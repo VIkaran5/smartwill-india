@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <meta name="robots" content="index, follow">
+  <title>Terms &amp; Conditions — SmartWill India</title>
+  <meta name="description" content="Terms of Service &amp; Legal Framework governing the use of SmartWill India online Will drafting platform under Indian law.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/terms">
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/legal.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Header Navbar matching main website -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/privacy" class="nav-link">Privacy Policy</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Your Will</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <div style="display:flex; justify-content:center;">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+      </div>
+      <a href="/" class="nav-link" style="font-size:1rem">Home</a>
+      <a href="/privacy" class="nav-link" style="font-size:1rem">Privacy Policy</a>
+      <a href="/contact" class="nav-link" style="font-size:1rem">Contact</a>
+      <a href="/blog" class="nav-link" style="font-size:1rem">Blog</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
+    </div>
+  </header>
+
+  <main class="legal-container">
+    <!-- Hero Header -->
+    <div class="legal-hero">
+      <div class="badge-pill">
+        <i data-lucide="file-text" style="width:14px;height:14px;"></i>
+        <span>Legal Terms &amp; Conditions</span>
+      </div>
+      <h1>Terms &amp; Conditions of Service</h1>
+      <p class="subtitle">
+        Please read these terms carefully before utilizing SmartWill India's digital Will preparation tools and document generation services.
+      </p>
+
+      <div class="legal-meta-bar">
+        <div class="legal-meta-item">
+          <i data-lucide="calendar" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Last Updated: <strong>September 2026</strong></span>
+        </div>
+        <div class="legal-meta-item">
+          <i data-lucide="scale" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Governing Act: <strong>Indian Succession Act 1925</strong></span>
+        </div>
+        <div class="legal-meta-item">
+          <i data-lucide="map-pin" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Jurisdiction: <strong>Hyderabad, India</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-Column Layout -->
+    <div class="legal-layout">
+      
+      <!-- Sticky Sidebar Table of Contents -->
+      <aside class="legal-sidebar">
+        <div class="legal-sidebar-title">Sections</div>
+        <nav>
+          <ul class="legal-toc-list">
+            <li><a href="#term-overview" class="legal-toc-link"><span class="text-gold">01</span> Service Overview</a></li>
+            <li><a href="#term-execution" class="legal-toc-link"><span class="text-gold">02</span> Statutory Execution</a></li>
+            <li><a href="#term-pricing" class="legal-toc-link"><span class="text-gold">03</span> Pricing &amp; Payments</a></li>
+            <li><a href="#term-dpdp" class="legal-toc-link"><span class="text-gold">04</span> DPDP Data Protection</a></li>
+            <li><a href="#term-liability" class="legal-toc-link"><span class="text-gold">05</span> Limitation of Liability</a></li>
+            <li><a href="#term-law" class="legal-toc-link"><span class="text-gold">06</span> Governing Jurisdiction</a></li>
+          </ul>
+        </nav>
+
+        <div class="legal-sidebar-help">
+          <div style="font-weight:600;color:var(--text-main);margin-bottom:4px;">Questions about terms?</div>
+          <div>Reach our legal support team:</div>
+          <div style="margin-top:4px;"><a href="mailto:smartwillindia.help@gmail.com">smartwillindia.help@gmail.com</a></div>
+        </div>
+      </aside>
+
+      <!-- Main Legal Content -->
+      <div class="legal-content">
+
+        <!-- 01: Overview -->
+        <article class="legal-card" id="term-overview">
+          <div class="legal-card-header">
+            <span class="legal-section-num">01</span>
+            <h2>Service Overview &amp; Nature of Platform</h2>
+          </div>
+          <p>
+            <strong>SmartWill India</strong> (operated by SmartWill Digital Technologies India) provides a technology-assisted digital platform designed to help Indian citizens draft structured, legally formatted Last Will and Testament documents for private, personal use.
+          </p>
+          <p>
+            <strong>Not a Law Firm:</strong> SmartWill India is a software platform, not a legal advisory service or advocate firm. Use of our software does not create an attorney-client relationship. If you possess unusually intricate asset structures or active contentious litigation, we advise seeking personalized counsel from a registered High Court advocate.
+          </p>
+        </article>
+
+        <!-- 02: Statutory Execution -->
+        <article class="legal-card" id="term-execution">
+          <div class="legal-card-header">
+            <span class="legal-section-num">02</span>
+            <h2>Statutory Execution Requirements (Section 63)</h2>
+          </div>
+          <p>
+            Under Section 63 of the <strong>Indian Succession Act 1925</strong>, generating or downloading a digital PDF Will document does <em>not</em> by itself make the Will legally effective. To attain full legal validity in India:
+          </p>
+          <ul>
+            <li><strong>Physical Printout:</strong> The generated PDF must be printed on plain A4 paper (stamp paper is not legally mandatory under Indian law).</li>
+            <li><strong>Testator Execution:</strong> The testator must physically sign or affix their thumb impression on each page in the presence of witnesses.</li>
+            <li><strong>Two Independent Witnesses:</strong> At least <strong>two (2) adult witnesses</strong> must physically observe the testator signing and sign the document themselves in the testator's presence.</li>
+            <li><strong>Beneficiary Disqualification:</strong> Under Section 67 of the Indian Succession Act 1925, named beneficiaries (or their spouses) <strong>must not</strong> act as attesting witnesses; doing so invalidates the bequest to that witness.</li>
+          </ul>
+        </article>
+
+        <!-- 03: Pricing & Payments -->
+        <article class="legal-card" id="term-pricing">
+          <div class="legal-card-header">
+            <span class="legal-section-num">03</span>
+            <h2>Pricing, Commercial Terms &amp; Refunds</h2>
+          </div>
+          <p>
+            Services are priced transparently at <strong>₹299 INR (one-time fee)</strong> per finalized Will PDF download. There are no recurring subscription charges or hidden renewal fees.
+          </p>
+          <p>
+            <strong>Payment Processing:</strong> Transactions are routed securely through authorized RBI-compliant payment aggregator Cashfree Payments India Pvt Ltd.
+          </p>
+          <p>
+            <strong>Refunds:</strong> Detailed provisions governing transaction disputes and technical delivery issues are set forth in our dedicated <a href="/refunds" style="color:var(--accent-gold);">Refund &amp; Cancellation Policy</a>.
+          </p>
+        </article>
+
+        <!-- 04: DPDP Act 2023 -->
+        <article class="legal-card" id="term-dpdp">
+          <div class="legal-card-header">
+            <span class="legal-section-num">04</span>
+            <h2>Data Protection &amp; Privacy (DPDP Act 2023)</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — DPDP Act contractual clause -->
+          <p>
+            SmartWill India operates in strict compliance with the <strong>Digital Personal Data Protection Act 2023</strong>. Your relationship regarding personal and financial data is governed by the following covenants:
+          </p>
+          <ul>
+            <li><strong>Purpose Limitation:</strong> All personal, asset, and family data collected through the form is processed exclusively to compile your Will document.</li>
+            <li><strong>Client-Side Encryption:</strong> Unsaved local drafts are scrambled using AES-GCM 256-bit Web Crypto encryption on your local browser.</li>
+            <li><strong>Zero Data Brokerage:</strong> We never monetize, sell, lease, or trade user data to financial product distributors, insurance brokers, or advertising networks.</li>
+            <li><strong>Data Rights:</strong> You possess the enforceable right to access, export, or permanently erase your data at any time via the dashboard.</li>
+            <li><strong>72-Hour Breach Notification:</strong> Pursuant to Section 8(6) of the DPDP Act 2023, in the event of an unauthorized personal data breach, SmartWill will notify the Data Protection Board of India within 72 hours and inform affected users without undue delay.</li>
+          </ul>
+          <p style="margin-top:0.75rem;">
+            Full data practices, storage timelines, and third-party processors are detailed in our <a href="/privacy" style="color:var(--accent-gold);">Privacy Policy</a>.
+          </p>
+        </article>
+
+        <!-- 05: Limitation of Liability -->
+        <article class="legal-card" id="term-liability">
+          <div class="legal-card-header">
+            <span class="legal-section-num">05</span>
+            <h2>Limitation of Liability &amp; Disclaimers</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED -->
+          <p>
+            SmartWill India automatically formats and generates documents based entirely on information provided by the user. SmartWill accepts no liability for errors, invalidity, or probate challenges resulting from incorrect, fraudulent, or incomplete information supplied by the testator.
+          </p>
+          <p>
+            To the maximum extent permitted under Indian law, SmartWill India's total aggregate liability arising out of or related to your use of the platform shall not exceed the actual amount paid by you (₹299 INR).
+          </p>
+        </article>
+
+        <!-- 06: Governing Law -->
+        <article class="legal-card" id="term-law">
+          <div class="legal-card-header">
+            <span class="legal-section-num">06</span>
+            <h2>Governing Law &amp; Dispute Jurisdiction</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED -->
+          <p>
+            These Terms of Service are governed by and construed in accordance with the substantive laws of the <strong>Republic of India</strong>.
+          </p>
+          <p>
+            Any legal dispute, suit, or claim arising out of or in connection with the platform shall be subject to the exclusive jurisdiction of the competent courts situated in <strong>Hyderabad, Telangana, India</strong>.
+          </p>
+          <div style="margin-top:1.5rem; padding:1.25rem; background:rgba(255,255,255,0.03); border:1px solid var(--border-light); border-radius:8px; font-size:0.85rem;">
+            <strong>Grievance Officer:</strong> Dasari G., SmartWill Digital Technologies India<br>
+            <strong>Compliance Email:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--accent-gold);">smartwillindia.help@gmail.com</a><br>
+            <strong>Resolution Timeline:</strong> Within 30 days under the DPDP Act 2023.
+          </div>
+        </article>
+
+      </div><!-- /legal-content -->
+
+    </div><!-- /legal-layout -->
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+          <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms" style="color:var(--accent-gold);">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/consent-banner.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Active Table of Contents highlighting on scroll
+    const sections = document.querySelectorAll('.legal-card');
+    const navLinks = document.querySelectorAll('.legal-toc-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 140;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+  <script src="/js/theme-switcher.js"></script>
+</body>
+</html>

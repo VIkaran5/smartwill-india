@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <meta name="robots" content="index, follow">
+  <title>Contact Us &amp; Grievance Support — SmartWill India</title>
+  <meta name="description" content="Contact SmartWill India customer support or reach our designated Grievance Officer under the Digital Personal Data Protection Act 2023.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/contact">
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/legal.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/privacy" class="nav-link">Privacy Policy</a>
+        <a href="/terms" class="nav-link">Terms</a>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Your Will</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <div style="display:flex; justify-content:center;">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+      </div>
+      <a href="/" class="nav-link" style="font-size:1rem">Home</a>
+      <a href="/privacy" class="nav-link" style="font-size:1rem">Privacy Policy</a>
+      <a href="/terms" class="nav-link" style="font-size:1rem">Terms</a>
+      <a href="/blog" class="nav-link" style="font-size:1rem">Blog</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
+    </div>
+  </header>
+
+  <main class="legal-container" style="max-width: 900px;">
+    <div class="legal-hero" style="margin-bottom: 2.5rem;">
+      <div class="badge-pill">
+        <i data-lucide="headphones" style="width:14px;height:14px;"></i>
+        <span>Help &amp; Grievance Redressal</span>
+      </div>
+      <h1>Contact Us</h1>
+      <p class="subtitle">
+        Have questions about creating your Will, payment assistance, or privacy rights? We are here to help.
+      </p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+      <!-- Support Channels -->
+      <div class="legal-card" style="padding: 2rem;">
+        <h3 style="color:var(--text-main); font-size:1.15rem; margin-bottom:1.25rem; display:flex; align-items:center; gap:8px;">
+          <i data-lucide="mail" style="color:var(--primary); width:18px; height:18px;"></i>
+          Official Communication Channels
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1.25rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--primary); font-weight: 700; margin-bottom: 4px;">General Support &amp; Enquiries</div>
+            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">
+              <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--primary); text-decoration:none;">smartwillindia.help@gmail.com</a>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-subtle); margin-top: 4px;">Mon – Sat: 9:00 AM – 7:00 PM IST</div>
+          </div>
+
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1.25rem;">
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-emerald); font-weight: 700; margin-bottom: 4px;">Registered Business Address</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+              SmartWill Digital Technologies India<br>
+              Financial District, Gachibowli, Hyderabad, Telangana 500032, India
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Designated Grievance Officer Box -->
+      <div class="legal-grievance-card">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom: 0.75rem;">
+          <i data-lucide="shield-check" style="width:20px;height:20px;color:var(--primary);"></i>
+          <h3 style="margin:0; font-size: 1.2rem; color: var(--text-main);">Designated Grievance Officer (DPDP Act 2023)</h3>
+        </div>
+        <p style="font-size:0.875rem; color:var(--text-muted); line-height:1.6; margin-bottom:1rem;">
+          Under Section 13 of the Digital Personal Data Protection Act 2023, you have the statutory right to address any data privacy, consent withdrawal, or deletion requests directly to our designated officer:
+        </p>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; font-size: 0.85rem; line-height: 1.7; color: var(--text-muted);">
+          <strong style="color:var(--text-main);">Officer Name:</strong> Dasari G.<br>
+          <strong style="color:var(--text-main);">Title:</strong> Grievance Officer, SmartWill Digital Technologies India<br>
+          <strong style="color:var(--text-main);">Official Contact:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--primary); font-weight:700;">smartwillindia.help@gmail.com</a><br>
+          <strong style="color:var(--text-main);">Statutory Turnaround:</strong> Guaranteed acknowledgement within 48 hours; resolution within <strong>30 calendar days</strong>.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+          <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact" style="color:var(--primary);">Contact &amp; Grievance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/consent-banner.js"></script>
+  <script src="/js/theme-switcher.js"></script>
+  <script>
+    if (window.lucide) lucide.createIcons();
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

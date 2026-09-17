@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js"></script>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f23">
+  <title>Create Your Legal Will — SmartWill India</title>
+  <!-- Capacitor Runtime — must be first script loaded -->
+  <script src="capacitor.js"></script>
+  
+  <!-- Bootstrap 5 — grid + responsive utilities only -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- jsPDF CDN for generating Will PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2canvas CDN for rendering Telugu & Hindi PDF documents perfectly -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- EmailJS SDK for sending Will PDF to user's email -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- Cashfree Payment Gateway V3 SDK for live GPay/PhonePe/UPI/Card checkout -->
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <!-- Firebase SDK V10 for Authentication & User Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- Header Navbar -->
+  <header class="app-header">
+    <div class="container app-nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon"><i data-lucide="shield-check"></i></div>
+        <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
+      </a>
+
+      <!-- Desktop right nav (hidden on mobile) -->
+      <div class="app-nav-right d-none d-md-flex">
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="te">తెలుగు</button>
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+        </div>
+        <div class="auth-nav-box flex align-center gap-2"></div>
+        <a href="index.html" class="btn btn-outline btn-sm" data-i18n="nav.home">Home</a>
+      </div>
+
+      <!-- Mobile: compact auth status + hamburger -->
+      <div class="d-flex d-md-none align-items-center gap-2">
+        <div class="auth-nav-box flex align-center gap-2"></div>
+        <button class="nav-hamburger" id="appNavHamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- App mobile menu -->
+    <div class="nav-mobile-menu" id="appNavMobileMenu">
+      <div class="lang-switcher" style="justify-content:center">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="te">తెలుగు</button>
+        <button class="lang-btn" data-lang="hi">हिंदी</button>
+      </div>
+      <a href="index.html" class="btn btn-outline" style="text-align:center">← Back to Home</a>
+    </div>
+  </header>
+
+  <!-- App Main Wizard Container -->
+  <main class="app-main">
+    <div class="container">
+      <!-- Progress Stepper -->
+      <div class="stepper-wrapper glass-card">
+        <div class="stepper-progress-bar" id="progressBar"></div>
+        <div class="step-item active" data-step="1" onclick="goToStep(1)">
+          <div class="step-number">1</div>
+          <span class="step-label" data-i18n="step.1">1. Personal</span>
+        </div>
+        <div class="step-item" data-step="2" onclick="goToStep(2)">
+          <div class="step-number">2</div>
+          <span class="step-label" data-i18n="step.2">2. Assets</span>
+        </div>
+        <div class="step-item" data-step="3" onclick="goToStep(3)">
+          <div class="step-number">3</div>
+          <span class="step-label" data-i18n="step.3">3. Family</span>
+        </div>
+        <div class="step-item" data-step="4" onclick="goToStep(4)">
+          <div class="step-number">4</div>
+          <span class="step-label" data-i18n="step.4">4. Allocation</span>
+        </div>
+        <div class="step-item" data-step="5" onclick="goToStep(5)">
+          <div class="step-number">5</div>
+          <span class="step-label" data-i18n="step.5">5. Review</span>
+        </div>
+        <div class="step-item" data-step="6" onclick="goToStep(6)">
+          <div class="step-number">6</div>
+          <span class="step-label" data-i18n="step.6">6. Payment & PDF</span>
+        </div>
+      </div>
+
+      <!-- Form Wizard Card -->
+      <div class="wizard-card glass-card">
+
+        <!-- STEP 1: Personal Information -->
+        <div class="wizard-step step-content active" id="step1">
+          <div class="step-header flex-between">
+            <div>
+              <h2 data-i18n="form.personalTitle">Personal & Legal Information</h2>
+              <p data-i18n="form.personalSubtitle">Enter your legal details exactly as printed on your official Identity Documents.</p>
+            </div>
+            <button type="button" id="resetDataBtn" class="btn btn-outline btn-sm text-rose" data-i18n="btn.reset">
+              🗑️ Clear Data & Start Fresh
+            </button>
+          </div>
+
+          <!-- DPDP Act 2023 Consent Notice & Checkbox -->
+          <div class="consent-box glass-card p-3 mb-4" style="background: rgba(245, 158, 11, 0.07); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px;">
+            <label style="display:flex; align-items:flex-start; gap:10px; font-size: 0.85rem; color: rgba(255,255,255,0.9); cursor:pointer; margin:0;">
+              <input type="checkbox" id="dpdpConsentCheckbox" style="margin-top: 3px; accent-color: #f59e0b; width:18px; height:18px; flex-shrink:0;">
+              <span>
+                <strong>DPDP Act 2023 Notice &amp; Consent:</strong> I consent to SmartWill India processing my personal, financial, and family details solely for the purpose of generating my legal Will document. I understand my data is protected under the <a href="/privacy" target="_blank" style="color:#f59e0b; text-decoration:underline;">Privacy Policy</a> and can be erased upon request.
+              </span>
+            </label>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.fullName">Full Legal Name</span> <span class="required">*</span></label>
+              <input type="text" id="fullName" class="form-control" placeholder="e.g. Ramesh Kumar Sharma" required data-i18n-placeholder="form.fullNamePlaceholder">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.dob">Date of Birth</span> <span class="required">*</span></label>
+              <input type="date" id="dob" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.gender">Gender</span> <span class="required">*</span></label>
+              <select id="gender" class="form-select" required>
+                <option value="Male" data-i18n="form.genderMale">Male</option>
+                <option value="Female" data-i18n="form.genderFemale">Female</option>
+                <option value="Other" data-i18n="form.genderOther">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.religion">Religion / Personal Law</span> <span class="required">*</span></label>
+              <select id="religion" class="form-select" required>
+                <option value="Hindu" data-i18n="form.religionHindu">Hindu / Sikh / Jain / Buddhist</option>
+                <option value="Muslim" data-i18n="form.religionMuslim">Muslim</option>
+                <option value="Christian" data-i18n="form.religionChristian">Christian / Parsi / Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Structured Govt ID Section -->
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="form.govtIdType">Govt ID Type</span> <span class="required">*</span></label>
+            <select id="govtIdType" class="form-select" required style="width:100%;font-size:16px;">
+              <option value="PAN Card">PAN Card</option>
+              <option value="Voter ID">Voter ID</option>
+              <option value="Passport">Passport</option>
+              <option value="Aadhaar Card">Aadhaar Card (Last 4 Digits Only)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label"><span data-i18n="form.govtIdDigits">Last 4 Digits / Chars</span> <span class="required">*</span></label>
+            <input type="text" id="govtIdDigits" class="form-control" placeholder="e.g. 9812 or 1234" maxlength="4" required style="width:100%;font-size:16px;" data-i18n-placeholder="form.govtIdDigitsPlaceholder">
+          </div>
+          <div id="govtIdStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
+
+          <div class="grid grid-2">
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.phone">Mobile Number</span> <span class="required">*</span></label>
+              <input type="tel" id="phone" class="form-control" placeholder="e.g. 9876543210" maxlength="10" required data-i18n-placeholder="form.phonePlaceholder">
+              <div id="phoneStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><span data-i18n="form.email">Email Address</span> <span class="required">*</span></label>
+              <input type="email" id="email" class="form-control" placeholder="ramesh@gmail.com" required data-i18n-placeholder="form.emailPlaceholder">
+              <div id="emailStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
+            </div>
+          </div>
+
+          <!-- Structured Address Section ("As per Govt ID") -->
+          <div class="address-section-box glass-card p-3 mt-3">
+            <label class="form-label text-bold"><span data-i18n="form.addressTitle">Permanent Address (As per Govt ID)</span> <span class="required">*</span></label>
+            <p class="form-help-text" data-i18n="form.addressHelp">Enter address exactly as printed on your official document.</p>
+            
+            <div class="form-group mt-2">
+              <input type="text" id="addressLine1" class="form-control" placeholder="Door / Flat No., Street Name, Area" required data-i18n-placeholder="form.addressLine1">
+            </div>
+
+            <div class="grid grid-3">
+              <div class="form-group">
+                <input type="text" id="addressCity" class="form-control" placeholder="City / Town" required data-i18n-placeholder="form.addressCity">
+              </div>
+              <div class="form-group">
+                <input type="text" id="addressState" class="form-control" placeholder="State" required data-i18n-placeholder="form.addressState">
+              </div>
+              <div class="form-group">
+                <input type="text" id="addressPincode" class="form-control" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required data-i18n-placeholder="form.addressPincode">
+              </div>
+            </div>
+            <div id="pincodeStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Assets -->
+        <div class="wizard-step step-content" id="step2">
+          <div class="step-header">
+            <h2 data-i18n="form.assetsTitle">Your Financial & Physical Assets</h2>
+            <p data-i18n="form.assetsSubtitle">List all your bank balances, properties, gold, and investments.</p>
+          </div>
+
+          <!-- Security Tip Alert Box -->
+          <div class="glass-card p-3 mb-3 border-blue flex align-center gap-2 text-xs" style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25);">
+            <span style="font-size: 1.2rem;">🔒</span>
+            <div>
+              <strong style="color: #60a5fa;" data-i18n="notice.bankingSecurityTitle">Banking Security Notice:</strong>
+              <span style="color: rgba(255,255,255,0.85);" data-i18n="notice.bankingSecurityDesc">For bank accounts and FDs, enter only the Bank Name & Last 4 Digits (e.g. HDFC A/C: XXXX1234). Never enter full account numbers or passwords.</span>
+            </div>
+          </div>
+
+          <div id="assetsContainer" class="dynamic-rows">
+            <!-- Dynamic Asset Rows inserted by JS -->
+          </div>
+
+          <button type="button" id="addAssetBtn" class="btn btn-outline btn-sm mt-3" data-i18n="form.addAsset">
+            ＋ Add Another Asset
+          </button>
+        </div>
+
+        <!-- STEP 3: Beneficiaries -->
+        <div class="wizard-step step-content" id="step3">
+          <div class="step-header">
+            <h2 data-i18n="form.familyTitle">Beneficiaries (Family Members)</h2>
+            <p data-i18n="form.familySubtitle">Add family members or loved ones who will inherit your assets.</p>
+          </div>
+
+          <!-- Step 3 Legal Tip Alert Box -->
+          <div class="glass-card p-3 mb-3 border-blue flex align-center gap-2 text-xs" style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25);">
+            <span style="font-size: 1.2rem;">⚖️</span>
+            <div>
+              <strong style="color: #60a5fa;" data-i18n="notice.witnessRuleTitle">Indian Succession Act Rule:</strong>
+              <span style="color: rgba(255,255,255,0.85);" data-i18n="notice.witnessRuleDesc">Beneficiaries can inherit any percentage, but under Section 67 of the Indian Succession Act 1925, a Beneficiary CANNOT act as one of your 2 Witnesses when signing the Will.</span>
+            </div>
+          </div>
+
+          <div id="beneficiariesContainer" class="dynamic-rows">
+            <!-- Dynamic Beneficiary Cards inserted by JS -->
+          </div>
+
+          <button type="button" id="addBeneficiaryBtn" class="btn btn-outline btn-sm mt-3" data-i18n="form.addBeneficiary">
+            ＋ Add Another Beneficiary
+          </button>
+        </div>
+
+        <!-- STEP 4: Asset Allocation -->
+        <div class="wizard-step step-content" id="step4">
+          <div class="step-header">
+            <h2 data-i18n="form.allocTitle">Asset Allocation Percentage</h2>
+            <p data-i18n="form.allocSubtitle">Specify what percentage of each asset goes to which beneficiary (Total must equal 100%).</p>
+          </div>
+
+          <!-- Step 4 Legal Tip Alert Box -->
+          <div class="glass-card p-3 mb-3 border-blue flex align-center gap-2 text-xs" style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25);">
+            <span style="font-size: 1.2rem;">💡</span>
+            <div>
+              <strong style="color: #60a5fa;" data-i18n="notice.smartAllocTitle">Smart Allocation Rule:</strong>
+              <span style="color: rgba(255,255,255,0.85);" data-i18n="notice.smartAllocDesc">Percentages for each asset must total exactly 100%. Click the ⚡ Split Equally button to divide any asset evenly in 1-click.</span>
+            </div>
+          </div>
+
+          <div id="allocationContainer" class="allocation-rows">
+            <!-- Dynamic Allocation sliders inserted by JS -->
+          </div>
+        </div>
+
+        <!-- STEP 5: Review & Executor -->
+        <div class="wizard-step step-content" id="step5">
+          <div class="step-header">
+            <h2 data-i18n="form.summaryTitle">Review & Verify Your Will</h2>
+            <p data-i18n="form.summarySubtitle">Please verify all details carefully before generating your document.</p>
+          </div>
+
+          <!-- Appoint Executor Box -->
+          <div class="executor-box glass-card mb-4">
+            <h3 class="mb-2" data-i18n="form.executorTitle">Appoint Will Executor</h3>
+            <p class="text-muted text-sm mb-3" data-i18n="form.executorHelp">The executor is the trusted person responsible for distributing your assets as written in this Will.</p>
+            <div class="grid grid-2">
+              <div class="form-group">
+                <label class="form-label" data-i18n="form.executorName">Executor Full Name</label>
+                <input type="text" id="executorName" class="form-control" placeholder="e.g. Suresh Sharma" data-i18n-placeholder="form.executorNamePlaceholder">
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="form.executorRelation">Relationship to Testator <span class="required">*</span></label>
+                <select id="executorRelation" class="form-select">
+                  <option value="Brother" data-i18n="form.relationBrother">Brother</option>
+                  <option value="Sister" data-i18n="form.relationSister">Sister</option>
+                  <option value="Spouse" data-i18n="form.relationSpouse">Spouse</option>
+                  <option value="Son" data-i18n="form.relationSon">Son</option>
+                  <option value="Daughter" data-i18n="form.relationDaughter">Daughter</option>
+                  <option value="Trusted Friend" data-i18n="form.relationOther">Trusted Friend</option>
+                  <option value="Lawyer / Advocate" data-i18n="form.relationOther">Lawyer / Advocate</option>
+                  <option value="Other" data-i18n="form.relationOther">Other Relative / Friend</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Will Summary Preview Box -->
+          <div class="summary-box glass-card" id="willSummaryPreview">
+            <!-- Summary populated dynamically by JS -->
+          </div>
+
+          <div class="confirm-checkbox mt-4">
+            <label class="checkbox-label">
+              <input type="checkbox" id="confirmCheckbox">
+              <span data-i18n="form.soundMindDeclaration">I hereby declare that I am of sound mind, making this Will out of my own free choice, and all information provided above is true and accurate.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 6: Payment & Download -->
+        <div class="wizard-step step-content" id="step6">
+          <div class="step-header text-center">
+            <h2 data-i18n="form.downloadTitle">🎉 Step 6: Payment & Instant PDF Download</h2>
+            <p data-i18n="form.pdfLanguageNote">(Note: You can keep the website in English while generating your Will in Telugu or Hindi)</p>
+          </div>
+
+          <!-- Pre-payment state -->
+          <div id="prePaymentState" class="text-center py-4">
+            <div class="price-display mb-4">
+              <span class="currency">₹</span><span class="amount">299</span>
+              <span class="strike">₹4,999</span>
+            </div>
+            <button type="button" id="payNowBtn" class="btn btn-gold btn-lg shadow-gold">
+              <i data-lucide="lock"></i> <span data-i18n="form.payBtn">Pay ₹299 & Unlock Legal Will PDF</span>
+            </button>
+          </div>
+
+          <!-- Post-payment state (Hidden until paid) -->
+          <div id="postPaymentState" class="post-payment-box hidden">
+            <div class="payment-success-card glass-card text-center mb-4">
+              <div class="success-icon"><i data-lucide="check-circle-2"></i></div>
+              <h3>Payment Successful!</h3>
+              <p class="text-muted">Transaction ID: TXN_SW_<span id="txnId">982347</span></p>
+
+              <!-- PDF Language Selector Option -->
+              <div class="pdf-format-selection glass-card p-3 my-3 text-left">
+                <label class="form-label text-bold" data-i18n="form.pdfLangTitle">Select Language for Generated PDF Will:</label>
+                <div class="radio-card-group mt-2">
+                  <label class="pdf-lang-card" for="pdfLangEn">
+                    <input type="radio" name="pdfLangChoice" value="en" checked id="pdfLangEn">
+                    <div class="pdf-lang-info">
+                      <div class="pdf-lang-title">🇬🇧 Legal English Version <span class="badge-recommended">Recommended</span></div>
+                      <div class="pdf-lang-desc">Standard for Courts, Banks & Financial Institutions</div>
+                    </div>
+                  </label>
+                  <label class="pdf-lang-card" for="pdfLangTe">
+                    <input type="radio" name="pdfLangChoice" value="te" id="pdfLangTe">
+                    <div class="pdf-lang-info">
+                      <div class="pdf-lang-title">🇮🇳 Telugu Version (తెలుగు లీగల్ పత్రం)</div>
+                      <div class="pdf-lang-desc">Drafted under Indian Succession Act 1925 in Telugu</div>
+                    </div>
+                  </label>
+                  <label class="pdf-lang-card" for="pdfLangHi">
+                    <input type="radio" name="pdfLangChoice" value="hi" id="pdfLangHi">
+                    <div class="pdf-lang-info">
+                      <div class="pdf-lang-title">🇮🇳 Hindi Version (हिंदी लीगल दस्तावेज)</div>
+                      <div class="pdf-lang-desc">Drafted under Indian Succession Act 1925 in Hindi</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              
+              <div class="email-send-toggle glass-card p-3 my-2 text-left">
+                <label class="checkbox-label flex align-center gap-2" style="cursor: pointer;">
+                  <input type="checkbox" id="sendEmailCheckbox" style="accent-color: var(--accent-gold); width: 18px; height: 18px;">
+                  <span style="font-size: 0.88rem; font-weight: 500;">📧 Also send a copy of this Will to my email address</span>
+                </label>
+                <p class="text-muted text-xs mt-1" id="emailTargetDisplay" style="margin-left: 26px;"></p>
+              </div>
+
+              <button type="button" id="downloadPdfBtn" class="btn btn-gold btn-lg mt-3">
+                <i data-lucide="download"></i> Download Will PDF Document
+              </button>
+            </div>
+
+            <!-- Execution Instructions Guide -->
+            <div class="execution-guide glass-card">
+              <h4 data-i18n="form.printGuideTitle">📋 Important Steps for Legal Validity in India:</h4>
+              <ul class="guide-list mt-2">
+                <li data-i18n="form.guideStep1">1. Print the downloaded PDF on plain A4 paper.</li>
+                <li data-i18n="form.guideStep2">2. Sign at the bottom of EVERY page in front of 2 independent witnesses.</li>
+                <li data-i18n="form.guideStep3">3. Have 2 witnesses (friends/neighbors, non-beneficiaries) sign the witness section.</li>
+                <li data-i18n="form.guideStep4">4. Store the physical document in a safe place or deposit box.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wizard Navigation Buttons -->
+        <div class="wizard-footer">
+          <button type="button" id="prevBtn" class="btn btn-secondary" disabled>Back</button>
+          <button type="button" id="nextBtn" class="btn btn-primary">Next Step <i data-lucide="arrow-right"></i></button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Razorpay Mock Payment Modal -->
+  <div id="paymentModal" class="payment-modal-overlay hidden">
+    <div class="payment-modal-card glass-card">
+      <div class="modal-header">
+        <div class="brand">
+          <i data-lucide="shield-check" class="text-blue"></i> SmartWill Pay
+        </div>
+        <button id="closeModalBtn" class="close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="merchant-info">
+          <span>SmartWill Digital Legal Will</span>
+          <span class="amount">₹299</span>
+        </div>
+
+        <div class="payment-tabs">
+          <button class="pay-tab active" data-tab="upi">UPI / QR</button>
+          <button class="pay-tab" data-tab="card">Card</button>
+          <button class="pay-tab" data-tab="netbanking">NetBanking</button>
+        </div>
+
+        <!-- UPI Tab Content -->
+        <div class="tab-content active" id="tab-upi">
+          <div class="qr-box">
+            <div class="dummy-qr">
+              <i data-lucide="qr-code"></i>
+              <span>Scan with GPay / PhonePe / Paytm</span>
+            </div>
+          </div>
+          <div class="form-group mt-3">
+            <input type="text" id="upiIdInput" class="form-control" placeholder="Enter UPI ID (e.g. 9876543210@upi)">
+          </div>
+        </div>
+
+        <!-- Card Tab Content -->
+        <div class="tab-content" id="tab-card">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Card Number (4532 .... .... ....)">
+          </div>
+          <div class="grid grid-2">
+            <input type="text" class="form-control" placeholder="MM / YY">
+            <input type="password" class="form-control" placeholder="CVV">
+          </div>
+        </div>
+
+        <!-- NetBanking Tab Content -->
+        <div class="tab-content" id="tab-netbanking">
+          <select class="form-select">
+            <option>State Bank of India</option>
+            <option>HDFC Bank</option>
+            <option>ICICI Bank</option>
+            <option>Axis Bank</option>
+          </select>
+        </div>
+
+        <button id="processPayBtn" class="btn btn-gold btn-lg w-full mt-4">
+          Pay ₹299 Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Container for Telugu/Hindi HTML Rendering to PDF -->
+  <div id="pdfRenderContainer" style="position: absolute; left: -9999px; top: -9999px; width: 800px; background: #ffffff; color: #000000; padding: 40px; font-family: 'Inter', sans-serif;"></div>
+
+  <!-- Toast Notification for Email Status -->
+  <div id="toastNotification" class="toast-notification hidden">
+    <div class="toast-icon" id="toastIcon">📧</div>
+    <div class="toast-content">
+      <p class="toast-title" id="toastTitle">Sending...</p>
+      <p class="toast-message" id="toastMessage"></p>
+    </div>
+    <button class="toast-close" onclick="hideToast()">&times;</button>
+  </div>
+
+  <!-- Authentication Modal (Sign In / Sign Up) -->
+  <div id="authModal" class="payment-modal-overlay hidden">
+    <div class="payment-modal-card glass-card auth-modal-card">
+      <div class="modal-header">
+        <div class="brand">
+          <i data-lucide="shield-check" class="text-blue"></i>
+          <span id="authModalTitle">Sign In to SmartWill</span>
+        </div>
+        <button type="button" onclick="closeAuthModal()" class="close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body p-4">
+        <!-- Auth Mode Tabs -->
+        <div class="payment-tabs mb-4">
+          <button type="button" class="pay-tab active" id="tabSignin" onclick="openAuthModal('signin')">Sign In</button>
+          <button type="button" class="pay-tab" id="tabSignup" onclick="openAuthModal('signup')">Create Account</button>
+        </div>
+
+        <!-- Google Sign-In Button -->
+        <button type="button" id="googleSignInBtn" class="btn btn-outline w-full mb-4 flex align-center justify-center gap-2" onclick="handleGoogleSignIn()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider mb-4"><span>OR USE EMAIL</span></div>
+
+        <!-- Sign In Form -->
+        <form id="formSignin" onsubmit="event.preventDefault(); handleEmailSignIn(document.getElementById('signinEmail').value, document.getElementById('signinPassword').value)">
+          <div class="form-group mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="signinEmail" class="form-control" placeholder="ramesh@example.com" required>
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" id="signinPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-gold btn-lg w-full">Sign In</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="formSignup" class="hidden" onsubmit="event.preventDefault(); handleEmailSignUp(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value, document.getElementById('signupName').value)">
+          <div class="form-group mb-3">
+            <label class="form-label">Full Legal Name</label>
+            <input type="text" id="signupName" class="form-control" placeholder="Ramesh Kumar Sharma" required>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="signupEmail" class="form-control" placeholder="ramesh@example.com" required>
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" id="signupPassword" class="form-control" placeholder="At least 6 characters" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-gold btn-lg w-full">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard Modal -->
+  <div id="dashboardModal" class="payment-modal-overlay hidden">
+    <div class="dashboard-modal-card">
+      <div class="dashboard-modal-header">
+        <div class="brand" style="display:flex; align-items:center; gap:8px; font-family:var(--font-heading); font-weight:700; font-size:1.15rem; color:#fff;">
+          <i data-lucide="shield-check" style="color:var(--accent-gold); width:22px; height:22px;"></i>
+          <span>Member Dashboard</span>
+        </div>
+        <button type="button" onclick="closeDashboardModal()" class="dashboard-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="dashboard-modal-body" id="dashboardWillList">
+        <p class="text-muted text-center py-4">Loading your dashboard...</p>
+      </div>
+      <div class="dashboard-modal-footer">
+        <div class="dashboard-data-rights">
+          <button type="button" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:6px 12px;" onclick="handleDownloadMyData()">
+            📥 Download My Data (JSON)
+          </button>
+          <button type="button" class="btn btn-outline btn-sm text-rose" style="font-size:0.75rem; padding:6px 12px; border-color:rgba(244,63,94,0.35);" onclick="handleDeleteMyAccount()">
+            🗑️ Delete Account &amp; Data
+          </button>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" style="font-size:0.75rem; color:var(--text-muted);" onclick="handleSignOut()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capacitor Native Bridge — handles back-button, network, payment, statusbar -->
+  <script type="module" src="js/capacitor-bridge.js"></script>
+  <script type="module" src="js/app.js?v=4.0"></script>
+  <script>
+    lucide.createIcons();
+
+    // ── App page hamburger toggle ──
+    const appHamburger = document.getElementById('appNavHamburger');
+    const appMobileMenu = document.getElementById('appNavMobileMenu');
+    if (appHamburger && appMobileMenu) {
+      appHamburger.addEventListener('click', () => {
+        appMobileMenu.classList.toggle('open');
+        appHamburger.classList.toggle('active');
+      });
+      appMobileMenu.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('click', () => {
+          appMobileMenu.classList.remove('open');
+          appHamburger.classList.remove('active');
+        });
+      });
+    }
+
+    // ── Pending Payment Recovery ──────────────────────────────────────────────
+    // If the user paid but the app didn't verify (e.g. manually closed browser),
+    // localStorage holds sw_pending_order_id. Re-verify it on every app load.
+    document.addEventListener('DOMContentLoaded', function () {
+      if (typeof window.checkPendingPaymentOnResume === 'function') {
+        window.checkPendingPaymentOnResume();
+      }
+    });
+    // Also re-check when app resumes from background (Capacitor resume event)
+    document.addEventListener('resume', function () {
+      if (typeof window.checkPendingPaymentOnResume === 'function') {
+        setTimeout(() => window.checkPendingPaymentOnResume(), 1000);
+      }
+    });
+  </script>
+</body>
+</html>

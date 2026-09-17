@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "809704555018",
+    "project_id": "smartwill-india",
+    "storage_bucket": "smartwill-india.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809704555018:android:2cb49800d8ca2200ad15f3",
+        "android_client_info": {
+          "package_name": "com.smartwillindia.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809704555018-d3f02q6duionc6b71d4fr272vig01pb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartwillindia.app",
+            "certificate_hash": "ea03a5817bb99d45adafeeaa5ab9961b323c5b04"
+          }
+        },
+        {
+          "client_id": "809704555018-fn1ches3d5bnnqqbkmkjrcibcpn19nvj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPg8R0HbsD1QhKl-eBPzeBhI5p6Zq-brA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809704555018-fn1ches3d5bnnqqbkmkjrcibcpn19nvj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

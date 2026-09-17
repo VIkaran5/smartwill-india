@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SmartWill India</string>
+    <string name="title_activity_main">SmartWill India</string>
+    <string name="package_name">com.smartwillindia.app</string>
+    <string name="custom_url_scheme">com.smartwillindia.app</string>
+    <string name="server_client_id">809704555018-fn1ches3d5bnnqqbkmkjrcibcpn19nvj.apps.googleusercontent.com</string>
+</resources>

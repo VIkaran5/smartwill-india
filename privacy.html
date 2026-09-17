@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <meta name="robots" content="index, follow">
+  <title>Privacy Policy — SmartWill India | DPDP Act 2023</title>
+  <meta name="description" content="SmartWill India Privacy Policy — Full disclosure of data collection, storage, encryption, and your legal rights under the Digital Personal Data Protection Act 2023.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/privacy">
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/legal.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Header Navbar matching main website -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/terms" class="nav-link">Terms &amp; Conditions</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Your Will</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <div style="display:flex; justify-content:center;">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+      </div>
+      <a href="/" class="nav-link" style="font-size:1rem">Home</a>
+      <a href="/terms" class="nav-link" style="font-size:1rem">Terms &amp; Conditions</a>
+      <a href="/contact" class="nav-link" style="font-size:1rem">Contact</a>
+      <a href="/blog" class="nav-link" style="font-size:1rem">Blog</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
+    </div>
+  </header>
+
+  <main class="legal-container">
+    <!-- Hero Header -->
+    <div class="legal-hero">
+      <div class="badge-pill">
+        <i data-lucide="shield" style="width:14px;height:14px;"></i>
+        <span>DPDP Act 2023 Compliant</span>
+      </div>
+      <h1>Privacy Policy &amp; Data Notice</h1>
+      <p class="subtitle">
+        We believe in complete transparency. Here is exactly how your personal, financial, and family data is collected, encrypted, and protected under Indian law.
+      </p>
+
+      <div class="legal-meta-bar">
+        <div class="legal-meta-item">
+          <i data-lucide="calendar" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Effective: <strong>September 2026</strong></span>
+        </div>
+        <div class="legal-meta-item">
+          <i data-lucide="scale" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Governing Law: <strong>DPDP Act 2023 (India)</strong></span>
+        </div>
+        <div class="legal-meta-item">
+          <i data-lucide="user-check" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Grievance Officer: <strong>Dasari G.</strong></span>
+        </div>
+        <div class="legal-meta-item">
+          <i data-lucide="clock" style="width:14px;height:14px;color:var(--accent-gold);"></i>
+          <span>Response Time: <strong>Within 30 Days</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Marker Flag -->
+    <div class="lawyer-review-banner">
+      <i data-lucide="alert-triangle" style="width:18px;height:18px;flex-shrink:0;"></i>
+      <div>
+        <strong>Legal Compliance Transparency:</strong> All clauses below are drafted in strict accordance with the Digital Personal Data Protection Act 2023 (DPDP Rules 2025). Marked for internal legal review.
+      </div>
+    </div>
+
+    <!-- Two-Column Layout -->
+    <div class="legal-layout">
+      
+      <!-- Sticky Sidebar Table of Contents -->
+      <aside class="legal-sidebar">
+        <div class="legal-sidebar-title">Table of Contents</div>
+        <nav>
+          <ul class="legal-toc-list">
+            <li><a href="#sec-fiduciary" class="legal-toc-link"><span class="text-gold">01</span> Data Fiduciary</a></li>
+            <li><a href="#sec-data-collected" class="legal-toc-link"><span class="text-gold">02</span> Data We Collect</a></li>
+            <li><a href="#sec-storage" class="legal-toc-link"><span class="text-gold">03</span> Storage &amp; Encryption</a></li>
+            <li><a href="#sec-legal-basis" class="legal-toc-link"><span class="text-gold">04</span> Legal Basis (Consent)</a></li>
+            <li><a href="#sec-processors" class="legal-toc-link"><span class="text-gold">05</span> Third-Party Processors</a></li>
+            <li><a href="#sec-retention" class="legal-toc-link"><span class="text-gold">06</span> Data Retention</a></li>
+            <li><a href="#sec-rights" class="legal-toc-link"><span class="text-gold">07</span> Your Legal Rights</a></li>
+            <li><a href="#sec-storage-keys" class="legal-toc-link"><span class="text-gold">08</span> Browser Storage</a></li>
+            <li><a href="#sec-security" class="legal-toc-link"><span class="text-gold">09</span> Security Safeguards</a></li>
+            <li><a href="#sec-minors" class="legal-toc-link"><span class="text-gold">10</span> Minors Policy</a></li>
+            <li><a href="#sec-updates" class="legal-toc-link"><span class="text-gold">11</span> Policy Updates</a></li>
+            <li><a href="#sec-grievance" class="legal-toc-link"><span class="text-gold">12</span> Grievance Redressal</a></li>
+          </ul>
+        </nav>
+
+        <div class="legal-sidebar-help">
+          <div style="font-weight:600;color:var(--text-main);margin-bottom:4px;">Have questions?</div>
+          <div>Contact our Grievance Officer directly at:</div>
+          <div style="margin-top:4px;"><a href="mailto:smartwillindia.help@gmail.com">smartwillindia.help@gmail.com</a></div>
+        </div>
+      </aside>
+
+      <!-- Main Legal Content -->
+      <div class="legal-content">
+
+        <!-- 01: Fiduciary -->
+        <article class="legal-card" id="sec-fiduciary">
+          <div class="legal-card-header">
+            <span class="legal-section-num">01</span>
+            <h2>Who We Are (Data Fiduciary)</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — Entity representation -->
+          <p>
+            <strong>SmartWill Digital Technologies India</strong> (operating as "SmartWill India", "we", "us", or "our") acts as the <strong>Data Fiduciary</strong> under the <em>Digital Personal Data Protection Act 2023 (DPDP Act)</em>.
+          </p>
+          <p>
+            As a Data Fiduciary, SmartWill India determines the purpose and means of processing personal data collected from individuals ("Data Principals") who use our software platform to create legal testamentary documents.
+          </p>
+          <div style="background:var(--bg-surface); border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:1rem; margin-top:0.75rem; font-size:0.85rem; overflow-wrap:break-word; word-break:break-word;">
+            <strong>Registered Operations Address:</strong> SmartWill Digital Technologies India, Financial District, Gachibowli, Hyderabad, Telangana 500032, India.<br>
+            <strong>Official Support Email:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--primary); font-weight:600;">smartwillindia.help@gmail.com</a>
+          </div>
+        </article>
+
+        <!-- 02: Data We Collect -->
+        <article class="legal-card" id="sec-data-collected">
+          <div class="legal-card-header">
+            <span class="legal-section-num">02</span>
+            <h2>Personal Data We Collect</h2>
+          </div>
+          <p>
+            To generate a legally enforceable Will under Section 63 of the Indian Succession Act 1925, our platform collects itemized categories of information directly from you:
+          </p>
+
+          <div class="legal-table-wrapper">
+            <table class="legal-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Specific Data Points</th>
+                  <th>Legal Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="tag-pill">Identity Data</span></td>
+                  <td>Full Legal Name, Date of Birth, Gender, Religion / Personal Law</td>
+                  <td>Testator identification and applying applicable succession law (Hindu Succession Act, Indian Succession Act, etc.).</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Government ID</span></td>
+                  <td>ID Type (PAN Card, Voter ID, Passport, Aadhaar) + <strong>Last 4 Digits only</strong></td>
+                  <td>Establishing statutory identity. We deliberately never ask for or store full 12-digit Aadhaar numbers.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Contact Info</span></td>
+                  <td>Mobile Number, Email Address</td>
+                  <td>Account verification, transactional receipts, and secure PDF delivery via email.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Address</span></td>
+                  <td>Door/Flat Number, Street, City/Town, State, PIN Code</td>
+                  <td>Mandatory statutory testator domicile recital in the Will document.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Financial Assets</span></td>
+                  <td>Bank Name &amp; A/C Last 4 Digits, Fixed Deposits, Property addresses, Mutual Funds, Stocks, Gold/Jewelry, Vehicles</td>
+                  <td>Asset schedule formulation required to bequeath and distribute estates legally.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Beneficiaries</span></td>
+                  <td>Full Names, Relationships, Contact numbers, Govt ID digits, Minor Guardian names</td>
+                  <td>Identifying heirs and appointing legal trustees for minor beneficiaries under the Guardian &amp; Wards Act 1890.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Will Executor</span></td>
+                  <td>Executor Full Legal Name, Relationship to Testator</td>
+                  <td>Designating the trusted person responsible for distributing the estate according to your wishes.</td>
+                </tr>
+                <tr>
+                  <td><span class="tag-pill">Transaction Data</span></td>
+                  <td>Order ID, Amount (₹299), Payment timestamp, Cashfree reference</td>
+                  <td>Fulfilling your purchase order and maintaining statutory accounting records.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- 03: Storage & Encryption -->
+        <article class="legal-card" id="sec-storage">
+          <div class="legal-card-header">
+            <span class="legal-section-num">03</span>
+            <h2>How and Where We Store Your Data</h2>
+          </div>
+          <p>We protect your legal and financial information using modern client-side and cloud encryption protocols:</p>
+
+          <div class="legal-table-wrapper">
+            <table class="legal-table">
+              <thead>
+                <tr>
+                  <th>Storage Location</th>
+                  <th>Data Stored</th>
+                  <th>Encryption &amp; Protection</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Your Local Browser</strong> (Device Only)</td>
+                  <td>In-progress Will draft, selected language, session recovery ID</td>
+                  <td>
+                    <strong>AES-GCM 256-bit Client Encryption</strong> via native Web Crypto API. Key derived via PBKDF2. Protects against casual inspection on shared or family computers.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Google Firestore</strong> (Encrypted Cloud)</td>
+                  <td>Authenticated user draft, sync state, referral balance</td>
+                  <td>
+                    Protected by TLS 1.3 in transit, Google AES-256 at rest, and Firebase Security Rules allowing access strictly to the authenticated owner.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Cashfree Payments</strong></td>
+                  <td>Customer name, email, phone, order amount</td>
+                  <td>
+                    PCI-DSS Level 1 certified gateway. SmartWill never sees or stores card numbers, CVVs, or UPI PINs.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- 04: Legal Basis -->
+        <article class="legal-card" id="sec-legal-basis">
+          <div class="legal-card-header">
+            <span class="legal-section-num">04</span>
+            <h2>Legal Basis for Processing (Consent)</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — DPDP Section 6 -->
+          <p>
+            Under Section 4 and Section 6 of the DPDP Act 2023, personal data is processed strictly on the basis of your <strong>free, specific, informed, unconditional, and unambiguous consent</strong>.
+          </p>
+          <ul>
+            <li><strong>Affirmative Action:</strong> You provide explicit consent by checking the unticked DPDP consent box on Step 1 of the Will builder.</li>
+            <li><strong>In-Memory Gating:</strong> No data is persisted to encrypted browser storage or cloud servers until this affirmative consent is given.</li>
+            <li><strong>Right of Withdrawal:</strong> You may withdraw your consent at any time by deleting your account or emailing our Grievance Officer.</li>
+          </ul>
+        </article>
+
+        <!-- 05: Processors -->
+        <article class="legal-card" id="sec-processors">
+          <div class="legal-card-header">
+            <span class="legal-section-num">05</span>
+            <h2>Third-Party Data Processors</h2>
+          </div>
+          <p>
+            SmartWill India engages trusted third-party service providers bound by strict confidentiality and data protection obligations:
+          </p>
+
+          <div class="legal-table-wrapper">
+            <table class="legal-table">
+              <thead>
+                <tr>
+                  <th>Processor</th>
+                  <th>Service Provided</th>
+                  <th>Data Shared</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Google LLC</strong></td>
+                  <td>Firebase Authentication &amp; Firestore Cloud Database</td>
+                  <td>Email, UID, encrypted draft Will</td>
+                  <td>USA / Global Cloud</td>
+                </tr>
+                <tr>
+                  <td><strong>Cashfree Payments India Pvt Ltd</strong></td>
+                  <td>Payment Processing</td>
+                  <td>Customer name, phone, email, order amount</td>
+                  <td>India</td>
+                </tr>
+                <tr>
+                  <td><strong>EmailJS Ltd</strong></td>
+                  <td>Transactional Email Delivery</td>
+                  <td>User email, generated PDF attachment</td>
+                  <td>UK / EU</td>
+                </tr>
+                <tr>
+                  <td><strong>Google LLC (Analytics)</strong></td>
+                  <td>Web Traffic Measurement</td>
+                  <td>Anonymised page views, country (opt-in gated)</td>
+                  <td>USA</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:0.75rem;">
+            <strong>Zero Marketing Sale Guarantee:</strong> SmartWill India will <em>never</em> sell, lease, rent, or trade your personal or financial data to insurance brokers, banks, advertising networks, or third parties.
+          </p>
+        </article>
+
+        <!-- 06: Data Retention -->
+        <article class="legal-card" id="sec-retention">
+          <div class="legal-card-header">
+            <span class="legal-section-num">06</span>
+            <h2>Data Retention Schedules</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — Statutory retention periods -->
+          <ul>
+            <li><strong>Local Draft Data:</strong> Encrypted browser draft data auto-expires after 24 hours of inactivity or is wiped immediately upon clicking "Clear Data" or deleting your account.</li>
+            <li><strong>Cloud Account &amp; Will Draft:</strong> Retained in encrypted form for the life of your account until you initiate an account deletion request.</li>
+            <li><strong>Financial Payment Records:</strong> Retained for 7 years to comply with mandatory Indian tax and financial audit regulations.</li>
+            <li><strong>Analytics Telemetry:</strong> Retained for 14 months per Google Analytics standard retention policies (applicable only after explicit consent).</li>
+          </ul>
+        </article>
+
+        <!-- 07: Your Legal Rights -->
+        <article class="legal-card" id="sec-rights">
+          <div class="legal-card-header">
+            <span class="legal-section-num">07</span>
+            <h2>Your Rights under DPDP Act 2023</h2>
+          </div>
+          <p>
+            As a Data Principal under Sections 11, 12, and 13 of the DPDP Act 2023, you hold full legal rights over your personal data:
+          </p>
+
+          <div class="legal-rights-grid">
+            <div class="legal-right-item">
+              <h4><i data-lucide="download" style="width:16px;height:16px;"></i> Right to Access</h4>
+              <p>You have the right to obtain a full summary of personal data held about you. Click <strong>"Download My Data (JSON)"</strong> in your dashboard or email us.</p>
+            </div>
+            <div class="legal-right-item">
+              <h4><i data-lucide="edit-3" style="width:16px;height:16px;"></i> Right to Correction</h4>
+              <p>You can review and modify any personal, asset, or family information at any time directly through the interactive Will wizard.</p>
+            </div>
+            <div class="legal-right-item">
+              <h4><i data-lucide="trash-2" style="width:16px;height:16px;"></i> Right to Erasure</h4>
+              <p>You have the "Right to be Forgotten". Click <strong>"Delete My Account &amp; Data"</strong> to permanently purge your local and cloud records.</p>
+            </div>
+            <div class="legal-right-item">
+              <h4><i data-lucide="undo" style="width:16px;height:16px;"></i> Right to Withdraw</h4>
+              <p>You may withdraw your consent at any time without penalty. Future processing stops immediately upon withdrawal.</p>
+            </div>
+            <div class="legal-right-item">
+              <h4><i data-lucide="user-check" style="width:16px;height:16px;"></i> Right to Nominate</h4>
+              <p>You have the right to nominate another individual who shall exercise your data rights in the event of death or incapacity.</p>
+            </div>
+            <div class="legal-right-item">
+              <h4><i data-lucide="shield-alert" style="width:16px;height:16px;"></i> Right to Redressal</h4>
+              <p>You have the right to have grievances addressed within 30 days, with the right to escalate to the Data Protection Board of India.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- 08: Browser Storage -->
+        <article class="legal-card" id="sec-storage-keys">
+          <div class="legal-card-header">
+            <span class="legal-section-num">08</span>
+            <h2>Browser Storage &amp; Cookies</h2>
+          </div>
+          <p>We do not use tracking cookies. We only use browser storage strictly necessary to operate the application:</p>
+
+          <div class="legal-table-wrapper">
+            <table class="legal-table">
+              <thead>
+                <tr>
+                  <th>Storage Key</th>
+                  <th>Classification</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>smartwill_draft</code></td>
+                  <td><span class="tag-pill">Essential</span></td>
+                  <td>Holds AES-GCM encrypted Will draft to prevent work loss on page refresh.</td>
+                </tr>
+                <tr>
+                  <td><code>sw_dpdp_consent</code></td>
+                  <td><span class="tag-pill">Essential</span></td>
+                  <td>Stores audit timestamp proving that DPDP consent was granted.</td>
+                </tr>
+                <tr>
+                  <td><code>smartwill_device_id</code></td>
+                  <td><span class="tag-pill">Essential</span></td>
+                  <td>Device identifier used in client encryption key derivation.</td>
+                </tr>
+                <tr>
+                  <td><code>smartwill_lang</code></td>
+                  <td><span class="tag-pill">Preference</span></td>
+                  <td>Remembers your chosen language (English / Telugu / Hindi).</td>
+                </tr>
+                <tr>
+                  <td><code>sw_analytics_consent</code></td>
+                  <td><span class="tag-pill">Optional</span></td>
+                  <td>Stores whether you accepted or declined optional Google Analytics.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- 09: Security Safeguards -->
+        <article class="legal-card" id="sec-security">
+          <div class="legal-card-header">
+            <span class="legal-section-num">09</span>
+            <h2>Technical &amp; Operational Security</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — Security disclosures -->
+          <ul>
+            <li><strong>Transport Encryption:</strong> 100% of website traffic is enforced over TLS 1.3 HTTPS with HSTS preloading.</li>
+            <li><strong>Client-Side Scrambling:</strong> Unencrypted plain text is never committed to localStorage; Web Crypto AES-GCM 256-bit prevents casual inspection.</li>
+            <li><strong>Least Privilege Cloud Access:</strong> Firestore Security Rules enforce strict UID matching, preventing any user from accessing another user's Will documents.</li>
+            <li><strong>No Payment Storage:</strong> We adhere to PCI-DSS standards; card numbers and UPI PINs never touch SmartWill servers.</li>
+          </ul>
+        </article>
+
+        <!-- 10: Minors -->
+        <article class="legal-card" id="sec-minors">
+          <div class="legal-card-header">
+            <span class="legal-section-num">10</span>
+            <h2>Minors Policy</h2>
+          </div>
+          <!-- LAWYER REVIEW REQUIRED — Section 9 DPDP Act -->
+          <p>
+            Under Section 9 of the DPDP Act 2023, we do not knowingly process personal data of individuals under 18 years of age as account holders. To create a Will in India under the Indian Succession Act 1925, the testator must be a major of sound mind. If a minor beneficiary is named in a Will, an adult guardian must be designated.
+          </p>
+        </article>
+
+        <!-- 11: Policy Updates -->
+        <article class="legal-card" id="sec-updates">
+          <div class="legal-card-header">
+            <span class="legal-section-num">11</span>
+            <h2>Updates to This Policy</h2>
+          </div>
+          <p>
+            We may update this Privacy Policy from time to time to maintain compliance with notifications issued by the Data Protection Board of India. The date of the latest update will always be noted at the top of this document. Continued usage after notification constitutes acceptance.
+          </p>
+        </article>
+
+        <!-- 12: Grievance Officer -->
+        <article class="legal-card" id="sec-grievance">
+          <div class="legal-card-header">
+            <span class="legal-section-num">12</span>
+            <h2>Grievance Redressal Mechanism</h2>
+          </div>
+          <p>
+            In compliance with Section 13 of the DPDP Act 2023, SmartWill India has designated a dedicated Grievance Officer:
+          </p>
+
+          <div class="legal-grievance-card">
+            <h3>🛡️ Grievance Officer Contact Details</h3>
+            <p><strong>Name:</strong> Dasari G.</p>
+            <p><strong>Designation:</strong> Grievance Officer, SmartWill Digital Technologies India</p>
+            <p><strong>Official Email:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--accent-gold);font-weight:700;">smartwillindia.help@gmail.com</a></p>
+            <p><strong>Statutory Resolution Timeline:</strong> Within 30 calendar days of receipt.</p>
+            <p style="margin-top:1rem; font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              If your grievance is not resolved to your satisfaction within 30 days, you have the statutory right under Section 13(3) of the DPDP Act 2023 to register a complaint with the <strong>Data Protection Board of India</strong>.
+            </p>
+          </div>
+        </article>
+
+      </div><!-- /legal-content -->
+
+    </div><!-- /legal-layout -->
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
+          <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy" style="color:var(--accent-gold);">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Registered under DPDP Act 2023.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/consent-banner.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Active Table of Contents highlighting on scroll
+    const sections = document.querySelectorAll('.legal-card');
+    const navLinks = document.querySelectorAll('.legal-toc-link');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 140;
+        if (pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+  <script src="/js/theme-switcher.js"></script>
+</body>
+</html>

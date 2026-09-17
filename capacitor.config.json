@@ -1,0 +1,29 @@
+{
+  "appId": "com.smartwillindia.app",
+  "appName": "SmartWill India",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0f0f23",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0f0f23",
+      "overlaysWebView": false
+    },
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "809704555018-fn1ches3d5bnnqqbkmkjrcibcpn19nvj.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
+  }
+}

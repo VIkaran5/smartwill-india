@@ -1,0 +1,8 @@
+functions/node_modules
+functions/.git
+.firebaserc
+firebase.json
+firestore.indexes.json
+test/
+marketing/
+.gemini/

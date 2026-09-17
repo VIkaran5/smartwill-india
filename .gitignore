@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor configs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build output
+dist/
+build/
+
+# Android build artifacts
+.gradle/
+android/.gradle/
+android/app/build/
+android/build/
+android/captures/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Cloud functions dependencies
+functions/node_modules/
+
+# Firebase / Cloud Secrets
+*.pem
+*serviceAccountKey*.json
+*firebase-adminsdk*.json

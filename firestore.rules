@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User profile documents (Server-authoritative for referredBy)
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'photoURL', 'updatedAt']);
+      allow update: if request.auth != null && request.auth.uid == userId
+        && !('referredBy' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false;
+    }
+
+    // Referral credits collection (Read-only for owner, write restricted to serverless admin)
+    match /referralCredits/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    // User Drafts collection (Cloud Sync)
+    match /users/{userId}/drafts/{draftId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Wills collection
+    match /wills/{willId} {
+      // Users can only read their own will documents
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Users can create/write their own will documents
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+
+    // Orders collection (Read-only for owner, write restricted to serverless admin)
+    match /orders/{orderId} {
+      allow write: if false; 
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
+    
+    // Audit logs collection (backend admin only)
+    match /auditLogs/{logId} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /functions/
+Disallow: /pay.html
+
+Sitemap: https://smartwill-india.vercel.app/sitemap.xml

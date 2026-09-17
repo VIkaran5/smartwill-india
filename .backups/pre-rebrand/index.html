@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js"></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>SmartWill India — Online Will Creation Platform at ₹299</title>
+  <meta name="description" content="Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Protect your bank accounts, FD, gold, and property for just ₹299. Available in English, Telugu, & Hindi.">
+  
+  <!-- Canonical -->
+  <link rel="canonical" href="https://smartwill-india.vercel.app/">
+
+  <!-- hreflang — reciprocal with /te/ -->
+  <link rel="alternate" hreflang="en" href="https://smartwill-india.vercel.app/">
+  <link rel="alternate" hreflang="te" href="https://smartwill-india.vercel.app/te/">
+  <link rel="alternate" hreflang="x-default" href="https://smartwill-india.vercel.app/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Create Your Will Online in 10 Minutes — Only ₹299 | SmartWill India">
+  <meta property="og:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. English, Telugu & Hindi. Instant PDF download.">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SmartWill India">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Create Your Will Online in 10 Minutes — Only ₹299 | SmartWill India">
+  <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
+  <meta name="twitter:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+
+  <!-- Bootstrap 5 — grid + responsive utilities only -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Firebase SDK V10 for Authentication & User Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is an online Will legally valid in India?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Under the Indian Succession Act, 1925, a Will is legally valid when signed by the testator and attested by two independent witnesses who are not beneficiaries. Registration is optional under Indian law. Note: certain communities governed by personal law (for example, Muslims in some testamentary matters) should consult a legal advisor to confirm applicability."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens after I download the PDF?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Print the generated PDF, sign on every page in front of 2 witnesses (who also sign). Store it safely or in your SmartWill digital vault."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I edit my Will later if I buy new property or assets?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can log back into SmartWill anytime to update your assets or beneficiaries and download an updated Will for free."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are my financial asset details secure?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. SmartWill uses industry-standard encryption to protect your data in transit and at rest. Your private financial information is accessible only by you."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Service Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "SmartWill India — Online Will Creation",
+    "description": "Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Available in English, Telugu, and Hindi.",
+    "url": "https://smartwill-india.vercel.app/",
+    "serviceType": "Legal Document Preparation",
+    "areaServed": {
+      "@type": "Country",
+      "name": "India"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "SmartWill India",
+      "url": "https://smartwill-india.vercel.app/"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "299",
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock",
+      "url": "https://smartwill-india.vercel.app/app.html"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Announcement Banner — fact-based, no fake urgency -->
+  <div id="announceBanner" class="announce-bar" role="alert" aria-live="polite">
+    <span>⚠️ <strong>₹40,000 Crore</strong> lies unclaimed in Indian banks — don't let your family's assets become a statistic. Secure their future today for just ₹299.</span>
+    <button class="announce-close" id="announceDismiss" aria-label="Dismiss banner">✕</button>
+  </div>
+
+  <!-- Background Glow FX -->
+  <div class="bg-glow-blue"></div>
+  <div class="bg-glow-gold"></div>
+
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon"><i data-lucide="shield-check"></i></div>
+        <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="#features" class="nav-link" data-i18n="nav.features">Features</a>
+        <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How It Works</a>
+        <a href="#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+        <a href="#faq" class="nav-link" data-i18n="nav.faq">FAQ</a>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+
+      <!-- Desktop nav actions (hidden on mobile) -->
+      <div class="nav-actions d-none d-md-flex">
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="te">తెలుగు</button>
+          <button class="lang-btn" data-lang="hi">हिंदी</button>
+        </div>
+        <div class="auth-nav-box flex align-center gap-2"></div>
+        <a href="app.html" class="btn btn-gold btn-sm" data-i18n="nav.createWill">Create Your Will</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <div class="lang-switcher" style="justify-content:center">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="te">తెలుగు</button>
+        <button class="lang-btn" data-lang="hi">हिंदी</button>
+      </div>
+      <a href="#features" class="nav-link" style="font-size:1rem">Features</a>
+      <a href="#how-it-works" class="nav-link" style="font-size:1rem">How It Works</a>
+      <a href="#pricing" class="nav-link" style="font-size:1rem">Pricing</a>
+      <a href="#faq" class="nav-link" style="font-size:1rem">FAQ</a>
+      <a href="/blog" class="nav-link" style="font-size:1rem">Blog</a>
+      <div class="auth-nav-box-mobile flex align-center gap-2" style="margin-top:0.5rem">
+        <button class="btn btn-outline btn-sm" style="flex:1" onclick="openAuthModal('signin')">Sign In</button>
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <a href="app.html" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-container">
+
+      <!-- Left: copy -->
+      <div class="hero-content">
+        <div class="hero-badge badge badge-gold" data-i18n="hero.badge">
+          ⚡ ₹40,000+ Crore Unclaimed in Indian Banks
+        </div>
+        <h1 class="hero-title" data-i18n="hero.title">
+          Protect Your Family's Future with a Legally Valid Will
+        </h1>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">
+          70% of Indians pass away without a Will — leaving families with frozen assets and court disputes. Create your Will online in 10 minutes.
+        </p>
+        <div class="hero-cta-group">
+          <a href="app.html" class="btn btn-gold btn-lg shadow-gold" data-i18n="hero.ctaPrimary">
+            Create Will Now — ₹299 <i data-lucide="arrow-right"></i>
+          </a>
+          <a href="#how-it-works" class="btn btn-secondary btn-lg" data-i18n="hero.ctaSecondary">
+            How It Works
+          </a>
+        </div>
+        <div class="hero-guarantee" data-i18n="hero.guarantee">
+          ✓ Aligned with Indian Succession Act, 1925 &nbsp;|&nbsp; 100% Confidential
+        </div>
+      </div>
+
+      <!-- Right: visual -->
+      <div class="hero-visual">
+        <img
+          src="/assets/hero-will-mockup.jpg"
+          alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
+          width="400"
+          height="533"
+          loading="eager"
+        >
+      </div>
+
+    </div>
+
+    <!-- Stats strip -->
+    <div class="container hero-stats-strip">
+      <div class="hero-stats-grid grid grid-3">
+        <div class="stat-card glass-card">
+          <div class="stat-number gradient-gold" data-i18n="hero.stat1">₹40k+ Cr</div>
+          <div class="stat-label" data-i18n="hero.stat1Label">Unclaimed Money in Indian Banks</div>
+        </div>
+        <div class="stat-card glass-card">
+          <div class="stat-number gradient-text" data-i18n="hero.stat2">70%</div>
+          <div class="stat-label" data-i18n="hero.stat2Label">Indians Die Without a Will</div>
+        </div>
+        <div class="stat-card glass-card">
+          <div class="stat-number gradient-gold" data-i18n="hero.stat3">10 Mins</div>
+          <div class="stat-label" data-i18n="hero.stat3Label">Time to Generate Your Will</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Problem Section — asymmetric: 1 featured card + 2 stacked -->
+  <section class="section problem-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="problem.title">Why You Need a Will in India</h2>
+        <p class="section-subtitle" data-i18n="problem.subtitle">Without a valid Will, your assets stay frozen or lead to family disputes for years.</p>
+      </div>
+
+      <div class="problem-asymmetric">
+        <!-- Featured: the ₹40k stat — most attention-grabbing problem -->
+        <div class="problem-featured glass-card">
+          <div class="card-icon icon-rose"><i data-lucide="alert-triangle"></i></div>
+          <div class="problem-stat gradient-gold">₹40,000+ Cr</div>
+          <h3 class="card-title" data-i18n="problem.card1Title">Unclaimed in Indian Banks</h3>
+          <p class="card-desc" data-i18n="problem.card1Desc">Bank balances, FDs, mutual funds and insurance lying unclaimed because nominees weren't assigned or Wills weren't written — verified by RBI Unclaimed Deposits data.</p>
+        </div>
+
+        <!-- Stack: 2 smaller problems -->
+        <div class="problem-stack">
+          <div class="problem-card glass-card">
+            <div class="card-icon icon-gold"><i data-lucide="scale"></i></div>
+            <h3 class="card-title" data-i18n="problem.card2Title">Family Disputes</h3>
+            <p class="card-desc" data-i18n="problem.card2Desc">Without a Will, family members must go to court to claim assets — a process that can take years and cost lakhs in legal fees.</p>
+          </div>
+          <div class="problem-card glass-card">
+            <div class="card-icon icon-blue"><i data-lucide="coins"></i></div>
+            <h3 class="card-title" data-i18n="problem.card3Title">Lawyers Charge ₹10k–₹50k</h3>
+            <p class="card-desc" data-i18n="problem.card3Desc">SmartWill gives you the legally structured format for just ₹299 — the same outcome, a fraction of the cost.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section — numbered flow with connectors (different from problem grid) -->
+  <section id="how-it-works" class="section hiw-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="hiw.title">How SmartWill Works</h2>
+        <p class="section-subtitle" data-i18n="hiw.subtitle">3 steps. 10 minutes. Your family protected.</p>
+      </div>
+
+      <div class="hiw-flow">
+        <div class="step-card glass-card">
+          <div class="step-badge">1</div>
+          <div class="step-icon"><i data-lucide="landmark"></i></div>
+          <h3 data-i18n="hiw.step1Title">Add Your Assets</h3>
+          <p data-i18n="hiw.step1Desc">Bank accounts, FDs, property, gold, mutual funds, stocks & vehicles.</p>
+        </div>
+
+        <div class="hiw-connector" aria-hidden="true">→</div>
+
+        <div class="step-card glass-card">
+          <div class="step-badge">2</div>
+          <div class="step-icon"><i data-lucide="users"></i></div>
+          <h3 data-i18n="hiw.step2Title">Assign Beneficiaries</h3>
+          <p data-i18n="hiw.step2Desc">Choose your spouse, children, or parents and set the exact percentage for each.</p>
+        </div>
+
+        <div class="hiw-connector" aria-hidden="true">→</div>
+
+        <div class="step-card glass-card">
+          <div class="step-badge">3</div>
+          <div class="step-icon"><i data-lucide="file-check-2"></i></div>
+          <h3 data-i18n="hiw.step3Title">Download Your Will PDF</h3>
+          <p data-i18n="hiw.step3Desc">Instantly download your ready-to-print Will, formatted under the Indian Succession Act 1925.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section class="section comparison-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="comp.title">SmartWill vs Traditional Lawyers</h2>
+        <p class="section-subtitle" data-i18n="comp.subtitle">Same legal format. 100x less cost. Done in minutes, not weeks.</p>
+      </div>
+
+      <div class="table-container glass-card" style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+        <table class="comp-table" style="min-width:480px; width:100%;">
+          <thead>
+            <tr>
+              <th data-i18n="comp.col1">Feature</th>
+              <th data-i18n="comp.col2">Traditional Lawyer</th>
+              <th class="highlight-col" data-i18n="comp.col3">SmartWill India</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="comp.row1">Cost</td>
+              <td class="text-rose" data-i18n="comp.row1A">₹10,000 - ₹50,000</td>
+              <td class="highlight-col text-gold" data-i18n="comp.row1B">Only ₹299</td>
+            </tr>
+            <tr>
+              <td data-i18n="comp.row2">Time Taken</td>
+              <td data-i18n="comp.row2A">2 to 4 Weeks</td>
+              <td class="highlight-col text-emerald" data-i18n="comp.row2B">Just 10 Minutes</td>
+            </tr>
+            <tr>
+              <td data-i18n="comp.row3">Privacy & Security</td>
+              <td data-i18n="comp.row3A">Shared with office staff</td>
+              <td class="highlight-col" data-i18n="comp.row3B">100% Encrypted & Private</td>
+            </tr>
+            <tr>
+              <td data-i18n="comp.row4">Updates & Modifications</td>
+              <td data-i18n="comp.row4A">Extra fee every time</td>
+              <td class="highlight-col" data-i18n="comp.row4B">Free digital edits anytime</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!--
+    TESTIMONIALS SECTION — HIDDEN FOR DEPLOY (real quotes needed before enabling)
+    To re-enable: remove this comment wrapper once genuine user quotes with permission are in place.
+    Do NOT remove the REPLACE_ markers — they show exactly what needs filling in.
+
+  <section class="section testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Real families who secured their assets with SmartWill India.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <!-- Testimonial 1 — REPLACE with real quote, name, city, initial
+        <div class="testimonial-card glass-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">
+            "REPLACE_WITH_REAL_QUOTE"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">R</div>
+            <div>
+              <div class="testimonial-name">REPLACE_NAME</div>
+              <div class="testimonial-meta">REPLACE_CITY · Will created REPLACE_MONTH 2025</div>
+            </div>
+          </div>
+        </div>
+
+        Testimonial 2 — REPLACE with real quote, name, city, initial
+        <div class="testimonial-card glass-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">
+            "REPLACE_WITH_REAL_QUOTE"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">S</div>
+            <div>
+              <div class="testimonial-name">REPLACE_NAME</div>
+              <div class="testimonial-meta">REPLACE_CITY · Will created REPLACE_MONTH 2025</div>
+            </div>
+          </div>
+        </div>
+
+        Testimonial 3 — REPLACE with real quote, name, city, initial
+        <div class="testimonial-card glass-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">
+            "REPLACE_WITH_REAL_QUOTE"
+          </p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">P</div>
+            <div>
+              <div class="testimonial-name">REPLACE_NAME</div>
+              <div class="testimonial-meta">REPLACE_CITY · Will created REPLACE_MONTH 2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  -->
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="section pricing-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="pricing.title">Simple, Honest Pricing</h2>
+        <p class="section-subtitle" data-i18n="pricing.subtitle">No hidden legal charges. Complete Will creation for less than the cost of a dinner.</p>
+      </div>
+
+      <div class="pricing-card-wrapper">
+        <div class="pricing-card glass-card">
+          <div class="popular-badge" data-i18n="pricing.popular">MOST POPULAR</div>
+          <h3 class="plan-name" data-i18n="pricing.planTitle">Complete Digital Will</h3>
+          <div class="price-box">
+            <span class="price-val" data-i18n="pricing.price">₹299</span>
+            <span class="orig-price" data-i18n="pricing.origPrice">₹4,999</span>
+          </div>
+
+          <ul class="feature-list">
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat1">Complete Asset & Beneficiary Allocation</span></li>
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat2">Formated under Indian Succession Act 1925</span></li>
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat3">Instant PDF Download</span></li>
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat4">2-Witness Signing & Execution Guide</span></li>
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat5">Trilingual Support (English, Telugu, Hindi)</span></li>
+            <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat6">Free Unlimited Storage & Digital Edits</span></li>
+          </ul>
+
+          <a href="app.html" class="btn btn-gold btn-lg w-full" data-i18n="pricing.cta">Get Started Now - ₹299</a>
+          
+          <p class="courier-note" data-i18n="pricing.courierAddon">
+            📦 Optional: Hardcopy Print & Legal Execution Kit delivered to home (+₹499)
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="section faq-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title" data-i18n="faq.title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item glass-card">
+          <div class="faq-question">
+            <span data-i18n="faq.q1">Is an online Will legally valid in India?</span>
+            <i data-lucide="chevron-down" class="faq-icon"></i>
+          </div>
+          <div class="faq-answer" data-i18n="faq.a1">
+            Yes! Under the Indian Succession Act 1925, any Will drafted clearly, printed on plain paper, signed by the testator, and witnessed by 2 independent adults is 100% legally valid. Registration or stamp paper is optional under Indian law.
+          </div>
+        </div>
+
+        <div class="faq-item glass-card">
+          <div class="faq-question">
+            <span data-i18n="faq.q2">What happens after I download the PDF?</span>
+            <i data-lucide="chevron-down" class="faq-icon"></i>
+          </div>
+          <div class="faq-answer" data-i18n="faq.a2">
+            Print the generated PDF, sign on every page in front of 2 witnesses (who also sign). Store it in a safe place or in your SmartWill vault.
+          </div>
+        </div>
+
+        <div class="faq-item glass-card">
+          <div class="faq-question">
+            <span data-i18n="faq.q3">Can I edit my Will later if I buy new property or assets?</span>
+            <i data-lucide="chevron-down" class="faq-icon"></i>
+          </div>
+          <div class="faq-answer" data-i18n="faq.a3">
+            Yes! You can log back into SmartWill anytime to update your assets or beneficiaries and download an updated Will for free.
+          </div>
+        </div>
+
+        <div class="faq-item glass-card">
+          <div class="faq-question">
+            <span data-i18n="faq.q4">Are my financial asset details secure?</span>
+            <i data-lucide="chevron-down" class="faq-icon"></i>
+          </div>
+          <div class="faq-answer" data-i18n="faq.a4">
+            Absolutely. We use modern AES-256 client and cloud encryption. Your private financial data is accessible only by you.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="index.html" class="nav-logo">
+          <div class="logo-icon"><i data-lucide="shield-check"></i></div>
+          <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
+        </a>
+        <p class="footer-desc" data-i18n="footer.desc">
+          SmartWill India is India's leading digital platform for creating legally compliant Wills under the Indian Succession Act.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer.quickLinks">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#how-it-works" data-i18n="nav.howItWorks">How It Works</a></li>
+          <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
+          <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
+          <li><a href="app.html" data-i18n="nav.createWill">Create Will</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer.legal">Legal & Policies</h4>
+        <ul class="footer-links">
+          <li><a href="privacy.html">Privacy Policy (DPDP)</a></li>
+          <li><a href="terms.html">Terms & Conditions</a></li>
+          <li><a href="refunds.html">Refunds & Cancellations</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+        <p class="footer-disclaimer mt-2" data-i18n="footer.disclaimer">
+          Disclaimer: SmartWill provides software-assisted legal document generation. Physical signature with 2 witnesses is legally required under the Indian Succession Act 1925.
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p data-i18n="footer.copyright">© 2026 SmartWill India. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification System -->
+  <div id="toastNotification" class="toast-notification hidden">
+    <div class="toast-icon" id="toastIcon">📧</div>
+    <div class="toast-content">
+      <p class="toast-title" id="toastTitle">Notification</p>
+      <p class="toast-message" id="toastMessage"></p>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.classList.add('hidden')">&times;</button>
+  </div>
+
+  <!-- Authentication Modal (Sign In / Sign Up) -->
+  <div id="authModal" class="payment-modal-overlay hidden">
+    <div class="payment-modal-card glass-card auth-modal-card">
+      <div class="modal-header">
+        <div class="brand">
+          <i data-lucide="shield-check" class="text-blue"></i>
+          <span id="authModalTitle">Sign In to SmartWill</span>
+        </div>
+        <button type="button" onclick="closeAuthModal()" class="close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body p-4">
+        <!-- Auth Mode Tabs -->
+        <div class="payment-tabs mb-4">
+          <button type="button" class="pay-tab active" id="tabSignin" onclick="openAuthModal('signin')">Sign In</button>
+          <button type="button" class="pay-tab" id="tabSignup" onclick="openAuthModal('signup')">Create Account</button>
+        </div>
+
+        <!-- Google Sign-In Button -->
+        <button type="button" id="googleSignInBtn" class="btn btn-outline w-full mb-4 flex align-center justify-center gap-2" onclick="handleGoogleSignIn()">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider mb-4"><span>OR USE EMAIL</span></div>
+
+        <!-- Sign In Form -->
+        <form id="formSignin" onsubmit="event.preventDefault(); handleEmailSignIn(document.getElementById('signinEmail').value, document.getElementById('signinPassword').value)">
+          <div class="form-group mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="signinEmail" class="form-control" placeholder="ramesh@example.com" required autocomplete="email" style="font-size:16px;">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" id="signinPassword" class="form-control" placeholder="Your password" required autocomplete="current-password" style="font-size:16px;">
+          </div>
+          <button type="submit" class="btn btn-gold btn-lg w-full" style="font-size:16px;">Sign In</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="formSignup" class="hidden" onsubmit="event.preventDefault(); handleEmailSignUp(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value, document.getElementById('signupName').value)">
+          <div class="form-group mb-3">
+            <label class="form-label">Full Legal Name</label>
+            <input type="text" id="signupName" class="form-control" placeholder="Ramesh Kumar Sharma" required autocomplete="name" style="font-size:16px;">
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="signupEmail" class="form-control" placeholder="ramesh@example.com" required autocomplete="email" style="font-size:16px;">
+          </div>
+          <div class="form-group mb-4">
+            <label class="form-label">Password</label>
+            <input type="password" id="signupPassword" class="form-control" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password" style="font-size:16px;">
+          </div>
+          <button type="submit" class="btn btn-gold btn-lg w-full" style="font-size:16px;">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard Modal -->
+  <div id="dashboardModal" class="payment-modal-overlay hidden">
+    <div class="dashboard-modal-card">
+      <div class="dashboard-modal-header">
+        <div class="brand" style="display:flex; align-items:center; gap:8px; font-family:var(--font-heading); font-weight:700; font-size:1.15rem; color:#fff;">
+          <i data-lucide="shield-check" style="color:var(--accent-gold); width:22px; height:22px;"></i>
+          <span>Member Dashboard</span>
+        </div>
+        <button type="button" onclick="closeDashboardModal()" class="dashboard-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="dashboard-modal-body" id="dashboardWillList">
+        <p class="text-muted text-center py-4">Loading your dashboard...</p>
+      </div>
+      <div class="dashboard-modal-footer">
+        <div class="dashboard-data-rights">
+          <button type="button" class="btn btn-outline btn-sm" style="font-size:0.75rem; padding:6px 12px;" onclick="handleDownloadMyData()">
+            📥 Download My Data (JSON)
+          </button>
+          <button type="button" class="btn btn-outline btn-sm text-rose" style="font-size:0.75rem; padding:6px 12px; border-color:rgba(244,63,94,0.35);" onclick="handleDeleteMyAccount()">
+            🗑️ Delete Account &amp; Data
+          </button>
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" style="font-size:0.75rem; color:var(--text-muted);" onclick="handleSignOut()">
+          🚪 Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/i18n/index.js"></script>
+  <script type="module" src="js/services/auth.js"></script>
+  <script type="module" src="js/pages/landing.js"></script>
+  <script src="js/animations.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // ── Announcement Banner ──
+    (function () {
+      const banner = document.getElementById('announceBanner');
+      const dismiss = document.getElementById('announceDismiss');
+      if (!banner) return;
+
+      // If user dismissed this session, hide immediately
+      if (sessionStorage.getItem('sw_banner_dismissed') === '1') {
+        banner.classList.add('hidden');
+      } else {
+        document.body.classList.add('banner-visible');
+      }
+
+      if (dismiss) {
+        dismiss.addEventListener('click', () => {
+          banner.classList.add('hidden');
+          document.body.classList.remove('banner-visible');
+          sessionStorage.setItem('sw_banner_dismissed', '1');
+        });
+      }
+    })();
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      // Close when any link inside is tapped
+      mobileMenu.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+    }
+  </script>
+</body>
+</html>

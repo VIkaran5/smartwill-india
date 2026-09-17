@@ -1,0 +1,62 @@
+﻿
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90mC:/Users/dasar/OneDrive/Documents/New folder/smartwill-india[39m
+
+node_modules\.bin\vitest.cmd : Not implemented: Window's scrollTo() method
+At line:1 char:1
++ node_modules\.bin\vitest.cmd run --reporter=verbose --no-coverage 2>& ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Not implemented...rollTo() method:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mshould adapt raw store state into clean domainState and uiState[32m 13[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mshould update uiState without altering domain objects[32m 13[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mshould update domainState cleanly[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mshould reset wizard state to defaults[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mshould notify subscriber on state change[32m 9[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mScenario A: Cloud draft restores Step 5 state, FSM validates restored state cleanly[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/stateAdapter.test.js[2m > [22mState Adapter Layer (js/wizard/stateAdapter.js)[2m > [22mScenario B: Rapid navigation sequence (NEXT -> NEXT -> PREV -> NEXT)[32m 21[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould identify specific missing fields in PERSONAL guard[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould reject invalid Indian mobile numbers[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould flag email typos[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould reject malformed email format[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould validate PAN card digits format[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould validate Aadhaar card digits format[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould validate Passport digits format[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould validate Voter ID digits format[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould validate Other Govt ID general alphanumeric format[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPERSONAL Guard[2m > [22mshould pass with valid personal details[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mBENEFICIARIES Guard[2m > [22mshould reject empty beneficiary list[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mBENEFICIARIES Guard[2m > [22mshould pass when at least one beneficiary is present[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mASSETS Guard[2m > [22mshould reject empty asset list[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mASSETS Guard[2m > [22mshould pass when at least one asset is present[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mALLOCATION Guard[2m > [22mshould reject allocation percentages that do not total 100%[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mALLOCATION Guard[2m > [22mshould pass when allocations total 100%[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mEXECUTOR Guard[2m > [22mshould reject when declaration is explicitly false[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mEXECUTOR Guard[2m > [22mshould pass when declaration is accepted[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mPAYMENT Guard[2m > [22mshould always return ok: true[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mvalidateStepGuard Helper[2m > [22mshould support numeric step inputs[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/guards.test.js[2m > [22mWizard Step Validation Guards (Pure Logic)[2m > [22mvalidateStepGuard Helper[2m > [22mshould return ok: true for invalid or unknown step inputs[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mshould export FSM_VERSION = 1[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSequential NEXT Transitions[2m > [22mshould block NEXT from Step 1 if personal details are invalid[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSequential NEXT Transitions[2m > [22mshould allow NEXT from Step 1 to Step 2 when personal details are valid[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSequential NEXT Transitions[2m > [22mshould allow NEXT from Step 2 to Step 3 when beneficiaries exist[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSequential PREVIOUS Transitions[2m > [22mshould allow PREVIOUS from Step 2 to Step 1 without running guards[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSequential PREVIOUS Transitions[2m > [22mshould reject PREVIOUS when on Step 1[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mGO_TO_STEP Direct Navigation & Multi-step Skips[2m > [22mshould allow GO_TO_STEP backward navigation at any time[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mGO_TO_STEP Direct Navigation & Multi-step Skips[2m > [22mshould block multi-step forward skip from Step 1 to Step 6 if intermediate guards fail[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mGO_TO_STEP Direct Navigation & Multi-step Skips[2m > [22mshould allow multi-step forward skip if all intermediate guards pass[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould handle RESTORE_DRAFT event with step number, string name, or undefined payload[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould handle GO_TO_STEP event with step string or invalid step number[32m 2[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould handle unknown currentStep input fallback to PERSONAL[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould handle RESET event[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould reject NEXT on PAYMENT step (no next step)[32m 0[2mms[22m[39m
+ [32mΓ£ô[39m tests/unit/fsm.test.js[2m > [22mPure Finite State Machine (FSM Engine)[2m > [22mSpecial System Events[2m > [22mshould reject unrecognized event types[32m 0[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m43 passed[39m[22m[90m (43)[39m
+[2m   Start at [22m 12:38:21
+[2m   Duration [22m 27.61s[2m (transform 967ms, setup 0ms, import 1.39s, tests 131ms, environment 21.96s)[22m
+
