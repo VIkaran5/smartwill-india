@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SmartWill India — Micro-interactions & Scroll Animations
  * MOTION_INTENSITY: 4  (trust-first, subtle — not cinematic)
  *
@@ -29,8 +29,9 @@
       el.style.transition = 'opacity 0.7s ' + SPRING + ', transform 0.7s ' + SPRING;
     });
     if (heroVisual) {
-      heroVisual.style.opacity = '0';
-      heroVisual.style.transition = 'opacity 0.9s ' + SPRING;
+      // Keep hero image VISIBLE for LCP — only animate position, not opacity
+      heroVisual.style.transform = 'translateY(30px) scale(0.97)';
+      heroVisual.style.transition = 'transform 0.9s ' + SPRING;
     }
 
     requestAnimationFrame(function () {
@@ -42,7 +43,7 @@
           }, i * 90);
         });
         if (heroVisual) {
-          setTimeout(function () { heroVisual.style.opacity = '1'; }, 180);
+          setTimeout(function () { heroVisual.style.transform = 'translateY(0) scale(1)'; }, 180);
         }
       });
     });

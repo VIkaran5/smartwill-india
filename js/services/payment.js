@@ -185,11 +185,19 @@ export async function createCashfreeOrderSession(name, email, phone, uid) {
       body: JSON.stringify({ name, email, phone, uid })
     });
 
-    const data = await apiRes.json();
+    const rawText = await apiRes.text();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseErr) {
+      logger.error('Create-order response was not valid JSON', { status: apiRes.status, rawText });
+      return { error: `Server error (${apiRes.status}): ${rawText.slice(0, 120) || 'Invalid server response'}` };
+    }
+
     if (apiRes.ok && data.payment_session_id) {
       return data;
     } else {
-      logger.error('Create-order API error');
+      logger.error('Create-order API error', data);
       return { error: data.error || 'Serverless function error' };
     }
   } catch (e) {
@@ -219,7 +227,13 @@ export async function verifyPaymentWithBackoff(orderId) {
         body: JSON.stringify({ order_id: orderId })
       });
 
-      const data = await res.json();
+      const rawText = await res.text();
+      let data = {};
+      try {
+        data = JSON.parse(rawText);
+      } catch (parseErr) {
+        logger.error('Verify-payment response was not valid JSON', { status: res.status, rawText });
+      }
 
       if (res.ok && data.is_paid) {
         logger.info('Payment verified');
@@ -252,15 +266,15 @@ export function unlockPostPaymentUI(orderId, isSilent = false) {
   if (txnIdEl && orderId) {
     const cleanId = orderId.replace(/^SW_/, '');
     const shortRef = cleanId.slice(-8).toUpperCase();
-    txnIdEl.textContent = `SW-${shortRef}`;
+    txnIdEl.textContent = `TXN_SW_${shortRef}`;
   }
 
   window.isPaymentUnlocked = true;
   localStorage.removeItem('sw_pending_order_id');
   if (orderId) {
     try {
+      sessionStorage.setItem('sw_session_paid_order', orderId);
       localStorage.setItem('sw_last_paid_order_id', orderId);
-      localStorage.setItem('sw_is_paid', '1');
       if (window.currentUser && window.currentUser.uid) {
         localStorage.setItem('sw_paid_order_' + window.currentUser.uid, JSON.stringify({ orderId, status: 'PAID' }));
       }
@@ -274,9 +288,15 @@ export function unlockPostPaymentUI(orderId, isSilent = false) {
 
 /**
  * Checks if the signed-in user already owns a paid order in Firestore or localStorage.
+ * Only unlocks Step 6 UI if explicitly requested via URL (e.g. ?download=1) or if
+ * paid in the current tab session to prevent false unlocks on fresh Will drafts.
  */
-export async function checkExistingPaidOrder(user) {
+export async function checkExistingPaidOrder(user, allowAutoUnlock = false) {
   if (!user) return false;
+
+  const urlParams = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : null;
+  const isExplicitDownload = urlParams && urlParams.get('download') === '1';
+  const sessionPaidOrderId = (typeof sessionStorage !== 'undefined') ? sessionStorage.getItem('sw_session_paid_order') : null;
 
   // 1. Authoritative check: Query Firestore orders collection (server-governed via firestore.rules)
   if (typeof window.firebase !== 'undefined' && window.firebase.firestore) {
@@ -293,10 +313,16 @@ export async function checkExistingPaidOrder(user) {
         const orderId = orderData.orderId || snap.docs[0].id;
         try {
           localStorage.setItem('sw_paid_order_' + user.uid, JSON.stringify({ orderId, ...orderData }));
-          localStorage.setItem('sw_is_paid', '1');
           localStorage.setItem('sw_last_paid_order_id', orderId);
         } catch (e) {}
-        unlockPostPaymentUI(orderId, true);
+
+        // Only auto-unlock Step 6 if:
+        // 1. Explicit download request from dashboard (?download=1)
+        // 2. The order was paid in this tab session
+        // 3. Caller explicitly requested auto-unlock
+        if (isExplicitDownload || (sessionPaidOrderId && sessionPaidOrderId === orderId) || allowAutoUnlock) {
+          unlockPostPaymentUI(orderId, true);
+        }
         return true;
       } else {
         // If Firestore confirms no paid order exists for this authenticated UID,
@@ -305,6 +331,7 @@ export async function checkExistingPaidOrder(user) {
           localStorage.removeItem('sw_paid_order_' + user.uid);
           localStorage.removeItem('sw_is_paid');
           localStorage.removeItem('sw_last_paid_order_id');
+          sessionStorage.removeItem('sw_session_paid_order');
         } catch (e) {}
         return false;
       }
@@ -319,7 +346,9 @@ export async function checkExistingPaidOrder(user) {
     if (cached) {
       const order = JSON.parse(cached);
       if (order && order.orderId && order.status === 'PAID') {
-        unlockPostPaymentUI(order.orderId, true);
+        if (isExplicitDownload || (sessionPaidOrderId && sessionPaidOrderId === order.orderId) || allowAutoUnlock) {
+          unlockPostPaymentUI(order.orderId, true);
+        }
         return true;
       }
     }
@@ -430,8 +459,34 @@ export function checkPendingPaymentOnResume() {
   }
 }
 
+/**
+ * Reset payment state to allow testing checkout or paying for a fresh Will
+ */
+export function resetPaymentState() {
+  window.isPaymentUnlocked = false;
+  const prePaymentState = document.getElementById('prePaymentState');
+  const postPaymentState = document.getElementById('postPaymentState');
+  if (prePaymentState) prePaymentState.classList.remove('hidden');
+  if (postPaymentState) postPaymentState.classList.add('hidden');
+
+  try {
+    sessionStorage.removeItem('sw_session_paid_order');
+    localStorage.removeItem('sw_is_paid');
+    localStorage.removeItem('sw_last_paid_order_id');
+    localStorage.removeItem('sw_pending_order_id');
+    if (window.currentUser && window.currentUser.uid) {
+      localStorage.removeItem('sw_paid_order_' + window.currentUser.uid);
+    }
+  } catch (e) {}
+
+  resetPayNowBtn();
+  showToast('info', 'Payment State Reset', 'You can now proceed to pay for a new Will.');
+}
+
 // Global window attachments
 window.createCashfreeOrderSession = createCashfreeOrderSession;
 window.verifyPaymentWithBackoff = verifyPaymentWithBackoff;
 window.checkPendingPaymentOnResume = checkPendingPaymentOnResume;
 window.checkExistingPaidOrder = checkExistingPaidOrder;
+window.resetPaymentState = resetPaymentState;
+window.unlockPostPaymentUI = unlockPostPaymentUI;

@@ -23,6 +23,36 @@ let firebaseDb = null;
 export let currentUser = null;
 let authListenerAttached = false;
 let isSubmitting = false;
+let firebaseLoadPromise = null;
+
+/**
+ * Dynamically load Firebase SDK scripts on demand.
+ * Returns a Promise that resolves when both firebase-app and firebase-auth are loaded.
+ * On app.html, Firebase is already loaded via script tags, so this resolves immediately.
+ */
+function loadFirebaseSDK() {
+  // Already loaded (e.g. on app.html which has script tags)
+  if (typeof window.firebase !== 'undefined') {
+    return Promise.resolve();
+  }
+  // Already loading
+  if (firebaseLoadPromise) return firebaseLoadPromise;
+
+  firebaseLoadPromise = new Promise((resolve, reject) => {
+    const appScript = document.createElement('script');
+    appScript.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js';
+    appScript.onload = () => {
+      const authScript = document.createElement('script');
+      authScript.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js';
+      authScript.onload = () => resolve();
+      authScript.onerror = () => reject(new Error('Failed to load Firebase Auth SDK'));
+      document.head.appendChild(authScript);
+    };
+    appScript.onerror = () => reject(new Error('Failed to load Firebase App SDK'));
+    document.head.appendChild(appScript);
+  });
+  return firebaseLoadPromise;
+}
 
 export function initAuthService() {
   if (typeof window.firebase !== 'undefined') {
@@ -33,7 +63,9 @@ export function initAuthService() {
         firebaseApp = window.firebase.app();
       }
       firebaseAuth = window.firebase.auth();
-      firebaseDb = window.firebase.firestore();
+      if (typeof window.firebase.firestore === 'function') {
+        firebaseDb = window.firebase.firestore();
+      }
       logger.info('Firebase initialized successfully');
 
       // Fix 3: Properly handle redirect result — fires on page reload when
@@ -51,7 +83,9 @@ export function initAuthService() {
         });
       }
 
-      initCloudSync(firebaseDb);
+      if (firebaseDb) {
+        initCloudSync(firebaseDb);
+      }
 
       if (!authListenerAttached) {
         authListenerAttached = true;
@@ -72,6 +106,20 @@ export function initAuthService() {
       }
     } catch (e) {
       logger.warn('Firebase init warning', e);
+    }
+  } else {
+    // 1. Render default signed-out UI buttons immediately
+    updateAuthUI(currentUser);
+
+    // 2. Background idle load Firebase to check if user has an active session without affecting initial page speed
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(() => {
+        loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
+      }, { timeout: 3500 });
+    } else {
+      setTimeout(() => {
+        loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
+      }, 1500);
     }
   }
 }
@@ -96,7 +144,6 @@ export function updateAuthUI(user) {
 
       container.innerHTML = `
         <div class="user-profile-menu flex align-center gap-2">
-          <div class="cloud-sync-badge"></div>
           <button type="button" class="user-profile-btn btn btn-outline btn-sm flex align-center gap-2">
             <img src="${photoURL}" alt="${displayName}" class="user-avatar-img" style="width:24px;height:24px;border-radius:50%;">
             <span class="user-name-text">${displayName}</span>
@@ -107,6 +154,7 @@ export function updateAuthUI(user) {
               <p class="font-bold text-sm" style="color:var(--text-main); margin:0 0 2px;">${displayName}</p>
               <p class="text-xs text-muted" style="margin:0;">${safeEmail}</p>
               ${statusBadge}
+              <div class="cloud-sync-badge mt-1"></div>
             </div>
             <button type="button" class="dropdown-item btn btn-outline btn-sm w-full mb-2 flex align-center gap-2" style="text-align:left; justify-content:flex-start;" onclick="openDashboardModal()">
               <i data-lucide="layout-dashboard" style="width:16px; height:16px; color:var(--accent-gold);"></i>
@@ -132,10 +180,10 @@ export function updateAuthUI(user) {
 
     } else {
       container.innerHTML = `
-        <button type="button" class="btn btn-outline btn-sm" onclick="openAuthModal('signin')">
+        <button type="button" class="btn btn-outline btn-sm auth-btn-signin" onclick="openAuthModal('signin')">
           Sign In
         </button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">
+        <button type="button" class="btn btn-primary btn-sm auth-btn-signup" onclick="openAuthModal('signup')">
           Sign Up
         </button>
       `;
@@ -171,6 +219,11 @@ function bindDropdownEvents() {
 export function openAuthModal(mode = 'signin') {
   const modal = document.getElementById('authModal');
   if (!modal) return;
+
+  // Lazy-load Firebase SDK when auth modal is first opened
+  loadFirebaseSDK().then(() => initAuthService()).catch(err => {
+    logger.warn('Firebase SDK lazy-load failed:', err);
+  });
 
   // GUARD: If already signed in, block the modal — show helpful toast instead
   if (currentUser) {
@@ -465,6 +518,7 @@ window.handleDeleteMyAccount = async function () {
   if (!secondConfirm) return;
 
   try {
+    sessionStorage.removeItem('sw_session_paid_order');
     localStorage.removeItem('smartwill_draft');
     localStorage.removeItem('sw_dpdp_consent');
     localStorage.removeItem('sw_pending_order_id');
@@ -485,7 +539,14 @@ window.handleDeleteMyAccount = async function () {
         }
         try {
           await user.delete();
-        } catch (_) {}
+        } catch (delErr) {
+          if (delErr.code === 'auth/requires-recent-login') {
+            showToast('warning', 'Recent Login Required', 'For security, please sign in again before deleting your account.');
+            openAuthModal('signin');
+            return;
+          }
+          throw delErr;
+        }
       }
     }
 
@@ -514,6 +575,15 @@ export async function handleSignOut() {
   }
   currentUser = null;
   window.currentUser = null;
+  try {
+    sessionStorage.removeItem('sw_session_paid_order');
+    localStorage.removeItem('sw_is_paid');
+    localStorage.removeItem('sw_last_paid_order_id');
+    localStorage.removeItem('sw_pending_order_id');
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sw_paid_order_')) localStorage.removeItem(key);
+    });
+  } catch (e) {}
   resetState(); // Reset local store state (clears personal info, assets, beneficiaries)
   updateAuthUI(null);
   closeAuthModal();
@@ -543,9 +613,8 @@ function getLocalizedAuthErrorMessage(errorCode) {
       return t('auth.error.emailInUse');
     case 'auth/wrong-password':
     case 'auth/invalid-credential':
-      return t('auth.error.wrongPassword');
     case 'auth/user-not-found':
-      return t('auth.error.userNotFound');
+      return 'Invalid email or password. Please check your credentials and try again.';
     case 'auth/weak-password':
       return t('auth.error.weakPassword');
     case 'auth/invalid-email':
@@ -560,10 +629,6 @@ function getLocalizedAuthErrorMessage(errorCode) {
       return 'No internet connection. Check your WiFi or mobile data and try again.';
     case 'auth/too-many-requests':
       return 'Too many failed attempts. Please wait a few minutes then try again.';
-    case 'auth/user-not-found':
-      return 'No account found with this email. Please create a new account first.';
-    case 'auth/wrong-password':
-      return 'Incorrect password. Please try again or reset your password.';
     default:
       if (typeof errorCode === 'string' && (errorCode.includes('storage-partitioned') || errorCode.includes('missing initial state') || errorCode.includes('sessionStorage'))) {
         return 'Google Sign-In is restricted in mobile browser mode by privacy rules. Please use Email & Password below.';
@@ -576,6 +641,16 @@ export async function handleEmailSignUp(email, password, fullName) {
   if (isSubmitting) return;
   if (!firebaseAuth) {
     showToast('error', 'Auth Error', 'Authentication service unavailable.');
+    return;
+  }
+
+  // ── Password Policy Enforcement (VULN-014) ──
+  if (!password || password.length < 8) {
+    showToast('warning', 'Weak Password', 'Password must be at least 8 characters long.');
+    return;
+  }
+  if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+    showToast('warning', 'Weak Password', 'Password must contain at least one uppercase letter and one number.');
     return;
   }
 

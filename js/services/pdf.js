@@ -4,8 +4,61 @@ import { sendWillToEmail } from './email.js';
 import { showToast } from '../ui/toast.js';
 import { logger } from './logger.js';
 import { escapeHTML } from '../utils/sanitizer.js';
+import { getAuthHeaders, resetPaymentState } from './payment.js';
 
 export async function generateWillPDF(willData) {
+  // ── Security Check (VULN-001): Server-Side Payment Verification ──
+  const user = window.currentUser || (typeof firebase !== 'undefined' && firebase.auth ? firebase.auth().currentUser : null);
+  if (!user) {
+    showToast('warning', 'Sign In Required', 'Please sign in to verify your payment and download your Will.');
+    if (typeof window.openAuthModal === 'function') window.openAuthModal('signin');
+    throw new Error('Authentication required for Will PDF download');
+  }
+
+  showToast('loading', 'Verifying Payment Authorization...', 'Validating your order with the security server...');
+
+  let isAuthorized = false;
+  const orderId = willData?.paidOrderId || localStorage.getItem('sw_last_paid_order_id') || null;
+
+  try {
+    const headers = await getAuthHeaders();
+    const apiBase = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())))
+      ? 'https://smartwill-india.vercel.app' : '';
+
+    const res = await fetch(`${apiBase}/api/verify-download`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ order_id: orderId })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.authorized) {
+      isAuthorized = true;
+    } else {
+      logger.warn('[Security] Unauthorized PDF download attempt:', data.error);
+      showToast('error', 'Payment Required', data.error || 'A verified payment of ₹299 is required to download this official Will document.');
+      resetPaymentState();
+      throw new Error(data.error || 'Payment verification failed');
+    }
+  } catch (err) {
+    if (err.message && (err.message.includes('Payment required') || err.message.includes('Authentication required'))) {
+      throw err;
+    }
+    // Network fallback: If network is offline and user has verified offline cache
+    const offlineCached = localStorage.getItem('sw_paid_order_' + user.uid);
+    if (!navigator.onLine && offlineCached) {
+      try {
+        const parsed = JSON.parse(offlineCached);
+        if (parsed && parsed.status === 'PAID') isAuthorized = true;
+      } catch (_) {}
+    }
+    if (!isAuthorized) {
+      logger.error('Payment authorization check failed', err);
+      showToast('error', 'Verification Failed', 'Could not verify payment with server. Please check your connection.');
+      throw err;
+    }
+  }
+
   const pdfLangChoice = document.querySelector('input[name="pdfLangChoice"]:checked');
   const selectedLang = pdfLangChoice ? pdfLangChoice.value : (localStorage.getItem('smartwill_lang') || 'en');
 
@@ -390,28 +443,40 @@ export async function generateRegionalWillPDF(willData, lang) {
           'ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనని ఇతర ఆస్తులు లేదా హక్కులు ఏవైనా ఉంటే, అవి నా లబ్ధిదారులందరికీ సమానంగా చెందుతాయి.' :
           'इस वसीयत में विशेष रूप से उल्लेख न की गई अन्य संपत्तियां मेरे सभी उत्तराधिकारियों में समान रूप से बांटी जाएंगी।'}
       </p>
-      <div style="margin-top: 30px; border-top: 1px dashed #666; padding-top: 10px;">
+      <div style="margin-top: 20px; border-top: 1px dashed #666; padding-top: 10px;">
+        <p style="margin-bottom: 8px; font-size: 11.5px;">
+          ${isTe ? 
+            `పై విషయాలన్నీ సత్యమని ధృవీకరిస్తూ, నేను (<strong>${safeFullName}</strong>) ఈ దినమున అనగా 2026 సంవత్సరం _________ నెల _________ వ తేదీన నా సంపూర్ణ సమ్మతితో ఈ విల్ పత్రంపై సంతకం చేయుచున్నాను.` :
+            `उपरोक्त सभी विवरणों को सत्य मानते हुए, मैं (<strong>${safeFullName}</strong>) आज दिनांक _____ माह ____________, 2026 को अपनी पूर्ण सहमति से इस वसीयत पर हस्ताक्षर कर रहा/रही हूँ।`}
+        </p>
         <p><strong>${isTe ? 'శాసనకర్త సంతకం / Signature of Testator:' : 'वसीयतकर्ता के हस्ताक्षर / Signature of Testator:'}</strong></p>
         <br>
         <p>_____________________________________</p>
         <p style="font-size: 12px; color: #333;">${safeFullName}</p>
       </div>
-      <div style="margin-top: 25px; border: 1px solid #777; padding: 12px; border-radius: 4px;">
-        <h4 style="font-size: 13px; margin-bottom: 8px;">
-          ${isTe ? 'ఇద్దరు సాక్షుల సంతకాలు (ATTESTATION BY TWO WITNESSES):' : 'दो गवाहों के हस्ताक्षर (ATTESTATION BY TWO WITNESSES):'}
+      <div style="margin-top: 18px; border: 1px solid #777; padding: 10px; border-radius: 4px;">
+        <h4 style="font-size: 12px; margin-bottom: 4px;">
+          ${isTe ? 'ఇద్దరు సాక్షుల ధృవీకరణ సంతకాలు (ATTESTATION BY TWO INDEPENDENT WITNESSES):' : 'दो स्वतंत्र गवाहों के हस्ताक्षर (ATTESTATION BY TWO INDEPENDENT WITNESSES):'}
         </h4>
+        <p style="font-size: 10px; color: #444; margin-bottom: 8px; line-height: 1.35;">
+          ${isTe ? 
+            'శాసనకర్త మా సమక్షంలో సంతకం చేయగా చూసి, వారి కోరిక మేరకు, వారి సమక్షంలో మరియు మా ఇద్దరి సమక్షంలో మేము సాక్షులుగా సంతకాలు చేయుచున్నాము. మేము ఈ విల్ ద్వారా ఎటువంటి ఆస్తి లబ్ధి పొందని స్వతంత్ర సాక్షులమని ధృవీకరిస్తున్నాము.' :
+            'वसीयतकर्ता द्वारा हमारे समक्ष हस्ताक्षर किए जाने की पुष्टि करते हुए, उनके अनुरोध पर, उनकी उपस्थिति में और एक-दूसरे की उपस्थिति में हम गवाह के रूप में हस्ताक्षर कर रहे हैं। हम पुष्टि करते हैं कि हम इस वसीयत के लाभार्थी नहीं हैं।'}
+        </p>
         <div style="display: flex; justify-content: space-between; font-size: 11px;">
           <div style="width: 48%;">
-            <p><strong>1. ${isTe ? 'సాక్షి 1 / Witness 1:' : 'గవాహ 1 / Witness 1:'}</strong></p>
-            <p>${isTe ? 'సంతకం:' : 'హస్తాక్షర:'} ____________________</p>
-            <p>${isTe ? 'పేరు:' : 'నామ:'} _______________________</p>
-            <p>${isTe ? 'చిరునామా:' : 'పతా:'} ____________________</p>
+            <p><strong>1. ${isTe ? 'సాక్షి 1 / Witness 1:' : 'गवाह 1 / Witness 1:'}</strong></p>
+            <p>${isTe ? 'సంతకం:' : 'हस्ताक्षर:'} ____________________</p>
+            <p>${isTe ? 'పేరు:' : 'नाम:'} _______________________</p>
+            <p>${isTe ? 'తండ్రి/భర్త పేరు:' : 'पिता/पति का नाम:'} ____________________</p>
+            <p>${isTe ? 'చిరునామా:' : 'पता:'} ____________________</p>
           </div>
           <div style="width: 48%;">
-            <p><strong>2. ${isTe ? 'సాక్షి 2 / Witness 2:' : 'గవాహ 2 / Witness 2:'}</strong></p>
-            <p>${isTe ? 'సంతకం:' : 'హస్తాక్షర:'} ____________________</p>
-            <p>${isTe ? 'పేరు:' : 'నామ:'} _______________________</p>
-            <p>${isTe ? 'చిరునామా:' : 'పతా:'} ____________________</p>
+            <p><strong>2. ${isTe ? 'సాక్షి 2 / Witness 2:' : 'गवाह 2 / Witness 2:'}</strong></p>
+            <p>${isTe ? 'సంతకం:' : 'हस्ताक्षर:'} ____________________</p>
+            <p>${isTe ? 'పేరు:' : 'नाम:'} _______________________</p>
+            <p>${isTe ? 'తండ్రి/భర్త పేరు:' : 'पिता/पति का नाम:'} ____________________</p>
+            <p>${isTe ? 'చిరునామా:' : 'पता:'} ____________________</p>
           </div>
         </div>
       </div>
@@ -440,5 +505,6 @@ export async function generateRegionalWillPDF(willData, lang) {
   }
 }
 
-// Temporary compatibility fallback bindings
+// Global window attachments
 window.generateWillPDF = generateWillPDF;
+window.generateRegionalWillPDF = generateRegionalWillPDF;

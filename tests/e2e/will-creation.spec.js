@@ -19,6 +19,7 @@ test.describe('SmartWill India — Full Will Creation & FSM Workflow', () => {
   });
 
   test('should validate invalid mobile phone number', async ({ page }) => {
+    await page.check('#dpdpConsentCheckbox');
     await page.fill('#fullName', 'Ramesh Sharma');
     await page.fill('#dob', '1985-05-15');
     await page.fill('#addressLine1', '123 MG Road');
@@ -34,6 +35,7 @@ test.describe('SmartWill India — Full Will Creation & FSM Workflow', () => {
   });
 
   test('should seamlessly transition Step 1 -> Step 2 -> Step 3 with valid input', async ({ page }) => {
+    await page.check('#dpdpConsentCheckbox');
     await page.fill('#fullName', 'Ramesh Sharma');
     await page.fill('#dob', '1985-05-15');
     await page.fill('#addressLine1', '123 MG Road');
@@ -52,6 +54,7 @@ test.describe('SmartWill India — Full Will Creation & FSM Workflow', () => {
   });
 
   test('should handle browser back button smoothly via popstate', async ({ page }) => {
+    await page.check('#dpdpConsentCheckbox');
     await page.fill('#fullName', 'Ramesh Sharma');
     await page.fill('#dob', '1985-05-15');
     await page.fill('#addressLine1', '123 MG Road');

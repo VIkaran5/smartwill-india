@@ -41,10 +41,17 @@ function getDeviceId() {
   return id;
 }
 
-async function deriveKey() {
+function getKeyMaterialString(preferLegacy = false) {
+  const deviceId = getDeviceId();
+  if (preferLegacy) return deviceId;
+  const uid = (typeof window !== 'undefined' && window.currentUser && window.currentUser.uid) ? window.currentUser.uid : '';
+  return uid ? `${deviceId}_${uid}` : deviceId;
+}
+
+async function deriveKey(preferLegacy = false) {
   const keyMaterial = await window.crypto.subtle.importKey(
     'raw',
-    new TextEncoder().encode(getDeviceId()),
+    new TextEncoder().encode(getKeyMaterialString(preferLegacy)),
     { name: 'PBKDF2' },
     false,
     ['deriveKey']
@@ -73,14 +80,25 @@ async function encryptPayload(plaintext) {
 }
 
 async function decryptPayload(b64) {
-  const key = await deriveKey();
   const packed = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  const decrypted = await window.crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: packed.slice(0, 12) },
-    key,
-    packed.slice(12)
-  );
-  return new TextDecoder().decode(decrypted);
+  try {
+    const key = await deriveKey(false);
+    const decrypted = await window.crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: packed.slice(0, 12) },
+      key,
+      packed.slice(12)
+    );
+    return new TextDecoder().decode(decrypted);
+  } catch (userKeyErr) {
+    // Fallback: try with legacy device-only key in case draft was saved before login
+    const legacyKey = await deriveKey(true);
+    const decrypted = await window.crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: packed.slice(0, 12) },
+      legacyKey,
+      packed.slice(12)
+    );
+    return new TextDecoder().decode(decrypted);
+  }
 }
 
 function legacyDecode(raw) {
@@ -125,4 +143,14 @@ export function clearDraft() {
     localStorage.removeItem(STORAGE_KEY);
   } catch (e) { console.error('[SmartWill] Draft clear error', e); }
 }
+
+// Security Check (VULN-015): Expire stale drafts on visibility change
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      loadDraft().catch(() => {});
+    }
+  });
+}
+
 

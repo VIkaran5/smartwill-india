@@ -71,6 +71,66 @@ export function renderSummary() {
   html += `
       </ul>
     </div>
+
+    <div class="summary-section">
+      <h4>${t('summary.allocations') || '📊 Asset Allocations (Distribution)'}</h4>
+  `;
+
+  if (assets.length === 0) {
+    html += `<p><em>${notProvidedStr}</em></p>`;
+  } else {
+    assets.forEach(asset => {
+      const allocs = asset.allocations || [];
+      const shareLabel = (t('summary.share') && t('summary.share') !== 'summary.share') ? t('summary.share') : 'Share';
+      html += `
+        <div style="margin-bottom: 12px; padding: 10px 14px; background: rgba(0,0,0,0.02); border-left: 3px solid var(--primary, #1e3a8a); border-radius: 6px;">
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 6px;">📦 ${escapeHTML(asset.type || 'Asset')}: ${escapeHTML(asset.desc || notProvidedStr)}</div>
+          <ul style="margin: 0; padding: 0; list-style: none;">
+      `;
+      if (allocs.length === 0) {
+        html += `<li style="color:var(--text-muted); font-style:italic; padding:4px 0;">100% Equal distribution among all beneficiaries</li>`;
+      } else {
+        allocs.forEach(al => {
+          const ben = beneficiaries.find(b => b.id === al.beneficiaryId);
+          const benName = ben ? `${ben.name || 'Beneficiary'} (${ben.relation || ''})` : `Beneficiary #${al.beneficiaryId}`;
+          html += `
+            <li style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px dashed var(--border-light, rgba(0,0,0,0.08));">
+              <span>👤 ${escapeHTML(benName)}</span>
+              <span style="background:rgba(245, 158, 11, 0.12); color:#b45309; font-weight:700; padding:2px 10px; border-radius:999px; font-size:0.85rem; border:1px solid rgba(245, 158, 11, 0.3);">${al.percentage}% ${shareLabel}</span>
+            </li>
+          `;
+        });
+      }
+      html += `
+          </ul>
+        </div>
+      `;
+    });
+  }
+
+  html += `
+    </div>
+
+    <div class="summary-section">
+      <h4>${t('summary.executor') || '⚖️ Appointed Will Executor'}</h4>
+  `;
+
+  const executor = state.executor || {};
+  const execName = (executor.name || '').trim();
+  const execRelation = (executor.relation || '').trim();
+
+  if (execName) {
+    html += `
+      <p><strong>${t('summary.name') || 'Name:'}</strong> ${escapeHTML(execName)} | <strong>${t('summary.relation') || 'Relationship:'}</strong> ${escapeHTML(execRelation || notProvidedStr)}</p>
+    `;
+  } else {
+    html += `
+      <p style="color: var(--text-muted); font-style: italic; font-size: 0.9rem;">${t('summary.executorNone') || 'No Executor appointed (Under Indian Succession Act, court will appoint administrator if unassigned).'}</p>
+    `;
+  }
+
+  html += `
+    </div>
   `;
 
   container.innerHTML = html;

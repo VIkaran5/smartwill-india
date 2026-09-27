@@ -28,6 +28,9 @@ Desktop.ini
 # Build output
 dist/
 build/
+playwright-report/
+test-results/
+raw-assets/
 
 # Android build artifacts
 .gradle/

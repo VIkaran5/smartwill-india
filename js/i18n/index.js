@@ -62,23 +62,30 @@ export function setLanguage(lang, isManualClick = false) {
 
   // Apply translations with non-blocking transition
   applyTranslations(lang);
+
+  // Dispatch languageChanged event with current language for dynamic modules
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
+  }
 }
 
 export function applyTranslations(lang) {
   const dict = dictionaries[lang] || dictionaries[DEFAULT_LANGUAGE];
+  const fallbackDict = dictionaries[DEFAULT_LANGUAGE] || {};
 
   // Query all data-i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (dict && dict[key]) {
+    const text = (dict && dict[key]) !== undefined ? dict[key] : fallbackDict[key];
+    if (text !== undefined) {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
         if (el.hasAttribute('placeholder')) {
-          el.setAttribute('placeholder', dict[key]);
+          el.setAttribute('placeholder', text);
         }
       } else if (el.tagName === 'OPTION') {
-        el.textContent = dict[key];
+        el.textContent = text;
       } else {
-        el.textContent = dict[key];
+        el.textContent = text;
       }
     }
   });
@@ -86,10 +93,16 @@ export function applyTranslations(lang) {
   // Query all data-i18n-placeholder elements
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.getAttribute('data-i18n-placeholder');
-    if (dict && dict[key]) {
-      el.setAttribute('placeholder', dict[key]);
+    const ph = (dict && dict[key]) !== undefined ? dict[key] : fallbackDict[key];
+    if (ph !== undefined) {
+      el.setAttribute('placeholder', ph);
     }
   });
+
+  // Re-render lucide icons if any were affected
+  if (typeof window !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+    window.lucide.createIcons();
+  }
 }
 
 export function t(key, fallback = null) {

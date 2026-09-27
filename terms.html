@@ -17,22 +17,24 @@
   <meta name="description" content="Terms of Service &amp; Legal Framework governing the use of SmartWill India online Will drafting platform under Indian law.">
   <link rel="canonical" href="https://smartwill-india.vercel.app/terms">
   <!-- Favicons — Dual Theme -->
-  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
   
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/landing.css">
   <link rel="stylesheet" href="css/legal.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/legal-bot.css">
+  <script src="/js/consent-banner.js" defer></script>
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
 </head>
 <body>
   <!-- Header Navbar matching main website -->
   <header class="navbar">
     <div class="container nav-container">
       <a href="/" class="nav-logo" aria-label="SmartWill India Home">
-        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
-        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text">SmartWill India</span>
       </a>
 
@@ -196,6 +198,11 @@
           <p style="margin-top:0.75rem;">
             Full data practices, storage timelines, and third-party processors are detailed in our <a href="/privacy" style="color:var(--accent-gold);">Privacy Policy</a>.
           </p>
+          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light);">
+            <button type="button" class="btn btn-outline btn-sm" onclick="window.openCookieConsent && window.openCookieConsent()" style="display:inline-flex; align-items:center; gap:6px;">
+              🛡️ Manage Cookie &amp; DPDP Consent Preferences
+            </button>
+          </div>
         </article>
 
         <!-- 05: Limitation of Liability -->
@@ -243,8 +250,8 @@
     <div class="container footer-container">
       <div class="footer-col">
         <a href="/" class="nav-logo" aria-label="SmartWill India Home">
-          <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
-          <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
           <span class="logo-text">SmartWill India</span>
         </a>
         <p class="footer-desc">
@@ -269,6 +276,7 @@
           <li><a href="/terms" style="color:var(--accent-gold);">Terms &amp; Conditions</a></li>
           <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
           <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
         </ul>
       </div>
     </div>
@@ -279,9 +287,17 @@
     </div>
   </footer>
 
-  <script src="/js/consent-banner.js"></script>
   <script>
-    lucide.createIcons();
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
 
     // Active Table of Contents highlighting on scroll
     const sections = document.querySelectorAll('.legal-card');
@@ -328,5 +344,6 @@
     }
   </script>
   <script src="/js/theme-switcher.js"></script>
+  <script type="module" src="js/ui/legalBot.js"></script>
 </body>
 </html>

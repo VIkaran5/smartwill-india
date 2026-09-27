@@ -153,7 +153,7 @@ module.exports = async function handler(req, res) {
 
     if (!cfResponse.ok) {
       console.error(`[Cashfree Error] requestId=${requestId}, uid=${auth.uid}, message=${cfResult.message || 'Payment session creation failed'}`);
-      return res.status(cfResponse.status || 400).json({ error: cfResult.message || cfResult.type || 'Cashfree payment error' });
+      return res.status(cfResponse.status || 400).json({ error: 'Payment gateway initialization failed. Please try again or contact support.' });
     }
 
     console.log(`[Order Created] requestId=${requestId}, uid=${auth.uid}, orderId=${orderId}, expectedAmount=${expectedAmount}, creditRedeemed=${creditRedeemed}, referredBy=${referredBy}`);

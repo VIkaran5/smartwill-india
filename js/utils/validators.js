@@ -95,3 +95,9 @@ export function validateGovtId(type, digits) {
   const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);
   return { isValid: valid, message: valid ? `✓ Valid Identity Digits (${cleanDigits})` : '⚠️ Please enter 4 valid characters for selected Govt ID.' };
 }
+
+export function isValidIndianPincode(pincode) {
+  if (!pincode) return false;
+  const cleanPin = String(pincode).trim();
+  return /^[1-9]\d{5}$/.test(cleanPin);
+}

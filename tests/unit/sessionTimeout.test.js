@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   startSessionGuardian,
   stopSessionGuardian,
@@ -6,6 +6,7 @@ import {
   executeSessionLock,
   isNativeApp,
   isPaymentStepActive,
+  checkInactivity,
   _setTestConfig,
   _isGuardianActive,
   _isWarningShown
@@ -16,6 +17,14 @@ describe('Gentle Session Inactivity Guardian (sessionTimeout.js)', () => {
     vi.useRealTimers();
     stopSessionGuardian();
     _setTestConfig(45 * 60 * 1000, 2 * 60 * 1000, 10 * 1000);
+    localStorage.clear();
+    document.body.innerHTML = '';
+  });
+
+  afterEach(() => {
+    stopSessionGuardian();
+    localStorage.clear();
+    document.body.innerHTML = '';
   });
 
   it('detects standard web environment as not native app', () => {
@@ -24,6 +33,25 @@ describe('Gentle Session Inactivity Guardian (sessionTimeout.js)', () => {
 
   it('detects step 5 payment URL param correctly', () => {
     expect(isPaymentStepActive()).toBe(false);
+  });
+
+  it('returns false when step6 DOM element exists without active class (the critical bugfix)', () => {
+    // In app.html, step6 exists on all steps but only has .active on step 6
+    const step6 = document.createElement('div');
+    step6.id = 'step6';
+    step6.className = 'wizard-step step-content';
+    document.body.appendChild(step6);
+
+    expect(isPaymentStepActive()).toBe(false);
+  });
+
+  it('returns true when step6 DOM element has active class', () => {
+    const step6 = document.createElement('div');
+    step6.id = 'step6';
+    step6.className = 'wizard-step step-content active';
+    document.body.appendChild(step6);
+
+    expect(isPaymentStepActive()).toBe(true);
   });
 
   it('starts guardian when user object is provided and stops on stopSessionGuardian', () => {
@@ -51,6 +79,37 @@ describe('Gentle Session Inactivity Guardian (sessionTimeout.js)', () => {
     expect(_isGuardianActive()).toBe(true);
 
     stopSessionGuardian();
+  });
+
+  it('immediately triggers session lock if user activity occurs after idle timeout elapsed (e.g. laptop woke from sleep)', async () => {
+    window.firebaseAuth = { signOut: vi.fn().mockResolvedValue() };
+    window.updateAuthUI = vi.fn();
+
+    const mockUser = { uid: 'user_xyz', email: 'test@smartwill.in' };
+    startSessionGuardian(mockUser);
+
+    // Simulate system waking from sleep 50 minutes later
+    _setTestConfig(45 * 60 * 1000, 2 * 60 * 1000, 10 * 1000, Date.now() - 50 * 60 * 1000);
+
+    // User moves mouse upon returning
+    await recordUserActivity(false);
+
+    expect(_isGuardianActive()).toBe(false);
+    expect(window.firebaseAuth.signOut).toHaveBeenCalled();
+  });
+
+  it('locks immediately on startup if stored activity is older than idle timeout', async () => {
+    window.firebaseAuth = { signOut: vi.fn().mockResolvedValue() };
+    window.updateAuthUI = vi.fn();
+
+    // 2 hours ago
+    localStorage.setItem('sw_last_activity_time', (Date.now() - 2 * 60 * 60 * 1000).toString());
+
+    const mockUser = { uid: 'user_xyz', email: 'test@smartwill.in' };
+    await startSessionGuardian(mockUser);
+
+    expect(_isGuardianActive()).toBe(false);
+    expect(window.firebaseAuth.signOut).toHaveBeenCalled();
   });
 
   it('executes session lock gracefully without throwing errors', async () => {

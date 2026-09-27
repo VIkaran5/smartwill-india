@@ -230,7 +230,7 @@ function updateSyncBadge() {
   badges.forEach(badge => {
     switch (syncStatus) {
       case 'synced':
-        badge.innerHTML = `<span style="color:#10b981; font-weight:600; font-size:0.75rem;">☁️ Synced</span>`;
+        badge.innerHTML = `<span style="color:#10b981; font-weight:600; font-size:0.75rem;">☁️ Cloud Synced</span>`;
         break;
       case 'syncing':
         badge.innerHTML = `<span style="color:#3b82f6; font-weight:600; font-size:0.75rem;">⏳ Syncing...</span>`;
@@ -242,7 +242,7 @@ function updateSyncBadge() {
         badge.innerHTML = `<span style="color:#f43f5e; font-weight:600; font-size:0.75rem;">❌ Sync Failed</span>`;
         break;
       default:
-        badge.innerHTML = `<span style="color:rgba(255,255,255,0.6); font-weight:500; font-size:0.75rem;">✓ Local Only</span>`;
+        badge.innerHTML = `<span style="color:var(--text-muted, #64748b); font-weight:500; font-size:0.75rem;">💾 Saved on Device</span>`;
     }
   });
 }

@@ -1,0 +1,546 @@
+/* ── SmartWill India — Native Floating Legal Assistant Bot ── */
+
+.smartwill-bot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 920;
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+
+  /* ── Light Mode Token Palette (Default) ── */
+  --bot-gold: #dfb76c;
+  --bot-gold-hover: #ecd093;
+  --bot-bg-panel: #ffffff;
+  --bot-border-panel: #e2e8f0;
+  --bot-shadow-panel: 0 20px 40px -10px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.1);
+
+  --bot-header-bg: #f8fafc;
+  --bot-header-title: #0f172a;
+  --bot-header-sub: #64748b;
+  --bot-header-border: #e2e8f0;
+
+  --bot-msg-bot-bg: #f1f5f9;
+  --bot-msg-bot-text: #0f172a;
+  --bot-msg-bot-border: #e2e8f0;
+  --bot-link-color: #0369a1;
+
+  --bot-msg-user-bg: #0f172a;
+  --bot-msg-user-text: #ffffff;
+  --bot-time-text: #94a3b8;
+
+  /* Primary Action Button (High Contrast Carbon / Gold in light) */
+  --bot-cta-gold-bg: #0f172a;
+  --bot-cta-gold-text: #ffffff;
+  --bot-cta-gold-border: #0f172a;
+  --bot-cta-gold-hover: #1e293b;
+
+  /* Secondary Outline Button */
+  --bot-cta-outline-bg: #ffffff;
+  --bot-cta-outline-text: #0f172a;
+  --bot-cta-outline-border: #cbd5e1;
+  --bot-cta-outline-hover: #f1f5f9;
+
+  /* Quick Question Chips */
+  --bot-chip-bg: #ffffff;
+  --bot-chip-text: #1e293b;
+  --bot-chip-border: #cbd5e1;
+  --bot-chip-hover-bg: #f8fafc;
+  --bot-chip-hover-border: #0f172a;
+  --bot-chip-hover-text: #0f172a;
+
+  /* Input & Send Button */
+  --bot-input-bg: #ffffff;
+  --bot-input-text: #0f172a;
+  --bot-input-border: #cbd5e1;
+  --bot-input-placeholder: #64748b;
+  --bot-send-bg: #0f172a;
+  --bot-send-text: #ffffff;
+  --bot-send-hover: #1e293b;
+}
+
+/* ── Dark Mode Token Palette Overrides ── */
+[data-theme="dark"] .smartwill-bot-container {
+  --bot-bg-panel: #0f172a;
+  --bot-border-panel: #334155;
+  --bot-shadow-panel: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 1px rgba(223, 183, 108, 0.2);
+
+  --bot-header-bg: #1e293b;
+  --bot-header-title: #f8fafc;
+  --bot-header-sub: #94a3b8;
+  --bot-header-border: #334155;
+
+  --bot-msg-bot-bg: #1e293b;
+  --bot-msg-bot-text: #f8fafc;
+  --bot-msg-bot-border: #334155;
+  --bot-link-color: #38bdf8;
+
+  --bot-msg-user-bg: linear-gradient(135deg, #dfb76c 0%, #c99f52 100%);
+  --bot-msg-user-text: #080c1a;
+  --bot-time-text: #64748b;
+
+  --bot-cta-gold-bg: #dfb76c;
+  --bot-cta-gold-text: #080c1a;
+  --bot-cta-gold-border: #dfb76c;
+  --bot-cta-gold-hover: #ecd093;
+
+  --bot-cta-outline-bg: #1e293b;
+  --bot-cta-outline-text: #f8fafc;
+  --bot-cta-outline-border: #475569;
+  --bot-cta-outline-hover: #334155;
+
+  --bot-chip-bg: #1e293b;
+  --bot-chip-text: #cbd5e1;
+  --bot-chip-border: #334155;
+  --bot-chip-hover-bg: #334155;
+  --bot-chip-hover-border: #dfb76c;
+  --bot-chip-hover-text: #dfb76c;
+
+  --bot-input-bg: #0b1120;
+  --bot-input-text: #f8fafc;
+  --bot-input-border: #334155;
+  --bot-input-placeholder: #64748b;
+  --bot-send-bg: #dfb76c;
+  --bot-send-text: #080c1a;
+  --bot-send-hover: #ecd093;
+}
+
+/* ── Launcher Button ── */
+.smartwill-bot-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  border: 1px solid rgba(223, 183, 108, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s;
+  user-select: none;
+}
+
+[data-theme="dark"] .smartwill-bot-launcher {
+  background: linear-gradient(135deg, #0b1120 0%, #020617 100%);
+  border-color: rgba(223, 183, 108, 0.5);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 16px rgba(223, 183, 108, 0.15);
+}
+
+.smartwill-bot-launcher:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: #dfb76c;
+  box-shadow: 0 12px 32px rgba(223, 183, 108, 0.25);
+}
+
+.smartwill-bot-launcher:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.smartwill-bot-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(223, 183, 108, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.smartwill-bot-avatar svg {
+  width: 16px;
+  height: 16px;
+  fill: #dfb76c;
+  color: #dfb76c;
+}
+
+.smartwill-bot-online-dot {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 1.5px solid #0f172a;
+}
+
+.smartwill-bot-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+
+.smartwill-bot-badge-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(223, 183, 108, 0.2);
+  color: #dfb76c;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Chat Panel Window ── */
+.smartwill-bot-panel {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 540px;
+  max-height: calc(100vh - 120px);
+  background: var(--bot-bg-panel);
+  border: 1px solid var(--bot-border-panel);
+  border-radius: 20px;
+  box-shadow: var(--bot-shadow-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transform-origin: bottom right;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 930;
+}
+
+.smartwill-bot-panel.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(0.95);
+}
+
+/* ── Chat Header ── */
+.smartwill-bot-header {
+  padding: 14px 18px;
+  background: var(--bot-header-bg);
+  border-bottom: 1px solid var(--bot-header-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.smartwill-bot-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.smartwill-bot-header-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bot-header-title);
+  line-height: 1.2;
+}
+
+.smartwill-bot-header-sub {
+  font-size: 0.72rem;
+  color: var(--bot-header-sub);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.smartwill-bot-header-sub span.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.smartwill-bot-close-btn {
+  background: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--bot-header-sub);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.smartwill-bot-close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--bot-header-title);
+}
+
+[data-theme="dark"] .smartwill-bot-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* ── Messages Area ── */
+.smartwill-bot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bot-bg-panel);
+  scroll-behavior: smooth;
+}
+
+.smartwill-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 88%;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  animation: botFadeIn 0.2s ease-out;
+}
+
+@keyframes botFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.smartwill-msg-bot {
+  align-self: flex-start;
+}
+
+.smartwill-msg-user {
+  align-self: flex-end;
+}
+
+.smartwill-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 14px;
+  word-break: break-word;
+}
+
+.smartwill-msg-bot .smartwill-msg-bubble {
+  background: var(--bot-msg-bot-bg);
+  color: var(--bot-msg-bot-text);
+  border-top-left-radius: 4px;
+  border: 1px solid var(--bot-msg-bot-border);
+}
+
+.smartwill-msg-bot .smartwill-msg-bubble strong {
+  color: inherit;
+  font-weight: 700;
+}
+
+.smartwill-msg-bot .smartwill-msg-bubble em {
+  color: inherit;
+}
+
+.smartwill-msg-bot .smartwill-msg-bubble a {
+  color: var(--bot-link-color);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.smartwill-msg-bot .smartwill-msg-bubble a:hover {
+  text-decoration: none;
+}
+
+.smartwill-msg-user .smartwill-msg-bubble {
+  background: var(--bot-msg-user-bg);
+  color: var(--bot-msg-user-text);
+  font-weight: 600;
+  border-top-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.smartwill-msg-time {
+  font-size: 0.68rem;
+  color: var(--bot-time-text);
+  margin-top: 3px;
+  align-self: flex-start;
+}
+
+.smartwill-msg-user .smartwill-msg-time {
+  align-self: flex-end;
+}
+
+/* ── CTA Action Buttons inside Bot ── */
+.smartwill-msg-cta-box {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.smartwill-msg-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+}
+
+.smartwill-msg-cta-btn:active {
+  transform: scale(0.98);
+}
+
+/* Primary High-Contrast Button */
+.smartwill-msg-cta-gold {
+  background: var(--bot-cta-gold-bg);
+  color: var(--bot-cta-gold-text) !important;
+  border: 1px solid var(--bot-cta-gold-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.smartwill-msg-cta-gold:hover {
+  background: var(--bot-cta-gold-hover);
+  color: var(--bot-cta-gold-text) !important;
+  border-color: var(--bot-cta-gold-hover);
+}
+
+/* Secondary Outline Button */
+.smartwill-msg-cta-outline {
+  background: var(--bot-cta-outline-bg);
+  border: 1px solid var(--bot-cta-outline-border);
+  color: var(--bot-cta-outline-text) !important;
+}
+
+.smartwill-msg-cta-outline:hover {
+  background: var(--bot-cta-outline-hover);
+  color: var(--bot-cta-outline-text) !important;
+  border-color: var(--bot-cta-gold-border);
+}
+
+/* ── Quick Question Chips Container ── */
+.smartwill-bot-chips {
+  padding: 10px 14px;
+  background: var(--bot-header-bg);
+  border-top: 1px solid var(--bot-header-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 110px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.smartwill-bot-chip {
+  background: var(--bot-chip-bg);
+  border: 1px solid var(--bot-chip-border);
+  color: var(--bot-chip-text);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.smartwill-bot-chip:hover {
+  background: var(--bot-chip-hover-bg);
+  border-color: var(--bot-chip-hover-border);
+  color: var(--bot-chip-hover-text);
+  transform: translateY(-1px);
+}
+
+/* ── Text Input Bar ── */
+.smartwill-bot-input-area {
+  padding: 12px 14px;
+  background: var(--bot-bg-panel);
+  border-top: 1px solid var(--bot-border-panel);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.smartwill-bot-input {
+  flex: 1;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--bot-input-border);
+  background: var(--bot-input-bg);
+  color: var(--bot-input-text);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.smartwill-bot-input::placeholder {
+  color: var(--bot-input-placeholder);
+}
+
+.smartwill-bot-input:focus {
+  border-color: var(--bot-cta-gold-border);
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="dark"] .smartwill-bot-input:focus {
+  box-shadow: 0 0 0 2px rgba(223, 183, 108, 0.25);
+}
+
+.smartwill-bot-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bot-send-bg);
+  color: var(--bot-send-text);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.smartwill-bot-send-btn:hover {
+  background: var(--bot-send-hover);
+  transform: scale(1.05);
+}
+
+.smartwill-bot-send-btn:active {
+  transform: scale(0.95);
+}
+
+.smartwill-bot-send-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* ── Mobile Responsiveness & Sticky Bar Clearance ── */
+@media (max-width: 768px) {
+  .smartwill-bot-container {
+    bottom: 74px; /* Sits cleanly above the 60px mobile sticky bar */
+    right: 16px;
+  }
+
+  .smartwill-bot-launcher {
+    padding: 10px 16px;
+  }
+
+  .smartwill-bot-label {
+    font-size: 0.82rem;
+  }
+
+  .smartwill-bot-badge-tag {
+    display: none; /* Keep launcher compact on small screens */
+  }
+
+  .smartwill-bot-panel {
+    width: calc(100vw - 28px);
+    height: 480px;
+    max-height: 68vh;
+    bottom: calc(100% + 10px);
+    right: 0;
+  }
+}

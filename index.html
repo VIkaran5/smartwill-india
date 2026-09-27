@@ -7,20 +7,24 @@
       try {
         var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', t);
+        // Pre-apply banner padding before first paint to prevent CLS
+        if (sessionStorage.getItem('sw_banner_dismissed') !== '1') {
+          document.documentElement.classList.add('banner-visible');
+        }
       } catch(e) {}
     })();
   </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
-  <script src="/js/consent-banner.js"></script>
+  <script src="/js/consent-banner.js" defer></script>
   <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
   <title>SmartWill India — Online Will Creation Platform at ₹299</title>
   <meta name="description" content="Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Protect your bank accounts, FD, gold, and property for just ₹299. Available in English, Telugu, & Hindi.">
   
   <!-- Favicons — Dual Theme -->
-  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
 
   <!-- Canonical -->
   <link rel="canonical" href="https://smartwill-india.vercel.app/">
@@ -46,15 +50,30 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://smartwill-india.vercel.app/og-image.jpg">
 
-  <!-- Bootstrap 5 — grid + responsive utilities only -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
+  <!-- Resource Hints for CDNs & Performance -->
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="dns-prefetch" href="https://unpkg.com">
+
+  <!-- Preload Hero LCP Mockup (Responsive WebP) -->
+  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
+  <!-- Preload Primary Latin Display & Body Fonts -->
+  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/assets/fonts/fonts.css"></noscript>
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/landing.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Firebase SDK V10 for Authentication & User Cloud Sync -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="css/legal-bot.css"></noscript>
+  <!-- Non-blocking Bootstrap Grid -->
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/css/bootstrap-grid.min.css"></noscript>
+
+  <!-- Deferred non-critical scripts to eliminate render-blocking with SRI -->
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" integrity="sha384-v15JX+vZHMR3T6LQR9N6e6wIKrKOdNTbdj8j+e5irqq3L9gCauJz2vGlUzomWyUp" crossorigin="anonymous" defer></script>
 
   <!-- FAQ Structured Data -->
   <script type="application/ld+json">
@@ -129,7 +148,7 @@
 <body>
   <!-- Announcement Banner — fact-based, no fake urgency -->
   <div id="announceBanner" class="announce-bar" role="alert" aria-live="polite">
-    <span>⚠️ <strong>₹40,000 Crore</strong> lies unclaimed in Indian banks — don't let your family's assets become a statistic. Secure their future today for just ₹299.</span>
+    <span data-i18n="announcement.text">⚠️ <strong>₹40,000 Crore</strong> lies unclaimed in Indian banks — don't let your family's assets become a statistic. Secure their future today for just ₹299.</span>
     <button class="announce-close" id="announceDismiss" aria-label="Dismiss banner">✕</button>
   </div>
 
@@ -142,22 +161,22 @@
   <header class="navbar">
     <div class="container nav-container">
       <a href="index.html" class="nav-logo" aria-label="SmartWill India Home">
-        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
-        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
       </a>
 
       <nav class="nav-menu">
         <a href="#features" class="nav-link" data-i18n="nav.features">Features</a>
         <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How It Works</a>
-        <a href="#demo" class="nav-link" data-i18n="demo.badge">Demo</a>
         <a href="#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+        <a href="#legal-awareness" class="nav-link" data-i18n="nav.legalAwareness">Legal Guide</a>
         <a href="#faq" class="nav-link" data-i18n="nav.faq">FAQ</a>
         <a href="/blog" class="nav-link">Blog</a>
       </nav>
 
-      <!-- Desktop nav actions (hidden on mobile) -->
-      <div class="nav-actions d-none d-md-flex">
+      <!-- Desktop & Tablet nav actions -->
+      <div class="nav-actions">
         <div class="lang-switcher">
           <button class="lang-btn active" data-lang="en">EN</button>
           <button class="lang-btn" data-lang="te">తెలుగు</button>
@@ -167,35 +186,33 @@
           <span class="toggle-icon"><i data-lucide="moon"></i></span>
           <span class="toggle-text">Dark</span>
         </button>
-        <div class="auth-nav-box flex align-center gap-2"></div>
+        <div class="auth-nav-box flex align-center gap-2">
+          <button type="button" class="btn btn-outline btn-sm auth-btn-signin" onclick="openAuthModal('signin')">Sign In</button>
+          <button type="button" class="btn btn-primary btn-sm auth-btn-signup" onclick="openAuthModal('signup')">Sign Up</button>
+        </div>
         <a href="app.html" class="btn btn-gold btn-sm" data-i18n="nav.createWill">Create Your Will</a>
       </div>
 
-      <!-- Hamburger (mobile only) -->
-      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+      <!-- Hamburger (The Three Line Menu) -->
+      <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
     </div>
 
-    <!-- Mobile slide-down menu -->
+    <!-- Slide-down navigation menu (Desktop & Mobile) -->
     <div class="nav-mobile-menu" id="navMobileMenu">
       <div class="lang-switcher" style="justify-content:center">
         <button class="lang-btn active" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="te">తెలుగు</button>
         <button class="lang-btn" data-lang="hi">हिंदी</button>
       </div>
-      <div style="display:flex; justify-content:center;">
-        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
-          <span class="toggle-icon"><i data-lucide="moon"></i></span>
-          <span class="toggle-text">Dark</span>
-        </button>
-      </div>
-      <a href="#features" class="nav-link" style="font-size:1rem">Features</a>
-      <a href="#how-it-works" class="nav-link" style="font-size:1rem">How It Works</a>
-      <a href="#demo" class="nav-link" style="font-size:1rem" data-i18n="demo.badge">Demo</a>
-      <a href="#pricing" class="nav-link" style="font-size:1rem">Pricing</a>
-      <a href="#faq" class="nav-link" style="font-size:1rem">FAQ</a>
-      <a href="/blog" class="nav-link" style="font-size:1rem">Blog</a>
+      <a href="#features" class="nav-link" data-i18n="nav.features">Features</a>
+      <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How It Works</a>
+      <a href="#nominee-check" class="nav-link nav-link-nominee" data-i18n="nav.nomineeCheck">Nominee Check</a>
+      <a href="#pricing" class="nav-link" data-i18n="nav.pricing">Pricing</a>
+      <a href="#legal-awareness" class="nav-link" data-i18n="nav.legalAwareness">Legal Guide</a>
+      <a href="#faq" class="nav-link" data-i18n="nav.faq">FAQ</a>
+      <a href="/blog" class="nav-link">Blog</a>
       <div class="auth-nav-box-mobile flex align-center gap-2" style="margin-top:0.5rem">
         <button class="btn btn-outline btn-sm" style="flex:1" onclick="openAuthModal('signin')">Sign In</button>
         <button class="btn btn-primary btn-sm" style="flex:1" onclick="openAuthModal('signup')">Sign Up</button>
@@ -203,6 +220,9 @@
       <a href="app.html" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
     </div>
   </header>
+
+  <!-- Main Landmark -->
+  <main id="main-content">
 
   <!-- Hero Section -->
   <section class="hero-section">
@@ -223,24 +243,30 @@
           <a href="app.html" class="btn btn-gold btn-lg shadow-gold" data-i18n="hero.ctaPrimary">
             Create Will Now — ₹299 <i data-lucide="arrow-right"></i>
           </a>
-          <a href="#demo" class="btn btn-secondary btn-lg" data-i18n="hero.ctaSecondary">
-            How It Works &amp; Demo
-          </a>
+          <button type="button" class="btn btn-secondary btn-lg" onclick="openSampleWillModal()">
+            <i data-lucide="file-text"></i> View Sample Will (Free)
+          </button>
         </div>
         <div class="hero-guarantee" data-i18n="hero.guarantee">
-          ✓ Aligned with Indian Succession Act, 1925 &nbsp;|&nbsp; 100% Confidential
+          ✓ Aligned with Indian Succession Act, 1925 &nbsp;|&nbsp; 100% Confidential &nbsp;|&nbsp; <a href="#demo" style="color:var(--text-muted); text-decoration:underline;">How It Works &amp; Demo</a>
         </div>
       </div>
 
       <!-- Right: visual -->
       <div class="hero-visual">
-        <img
-          src="/assets/hero-will-mockup.jpg"
-          alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
-          width="400"
-          height="533"
-          loading="eager"
-        >
+        <picture>
+          <source media="(max-width: 640px)" srcset="/assets/hero-will-mockup-mobile.webp" type="image/webp">
+          <source srcset="/assets/hero-will-mockup.webp" type="image/webp">
+          <img
+            src="/assets/hero-will-mockup.webp"
+            alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
+            width="400"
+            height="533"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          >
+        </picture>
       </div>
 
     </div>
@@ -299,6 +325,131 @@
     </div>
   </section>
 
+  <!-- 30-Second Nominee Reality Check Section (Conversion & Legal Awareness Engine) -->
+  <section id="nominee-check" class="section nominee-check-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="hero-badge badge badge-gold mb-2" data-i18n="nominee.badge">
+          ⚖️ Supreme Court Precedent & Legal Reality Check
+        </div>
+        <h2 class="section-title" data-i18n="nominee.title">
+          The 30-Second Nominee Reality Check
+        </h2>
+        <p class="section-subtitle max-w-700" data-i18n="nominee.subtitle">
+          Over 90% of Indians mistakenly assume a Bank or Demat Nominee inherits their wealth. Test your family's real legal risk in 3 quick questions.
+        </p>
+      </div>
+
+      <div class="nominee-quiz-card glass-card" id="nomineeCheckWidget">
+        <div class="quiz-header">
+          <div class="quiz-progress-track">
+            <div class="quiz-progress-fill" style="width: 25%;"></div>
+          </div>
+          <div class="quiz-header-meta">
+            <span class="quiz-step-indicator">Question 1 of 3</span>
+            <span class="quiz-badge-micro">100% Confidential • Instant Result</span>
+          </div>
+        </div>
+
+        <!-- Question 1: Assets -->
+        <div class="quiz-step quiz-step-1">
+          <h3 class="quiz-question-title" data-i18n="nominee.q1Title">1. Which assets do you want to secure for your family?</h3>
+          <p class="quiz-question-subtitle" data-i18n="nominee.q1Sub">Select all that apply to your household:</p>
+          
+          <div class="quiz-chips-grid">
+            <div class="quiz-chip" data-val="bank">
+              <div class="quiz-chip-left">
+                <i data-lucide="landmark"></i>
+                <span data-i18n="nominee.asset1">Bank Accounts &amp; FDs</span>
+              </div>
+              <span class="quiz-chip-check">✓</span>
+            </div>
+            <div class="quiz-chip" data-val="stocks">
+              <div class="quiz-chip-left">
+                <i data-lucide="trending-up"></i>
+                <span data-i18n="nominee.asset2">Mutual Funds &amp; Demat</span>
+              </div>
+              <span class="quiz-chip-check">✓</span>
+            </div>
+            <div class="quiz-chip" data-val="property">
+              <div class="quiz-chip-left">
+                <i data-lucide="home"></i>
+                <span data-i18n="nominee.asset3">House, Flat, or Land</span>
+              </div>
+              <span class="quiz-chip-check">✓</span>
+            </div>
+            <div class="quiz-chip" data-val="gold">
+              <div class="quiz-chip-left">
+                <i data-lucide="sparkles"></i>
+                <span data-i18n="nominee.asset4">Gold &amp; Valuables</span>
+              </div>
+              <span class="quiz-chip-check">✓</span>
+            </div>
+          </div>
+
+          <div class="text-center">
+            <button type="button" class="btn btn-gold btn-md" id="quizStep1Next" disabled data-i18n="nominee.nextBtn">
+              Continue to Step 2 &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Question 2: Nominees -->
+        <div class="quiz-step quiz-step-2" style="display:none;">
+          <h3 class="quiz-question-title" data-i18n="nominee.q2Title">2. Have you designated a Nominee for these assets?</h3>
+          <p class="quiz-question-subtitle" data-i18n="nominee.q2Sub">Select the option that best reflects your current setup:</p>
+
+          <div class="quiz-options-list">
+            <button type="button" class="quiz-option-card quiz-option-step2" data-val="yes_all">
+              <span class="quiz-option-icon">🟢</span>
+              <span class="quiz-option-text" data-i18n="nominee.q2Opt1">Yes, I added my spouse, children, or parents as nominees in all accounts.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+            <button type="button" class="quiz-option-card quiz-option-step2" data-val="partial">
+              <span class="quiz-option-icon">🟡</span>
+              <span class="quiz-option-text" data-i18n="nominee.q2Opt2">Only in some bank accounts; unsure about mutual funds or property.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+            <button type="button" class="quiz-option-card quiz-option-step2" data-val="no">
+              <span class="quiz-option-icon">🔴</span>
+              <span class="quiz-option-text" data-i18n="nominee.q2Opt3">No nominees added, or I haven't updated them in years.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Question 3: Will -->
+        <div class="quiz-step quiz-step-3" style="display:none;">
+          <h3 class="quiz-question-title" data-i18n="nominee.q3Title">3. Do you have a written, witnessed Will?</h3>
+          <p class="quiz-question-subtitle" data-i18n="nominee.q3Sub">A Will specifies clear ownership and prevents court intervention:</p>
+
+          <div class="quiz-options-list">
+            <button type="button" class="quiz-option-card quiz-option-step3" data-val="no_assumed">
+              <span class="quiz-option-icon">❌</span>
+              <span class="quiz-option-text" data-i18n="nominee.q3Opt1">No — I assumed the Nominee automatically inherits and owns everything.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+            <button type="button" class="quiz-option-card quiz-option-step3" data-val="no_pending">
+              <span class="quiz-option-icon">⏳</span>
+              <span class="quiz-option-text" data-i18n="nominee.q3Opt2">No — I knew I need one, but haven't gotten around to drafting it yet.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+            <button type="button" class="quiz-option-card quiz-option-step3" data-val="yes_has_will">
+              <span class="quiz-option-icon">✅</span>
+              <span class="quiz-option-text" data-i18n="nominee.q3Opt3">Yes — I already have a signed Will witnessed by 2 independent people.</span>
+              <span class="quiz-radio-ring"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Calculated Result -->
+        <div class="quiz-step quiz-step-result" style="display:none;">
+          <div class="quiz-result-content"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- How It Works Section — numbered flow with connectors (different from problem grid) -->
   <section id="how-it-works" class="section hiw-section">
     <div class="container">
@@ -329,7 +480,7 @@
         <div class="step-card glass-card">
           <div class="step-badge">3</div>
           <div class="step-icon"><i data-lucide="file-check-2"></i></div>
-          <h3 data-i18n="hiw.step3Title">Download Your Will PDF</h3>
+          <h3 data-i18n="hiw.step3Title">Instant Legal Will PDF</h3>
           <p data-i18n="hiw.step3Desc">Instantly download your ready-to-print Will, formatted under the Indian Succession Act 1925.</p>
         </div>
       </div>
@@ -348,21 +499,21 @@
       <div class="demo-player-wrapper glass-card">
         <!-- Dual Mode Tabs -->
         <div class="demo-tabs-bar">
-          <button type="button" class="demo-tab-btn active" data-tab="video">
-            <i data-lucide="play-circle"></i> <span>Video Tour</span>
+          <button type="button" class="demo-tab-btn active" data-tab="slides">
+            <i data-lucide="layers"></i> <span data-i18n="demo.tabSlides">Step-by-Step Slides (Instant)</span>
           </button>
-          <button type="button" class="demo-tab-btn" data-tab="slides">
-            <i data-lucide="layers"></i> <span>Step-by-Step Slides (Instant)</span>
+          <button type="button" class="demo-tab-btn" data-tab="video">
+            <i data-lucide="play-circle"></i> <span data-i18n="demo.tabVideo">Video Tour</span>
           </button>
         </div>
 
         <div class="demo-content-area">
-          <!-- 1. Arcade Video View -->
-          <div class="demo-view demo-view-video active">
+          <!-- 1. Arcade Video View (Loads on demand when tab selected) -->
+          <div class="demo-view demo-view-video">
             <div class="demo-iframe-container">
               <iframe 
                 id="demoArcadeIframe"
-                src="https://demo.arcade.software/video/fIDCyagb6m2mXHCnjysd?embed&amp;embed_mobile=tab&amp;embed_desktop=inline&amp;show_copy_link=true&amp;autoplay=true" 
+                data-src="https://demo.arcade.software/video/fIDCyagb6m2mXHCnjysd?embed&amp;embed_mobile=tab&amp;embed_desktop=inline&amp;show_copy_link=true&amp;autoplay=true" 
                 title="SmartWill India Product Explainer" 
                 frameborder="0" 
                 loading="lazy" 
@@ -379,11 +530,11 @@
             </div>
           </div>
 
-          <!-- 2. Zero-Fail Local Slide Carousel (100% locally hosted) -->
-          <div class="demo-view demo-view-slides">
+          <!-- 2. Zero-Fail Local Slide Carousel (100% locally hosted, instant load) -->
+          <div class="demo-view demo-view-slides active">
             <div class="demo-slides-container">
               <div class="demo-slide-viewer">
-                <img id="demoCurrentSlideImg" src="/assets/arcade-slides/01_smartwill_hero_hook.png" alt="SmartWill Step 1" loading="lazy">
+                <img id="demoCurrentSlideImg" src="/assets/arcade-slides/01_smartwill_hero_hook.webp" alt="SmartWill Step 1" width="824" height="464" loading="lazy">
                 
                 <button type="button" class="demo-nav-btn prev" id="demoPrevBtn" aria-label="Previous step">
                   <i data-lucide="chevron-left"></i>
@@ -405,10 +556,13 @@
         </div>
       </div>
 
-      <div class="demo-cta-wrap text-center">
+      <div class="demo-cta-wrap text-center" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
         <a href="app.html" class="btn btn-gold btn-lg shadow-gold" data-i18n="demo.cta">
           Start Creating Your Will — ₹299 <i data-lucide="arrow-right"></i>
         </a>
+        <button type="button" class="btn btn-outline btn-lg" onclick="openSampleWillModal()">
+          <i data-lucide="eye"></i> View Sample Legal Will (Free)
+        </button>
       </div>
     </div>
   </section>
@@ -416,40 +570,57 @@
   <!-- Comparison Section -->
   <section class="section comparison-section">
     <div class="container">
-      <div class="section-header">
-        <h2 class="section-title" data-i18n="comp.title">SmartWill vs Traditional Lawyers</h2>
-        <p class="section-subtitle" data-i18n="comp.subtitle">Same legal format. 100x less cost. Done in minutes, not weeks.</p>
+      <div class="section-header text-center">
+        <h2 class="section-title" data-i18n="comp.title">SmartWill vs Generic AI vs Traditional Lawyers</h2>
+        <p class="section-subtitle" data-i18n="comp.subtitle">Why asking ChatGPT or hiring a ₹25,000 lawyer isn't the right way to protect your family's inheritance.</p>
       </div>
 
       <div class="table-container glass-card" style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
-        <table class="comp-table" style="min-width:480px; width:100%;">
+        <table class="comp-table" style="min-width:680px; width:100%;">
           <thead>
             <tr>
-              <th data-i18n="comp.col1">Feature</th>
+              <th data-i18n="comp.col1">Legal &amp; Technical Standard</th>
+              <th data-i18n="comp.colAi" style="color:var(--text-muted);">Generic AI (ChatGPT / Free Doc)</th>
               <th data-i18n="comp.col2">Traditional Lawyer</th>
-              <th class="highlight-col" data-i18n="comp.col3">SmartWill India</th>
+              <th class="highlight-col text-gold" data-i18n="comp.col3">SmartWill India (⭐ Recommended)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td data-i18n="comp.row1">Cost</td>
+              <td data-i18n="comp.row1">Total Cost</td>
+              <td class="text-muted" data-i18n="comp.row1Ai">Free (High Legal Risk)</td>
               <td class="text-rose" data-i18n="comp.row1A">₹10,000 - ₹50,000</td>
-              <td class="highlight-col text-gold" data-i18n="comp.row1B">Only ₹299</td>
+              <td class="highlight-col text-gold" data-i18n="comp.row1B">Only ₹299 (Fixed)</td>
             </tr>
             <tr>
-              <td data-i18n="comp.row2">Time Taken</td>
+              <td data-i18n="comp.row2">Turnaround Time</td>
+              <td data-i18n="comp.row2Ai">5 Minutes</td>
               <td data-i18n="comp.row2A">2 to 4 Weeks</td>
               <td class="highlight-col text-emerald" data-i18n="comp.row2B">Just 10 Minutes</td>
             </tr>
             <tr>
-              <td data-i18n="comp.row3">Privacy & Security</td>
-              <td data-i18n="comp.row3A">Shared with office staff</td>
-              <td class="highlight-col" data-i18n="comp.row3B">100% Encrypted & Private</td>
+              <td data-i18n="comp.row3">Indian Succession Act (Sec 63)</td>
+              <td class="text-rose" data-i18n="comp.row3Ai">❌ Fails (Hallucinates US/UK probate)</td>
+              <td data-i18n="comp.row3A">✅ Compliant</td>
+              <td class="highlight-col text-emerald" data-i18n="comp.row3B">✅ 100% Legally Formatted</td>
             </tr>
             <tr>
-              <td data-i18n="comp.row4">Updates & Modifications</td>
-              <td data-i18n="comp.row4A">Extra fee every time</td>
-              <td class="highlight-col" data-i18n="comp.row4B">Free digital edits anytime</td>
+              <td data-i18n="comp.row4">Witness Disqualification (Sec 67)</td>
+              <td class="text-rose" data-i18n="comp.row4Ai">❌ Fatal Trap: Allows beneficiary as witness</td>
+              <td data-i18n="comp.row4A">✅ Checks manually</td>
+              <td class="highlight-col text-emerald" data-i18n="comp.row4B">✅ Automated Statutory Checks</td>
+            </tr>
+            <tr>
+              <td data-i18n="comp.row5">Data Privacy &amp; DPDP Act 2023</td>
+              <td class="text-rose" data-i18n="comp.row5Ai">⚠️ Trained on public AI models</td>
+              <td class="text-rose" data-i18n="comp.row5A">⚠️ Handled by office typists/clerks</td>
+              <td class="highlight-col text-gold" data-i18n="comp.row5B">🔒 Zero-Knowledge Client AES-GCM</td>
+            </tr>
+            <tr>
+              <td data-i18n="comp.row6">Future Lifetime Edits</td>
+              <td data-i18n="comp.row6Ai">Re-prompt from scratch</td>
+              <td class="text-rose" data-i18n="comp.row6A">Paid consultation every visit</td>
+              <td class="highlight-col text-emerald" data-i18n="comp.row6B">✅ Free Lifetime Digital Edits</td>
             </tr>
           </tbody>
         </table>
@@ -518,6 +689,107 @@
   </section>
   -->
 
+  <!-- The Real Cost of Dying Without a Will in India (Loss Aversion Reality Check) -->
+  <section class="section court-cost-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="badge-tag mb-2" style="display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; padding:0.35rem 0.85rem; border-radius:999px; background:rgba(239, 68, 68, 0.15); color:#ef4444; font-weight:700;">
+          <i data-lucide="alert-octagon" style="width:16px;height:16px;"></i> <span>Financial Reality Check</span>
+        </div>
+        <h2 class="section-title">The Real Cost of "Saving" ₹299 Today</h2>
+        <p class="section-subtitle max-w-700">
+          When an Indian passes away without a Will, banks and registrars freeze accounts. Here is what grieving families are actually forced to spend in Indian district courts:
+        </p>
+      </div>
+
+      <div class="court-cost-grid">
+        <!-- 🔴 Without a Will -->
+        <div class="cost-card cost-card-danger glass-card">
+          <div>
+            <div class="cost-card-header">
+              <span class="cost-badge cost-badge-danger">
+                <i data-lucide="x-circle" style="width:14px;height:14px;"></i> Without a Will (Intestate)
+              </span>
+            </div>
+            <h3 class="cost-headline text-rose">12–18 Months of Court &amp; Bank Delays</h3>
+            <p class="cost-subline">What Indian succession law mandates when you leave no written Will:</p>
+
+            <ul class="cost-breakdown-list">
+              <li class="cost-item cost-item-danger">
+                <i data-lucide="lock" class="cost-item-icon"></i>
+                <span><strong>Frozen Accounts &amp; Lockers:</strong> SBI, HDFC, and post offices refuse release without a court order. Nominees cannot withdraw.</span>
+              </li>
+              <li class="cost-item cost-item-danger">
+                <i data-lucide="coins" class="cost-item-icon"></i>
+                <span><strong>Court Succession Certificate:</strong> District courts levy 3% to 5% ad-valorem stamp fees on your family's savings.</span>
+              </li>
+              <li class="cost-item cost-item-danger">
+                <i data-lucide="briefcase" class="cost-item-icon"></i>
+                <span><strong>Lawyer Litigation Fees:</strong> Advocates charge ₹25,000 to ₹1,00,000+ for filing probate or succession petitions.</span>
+              </li>
+              <li class="cost-item cost-item-danger">
+                <i data-lucide="calendar" class="cost-item-icon"></i>
+                <span><strong>10+ Physical Court Visits:</strong> Your grieving spouse and children must attend repeated hearings before a judge.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="cost-card-footer">
+            <div class="cost-total-row">
+              <span class="cost-total-label">Total Cost to Family:</span>
+              <span class="cost-total-val-danger">₹50,000 – ₹1,00,000+</span>
+            </div>
+            <div style="font-size:0.8rem; color:#ef4444; font-weight:600;">
+              ⚠️ Plus 1 to 2 years of frozen assets and court rounds.
+            </div>
+          </div>
+        </div>
+
+        <!-- 🟢 With SmartWill India -->
+        <div class="cost-card cost-card-success glass-card">
+          <div>
+            <div class="cost-card-header">
+              <span class="cost-badge cost-badge-success">
+                <i data-lucide="shield-check" style="width:14px;height:14px;"></i> With SmartWill India
+              </span>
+            </div>
+            <h3 class="cost-headline text-emerald">10 Minutes to Instant Family Immunity</h3>
+            <p class="cost-subline">Legally compliant with Section 63 of the Indian Succession Act 1925:</p>
+
+            <ul class="cost-breakdown-list">
+              <li class="cost-item cost-item-success">
+                <i data-lucide="check-circle-2" class="cost-item-icon"></i>
+                <span><strong>Zero Court Succession Delays:</strong> Clear asset ownership bypasses lengthy intestate court disputes.</span>
+              </li>
+              <li class="cost-item cost-item-success">
+                <i data-lucide="check-circle-2" class="cost-item-icon"></i>
+                <span><strong>Direct Bank Settlement:</strong> Banks release FDs, mutual funds, and properties directly to designated heirs.</span>
+              </li>
+              <li class="cost-item cost-item-success">
+                <i data-lucide="check-circle-2" class="cost-item-icon"></i>
+                <span><strong>2-Witness Statutory Validity:</strong> Structured with automated witness conflict-of-interest checks (Sec 67).</span>
+              </li>
+              <li class="cost-item cost-item-success">
+                <i data-lucide="check-circle-2" class="cost-item-icon"></i>
+                <span><strong>Free Lifetime Digital Edits:</strong> Update assets, add children, or change allocation anytime at zero extra charge.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="cost-card-footer">
+            <div class="cost-total-row">
+              <span class="cost-total-label">SmartWill Total Price:</span>
+              <span class="cost-total-val-success">₹299 (Fixed)</span>
+            </div>
+            <a href="app.html" class="btn btn-gold btn-lg w-full shadow-gold" style="justify-content:center;">
+              Protect Your Family for ₹299 <i data-lucide="arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing Section -->
   <section id="pricing" class="section pricing-section">
     <div class="container">
@@ -545,10 +817,155 @@
           </ul>
 
           <a href="app.html" class="btn btn-gold btn-lg w-full" data-i18n="pricing.cta">Get Started Now - ₹299</a>
-          
-          <p class="courier-note" data-i18n="pricing.courierAddon">
-            📦 Optional: Hardcopy Print & Legal Execution Kit delivered to home (+₹499)
-          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Legal Awareness: Valid vs. Invalid Will Rules (Indian Succession Act, 1925) -->
+  <section id="legal-awareness" class="section legal-awareness-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="badge-tag mb-2" style="display:inline-flex; align-items:center; gap:6px; font-size:0.8rem; padding:0.35rem 0.85rem; border-radius:999px; background:rgba(223, 183, 108, 0.15); color:var(--accent-gold); font-weight:700;">
+          <i data-lucide="scale" style="width:16px;height:16px;"></i> <span data-i18n="awareness.badge">Indian Succession Act, 1925 • Legal Awareness</span>
+        </div>
+        <h2 class="section-title" data-i18n="awareness.title">What Makes a Will 100% Legally Valid vs. Invalid in India?</h2>
+        <p class="section-subtitle max-w-700" data-i18n="awareness.subtitle">
+          Don't let common myths or signing mistakes void your family's hard-earned inheritance. Understand what Indian law actually requires.
+        </p>
+      </div>
+
+      <div class="awareness-grid">
+        <!-- 🟢 Valid & Legally Enforceable -->
+        <div class="awareness-card card-valid glass-card">
+          <div class="card-status-header">
+            <div class="status-indicator valid">
+              <i data-lucide="check-circle-2"></i>
+            </div>
+            <div>
+              <h3 class="m-0" data-i18n="awareness.validHeading">100% Legal & Court-Enforceable</h3>
+              <p class="text-muted text-xs m-0" data-i18n="awareness.validSub">What the Indian Succession Act 1925 strictly recognizes</p>
+            </div>
+          </div>
+
+          <div class="awareness-rules-list">
+            <div class="rule-item">
+              <div class="rule-icon"><i data-lucide="file-text"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.rule1Title">Plain White A4 Paper is 100% Legal</h4>
+                <p data-i18n="awareness.rule1Desc">Under Indian law, stamp paper or green sheets are NOT required. A clean printout on plain A4 paper carries full legal validity in court.</p>
+              </div>
+            </div>
+
+            <div class="rule-item">
+              <div class="rule-icon"><i data-lucide="users"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.rule2Title">Two Independent Adult Witnesses</h4>
+                <p data-i18n="awareness.rule2Desc">Two individuals (aged 18+) must witness your signature and sign in each other's presence. They must be mentally sound.</p>
+              </div>
+            </div>
+
+            <div class="rule-item">
+              <div class="rule-icon"><i data-lucide="stamp"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.rule3Title">Registration is Completely Optional</h4>
+                <p data-i18n="awareness.rule3Desc">Under Section 18 of the Registration Act 1908, registering a Will is optional. An unregistered Will has equal legal force.</p>
+              </div>
+            </div>
+
+            <div class="rule-item">
+              <div class="rule-icon"><i data-lucide="languages"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.rule4Title">Any Indian Language Permitted</h4>
+                <p data-i18n="awareness.rule4Desc">You can legally draft your Will in English, Telugu, Hindi, or any regional language understood by you.</p>
+              </div>
+            </div>
+
+            <div class="rule-item">
+              <div class="rule-icon"><i data-lucide="refresh-cw"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.rule5Title">Unlimited Lifetime Updates</h4>
+                <p data-i18n="awareness.rule5Desc">You can amend or revoke your Will anytime. The latest dated Will automatically supersedes all older versions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🔴 Fatal Mistakes & Illegal Traps -->
+        <div class="awareness-card card-invalid glass-card">
+          <div class="card-status-header">
+            <div class="status-indicator invalid">
+              <i data-lucide="alert-triangle"></i>
+            </div>
+            <div>
+              <h3 class="m-0" data-i18n="awareness.invalidHeading">Critical Traps & Illegal Mistakes</h3>
+              <p class="text-muted text-xs m-0" data-i18n="awareness.invalidSub">Mistakes that make a Will void or rejected in court</p>
+            </div>
+          </div>
+
+          <div class="awareness-rules-list">
+            <div class="rule-item danger">
+              <div class="rule-icon"><i data-lucide="ban"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.trap1Title">Beneficiary Signing as a Witness (Section 67)</h4>
+                <p data-i18n="awareness.trap1Desc"><strong>Fatal Trap:</strong> If your son, daughter, or spouse signs as a witness, their entire bequest is <strong>100% void</strong> by law! Witnesses must be independent.</p>
+              </div>
+            </div>
+
+            <div class="rule-item danger">
+              <div class="rule-icon"><i data-lucide="shield-alert"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.trap2Title">Gifting Ancestral Property Beyond Your Share</h4>
+                <p data-i18n="awareness.trap2Desc">You can only freely bequeath <strong>self-acquired property</strong>. You cannot disinherit legal coparceners from undivided ancestral family land.</p>
+              </div>
+            </div>
+
+            <div class="rule-item danger">
+              <div class="rule-icon"><i data-lucide="user-x"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.trap3Title">Coercion, Force, or Lack of Sound Mind</h4>
+                <p data-i18n="awareness.trap3Desc">Any Will executed under physical pressure, emotional blackmail, fraud, or during mental incapacity is null and void.</p>
+              </div>
+            </div>
+
+            <div class="rule-item danger">
+              <div class="rule-icon"><i data-lucide="file-diff"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.trap4Title">Altering Document After Signature (Forgery)</h4>
+                <p data-i18n="awareness.trap4Desc">Tampering with or digitally editing a signed Will is a non-bailable criminal offense (Forgery under Sec 463/465 IPC / BNS).</p>
+              </div>
+            </div>
+
+            <div class="rule-item danger">
+              <div class="rule-icon"><i data-lucide="divide"></i></div>
+              <div class="rule-content">
+                <h4 data-i18n="awareness.trap5Title">Vague Proportions Leading to Family Disputes</h4>
+                <p data-i18n="awareness.trap5Desc">Ambiguous instructions ("give some money to X") cause civil lawsuits. Percentages must be clearly specified to 100%.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Legal Myth-Busters Banner -->
+      <div class="myths-banner glass-card mt-4">
+        <div class="myths-header flex align-center gap-2 mb-3">
+          <i data-lucide="help-circle" class="text-gold"></i>
+          <h4 class="m-0" data-i18n="awareness.mythsTitle">Top 3 Indian Will Myths Debunked</h4>
+        </div>
+        <div class="myths-grid">
+          <div class="myth-box">
+            <div class="myth-label" data-i18n="awareness.myth1Label">❌ Myth: "Nominee automatically owns the asset after death"</div>
+            <div class="fact-label" data-i18n="awareness.fact1Label">✅ Supreme Court Reality: A nominee is merely a temporary trustee. The true legal owner is the beneficiary designated in your Will.</div>
+          </div>
+          <div class="myth-box">
+            <div class="myth-label" data-i18n="awareness.myth2Label">❌ Myth: "A Doctor must always certify the Will"</div>
+            <div class="fact-label" data-i18n="awareness.fact2Label">✅ Supreme Court Reality: Medical certificates are NOT legally mandatory, though helpful if the testator is advanced in age or ailing.</div>
+          </div>
+          <div class="myth-box">
+            <div class="myth-label" data-i18n="awareness.myth3Label">❌ Myth: "You need an expensive ₹10,000 advocate"</div>
+            <div class="fact-label" data-i18n="awareness.fact3Label">✅ Supreme Court Reality: The law does not mandate lawyers. Any citizen can draft their own valid Will on plain paper.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -604,14 +1021,15 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- Footer -->
   <footer class="footer">
     <div class="container footer-container">
       <div class="footer-col">
         <a href="index.html" class="nav-logo" aria-label="SmartWill India Home">
-          <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
-          <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
           <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
         </a>
         <p class="footer-desc" data-i18n="footer.desc">
@@ -636,6 +1054,7 @@
           <li><a href="terms.html">Terms & Conditions</a></li>
           <li><a href="refunds.html">Refunds & Cancellations</a></li>
           <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
         </ul>
         <p class="footer-disclaimer mt-2" data-i18n="footer.disclaimer">
           Disclaimer: SmartWill provides software-assisted legal document generation. Physical signature with 2 witnesses is legally required under the Indian Succession Act 1925.
@@ -734,14 +1153,134 @@
     </div>
   </div>
 
+  <!-- Sample Legal Will Preview Modal -->
+  <div id="sampleWillModal" class="sample-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="sampleModalTitle">
+    <div class="sample-modal-card">
+      <div class="sample-modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <i data-lucide="file-check" style="color:var(--accent-gold); width:20px; height:20px;"></i>
+          <span id="sampleModalTitle" style="font-weight:700; font-size:1.1rem; color:var(--text-main);">Official Legal Will Format (Sample Preview)</span>
+        </div>
+        <button type="button" onclick="closeSampleWillModal()" class="dashboard-modal-close" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="sample-modal-body">
+        <div class="sample-watermark">SAMPLE PREVIEW • SMARTWILL INDIA</div>
+        <div class="sample-doc-container">
+          <div class="sample-doc-title">
+            LAST WILL AND TESTAMENT<br>
+            <span style="font-size:0.9rem; font-weight:normal; font-style:italic;">(Drafted in compliance with Section 63 of the Indian Succession Act, 1925)</span>
+          </div>
+
+          <div class="sample-clause">
+            <p>I, <strong>RAMESH KUMAR SHARMA</strong>, S/o Late Shri Gopal Sharma, aged about 48 years, residing at Flat 402, Sai Residency, Banjara Hills, Hyderabad, Telangana 500034, do hereby revoke all my previous Wills, Codicils, and testamentary dispositions made by me at any time heretofore, and declare this to be my <strong>LAST WILL AND TESTAMENT</strong>.</p>
+          </div>
+
+          <div class="sample-clause">
+            <div class="sample-clause-title">1. DECLARATION OF SOUND MIND &amp; DISPOSING CAPACITY</div>
+            <p>I declare that I am of sound, disposing mind, memory, and understanding, and that I am executing this Will voluntarily out of my own free will and pleasure, without any coercion, fraud, undue influence, or misrepresentation from any person whatsoever.</p>
+          </div>
+
+          <div class="sample-clause">
+            <div class="sample-clause-title">2. APPOINTMENT OF EXECUTOR</div>
+            <p>I hereby nominate, constitute, and appoint my trusted spouse, <strong>SMT. PRIYA SHARMA</strong>, to be the Sole Executor of this my Will. In the event she is unwilling or unable to act, I appoint my brother, Shri Rajesh Sharma, as the Alternate Executor.</p>
+          </div>
+
+          <div class="sample-clause">
+            <div class="sample-clause-title">3. DEVISE &amp; BEQUEST OF ASSETS</div>
+            <p>Upon my demise, my scheduled assets shall be distributed as follows:</p>
+            <ul style="margin: 0.5rem 0 0.5rem 1.5rem; line-height: 1.8;">
+              <li><strong>Immovable Property:</strong> 100% share in Residential Flat 402, Sai Residency, Hyderabad shall devolve absolutely upon my spouse, <strong>SMT. PRIYA SHARMA</strong>.</li>
+              <li><strong>Financial Assets:</strong> Savings Account &amp; Fixed Deposits held in HDFC Bank (A/c No. ending in ****4921) and Zerodha Demat Account (ID ending in ****812) shall be distributed equally (50% each) between my children, <strong>ROHAN SHARMA</strong> and <strong>ANANYA SHARMA</strong>.</li>
+              <li><strong>Gold &amp; Valuables:</strong> All my gold ornaments and family silver shall devolve exclusively upon my daughter, <strong>ANANYA SHARMA</strong>.</li>
+            </ul>
+          </div>
+
+          <div class="sample-clause">
+            <div class="sample-clause-title">4. RESIDUARY CLAUSE</div>
+            <p>Any other property, asset, claim, or sum of money belonging to me at the time of my death not specifically mentioned herein shall devolve absolutely upon my spouse, SMT. PRIYA SHARMA.</p>
+          </div>
+
+          <div class="sample-witness-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem;">
+              <div>
+                <p style="margin:0; font-weight:700;">TESTATOR SIGNATURE:</p>
+                <div style="height:40px; border-bottom:1px solid currentColor; width:180px; margin-top:8px;"></div>
+                <p style="margin:4px 0 0; font-size:0.85rem;">(Ramesh Kumar Sharma)</p>
+              </div>
+              <div style="text-align:right;">
+                <p style="margin:0;">Date: _____ / _____ / 2026</p>
+                <p style="margin:4px 0 0;">Place: Hyderabad, India</p>
+              </div>
+            </div>
+
+            <div class="sample-clause-title">ATTESTATION BY TWO INDEPENDENT WITNESSES (Sec 63 Indian Succession Act)</div>
+            <p style="font-size:0.85rem; font-style:italic; margin-bottom:1rem;">Signed by the above-named Testator in our joint presence, and we, in his presence and at his request, and in the presence of each other, have subscribed our names as attesting witnesses. We confirm that neither of us is a beneficiary or spouse of a beneficiary under this Will (Sec 67 compliant).</p>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; font-size:0.85rem;">
+              <div style="border:1px solid rgba(0,0,0,0.15); padding:10px; border-radius:6px;">
+                <strong>WITNESS 1:</strong><br>
+                Signature: _______________________<br>
+                Name: Shri Vikram Rao<br>
+                Address: Hyderabad, Telangana
+              </div>
+              <div style="border:1px solid rgba(0,0,0,0.15); padding:10px; border-radius:6px;">
+                <strong>WITNESS 2:</strong><br>
+                Signature: _______________________<br>
+                Name: Smt. Sunita Verma<br>
+                Address: Hyderabad, Telangana
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sample-modal-footer">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.85rem; color:var(--text-muted);">Print on plain A4 paper • Valid in all Indian Courts</span>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeSampleWillModal()">Close Preview</button>
+          <a href="app.html" class="btn btn-gold btn-sm shadow-gold">Create Your Will Now — ₹299 &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">₹299</span>
+      <span class="mobile-sticky-sub">10 Mins • Legally Valid</span>
+    </div>
+    <a href="app.html" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
   <script type="module" src="js/i18n/index.js"></script>
   <script type="module" src="js/services/auth.js"></script>
   <script type="module" src="js/pages/landing.js"></script>
-  <script src="js/animations.js"></script>
-  <script src="js/theme-switcher.js"></script>
-  <script src="js/demo-tour.js"></script>
+  <script type="module" src="js/ui/legalBot.js"></script>
+  <!-- nomineeCheck is already initialized by landing.js -->
+  <script src="js/animations.js" defer></script>
+  <script src="js/theme-switcher.js" defer></script>
+  <script src="js/demo-tour.js" defer></script>
   <script>
-    lucide.createIcons();
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(function() { window.lucide.createIcons(); }, { timeout: 2500 });
+        } else {
+          setTimeout(function() { window.lucide.createIcons(); }, 500);
+        }
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
 
     // ── Announcement Banner ──
     (function () {
@@ -749,17 +1288,29 @@
       const dismiss = document.getElementById('announceDismiss');
       if (!banner) return;
 
+      function updateBannerOffset() {
+        if (!banner || banner.classList.contains('hidden') || !document.documentElement.classList.contains('banner-visible')) {
+          document.documentElement.style.setProperty('--banner-height', '0px');
+          return;
+        }
+        document.documentElement.style.setProperty('--banner-height', banner.offsetHeight + 'px');
+      }
+
       // If user dismissed this session, hide immediately
       if (sessionStorage.getItem('sw_banner_dismissed') === '1') {
         banner.classList.add('hidden');
+        document.documentElement.classList.remove('banner-visible');
+        document.documentElement.style.setProperty('--banner-height', '0px');
       } else {
-        document.body.classList.add('banner-visible');
+        updateBannerOffset();
+        window.addEventListener('resize', updateBannerOffset, { passive: true });
       }
 
       if (dismiss) {
         dismiss.addEventListener('click', () => {
           banner.classList.add('hidden');
-          document.body.classList.remove('banner-visible');
+          document.documentElement.classList.remove('banner-visible');
+          document.documentElement.style.setProperty('--banner-height', '0px');
           sessionStorage.setItem('sw_banner_dismissed', '1');
         });
       }

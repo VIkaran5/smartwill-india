@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Global DPDP Act 2023 & Analytics Consent Banner for SmartWill India
  * Injected on all pages to ensure lawful, transparent consent prior to analytics execution.
  */
@@ -21,6 +21,11 @@
   }
 
   function initConsent() {
+    // Inside the Will creation wizard (app.html), legal DPDP consent is explicitly handled in-form via #dpdpConsentCheckbox
+    if (window.location.pathname.includes('app.html') || window.location.pathname === '/app') {
+      return;
+    }
+
     const currentConsent = localStorage.getItem(CONSENT_KEY);
 
     if (currentConsent === 'accepted') {
@@ -42,7 +47,7 @@
 
     const banner = document.createElement('div');
     banner.id = 'swConsentBanner';
-    banner.innerHTML = 
+    banner.innerHTML = `
       <div class="sw-banner-inner">
         <div class="sw-banner-text">
           <span class="sw-banner-icon">🛡️</span>
@@ -56,10 +61,10 @@
           <button id="swBtnDeclineConsent" class="sw-banner-btn sw-banner-btn-secondary">Decline Optional</button>
         </div>
       </div>
-    ;
+    `;
 
     const style = document.createElement('style');
-    style.textContent = 
+    style.textContent = `
       #swConsentBanner {
         position: fixed;
         bottom: 20px;
@@ -151,7 +156,7 @@
         .sw-banner-actions { justify-content: flex-end; }
         .sw-banner-btn { flex: 1; text-align: center; }
       }
-    ;
+    `;
 
     document.head.appendChild(style);
     document.body.appendChild(banner);
@@ -167,6 +172,25 @@
       banner.remove();
     });
   }
+
+  // Expose globally so users can trigger or review cookie preferences at any time
+  window.openCookieConsent = function (force = true) {
+    if (force) {
+      const existing = document.getElementById('swConsentBanner');
+      if (existing) {
+        existing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      renderBanner();
+      return;
+    }
+    initConsent();
+  };
+
+  window.resetCookieConsent = function () {
+    localStorage.removeItem(CONSENT_KEY);
+    window.openCookieConsent(true);
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initConsent);

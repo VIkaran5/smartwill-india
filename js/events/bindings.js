@@ -8,18 +8,40 @@ import { updateStepper, goToStep } from '../wizard/stepper.js';
 import { validateCurrentStep } from '../wizard/validation.js';
 import { WizardController } from '../wizard/controller.js';
 import { cleanAddressField } from '../utils/formatters.js';
-import { isValidEmailFormat, getEmailTypoWarning, validateGovtId } from '../utils/validators.js';
+import { isValidEmailFormat, getEmailTypoWarning, validateGovtId, isValidIndianPincode } from '../utils/validators.js';
+import { escapeHTML } from '../utils/sanitizer.js';
 import { initPaymentService } from '../services/payment.js';
 import { initI18n } from '../i18n/index.js';
 import { renderLanguageSelector } from '../ui/langSelector.js';
 import { initAuthService } from '../services/auth.js';
 import { showToast } from '../ui/toast.js';
+import { initDraftPreview, updateDraftContainer } from '../render/draftPreview.js';
 
 export function bindEvents() {
   initI18n();
   renderLanguageSelector();
   initAuthService();
   initPaymentService();
+  initDraftPreview();
+
+  // Re-render dynamic modules immediately whenever the user switches language
+  window.addEventListener('languageChanged', (e) => {
+    const newLang = e.detail?.lang || 'en';
+    updateState({ lang: newLang });
+    renderAssets();
+    renderBeneficiaries();
+    if (document.getElementById('allocationContainer')) {
+      renderAllocations();
+    }
+    if (document.getElementById('willSummaryPreview') || document.getElementById('reviewSection') || document.getElementById('summaryAssetsList')) {
+      renderSummary();
+    }
+    const draftModal = document.getElementById('draftPreviewModal');
+    if (draftModal && !draftModal.classList.contains('hidden')) {
+      updateDraftContainer();
+    }
+  });
+
   const nextBtn = document.getElementById('nextBtn');
   const prevBtn = document.getElementById('prevBtn');
   const addAssetBtn = document.getElementById('addAssetBtn');
@@ -49,6 +71,21 @@ export function bindEvents() {
       });
     }
   });
+
+  const executorName = document.getElementById('executorName');
+  const executorRelation = document.getElementById('executorRelation');
+  if (executorName) {
+    executorName.addEventListener('input', () => {
+      saveCurrentStepInputs();
+      renderSummary();
+    });
+  }
+  if (executorRelation) {
+    executorRelation.addEventListener('change', () => {
+      saveCurrentStepInputs();
+      renderSummary();
+    });
+  }
 
   const confirmCheckbox = document.getElementById('confirmCheckbox');
   if (confirmCheckbox) {
@@ -170,7 +207,7 @@ export function bindEvents() {
   }
 
   if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', async () => {
       const current = getState().currentStep;
       if (current === 1) {
         const box = document.getElementById('dpdpConsentCheckbox');
@@ -178,6 +215,49 @@ export function bindEvents() {
           showToast('error', 'Consent Required 🛡️', 'Please tick the DPDP Act 2023 Consent checkbox at the top to proceed.');
           box.scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
+        }
+
+        const pinInput = document.getElementById('addressPincode');
+        if (pinInput) {
+          const pinVal = pinInput.value.trim().replace(/\D/g, '');
+          if (!pinVal) {
+            showToast('warning', t('toast.mandatoryFields'));
+            pinInput.focus();
+            pinInput.classList.add('input-error-highlight');
+            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+            return;
+          }
+          if (pinVal.startsWith('0')) {
+            showToast('warning', t('toast.pincodeZero'));
+            pinInput.focus();
+            pinInput.classList.add('input-error-highlight');
+            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+            return;
+          }
+          if (pinVal.length !== 6) {
+            showToast('warning', t('toast.pincodeIncomplete'));
+            pinInput.focus();
+            pinInput.classList.add('input-error-highlight');
+            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+            return;
+          }
+          if (pinInput.dataset.status === 'invalid') {
+            showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound'));
+            pinInput.focus();
+            pinInput.classList.add('input-error-highlight');
+            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+            return;
+          }
+          if (!pinInput.dataset.status || pinInput.dataset.status === 'incomplete') {
+            const verifiedOk = await verifyPincode(false);
+            if (!verifiedOk && pinInput.dataset.status === 'invalid') {
+              showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound'));
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+          }
         }
       }
       saveCurrentStepInputs();
@@ -219,7 +299,8 @@ export function saveCurrentStepInputs() {
         addressLine1: document.getElementById('addressLine1')?.value?.trim() || '',
         addressCity: document.getElementById('addressCity')?.value?.trim() || '',
         addressState: document.getElementById('addressState')?.value?.trim() || '',
-        addressPincode: document.getElementById('addressPincode')?.value?.trim() || ''
+        addressPincode: document.getElementById('addressPincode')?.value?.trim() || '',
+        pincodeStatus: document.getElementById('addressPincode')?.dataset?.status || ''
       }
     });
   }
@@ -250,6 +331,25 @@ export function populatePersonalFields(state) {
     if (el) el.value = p[id] || '';
   });
 
+  // Restore Pincode Verification State if already present
+  const pinInput = document.getElementById('addressPincode');
+  const btnVerify = document.getElementById('btnVerifyPincode');
+  const badge = document.getElementById('pincodeStatusBadge');
+  if (pinInput && p.addressPincode && /^[1-9]\d{5}$/.test(p.addressPincode)) {
+    pinInput.dataset.status = p.pincodeStatus || 'verified';
+    if (pinInput.dataset.status === 'verified') {
+      if (btnVerify) {
+        btnVerify.classList.add('is-verified');
+        btnVerify.textContent = t('form.verifiedBtn') || '✓ Verified';
+      }
+      if (badge && p.addressCity && p.addressState) {
+        badge.classList.remove('hidden');
+        badge.style.color = '#10b981';
+        badge.innerHTML = `✓ PIN ${escapeHTML(p.addressPincode)} Verified: <strong>${escapeHTML(p.addressCity)}, ${escapeHTML(p.addressState)}</strong>`;
+      }
+    }
+  }
+
   const e = state.executor || {};
   const executorFields = { executorName: 'name', executorRelation: 'relation' };
   Object.entries(executorFields).forEach(([elId, key]) => {
@@ -271,108 +371,237 @@ function updateEmailTargetDisplay() {
   }
 }
 
-function setupPincodeAutoLookup() {
+export async function verifyPincode(isExplicit = false) {
   const pinInput = document.getElementById('addressPincode');
   const cityInput = document.getElementById('addressCity');
   const stateInput = document.getElementById('addressState');
   const badge = document.getElementById('pincodeStatusBadge');
+  const btnVerify = document.getElementById('btnVerifyPincode');
 
-  if (!pinInput) return;
+  if (!pinInput) return false;
 
-  async function lookupPincode() {
-    const pin = pinInput.value.trim().replace(/\D/g, '');
+  const rawPin = pinInput.value.trim();
+  const pin = rawPin.replace(/\D/g, '').slice(0, 6);
+  if (pinInput.value !== pin) pinInput.value = pin;
 
-    if (pin.length !== 6) {
-      if (badge) badge.classList.add('hidden');
-      return;
+  if (!pin) {
+    if (badge) badge.classList.add('hidden');
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.disabled = false;
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
     }
+    pinInput.dataset.status = '';
+    return false;
+  }
 
-    // Show loading state
+  if (pin.startsWith('0')) {
+    if (badge) {
+      badge.classList.remove('hidden');
+      badge.style.color = '#f43f5e';
+      badge.textContent = t('toast.pincodeZero') || '⚠️ Indian PIN codes cannot start with 0.';
+    }
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.disabled = false;
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
+    }
+    pinInput.dataset.status = 'invalid';
+    return false;
+  }
+
+  if (pin.length < 6) {
     if (badge) {
       badge.classList.remove('hidden');
       badge.style.color = '#f59e0b';
-      badge.innerHTML = `⏳ Verifying PIN ${pin}...`;
+      badge.textContent = t('toast.pincodeIncomplete') || '⚠️ PIN code must be 6 digits (e.g. 500038).';
     }
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.disabled = false;
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
+    }
+    pinInput.dataset.status = 'incomplete';
+    return false;
+  }
 
-    let detectedDistrict = '';
-    let detectedState = '';
-    let primaryApiResponded = false;  // tracks if API responded (even with "not found")
-    let primaryApiInvalid = false;    // tracks if API explicitly said "invalid/not found"
+  // Show loading state
+  if (badge) {
+    badge.classList.remove('hidden');
+    badge.style.color = '#f59e0b';
+    badge.textContent = `⏳ ${t('toast.pincodeDetecting') || 'Verifying PIN'} ${pin}...`;
+  }
+  if (btnVerify) {
+    btnVerify.disabled = true;
+    btnVerify.textContent = '⏳...';
+  }
+  pinInput.dataset.status = 'checking';
 
-    // ── Primary API: api.postalpincode.in ──
+  let detectedDistrict = '';
+  let detectedState = '';
+  let primaryApiInvalid = false;
+
+  // ── Primary API: api.postalpincode.in ──
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    const data = await res.json();
+
+    if (data && data[0]) {
+      if (data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+        const po = data[0].PostOffice[0];
+        detectedDistrict = po.District || po.Region || po.Division || '';
+        detectedState = po.State || '';
+      } else if (data[0].Status === 'Error' || data[0].Status === 'No records') {
+        primaryApiInvalid = true;
+      }
+    }
+  } catch (err) {
+    console.warn('[Pincode] Primary API timeout/error, trying fallback...', err?.message);
+  }
+
+  // ── Fallback API: zippopotam.us ──
+  if (!detectedState) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
-      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      const data = await res.json();
-
-      primaryApiResponded = true;
-
-      if (data && data[0]) {
-        if (data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
-          const po = data[0].PostOffice[0];
-          detectedDistrict = po.District || po.Region || po.Division || '';
-          detectedState = po.State || '';
-        } else if (data[0].Status === 'Error' || data[0].Status === 'No records') {
-          // API responded and explicitly says this pincode doesn't exist
-          primaryApiInvalid = true;
+      const res2 = await fetch(`https://api.zippopotam.us/IN/${pin}`);
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2 && data2.places && data2.places.length > 0) {
+          detectedDistrict = data2.places[0]['place name'] || '';
+          detectedState = data2.places[0]['state'] || '';
+          primaryApiInvalid = false;
         }
+      } else if (res2.status === 404) {
+        primaryApiInvalid = true;
       }
-    } catch (err) {
-      // Network error or timeout — primaryApiResponded stays false
-      console.warn('[Pincode] Primary API timeout/error, trying fallback...', err.message);
-    }
-
-    // ── Fallback API: zippopotam.us ──
-    if (!detectedState) {
-      try {
-        const res2 = await fetch(`https://api.zippopotam.us/IN/${pin}`);
-        if (res2.ok) {
-          const data2 = await res2.json();
-          if (data2 && data2.places && data2.places.length > 0) {
-            detectedDistrict = data2.places[0]['place name'] || '';
-            detectedState = data2.places[0]['state'] || '';
-            primaryApiInvalid = false; // fallback confirmed it's valid
-          }
-        } else if (res2.status === 404) {
-          // Fallback also says not found — definitely invalid
-          primaryApiInvalid = true;
-        }
-      } catch (err2) {
-        console.warn('[Pincode] Fallback API error:', err2.message);
-      }
-    }
-
-    // ── Display Result ──
-    if (detectedState) {
-      // ✅ CASE 1: Valid pincode — auto-fill and show green
-      if (stateInput) stateInput.value = detectedState;
-      if (cityInput && detectedDistrict) cityInput.value = detectedDistrict;
-      saveCurrentStepInputs();
-
-      if (badge) {
-        badge.style.color = '#10b981';
-        badge.innerHTML = `✓ PIN ${pin} Verified: <strong>${detectedDistrict ? detectedDistrict + ', ' : ''}${detectedState}</strong>`;
-      }
-    } else if (primaryApiInvalid) {
-      // ❌ CASE 2: Both APIs confirmed this pincode does NOT exist
-      if (badge) {
-        badge.style.color = '#f43f5e';
-        badge.innerHTML = `❌ PIN ${pin} is invalid. This PIN code does not exist in India. Please check.`;
-      }
-    } else {
-      // ⚠️ CASE 3: Network error / API offline — can't verify, warn but don't block
-      saveCurrentStepInputs();
-      if (badge) {
-        badge.style.color = '#f59e0b';
-        badge.innerHTML = `⚠️ PIN ${pin} could not be verified (network issue). Please double-check manually.`;
-      }
+    } catch (err2) {
+      console.warn('[Pincode] Fallback API error:', err2?.message);
     }
   }
 
-  pinInput.addEventListener('input', lookupPincode);
-  pinInput.addEventListener('blur', lookupPincode);
+  if (btnVerify) btnVerify.disabled = false;
+
+  // ── Display Result ──
+  if (detectedState) {
+    if (stateInput) stateInput.value = detectedState;
+    if (cityInput && detectedDistrict) cityInput.value = detectedDistrict;
+    pinInput.dataset.status = 'verified';
+
+    if (badge) {
+      badge.classList.remove('hidden');
+      badge.style.color = '#10b981';
+      badge.innerHTML = `✓ PIN ${escapeHTML(pin)} Verified: <strong>${detectedDistrict ? escapeHTML(detectedDistrict) + ', ' : ''}${escapeHTML(detectedState)}</strong>`;
+    }
+    if (btnVerify) {
+      btnVerify.classList.add('is-verified');
+      btnVerify.textContent = t('form.verifiedBtn') || '✓ Verified';
+    }
+    if (isExplicit) {
+      showToast('success', t('toast.pincodeVerified') || 'PIN Verified', `${detectedDistrict ? detectedDistrict + ', ' : ''}${detectedState}`);
+    }
+    saveCurrentStepInputs();
+    return true;
+  } else if (primaryApiInvalid) {
+    pinInput.dataset.status = 'invalid';
+    if (badge) {
+      badge.classList.remove('hidden');
+      badge.style.color = '#f43f5e';
+      badge.textContent = `❌ PIN ${pin} is invalid. This PIN code does not exist in India. Please check.`;
+    }
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
+    }
+    if (isExplicit) {
+      showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound') || 'This PIN code does not exist in India.');
+    }
+    saveCurrentStepInputs();
+    return false;
+  } else {
+    // Network / API offline fallback
+    pinInput.dataset.status = 'unverified_offline';
+    if (badge) {
+      badge.classList.remove('hidden');
+      badge.style.color = '#f59e0b';
+      badge.textContent = `⚠️ PIN ${pin} could not be verified (network issue). Please double-check manually.`;
+    }
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
+    }
+    saveCurrentStepInputs();
+    return true;
+  }
+}
+
+function setupPincodeAutoLookup() {
+  const pinInput = document.getElementById('addressPincode');
+  const btnVerify = document.getElementById('btnVerifyPincode');
+  const badge = document.getElementById('pincodeStatusBadge');
+
+  if (!pinInput) return;
+
+  pinInput.addEventListener('input', () => {
+    const raw = pinInput.value.replace(/\D/g, '').slice(0, 6);
+    if (pinInput.value !== raw) pinInput.value = raw;
+
+    if (btnVerify) {
+      btnVerify.classList.remove('is-verified');
+      btnVerify.textContent = t('form.verifyBtn') || 'Verify';
+    }
+
+    if (raw.length === 0) {
+      if (badge) badge.classList.add('hidden');
+      pinInput.dataset.status = '';
+      return;
+    }
+
+    if (raw.startsWith('0')) {
+      if (badge) {
+        badge.classList.remove('hidden');
+        badge.style.color = '#f43f5e';
+        badge.textContent = t('toast.pincodeZero') || '⚠️ Indian PIN codes cannot start with 0.';
+      }
+      pinInput.dataset.status = 'invalid';
+      return;
+    }
+
+    if (raw.length < 6) {
+      if (badge) {
+        badge.classList.remove('hidden');
+        badge.style.color = '#f59e0b';
+        badge.textContent = t('toast.pincodeIncomplete') || '⚠️ PIN code must be 6 digits (e.g. 500038).';
+      }
+      pinInput.dataset.status = 'incomplete';
+      return;
+    }
+
+    // Exact 6 digits reached: auto lookup!
+    verifyPincode(false);
+  });
+
+  pinInput.addEventListener('blur', () => {
+    const raw = pinInput.value.replace(/\D/g, '').slice(0, 6);
+    if (raw.length === 6 && pinInput.dataset.status !== 'verified') {
+      verifyPincode(false);
+    }
+  });
+
+  if (btnVerify) {
+    btnVerify.addEventListener('click', () => {
+      const pin = pinInput.value.trim();
+      if (!pin || pin.length < 6 || pin.startsWith('0')) {
+        pinInput.focus();
+        pinInput.classList.add('input-error-highlight');
+        setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+        showToast('warning', pin.startsWith('0') ? t('toast.pincodeZero') : t('toast.pincodeIncomplete'));
+        return;
+      }
+      verifyPincode(true);
+    });
+  }
 }
 
 function setupGovtIdValidation() {
@@ -400,7 +629,7 @@ function setupGovtIdValidation() {
     if (badge) {
       badge.classList.remove('hidden');
       badge.style.color = result.isValid ? '#10b981' : '#f43f5e';
-      badge.innerHTML = result.message;
+      badge.textContent = result.message;
     }
   }
 
@@ -428,10 +657,10 @@ function setupMobileAndEmailValidation() {
 
       if (/^[6-9]\d{9}$/.test(val)) {
         phoneBadge.style.color = '#10b981';
-        phoneBadge.innerHTML = `✓ Valid Indian Mobile (+91 ${val})`;
+        phoneBadge.textContent = `✓ Valid Indian Mobile (+91 ${val})`;
       } else {
         phoneBadge.style.color = '#f43f5e';
-        phoneBadge.innerHTML = `⚠️ Must be 10 digits starting with 6, 7, 8, or 9.`;
+        phoneBadge.textContent = `⚠️ Must be 10 digits starting with 6, 7, 8, or 9.`;
       }
     });
   }
@@ -450,16 +679,16 @@ function setupMobileAndEmailValidation() {
       const typoWarning = getEmailTypoWarning(val);
       if (typoWarning) {
         emailBadge.style.color = '#f59e0b';
-        emailBadge.innerHTML = `⚠️ Typo Detected: ${typoWarning}`;
+        emailBadge.textContent = `⚠️ Typo Detected: ${typoWarning}`;
         return;
       }
 
       if (isValidEmailFormat(val)) {
         emailBadge.style.color = '#10b981';
-        emailBadge.innerHTML = `✓ Valid Email Address (${val})`;
+        emailBadge.textContent = `✓ Valid Email Address (${val})`;
       } else {
         emailBadge.style.color = '#f43f5e';
-        emailBadge.innerHTML = `⚠️ Please enter a valid email (e.g. ramesh@gmail.com).`;
+        emailBadge.textContent = `⚠️ Please enter a valid email (e.g. ramesh@gmail.com).`;
       }
     });
   }

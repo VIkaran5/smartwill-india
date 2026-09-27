@@ -8,6 +8,7 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == userId
         && request.resource.data.keys().hasOnly(['fullName', 'email', 'photoURL', 'updatedAt']);
       allow update: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['fullName', 'email', 'photoURL', 'updatedAt', 'referredBy'])
         && !('referredBy' in request.resource.data.diff(resource.data).affectedKeys());
       allow delete: if false;
     }

@@ -1,0 +1,149 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {
+  renderDraftContent,
+  openDraftPreviewModal,
+  closeDraftPreviewModal,
+  activeDraftLang
+} from '../../js/render/draftPreview.js';
+
+describe('Draft Will Document Preview Service', () => {
+  const mockWillData = {
+    personal: {
+      fullName: 'Dasari Ganesh',
+      dob: '2002-09-18',
+      gender: 'Male',
+      religion: 'Hindu',
+      govtIdType: 'PAN Card',
+      govtIdDigits: '232F',
+      addressLine1: 'ESI, near metro',
+      addressCity: 'Hyderabad',
+      addressState: 'Telangana',
+      addressPincode: '500001'
+    },
+    assets: [
+      {
+        id: 1,
+        type: 'Bank Account / FD',
+        desc: 'IOB Fixed Deposit 6543, Bitragunta Branch',
+        value: '4999999',
+        allocations: [
+          { beneficiaryId: 1, percentage: 50 },
+          { beneficiaryId: 2, percentage: 50 }
+        ]
+      }
+    ],
+    beneficiaries: [
+      { id: 1, name: 'Haritha Dasari', relation: 'Sister', idType: 'Aadhaar Card', idDigits: '4334' },
+      { id: 2, name: 'Jayamma Dasari', relation: 'Mother', idType: 'PAN Card', idDigits: '342F' }
+    ],
+    executor: {
+      name: 'Suresh Sharma',
+      relation: 'Trusted Friend'
+    }
+  };
+
+  it('renders complete English legal draft with all required clauses', () => {
+    const html = renderDraftContent(mockWillData, 'en');
+
+    expect(html).toContain('LAST WILL AND TESTAMENT');
+    expect(html).toContain('Indian Succession Act, 1925');
+    expect(html).toContain('DASARI GANESH');
+    expect(html).toContain('PAN Card Ending in XXXX-232F');
+    expect(html).toContain('Hyderabad, Telangana, PIN: 500001');
+    expect(html).toContain('1. REVOCATION OF ALL FORMER WILLS');
+    expect(html).toContain('2. DECLARATION OF SOUND HEALTH AND FREE WILL');
+    expect(html).toContain('3. APPOINTMENT OF WILL EXECUTOR');
+    expect(html).toContain('Suresh Sharma');
+    expect(html).toContain('Trusted Friend');
+    expect(html).toContain('4. SCHEDULE OF BEQUEST OF ASSETS');
+    expect(html).toContain('50% Share');
+    expect(html).toContain('Haritha Dasari');
+    expect(html).toContain('5. RESIDUARY ESTATE CLAUSE');
+    expect(html).toContain('IN WITNESS WHEREOF');
+    expect(html).toContain('ATTESTATION BY TWO INDEPENDENT WITNESSES');
+    expect(html).toContain('SAMPLE DRAFT • SMARTWILL INDIA');
+  });
+
+  it('renders Telugu legal draft with authentic Telugu phrasing', () => {
+    const html = renderDraftContent(mockWillData, 'te');
+
+    expect(html).toContain('కడపటి ఇష్టపూర్వక మరణ శాసన పత్రము');
+    expect(html).toContain('భారతీయ వారసత్వ చట్టం 1925');
+    expect(html).toContain('Dasari Ganesh');
+    expect(html).toContain('పూర్వ విల్స్ రద్దు నిబంధన');
+    expect(html).toContain('సంపూర్ణ ఆరోగ్య స్పృహ ప్రకటన');
+    expect(html).toContain('విల్ ఎగ్జిక్యూటర్ నియామకం');
+    expect(html).toContain('Suresh Sharma');
+    expect(html).toContain('ఆస్తుల కేటాయింపు పట్టిక');
+    expect(html).toContain('మిగిలిన ఆస్తుల నిబంధన');
+    expect(html).toContain('ఇద్దరు సాక్షుల సంతకాలు');
+    expect(html).toContain('నమూనా ముసాయిదా • SMARTWILL INDIA');
+  });
+
+  it('renders Hindi legal draft with authentic Hindi phrasing', () => {
+    const html = renderDraftContent(mockWillData, 'hi');
+
+    expect(html).toContain('अंतिम इच्छा पत्र / वसीयतनामा');
+    expect(html).toContain('भारतीय उत्तराधिकार अधिनियम 1925');
+    expect(html).toContain('Dasari Ganesh');
+    expect(html).toContain('पूर्व वसीयतों का निरस्तीकरण');
+    expect(html).toContain('स्वस्थ चित्त एवं स्वेच्छा की घोषणा');
+    expect(html).toContain('वसीयत निष्पादक की नियुक्ति');
+    expect(html).toContain('Suresh Sharma');
+    expect(html).toContain('संपत्ति आवंटन अनुसूची');
+    expect(html).toContain('शेष संपत्ति नियम');
+    expect(html).toContain('दो गवाहों के हस्ताक्षर');
+    expect(html).toContain('नमूना ड्राफ्ट • SMARTWILL INDIA');
+  });
+
+  it('handles empty executor gracefully with statutory court administration fallback', () => {
+    const dataWithoutExec = {
+      ...mockWillData,
+      executor: { name: '', relation: '' }
+    };
+
+    const htmlEn = renderDraftContent(dataWithoutExec, 'en');
+    expect(htmlEn).toContain('Letters of Administration');
+
+    const htmlTe = renderDraftContent(dataWithoutExec, 'te');
+    expect(htmlTe).toContain('ప్రత్యేక ఎగ్జిక్యూటర్‌ను నియమించలేదు');
+
+    const htmlHi = renderDraftContent(dataWithoutExec, 'hi');
+    expect(htmlHi).toContain('कोई निजी निष्पादक नियुक्त नहीं किया है');
+  });
+
+  it('handles empty or missing assets gracefully without throwing', () => {
+    const dataEmpty = {
+      personal: {},
+      assets: [],
+      beneficiaries: [],
+      executor: {}
+    };
+
+    expect(() => renderDraftContent(dataEmpty, 'en')).not.toThrow();
+    expect(() => renderDraftContent(dataEmpty, 'te')).not.toThrow();
+    expect(() => renderDraftContent(dataEmpty, 'hi')).not.toThrow();
+
+    const html = renderDraftContent(dataEmpty, 'en');
+    expect(html).toContain('LAST WILL AND TESTAMENT');
+    expect(html).toContain('No specific assets recorded');
+  });
+
+  it('opens and closes draft preview modal cleanly', () => {
+    document.body.innerHTML = `
+      <div id="draftPreviewModal" class="payment-modal-overlay hidden">
+        <div id="draftDocumentContainer"></div>
+      </div>
+      <button id="previewDraftBtn"></button>
+    `;
+
+    openDraftPreviewModal('en');
+    const modal = document.getElementById('draftPreviewModal');
+    expect(modal.classList.contains('hidden')).toBe(false);
+    expect(document.body.style.overflow).toBe('hidden');
+
+    closeDraftPreviewModal();
+    expect(modal.classList.contains('hidden')).toBe(true);
+    expect(document.body.style.overflow).toBe('');
+  });
+});

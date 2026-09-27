@@ -5,7 +5,9 @@ const { admin } = require('./firebase');
 // is NOT set on Vercel. If you set ALLOWED_ORIGINS in Vercel's dashboard,
 // make sure it includes 'capacitor://localhost' (for Android APK requests)
 // otherwise all API calls from the APK will be CORS-blocked.
-const DEFAULT_ALLOWED_ORIGINS = 'https://smartwill-india.vercel.app,http://localhost:3000,http://127.0.0.1:5500,capacitor://localhost,http://localhost,https://localhost';
+const PROD_ALLOWED_ORIGINS = 'https://smartwill-india.vercel.app,capacitor://localhost,http://localhost,https://localhost';
+const DEV_ALLOWED_ORIGINS = `${PROD_ALLOWED_ORIGINS},http://localhost:3000,http://127.0.0.1:5500`;
+const DEFAULT_ALLOWED_ORIGINS = process.env.NODE_ENV === 'production' ? PROD_ALLOWED_ORIGINS : DEV_ALLOWED_ORIGINS;
 
 // Capacitor Android origins that are always trusted
 // NOTE: Capacitor 6+ uses https://localhost (not capacitor://localhost) as the Android WebView scheme
@@ -26,19 +28,16 @@ function handleCORS(req, res) {
   const requestOrigin = req.headers.origin;
 
   if (!requestOrigin) {
-    // Bug #10 Fix: Capacitor Android sometimes omits the Origin header on fetch.
-    // In that case we still allow the request and reflect a safe default.
-    // We do NOT send Access-Control-Allow-Origin: * because credentials are included.
+    // Capacitor Android or direct server call
     res.setHeader('Access-Control-Allow-Origin', 'https://smartwill-india.vercel.app');
   } else if (allowedOrigins.has(requestOrigin) || CAPACITOR_ORIGINS.has(requestOrigin)) {
-    // Bug #10 Fix: CRITICAL — must reflect the EXACT requesting origin back,
-    // not a hard-coded value. When origin is 'capacitor://localhost' and we
-    // return 'https://smartwill-india.vercel.app', the browser rejects the
-    // response with a CORS error, causing a network error in the app.
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
   } else {
-    // Unknown origin — deny CORS (no Access-Control-Allow-Origin set means blocked)
-    res.setHeader('Access-Control-Allow-Origin', 'https://smartwill-india.vercel.app');
+    // Unknown origin — block CORS
+    if (req.method === 'OPTIONS') {
+      res.status(403).end();
+      return true;
+    }
   }
 
   res.setHeader('Vary', 'Origin');

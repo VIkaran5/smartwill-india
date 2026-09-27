@@ -12,7 +12,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
-  <script src="/js/consent-banner.js"></script>
+  <script src="/js/consent-banner.js" defer></script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -20,39 +20,55 @@
   <title>Create Your Legal Will — SmartWill India</title>
   <meta name="description" content="Generate your legally valid Indian Will online in 10 minutes. Step-by-step wizard for assets, beneficiaries, and digital signature instructions under Indian Succession Act 1925.">
   <!-- Favicons — Dual Theme -->
-  <link rel="icon" type="image/jpeg" href="/assets/logo-light.jpg" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/jpeg" href="/assets/logo-dark.jpg" media="(prefers-color-scheme: dark)">
-  <link rel="apple-touch-icon" href="/assets/logo-light.jpg">
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
 
   <link rel="canonical" href="https://smartwill-india.vercel.app/app">
   <!-- Capacitor Runtime — must be first script loaded -->
   <script src="capacitor.js"></script>
   
-  <!-- Bootstrap 5 — grid + responsive utilities only -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
+  <!-- Resource Hints for CDNs & Performance -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://sdk.cashfree.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://unpkg.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://sdk.cashfree.com">
+  <link rel="dns-prefetch" href="https://www.gstatic.com">
+
+  <!-- Stylesheets — local font sheet first to eliminate @import round-trips -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/app.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/legal-bot.css">
+
+  <!-- Deferred non-critical scripts with Subresource Integrity (SRI) for supply chain security -->
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" integrity="sha384-v15JX+vZHMR3T6LQR9N6e6wIKrKOdNTbdj8j+e5irqq3L9gCauJz2vGlUzomWyUp" crossorigin="anonymous" defer></script>
   <!-- jsPDF CDN for generating Will PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous" defer></script>
   <!-- html2canvas CDN for rendering Telugu & Hindi PDF documents perfectly -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous" defer></script>
   <!-- EmailJS SDK for sending Will PDF to user's email -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous" defer></script>
   <!-- Cashfree Payment Gateway V3 SDK for live GPay/PhonePe/UPI/Card checkout -->
-  <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+  <script src="https://sdk.cashfree.com/js/v3/cashfree.js" defer></script>
   <!-- Firebase SDK V10 for Authentication & User Cloud Sync -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" integrity="sha384-4gq9w/AGf72FXdNQ3Kn3EqWP7633NbCMjpYHt8YCZyXf23o2opcuAr4cif41tLrC" crossorigin="anonymous" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" integrity="sha384-xtdq4MQqPj1dB5DQsuw9O7dh4kHhMP/Wp5u8O1jiaWiou13ZfJIgiccjtVK2pBhL" crossorigin="anonymous" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" integrity="sha384-Qgqc/HETq5lqJnRDqWnV1AZGw3pgMYNUVaqLLN1W/55XuWK94epwbCQrOvdoh1Zo" crossorigin="anonymous" defer></script>
 </head>
 <body>
   <!-- Header Navbar -->
   <header class="app-header">
     <div class="container app-nav-container">
       <a href="index.html" class="nav-logo" aria-label="SmartWill India Home">
-        <img src="/assets/logo-light.jpg" alt="SmartWill India Logo" class="logo-img logo-light-theme">
-        <img src="/assets/logo-dark.jpg" alt="SmartWill India Logo" class="logo-img logo-dark-theme">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
       </a>
 
@@ -233,7 +249,10 @@
                 <input type="text" id="addressState" class="form-control" placeholder="State" required data-i18n-placeholder="form.addressState">
               </div>
               <div class="form-group">
-                <input type="text" id="addressPincode" class="form-control" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="postal-code" required data-i18n-placeholder="form.addressPincode">
+                <div class="pincode-input-group">
+                  <input type="text" id="addressPincode" class="form-control" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="postal-code" required data-i18n-placeholder="form.addressPincode">
+                  <button type="button" id="btnVerifyPincode" class="btn btn-outline btn-verify-pin" data-i18n="form.verifyBtn">Verify</button>
+                </div>
               </div>
             </div>
             <div id="pincodeStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
@@ -328,7 +347,7 @@
                 <input type="text" id="executorName" class="form-control" placeholder="e.g. Suresh Sharma" data-i18n-placeholder="form.executorNamePlaceholder">
               </div>
               <div class="form-group">
-                <label class="form-label" data-i18n="form.executorRelation">Relationship to Testator <span class="required">*</span></label>
+                <label class="form-label"><span data-i18n="form.executorRelation">Relationship to Testator</span> <span class="required">*</span></label>
                 <select id="executorRelation" class="form-select" required>
                   <option value="" disabled selected data-i18n="form.selectRelationship">Select Relationship</option>
                   <option value="Brother" data-i18n="form.relationBrother">Brother</option>
@@ -336,8 +355,8 @@
                   <option value="Spouse" data-i18n="form.relationSpouse">Spouse</option>
                   <option value="Son" data-i18n="form.relationSon">Son</option>
                   <option value="Daughter" data-i18n="form.relationDaughter">Daughter</option>
-                  <option value="Trusted Friend" data-i18n="form.relationOther">Trusted Friend</option>
-                  <option value="Lawyer / Advocate" data-i18n="form.relationOther">Lawyer / Advocate</option>
+                  <option value="Trusted Friend" data-i18n="form.relationTrustedFriend">Trusted Friend</option>
+                  <option value="Lawyer / Advocate" data-i18n="form.relationLawyer">Lawyer / Advocate</option>
                   <option value="Other" data-i18n="form.relationOther">Other Relative / Friend</option>
                 </select>
               </div>
@@ -348,10 +367,44 @@
           <div class="summary-box glass-card">
             <div class="summary-box-header flex-between align-center">
               <h3 class="m-0" data-i18n="summary.cardTitle">📋 Will Document Summary</h3>
-              <span class="badge badge-subtle" data-i18n="summary.draftBadge" style="font-size:0.75rem; padding:0.25rem 0.6rem; border-radius:999px; background:rgba(0,0,0,0.06); color:var(--text-muted); font-weight:600;">Preview Draft</span>
+              <button type="button" id="previewDraftBtn" class="btn-preview-draft" title="Preview Draft Legal Will" aria-label="Preview Draft Legal Will">
+                <i data-lucide="eye" style="width:14px; height:14px;"></i>
+                <span data-i18n="summary.draftBadge">Preview Draft</span>
+              </button>
             </div>
             <div id="willSummaryPreview" class="summary-content">
               <!-- Summary populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Signing & Legal Validity Advisory Callout -->
+          <div class="legal-advisory-callout glass-card mt-3 mb-3">
+            <div class="advisory-header flex align-center gap-2">
+              <i data-lucide="shield-alert" class="text-gold" style="width:18px;height:18px;"></i>
+              <strong data-i18n="advisory.title">💡 Important Legal Advisory for Execution (Indian Succession Act 1925)</strong>
+            </div>
+            <div class="advisory-points-grid mt-2">
+              <div class="advisory-item">
+                <span class="advisory-bullet">1</span>
+                <div>
+                  <strong data-i18n="advisory.w1Title">Two Independent Witnesses:</strong>
+                  <span data-i18n="advisory.w1Desc">Under Section 67, never choose a beneficiary or their spouse as a witness (doing so voids their entire inheritance). Choose independent friends or neighbors.</span>
+                </div>
+              </div>
+              <div class="advisory-item">
+                <span class="advisory-bullet">2</span>
+                <div>
+                  <strong data-i18n="advisory.w2Title">Plain White Paper:</strong>
+                  <span data-i18n="advisory.w2Desc">Print your downloaded PDF on standard A4 paper. Stamp paper or notarization is NOT legally mandatory in India.</span>
+                </div>
+              </div>
+              <div class="advisory-item">
+                <span class="advisory-bullet">3</span>
+                <div>
+                  <strong data-i18n="advisory.w3Title">Safe Storage:</strong>
+                  <span data-i18n="advisory.w3Desc">Keep the physically signed original in a secure place (home safe or locker) and inform your trusted executor.</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -385,8 +438,13 @@
           <div id="postPaymentState" class="post-payment-box hidden">
             <div class="payment-success-card glass-card text-center mb-4">
               <div class="success-icon"><i data-lucide="check-circle-2"></i></div>
-              <h3>Payment Successful!</h3>
-              <p class="text-muted">Transaction ID: TXN_SW_<span id="txnId">982347</span></p>
+              <h3 data-i18n="payment.successTitle">Payment Successful!</h3>
+              <p class="text-muted"><span data-i18n="payment.txnId">Transaction ID:</span> <span id="txnId">TXN_SW_982347</span></p>
+              <div class="mt-2 mb-3">
+                <button type="button" class="btn btn-outline btn-sm text-xs" onclick="resetPaymentState()" style="font-size: 0.78rem; padding: 4px 10px; opacity: 0.85;">
+                  <i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"></i> Pay for a New Will / Reset
+                </button>
+              </div>
 
               <!-- PDF Language Selector Option -->
               <div class="pdf-format-selection glass-card p-3 my-3 text-left">
@@ -419,13 +477,13 @@
               <div class="email-send-toggle glass-card p-3 my-2 text-left">
                 <label class="checkbox-label flex align-center gap-2" style="cursor: pointer;">
                   <input type="checkbox" id="sendEmailCheckbox" style="accent-color: var(--accent-gold); width: 18px; height: 18px;">
-                  <span style="font-size: 0.88rem; font-weight: 500;">📧 Also send a copy of this Will to my email address</span>
+                  <span style="font-size: 0.88rem; font-weight: 500;" data-i18n="form.sendEmailCopy">📧 Also send a copy of this Will to my email address</span>
                 </label>
                 <p class="text-muted text-xs mt-1" id="emailTargetDisplay" style="margin-left: 26px;"></p>
               </div>
 
               <button type="button" id="downloadPdfBtn" class="btn btn-gold btn-lg mt-3">
-                <i data-lucide="download"></i> Download Will PDF Document
+                <i data-lucide="download"></i> <span data-i18n="form.downloadPdfBtn">Download Will PDF Document</span>
               </button>
             </div>
 
@@ -510,6 +568,54 @@
 
         <button id="processPayBtn" class="btn btn-gold btn-lg w-full mt-4">
           Pay ₹299 Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Draft Legal Will Document Preview Modal -->
+  <div id="draftPreviewModal" class="payment-modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="draftModalTitle">
+    <div class="draft-modal-card glass-card">
+      <div class="draft-modal-header flex-between align-center">
+        <div class="draft-modal-title-box flex align-center gap-2">
+          <i data-lucide="file-text" class="text-gold" style="width: 22px; height: 22px;"></i>
+          <div>
+            <h3 id="draftModalTitle" class="m-0" style="font-size: 1.12rem;" data-i18n="modal.draftTitle">Legal Will Draft Preview</h3>
+            <p class="text-muted text-xs m-0" data-i18n="modal.draftNotice">Sample preview of your legally formatted Will under Indian Succession Act 1925</p>
+          </div>
+        </div>
+        <div class="draft-modal-header-actions flex align-center gap-2">
+          <!-- Modal Language Switcher -->
+          <div class="draft-lang-tabs">
+            <button type="button" class="draft-lang-btn active" data-draft-lang="en">English</button>
+            <button type="button" class="draft-lang-btn" data-draft-lang="te">తెలుగు</button>
+            <button type="button" class="draft-lang-btn" data-draft-lang="hi">हिंदी</button>
+          </div>
+          <button type="button" id="closeDraftModalBtn" class="close-btn" aria-label="Close Draft Preview">&times;</button>
+        </div>
+      </div>
+
+      <!-- Watermark Notice Banner -->
+      <div class="draft-watermark-banner flex-between align-center">
+        <div class="flex align-center gap-2">
+          <span class="draft-badge-pill">DRAFT</span>
+          <span class="draft-banner-text" data-i18n="modal.watermarkNotice">Watermarked sample for your review. Official, signature-ready PDF unlocked in Step 6.</span>
+        </div>
+        <button type="button" id="printDraftBtn" class="btn btn-sm btn-outline draft-print-action-btn">
+          <i data-lucide="printer" style="width: 13px; height: 13px;"></i> <span data-i18n="modal.printDraft">Print</span>
+        </button>
+      </div>
+
+      <!-- Document Content Body -->
+      <div class="draft-modal-body" id="draftDocumentContainer">
+        <!-- Rendered dynamically by draftPreview.js -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="draft-modal-footer flex-between align-center">
+        <button type="button" id="closeDraftModalFooterBtn" class="btn btn-secondary btn-sm" data-i18n="modal.close">Close Preview</button>
+        <button type="button" id="draftProceedToStep6Btn" class="btn btn-primary btn-sm flex align-center gap-1">
+          <span data-i18n="modal.proceedToStep6">Proceed to Step 6</span> <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
         </button>
       </div>
     </div>
@@ -607,7 +713,16 @@
   <script type="module" src="js/capacitor-bridge.js"></script>
   <script type="module" src="js/app.js?v=4.0"></script>
   <script>
-    lucide.createIcons();
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
 
     // ── App page hamburger toggle ──
     const appHamburger = document.getElementById('appNavHamburger');
@@ -650,5 +765,6 @@
     });
   </script>
   <script src="js/theme-switcher.js"></script>
+  <script type="module" src="js/ui/legalBot.js"></script>
 </body>
 </html>

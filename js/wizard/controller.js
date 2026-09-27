@@ -83,6 +83,12 @@ export class WizardController {
       case GUARD_ERROR_CODES.EMAIL_TYPO_WARNING:
         message = `${t('toast.emailTypo')} ${meta ? meta.suggestion : ''}`;
         break;
+      case GUARD_ERROR_CODES.INVALID_PINCODE:
+        message = t('toast.pincodeInvalid') || 'Please enter a valid 6-digit Indian PIN code (e.g. 500038).';
+        break;
+      case GUARD_ERROR_CODES.PINCODE_NOT_FOUND:
+        message = t('toast.pincodeNotFound') || 'The entered PIN code does not exist in India. Please enter a valid PIN code.';
+        break;
       case GUARD_ERROR_CODES.INVALID_GOVT_ID_FORMAT:
         if (meta && meta.idType === 'Aadhaar Card') message = t('toast.aadhaarFormat');
         else if (meta && meta.idType === 'PAN Card') message = t('toast.panFormat');

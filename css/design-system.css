@@ -1,6 +1,5 @@
 /* SmartWill India - Design System & Modern CSS Framework */
-/* Self-hosted GDPR/DPDP privacy-safe fonts (Zero third-party IP leakage) */
-@import url('/assets/fonts/fonts.css');
+/* Self-hosted GDPR/DPDP privacy-safe fonts loaded via HTML <link> */
 
 :root, [data-theme="light"] {
   /* Dayos Brutalist Editorial Showroom — Color System */
@@ -184,6 +183,31 @@ body, .glass-card, .navbar, .nav-container, .wizard-card, .stepper-wrapper, .leg
   html, body, .glass-card, .navbar, .nav-container, .wizard-card, .stepper-wrapper, .legal-card, .legal-sidebar, .footer {
     transition: none !important;
   }
+}
+
+/* Global High-Contrast Footer Styling (ensures readability in all themes) */
+.footer {
+  background: var(--footer-bg, #040711) !important;
+  color: #f8fafc !important;
+}
+.footer h4, .footer .footer-col h4 {
+  color: #ffffff !important;
+}
+.footer-desc {
+  color: #cbd5e1 !important;
+}
+.footer-links a {
+  color: #e2e8f0 !important;
+}
+.footer-links a:hover {
+  color: #dfb76c !important;
+}
+.footer-disclaimer {
+  color: #94a3b8 !important;
+}
+.footer-bottom {
+  color: #cbd5e1 !important;
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Theme Switcher Pill Component */
@@ -1926,4 +1950,33 @@ a {
     transform: translateY(0);
   }
 }
+
+/* ── Core Layout & Spacing Utilities (Self-contained, non-blocking) ── */
+.container {
+  width: 100%;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 576px) { .container { max-width: 540px; } }
+@media (min-width: 768px) { .container { max-width: 720px; } }
+@media (min-width: 992px) { .container { max-width: 960px; } }
+@media (min-width: 1200px) { .container { max-width: 1140px; } }
+@media (min-width: 1400px) { .container { max-width: 1320px; } }
+
+.d-none { display: none !important; }
+.d-flex { display: flex !important; }
+@media (min-width: 768px) {
+  .d-md-flex { display: flex !important; }
+  .d-md-none { display: none !important; }
+}
+.m-0 { margin: 0 !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.p-4 { padding: 1.5rem !important; }
+.py-4 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
 

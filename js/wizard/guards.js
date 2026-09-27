@@ -1,12 +1,14 @@
 /* Pure Side-Effect-Free Validation Guards for SmartWill Wizard
  * Returns structured validation result objects: { ok: boolean, code?: string, field?: string, meta?: object } */
-import { isValidEmailFormat, getEmailTypoWarning, isValidIndianPhone } from '../utils/validators.js';
+import { isValidEmailFormat, getEmailTypoWarning, isValidIndianPhone, isValidIndianPincode } from '../utils/validators.js';
 
 export const GUARD_ERROR_CODES = {
   MANDATORY_FIELDS_MISSING: 'MANDATORY_FIELDS_MISSING',
   INVALID_PHONE: 'INVALID_PHONE',
   INVALID_EMAIL: 'INVALID_EMAIL',
   EMAIL_TYPO_WARNING: 'EMAIL_TYPO_WARNING',
+  INVALID_PINCODE: 'INVALID_PINCODE',
+  PINCODE_NOT_FOUND: 'PINCODE_NOT_FOUND',
   INVALID_GOVT_ID_FORMAT: 'INVALID_GOVT_ID_FORMAT',
   BENEFICIARY_REQUIRED: 'BENEFICIARY_REQUIRED',
   ASSET_REQUIRED: 'ASSET_REQUIRED',
@@ -50,6 +52,14 @@ export const STEP_GUARDS = {
 
     if (!isValidEmailFormat(email)) {
       return { ok: false, code: GUARD_ERROR_CODES.INVALID_EMAIL, field: 'email' };
+    }
+
+    if (!isValidIndianPincode(pincode)) {
+      return { ok: false, code: GUARD_ERROR_CODES.INVALID_PINCODE, field: 'addressPincode' };
+    }
+
+    if (p.pincodeValid === false || p.pincodeStatus === 'invalid') {
+      return { ok: false, code: GUARD_ERROR_CODES.PINCODE_NOT_FOUND, field: 'addressPincode' };
     }
 
     if (digits) {
@@ -107,8 +117,17 @@ export const STEP_GUARDS = {
   },
 
   EXECUTOR: (domainState) => {
-    if (domainState.declarationAccepted === false) {
+    if (!domainState.declarationAccepted) {
       return { ok: false, code: GUARD_ERROR_CODES.DECLARATION_REQUIRED, field: 'confirmCheckbox' };
+    }
+    const e = domainState.executor || {};
+    const name = (e.name || '').trim();
+    const relation = (e.relation || '').trim();
+    if (name && !relation) {
+      return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: 'executorRelation' };
+    }
+    if (relation && !name) {
+      return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: 'executorName' };
     }
     return { ok: true };
   },

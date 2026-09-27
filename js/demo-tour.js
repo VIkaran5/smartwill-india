@@ -11,49 +11,49 @@
 
   const slidesData = [
     {
-      img: '/assets/arcade-slides/01_smartwill_hero_hook.png',
+      img: '/assets/arcade-slides/01_smartwill_hero_hook.webp',
       titleEn: '1. Fast 10-Minute Questionnaire',
       descEn: 'Start with guided, plain-language questions. No legal jargon, confusing clauses, or intimidating paperwork.',
       titleTe: '1. సులభమైన 10 నిమిషాల ప్రక్రియ',
       descTe: 'సరళమైన ప్రశ్నలతో ప్రారంభించండి. ఎటువంటి క్లిష్టమైన న్యాయ పదాలు లేదా ఇబ్బందికరమైన ఫారమ్‌లు ఉండవు.'
     },
     {
-      img: '/assets/arcade-slides/02_personal_legal_details.png',
+      img: '/assets/arcade-slides/02_personal_legal_details.webp',
       titleEn: '2. Personal & Legal Details',
       descEn: 'Enter full legal name, religion, and family status as legally required under the Indian Succession Act.',
       titleTe: '2. వ్యక్తిగత & కుటుంబ వివరాలు',
       descTe: 'భారతీయ వారసత్వ చట్టం ప్రకారం అవసరమైన పూర్తి చట్టపరమైన పేరు, మతం మరియు కుటుంబ వివరాలను నమోదు చేయండి.'
     },
     {
-      img: '/assets/arcade-slides/03_assets_portfolio.png',
+      img: '/assets/arcade-slides/03_assets_portfolio.webp',
       titleEn: '3. Comprehensive Asset Portfolio',
       descEn: 'Easily organize bank savings, fixed deposits, mutual funds, gold jewelry, and real estate properties.',
       titleTe: '3. సమగ్ర ఆస్తుల జాబితా',
       descTe: 'బ్యాంక్ ఖాతాలు, FDలు, మ్యూచువల్ ఫండ్స్, బంగారం మరియు స్థిరాస్తులను స్పష్టంగా ఒకే చోట నమోదు చేయండి.'
     },
     {
-      img: '/assets/arcade-slides/04_family_beneficiaries.png',
+      img: '/assets/arcade-slides/04_family_beneficiaries.webp',
       titleEn: '4. Beneficiaries & Allocation',
       descEn: 'Assign exact percentage shares to your spouse, children, or parents with zero room for future disputes.',
       titleTe: '4. లబ్ధిదారుల కేటాయింపు',
       descTe: 'మీ భార్య/భర్త, పిల్లలు లేదా తల్లిదండ్రులకు స్పష్టమైన శాతం వాటాలను కేటాయించి వివాదాలను నివారించండి.'
     },
     {
-      img: '/assets/arcade-slides/05_review_will_summary.png',
+      img: '/assets/arcade-slides/05_review_will_summary.webp',
       titleEn: '5. Review & Asset Verification',
       descEn: 'Instant structured summary to review all asset allocations and appointed executors before finalizing.',
       titleTe: '5. సమీక్ష & ధృవీకరణ',
       descTe: 'వీలునామా ఖరారు చేయడానికి ముందు మీ కేటాయింపులు మరియు ఎగ్జిక్యూటర్ వివరాలను పూర్తిగా తనిఖీ చేసుకోండి.'
     },
     {
-      img: '/assets/arcade-slides/06_legal_will_document.png',
+      img: '/assets/arcade-slides/06_legal_will_document.webp',
       titleEn: '6. Court-Admissible Legal Will',
       descEn: 'Download your finalized, lawyer-vetted Will formatted strictly under the Indian Succession Act 1925.',
       titleTe: '6. చట్టబద్ధమైన వీలునామా పత్రం',
       descTe: 'ఇండియన్ సక్సెషన్ యాక్ట్ 1925 ప్రకారం రూపొందించబడిన అధికారిక, న్యాయ నిపుణుల ధృవీకరణ పొందిన PDF పత్రం.'
     },
     {
-      img: '/assets/arcade-slides/07_physical_will_document.jpg',
+      img: '/assets/arcade-slides/07_physical_will_document.webp',
       titleEn: '7. Physical Signing & 2 Witnesses',
       descEn: 'Print on plain paper and sign in the presence of 2 witnesses for 100% legal enforceability in court.',
       titleTe: '7. సంతకం & ఇద్దరు సాక్షులు',
@@ -93,30 +93,34 @@
       if (viewVideo) viewVideo.classList.toggle('active', target === 'video');
       if (viewSlides) viewSlides.classList.toggle('active', target === 'slides');
 
-      if (target === 'slides') {
-        startAutoplay();
+      if (target === 'video') {
+        stopAutoplay();
+        // Load Arcade iframe on-demand
+        if (iframe && iframe.dataset.src && (!iframe.src || iframe.src === 'about:blank' || !iframe.getAttribute('src'))) {
+          iframe.src = iframe.dataset.src;
+        }
+        if (slowHint && !iframeLoaded) {
+          setTimeout(() => {
+            if (!iframeLoaded || !navigator.onLine) {
+              slowHint.style.display = 'flex';
+            }
+          }, 4500);
+        }
       } else {
         stopAutoplay();
+        startAutoplay();
       }
     }
 
-    // Slow connection / DNS failure detector
-    // If Arcade iframe hasn't loaded within 3.8s or network is offline, show fallback prompt
-    if (slowHint && iframe) {
-      let iframeLoaded = false;
-
+    let iframeLoaded = false;
+    if (iframe) {
       iframe.addEventListener('load', () => {
         iframeLoaded = true;
         if (slowHint) slowHint.style.display = 'none';
       });
+    }
 
-      // Check online status or timeout
-      setTimeout(() => {
-        if (!iframeLoaded || !navigator.onLine) {
-          slowHint.style.display = 'flex';
-        }
-      }, 3800);
-
+    if (slowHint) {
       window.addEventListener('offline', () => {
         slowHint.style.display = 'flex';
       });
@@ -206,23 +210,25 @@
     const desc = document.getElementById('demoSlideDesc');
     const dots = document.querySelectorAll('.demo-dot');
 
+    const isTe = document.documentElement.getAttribute('lang') === 'te' || window.location.pathname.startsWith('/te');
+
     if (img) {
       img.src = slide.img;
-      img.alt = isTelugu ? slide.titleTe : slide.titleEn;
+      img.alt = isTe ? slide.titleTe : slide.titleEn;
     }
 
     if (badge) {
-      badge.textContent = isTelugu 
-        ? `దశ ${currentIndex + 1} / ${slidesData.length}` 
-        : `Step ${currentIndex + 1} of ${slidesData.length}`;
+      badge.textContent = isTe 
+        ? `స్లైడ్ ${currentIndex + 1} / ${slidesData.length}` 
+        : `Slide ${currentIndex + 1} of ${slidesData.length}`;
     }
 
     if (title) {
-      title.textContent = isTelugu ? slide.titleTe : slide.titleEn;
+      title.textContent = isTe ? slide.titleTe : slide.titleEn;
     }
 
     if (desc) {
-      desc.textContent = isTelugu ? slide.descTe : slide.descEn;
+      desc.textContent = isTe ? slide.descTe : slide.descEn;
     }
 
     dots.forEach((dot, idx) => {
@@ -250,6 +256,10 @@
       autoplayTimer = null;
     }
   }
+
+  window.addEventListener('languageChanged', () => {
+    updateSlideDisplay();
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initDemoTour);

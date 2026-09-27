@@ -4,7 +4,7 @@ import { STEP_GUARDS, validateStepGuard, GUARD_ERROR_CODES } from '../../js/wiza
 describe('Wizard Step Validation Guards (Pure Logic)', () => {
   describe('PERSONAL Guard', () => {
     it('should identify specific missing fields in PERSONAL guard', () => {
-      const p = { fullName: 'Name', dob: 'dob', addressLine1: 'Line1', addressCity: 'City', addressState: 'State', addressPincode: '123', phone: '987', email: 'e' };
+      const p = { fullName: 'Name', dob: 'dob', addressLine1: 'Line1', addressCity: 'City', addressState: 'State', addressPincode: '400001', phone: '987', email: 'e' };
 
       expect(STEP_GUARDS.PERSONAL({ personal: { ...p, fullName: '' } }).field).toBe('fullName');
       expect(STEP_GUARDS.PERSONAL({ personal: { ...p, dob: '' } }).field).toBe('dob');
@@ -132,6 +132,79 @@ describe('Wizard Step Validation Guards (Pure Logic)', () => {
       expect(result.code).toBe(GUARD_ERROR_CODES.INVALID_GOVT_ID_FORMAT);
     });
 
+    it('should reject incomplete Indian PIN code (< 6 digits, e.g. 50001)', () => {
+      const result = STEP_GUARDS.PERSONAL({
+        personal: {
+          fullName: 'Ramesh Sharma',
+          dob: '1985-05-15',
+          addressLine1: 'MG Road',
+          addressCity: 'Mumbai',
+          addressState: 'Maharashtra',
+          addressPincode: '50001', // Only 5 digits
+          phone: '9876543210',
+          email: 'ramesh@gmail.com'
+        }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.INVALID_PINCODE);
+      expect(result.field).toBe('addressPincode');
+    });
+
+    it('should reject Indian PIN code starting with 0', () => {
+      const result = STEP_GUARDS.PERSONAL({
+        personal: {
+          fullName: 'Ramesh Sharma',
+          dob: '1985-05-15',
+          addressLine1: 'MG Road',
+          addressCity: 'Mumbai',
+          addressState: 'Maharashtra',
+          addressPincode: '012345',
+          phone: '9876543210',
+          email: 'ramesh@gmail.com'
+        }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.INVALID_PINCODE);
+      expect(result.field).toBe('addressPincode');
+    });
+
+    it('should reject Indian PIN code with non-digit characters', () => {
+      const result = STEP_GUARDS.PERSONAL({
+        personal: {
+          fullName: 'Ramesh Sharma',
+          dob: '1985-05-15',
+          addressLine1: 'MG Road',
+          addressCity: 'Mumbai',
+          addressState: 'Maharashtra',
+          addressPincode: '50003A',
+          phone: '9876543210',
+          email: 'ramesh@gmail.com'
+        }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.INVALID_PINCODE);
+      expect(result.field).toBe('addressPincode');
+    });
+
+    it('should reject PIN code marked as invalid or not found by verification API', () => {
+      const result = STEP_GUARDS.PERSONAL({
+        personal: {
+          fullName: 'Ramesh Sharma',
+          dob: '1985-05-15',
+          addressLine1: 'MG Road',
+          addressCity: 'Mumbai',
+          addressState: 'Maharashtra',
+          addressPincode: '999999',
+          pincodeStatus: 'invalid',
+          phone: '9876543210',
+          email: 'ramesh@gmail.com'
+        }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.PINCODE_NOT_FOUND);
+      expect(result.field).toBe('addressPincode');
+    });
+
     it('should pass with valid personal details', () => {
       const result = STEP_GUARDS.PERSONAL({
         personal: {
@@ -224,7 +297,41 @@ describe('Wizard Step Validation Guards (Pure Logic)', () => {
       expect(result.code).toBe(GUARD_ERROR_CODES.DECLARATION_REQUIRED);
     });
 
-    it('should pass when declaration is accepted', () => {
+    it('should reject when declaration is undefined or unselected', () => {
+      const result = STEP_GUARDS.EXECUTOR({});
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.DECLARATION_REQUIRED);
+    });
+
+    it('should reject when executor name is given without relationship', () => {
+      const result = STEP_GUARDS.EXECUTOR({
+        declarationAccepted: true,
+        executor: { name: 'Suresh Sharma', relation: '' }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING);
+      expect(result.field).toBe('executorRelation');
+    });
+
+    it('should reject when executor relationship is chosen without name', () => {
+      const result = STEP_GUARDS.EXECUTOR({
+        declarationAccepted: true,
+        executor: { name: '', relation: 'Brother' }
+      });
+      expect(result.ok).toBe(false);
+      expect(result.code).toBe(GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING);
+      expect(result.field).toBe('executorName');
+    });
+
+    it('should pass when executor name and relationship are both provided', () => {
+      const result = STEP_GUARDS.EXECUTOR({
+        declarationAccepted: true,
+        executor: { name: 'Suresh Sharma', relation: 'Brother' }
+      });
+      expect(result.ok).toBe(true);
+    });
+
+    it('should pass when executor is omitted (optional) and declaration is accepted', () => {
       const result = STEP_GUARDS.EXECUTOR({ declarationAccepted: true });
       expect(result.ok).toBe(true);
     });

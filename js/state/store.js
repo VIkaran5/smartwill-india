@@ -19,15 +19,14 @@ const defaultState = {
     addressLine1: '',
     addressCity: '',
     addressState: '',
-    addressPincode: ''
+    addressPincode: '',
+    pincodeStatus: ''
   },
   assets: [
-    { id: 1, type: 'Bank Account / FD', desc: 'HDFC Savings Account (A/C: XXXX1234)', value: '500000' },
-    { id: 2, type: 'Property / Land', desc: 'Flat No 402, Green View Apartments, Hyderabad', value: '7500000' }
+    { id: 1, type: 'Bank Account / FD', details: {}, desc: '', value: '' }
   ],
   beneficiaries: [
-    { id: 1, name: 'Priya Sharma', relation: 'Spouse', phone: '9876543210', idType: 'PAN Card', idDigits: '5678' },
-    { id: 2, name: 'Arjun Sharma', relation: 'Son', phone: '9876543211', idType: 'Aadhaar Card', idDigits: '9812' }
+    { id: 1, name: '', relation: 'Spouse', phone: '', idType: '', idDigits: '' }
   ],
   executor: { name: '', relation: '' }
 };
@@ -75,7 +74,37 @@ export async function initStore() {
   if (checkStoredConsent()) {
     consentGiven = true;
     const saved = await loadDraft();
-    if (saved) state = saved;
+    if (saved) {
+      state = saved;
+      // Sanitize legacy mock dummy assets if they were saved in a prior session
+      if (Array.isArray(state.assets)) {
+        state.assets = state.assets.map(a => {
+          if (a.desc === 'HDFC Savings Account (A/C: XXXX1234)' && (a.value === '500000' || a.value === 500000)) {
+            return { ...a, desc: '', value: '', details: {} };
+          }
+          if (a.desc === 'Flat No 402, Green View Apartments, Hyderabad' && (a.value === '7500000' || a.value === 7500000)) {
+            return { ...a, desc: '', value: '', details: {} };
+          }
+          return a;
+        });
+      }
+      // Sanitize legacy mock dummy beneficiaries if present
+      if (Array.isArray(state.beneficiaries)) {
+        state.beneficiaries = state.beneficiaries.map(b => {
+          let updated = { ...b };
+          if (updated.name === 'Priya Sharma' || updated.name === 'Arjun Sharma') {
+            updated.name = '';
+          }
+          if (updated.phone === '9876543210' || updated.phone === '9876543211') {
+            updated.phone = '';
+          }
+          if (updated.idDigits === '5678' || updated.idDigits === '9812') {
+            updated.idDigits = '';
+          }
+          return updated;
+        });
+      }
+    }
   }
   if (typeof window !== 'undefined') {
     window.getWillState = getState;

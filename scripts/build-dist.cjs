@@ -79,6 +79,22 @@ for (const item of forbidden) {
   }
 }
 
+// 4b. Remove unused legacy .jpg files replaced by .webp (saves ~1.97 MB)
+const legacyJpgs = [
+  'assets/hero-will-mockup.jpg',
+  'assets/logo.jpg',
+  'assets/logo-dark.jpg',
+  'assets/logo-light.jpg',
+  'assets/linkedin-banner.jpg',
+];
+for (const f of legacyJpgs) {
+  const p = path.join(dist, f);
+  if (fs.existsSync(p)) {
+    fs.unlinkSync(p);
+    console.log('    Removed unused legacy image:', f);
+  }
+}
+
 // 5. Report
 function countFiles(dir) {
   let count = 0;
