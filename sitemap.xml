@@ -41,6 +41,16 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://smartwill-india.vercel.app/blog/is-will-registration-mandatory-in-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://smartwill-india.vercel.app/blog/nominee-vs-legal-heir-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://smartwill-india.vercel.app/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
