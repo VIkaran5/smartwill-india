@@ -44,19 +44,11 @@ export async function generateWillPDF(willData) {
     if (err.message && (err.message.includes('Payment required') || err.message.includes('Authentication required'))) {
       throw err;
     }
-    // Network fallback: If network is offline and user has verified offline cache
-    const offlineCached = localStorage.getItem('sw_paid_order_' + user.uid);
-    if (!navigator.onLine && offlineCached) {
-      try {
-        const parsed = JSON.parse(offlineCached);
-        if (parsed && parsed.status === 'PAID') isAuthorized = true;
-      } catch (_) {}
-    }
-    if (!isAuthorized) {
-      logger.error('Payment authorization check failed', err);
-      showToast('error', 'Verification Failed', 'Could not verify payment with server. Please check your connection.');
-      throw err;
-    }
+    // Security (VULN-001): Never trust client-side localStorage for payment authorization.
+    // If server is unreachable, fail closed — user must be online to verify payment.
+    logger.error('Payment authorization check failed', err);
+    showToast('error', 'Verification Failed', 'Could not verify payment with server. Please check your internet connection and try again.');
+    throw err;
   }
 
   const pdfLangChoice = document.querySelector('input[name="pdfLangChoice"]:checked');
@@ -506,5 +498,7 @@ export async function generateRegionalWillPDF(willData, lang) {
 }
 
 // Global window attachments
+// Security (VULN-001): Only expose the payment-gated entry point.
+// generateRegionalWillPDF and generateEnglishWillPDF are internal-only —
+// they must only be called via generateWillPDF which verifies payment server-side.
 window.generateWillPDF = generateWillPDF;
-window.generateRegionalWillPDF = generateRegionalWillPDF;

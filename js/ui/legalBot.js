@@ -882,8 +882,8 @@ export class SmartWillLegalBot {
     const hasTelugu = /[\u0C00-\u0C7F]/.test(text);
     const te = this.isTelugu || hasTelugu;
 
-    // 1. Append User Message
-    this.appendMessage('user', escapeHtml(text));
+    // 1. Append User Message (sanitization handled in appendMessage)
+    this.appendMessage('user', text);
     this.inputField.value = '';
 
     // 2. Compute Answer
@@ -979,16 +979,32 @@ export class SmartWillLegalBot {
     const msgDiv = document.createElement('div');
     msgDiv.className = `smartwill-msg smartwill-msg-${sender}`;
 
-    // Security (VULN-005): Strictly escape user input to prevent DOM XSS
-    const safeText = sender === 'user' ? escapeHtml(text) : text;
+    const bubble = document.createElement('div');
+    bubble.className = 'smartwill-msg-bubble';
 
-    msgDiv.innerHTML = `
-      <div class="smartwill-msg-bubble">
-        ${safeText}
-        ${extraHtml}
-      </div>
-      <span class="smartwill-msg-time">${getFormattedTime()}</span>
-    `;
+    // Security (VULN-005): User messages use textContent (XSS-proof).
+    // Bot messages use innerHTML since they contain intentional HTML formatting.
+    if (sender === 'user') {
+      const textNode = document.createElement('span');
+      textNode.textContent = text;
+      bubble.appendChild(textNode);
+    } else {
+      bubble.innerHTML = text;
+    }
+
+    // Append any extra HTML (CTA buttons for bot responses)
+    if (extraHtml && sender === 'bot') {
+      const extraContainer = document.createElement('div');
+      extraContainer.innerHTML = extraHtml;
+      bubble.appendChild(extraContainer);
+    }
+
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'smartwill-msg-time';
+    timeSpan.textContent = getFormattedTime();
+
+    msgDiv.appendChild(bubble);
+    msgDiv.appendChild(timeSpan);
 
     this.messagesContainer.appendChild(msgDiv);
     this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;

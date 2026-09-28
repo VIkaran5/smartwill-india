@@ -79,7 +79,7 @@ module.exports = async function handler(req, res) {
 
     if (!response.ok) {
       console.error(`[Cashfree Verify Error] requestId=${requestId}, orderId=${orderId}, message=${result.message || 'Verification failed'}`);
-      return res.status(response.status || 400).json({ error: result.message || 'Verification failed' });
+      return res.status(response.status || 400).json({ error: 'Payment verification failed. Please try again or contact support.' });
     }
 
     // Use order-specific expectedAmount (stored at creation, after any discount) rather
@@ -163,7 +163,7 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error(`[Serverless Exception] requestId=${requestId}, orderId=${orderId}, error=${error.message}`);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error processing payment verification.' });
   }
 }
 

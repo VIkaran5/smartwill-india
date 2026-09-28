@@ -24,8 +24,9 @@ module.exports = async function handler(req, res) {
 
   try {
     if (!db) {
-      // In local dev without Firestore, allow if orderId format is valid
-      return res.status(200).json({ authorized: true, orderId: reqOrderId || 'DEV_MOCK_ORDER', verifiedAt: Date.now() });
+      // Security (VULN-001): Fail closed — never authorize without database verification
+      console.error(`[Download Verify] requestId=${requestId}, uid=${auth.uid}, error=Firestore unavailable`);
+      return res.status(503).json({ authorized: false, error: 'Payment verification service temporarily unavailable. Please try again.' });
     }
 
     let paidOrder = null;

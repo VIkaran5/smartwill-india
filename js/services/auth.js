@@ -41,9 +41,14 @@ function loadFirebaseSDK() {
   firebaseLoadPromise = new Promise((resolve, reject) => {
     const appScript = document.createElement('script');
     appScript.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js';
+    // Security (VULN-003): SRI for dynamically injected Firebase SDKs
+    appScript.integrity = 'sha384-4gq9w/AGf72FXdNQ3Kn3EqWP7633NbCMjpYHt8YCZyXf23o2opcuAr4cif41tLrC';
+    appScript.crossOrigin = 'anonymous';
     appScript.onload = () => {
       const authScript = document.createElement('script');
       authScript.src = 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js';
+      authScript.integrity = 'sha384-xtdq4MQqPj1dB5DQsuw9O7dh4kHhMP/Wp5u8O1jiaWiou13ZfJIgiccjtVK2pBhL';
+      authScript.crossOrigin = 'anonymous';
       authScript.onload = () => resolve();
       authScript.onerror = () => reject(new Error('Failed to load Firebase Auth SDK'));
       document.head.appendChild(authScript);

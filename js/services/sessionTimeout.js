@@ -290,6 +290,14 @@ function scheduleTimers() {
   if (!isGuardianActive) return;
 
   if (isPaymentStepActive()) {
+    // Security (NEW-003): Even during payment, enforce a 2-hour absolute max timeout.
+    // Prevents indefinite session if user walks away on step 5/6.
+    const PAYMENT_MAX_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 hours
+    const elapsed = Date.now() - lastActivityTime;
+    if (elapsed >= PAYMENT_MAX_TIMEOUT_MS) {
+      executeSessionLock();
+      return;
+    }
     warningTimer = setTimeout(() => scheduleTimers(), 5 * 60 * 1000);
     return;
   }
@@ -445,9 +453,15 @@ export async function executeSessionLock(isSilent = false) {
   }
 
   // 2. Perform gentle Firebase sign-out (without wiping local draft store)
+  // Security (NEW-001): Use the exported handleSignOut or firebase.auth().signOut()
+  // instead of window.firebaseAuth which was never assigned on window.
   try {
-    if (typeof window !== 'undefined' && window.firebaseAuth) {
-      await window.firebaseAuth.signOut();
+    if (typeof window !== 'undefined') {
+      if (typeof window.handleSignOut === 'function') {
+        await window.handleSignOut();
+      } else if (typeof firebase !== 'undefined' && firebase.auth) {
+        await firebase.auth().signOut();
+      }
     }
   } catch (e) {
     console.warn('[Session Lock] Sign-out warning:', e);
@@ -462,6 +476,19 @@ export async function executeSessionLock(isSilent = false) {
     if (typeof window.closeDashboardModal === 'function') {
       window.closeDashboardModal();
     }
+
+    // Security (NEW-002): Clear PII from all visible form fields and wizard step content
+    // so a passerby cannot read personal details on the locked screen.
+    try {
+      document.querySelectorAll('input, textarea, select').forEach(el => {
+        if (el.type !== 'hidden' && el.type !== 'submit' && el.type !== 'button' && el.type !== 'radio' && el.type !== 'checkbox') {
+          el.value = '';
+        }
+      });
+      // Clear rendered draft preview text (step 5 summary)
+      const previewContainer = document.getElementById('draftPreviewContent') || document.getElementById('previewContent');
+      if (previewContainer) previewContainer.innerHTML = '';
+    } catch (_) {}
   }
 
   // 4. Notify user
