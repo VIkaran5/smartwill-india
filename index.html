@@ -63,14 +63,11 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/assets/fonts/fonts.css"></noscript>
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/landing.css">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="css/legal-bot.css"></noscript>
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/css/bootstrap-grid.min.css"></noscript>
 
   <!-- Deferred non-critical scripts to eliminate render-blocking with SRI -->
   <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" integrity="sha384-v15JX+vZHMR3T6LQR9N6e6wIKrKOdNTbdj8j+e5irqq3L9gCauJz2vGlUzomWyUp" crossorigin="anonymous" defer></script>
@@ -140,7 +137,7 @@
       "price": "299",
       "priceCurrency": "INR",
       "availability": "https://schema.org/InStock",
-      "url": "https://smartwill-india.vercel.app/app.html"
+      "url": "https://smartwill-india.vercel.app/app"
     }
   }
   </script>
@@ -160,7 +157,7 @@
   <!-- Navigation Bar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="index.html" class="nav-logo" aria-label="SmartWill India Home">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
         <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
         <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
@@ -180,7 +177,7 @@
         <div class="lang-switcher">
           <button class="lang-btn active" data-lang="en">EN</button>
           <button class="lang-btn" data-lang="te">తెలుగు</button>
-          <button class="lang-btn" data-lang="hi">हिंदी</button>
+          <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
         </div>
         <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
           <span class="toggle-icon"><i data-lucide="moon"></i></span>
@@ -190,7 +187,7 @@
           <button type="button" class="btn btn-outline btn-sm auth-btn-signin" onclick="openAuthModal('signin')">Sign In</button>
           <button type="button" class="btn btn-primary btn-sm auth-btn-signup" onclick="openAuthModal('signup')">Sign Up</button>
         </div>
-        <a href="app.html" class="btn btn-gold btn-sm" data-i18n="nav.createWill">Create Your Will</a>
+        <a href="/app" class="btn btn-gold btn-sm" data-i18n="nav.createWill">Create Your Will</a>
       </div>
 
       <!-- Hamburger (The Three Line Menu) -->
@@ -204,7 +201,7 @@
       <div class="lang-switcher" style="justify-content:center">
         <button class="lang-btn active" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="te">తెలుగు</button>
-        <button class="lang-btn" data-lang="hi">हिंदी</button>
+        <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
       </div>
       <a href="#features" class="nav-link" data-i18n="nav.features">Features</a>
       <a href="#how-it-works" class="nav-link" data-i18n="nav.howItWorks">How It Works</a>
@@ -217,7 +214,7 @@
         <button class="btn btn-outline btn-sm" style="flex:1" onclick="openAuthModal('signin')">Sign In</button>
         <button class="btn btn-primary btn-sm" style="flex:1" onclick="openAuthModal('signup')">Sign Up</button>
       </div>
-      <a href="app.html" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Your Will — ₹299</a>
     </div>
   </header>
 
@@ -240,7 +237,7 @@
           70% of Indians pass away without a Will — leaving families with frozen assets and court disputes. Create your Will online in 10 minutes.
         </p>
         <div class="hero-cta-group">
-          <a href="app.html" class="btn btn-gold btn-lg shadow-gold" data-i18n="hero.ctaPrimary">
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold" data-i18n="hero.ctaPrimary">
             Create Will Now — ₹299 <i data-lucide="arrow-right"></i>
           </a>
           <button type="button" class="btn btn-secondary btn-lg" onclick="openSampleWillModal()">
@@ -557,7 +554,7 @@
       </div>
 
       <div class="demo-cta-wrap text-center" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-        <a href="app.html" class="btn btn-gold btn-lg shadow-gold" data-i18n="demo.cta">
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" data-i18n="demo.cta">
           Start Creating Your Will — ₹299 <i data-lucide="arrow-right"></i>
         </a>
         <button type="button" class="btn btn-outline btn-lg" onclick="openSampleWillModal()">
@@ -781,7 +778,7 @@
               <span class="cost-total-label">SmartWill Total Price:</span>
               <span class="cost-total-val-success">₹299 (Fixed)</span>
             </div>
-            <a href="app.html" class="btn btn-gold btn-lg w-full shadow-gold" style="justify-content:center;">
+            <a href="/app" class="btn btn-gold btn-lg w-full shadow-gold" style="justify-content:center;">
               Protect Your Family for ₹299 <i data-lucide="arrow-right"></i>
             </a>
           </div>
@@ -816,7 +813,7 @@
             <li><i data-lucide="check-circle-2"></i> <span data-i18n="pricing.feat6">Free Unlimited Storage & Digital Edits</span></li>
           </ul>
 
-          <a href="app.html" class="btn btn-gold btn-lg w-full" data-i18n="pricing.cta">Get Started Now - ₹299</a>
+          <a href="/app" class="btn btn-gold btn-lg w-full" data-i18n="pricing.cta">Get Started Now - ₹299</a>
         </div>
       </div>
     </div>
@@ -1027,7 +1024,7 @@
   <footer class="footer">
     <div class="container footer-container">
       <div class="footer-col">
-        <a href="index.html" class="nav-logo" aria-label="SmartWill India Home">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
           <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
           <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
           <span class="logo-text" data-i18n="nav.brand">SmartWill India</span>
@@ -1044,17 +1041,17 @@
           <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
           <li><a href="#faq" data-i18n="nav.faq">FAQ</a></li>
           <li><a href="/blog">Legal Guides &amp; Blog</a></li>
-          <li><a href="app.html" data-i18n="nav.createWill">Create Will</a></li>
+          <li><a href="/app" data-i18n="nav.createWill">Create Will</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
         <h4 data-i18n="footer.legal">Legal & Policies</h4>
         <ul class="footer-links">
-          <li><a href="privacy.html">Privacy Policy (DPDP)</a></li>
-          <li><a href="terms.html">Terms & Conditions</a></li>
-          <li><a href="refunds.html">Refunds & Cancellations</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms & Conditions</a></li>
+          <li><a href="/refunds">Refunds & Cancellations</a></li>
+          <li><a href="/contact">Contact Us</a></li>
           <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
         </ul>
         <p class="footer-disclaimer mt-2" data-i18n="footer.disclaimer">
@@ -1242,7 +1239,7 @@
         </div>
         <div style="display:flex; gap:10px;">
           <button type="button" class="btn btn-outline btn-sm" onclick="closeSampleWillModal()">Close Preview</button>
-          <a href="app.html" class="btn btn-gold btn-sm shadow-gold">Create Your Will Now — ₹299 &rarr;</a>
+          <a href="/app" class="btn btn-gold btn-sm shadow-gold">Create Your Will Now — ₹299 &rarr;</a>
         </div>
       </div>
     </div>
@@ -1254,7 +1251,7 @@
       <span class="mobile-sticky-price">₹299</span>
       <span class="mobile-sticky-sub">10 Mins • Legally Valid</span>
     </div>
-    <a href="app.html" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
       Create Your Will &rarr;
     </a>
   </div>

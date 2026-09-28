@@ -53,16 +53,74 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/assets/fonts/fonts.css"></noscript>
   <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/landing.css">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/css/legal-bot.css"></noscript>
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/css/bootstrap-grid.min.css"></noscript>
 
   <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+
+  <!-- Telugu FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "ఆన్లైన్ వీలునామా భారతదేశంలో చెల్లుబాటు అవుతుందా?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "అవును. భారతీయ వారసత్వ చట్టం 1925 ప్రకారం, వీలునామా చెల్లుబాటు అవ్వాలంటే టెస్టేటర్ సంతకం చేసి, లబ్ధిదారులు కాని ఇద్దరు స్వతంత్ర సాక్షులు ధ్రువీకరించాలి. నమోదు ఐచ్ఛికం."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "SmartWill India ఎంత ఖర్చవుతుంది?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "కేవలం ₹299. 10 నిమిషాల్లో చట్టబద్ధమైన వీలునామా PDF డౌన్లోడ్ చేయవచ్చు. లాయర్ అపాయింట్మెంట్ అవసరం లేదు."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "వీలునామా రాయడానికి స్టాంప్ పేపర్ అవసరమా?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "కాదు. భారతీయ స్టాంప్ చట్టం 1899 సెక్షన్ 18 ప్రకారం వీలునామాలు స్టాంప్ డ్యూటీ నుండి పూర్తిగా మినహాయించబడ్డాయి. సాదా A4 కాగితం మీద ముద్రించి సంతకం చేస్తే చాలు."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Telugu Service Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "SmartWill India — ఆన్లైన్ వీలునామా సృష్టి",
+    "description": "భారతీయ వారసత్వ చట్టం 1925 ప్రకారం 10 నిమిషాల్లో చట్టబద్ధమైన వీలునామా ఆన్లైన్లో రూపొందించుకోండి.",
+    "provider": {
+      "@type": "Organization",
+      "name": "SmartWill India",
+      "url": "https://smartwill-india.vercel.app"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "India"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "299",
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock"
+    },
+    "serviceType": "Online Legal Will Drafting",
+    "url": "https://smartwill-india.vercel.app/te/"
+  }
+  </script>
 </head>
 <body>
 
@@ -89,7 +147,7 @@
         <div class="lang-switcher">
           <a href="/" class="lang-btn" style="text-decoration:none;">EN</a>
           <a href="/te/" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
-          <a href="/#features" class="lang-btn" style="text-decoration:none;" onclick="localStorage.setItem('smartwill_lang', 'hi');">हिंदी</a>
+          <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
         </div>
         <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
           <span class="toggle-icon"><i data-lucide="moon"></i></span>
@@ -109,7 +167,7 @@
       <div class="lang-switcher" style="justify-content:center">
         <a href="/" class="lang-btn" style="text-decoration:none;">EN</a>
         <a href="/te/" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
-        <a href="/#features" class="lang-btn" style="text-decoration:none;" onclick="localStorage.setItem('smartwill_lang', 'hi');">हिंदी</a>
+        <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
       </div>
       <a href="#ila-pani-chestundi" class="nav-link">ఎలా పని చేస్తుంది</a>
       <a href="#pricing" class="nav-link">ధర</a>
