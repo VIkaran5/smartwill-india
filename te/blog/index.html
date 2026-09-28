@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="te" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <title>తెలుగు లీగల్ గైడ్స్ &amp; బ్లాగ్ — SmartWill India</title>
+  <meta name="description" content="వీలునామా ఎలా రాయాలి, సబ్ రిజిస్ట్రార్ ఆఫీస్ ఫీజులు, నామినీ వర్సెస్ లీగల్ హెయిర్ నిబంధనలు మరియు వారసత్వ హక్కులపై సరళమైన తెలుగు గైడ్స్.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/te/blog">
+  
+  <!-- hreflang — reciprocal with /blog -->
+  <link rel="alternate" hreflang="en" href="https://smartwill-india.vercel.app/blog">
+  <link rel="alternate" hreflang="te" href="https://smartwill-india.vercel.app/te/blog">
+  <link rel="alternate" hreflang="x-default" href="https://smartwill-india.vercel.app/blog">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="తెలుగు లీగల్ గైడ్స్ &amp; బ్లాగ్ — SmartWill India">
+  <meta property="og:description" content="భారతీయ వారసత్వ చట్టం 1925 ప్రకారం వీలునామా, నామినీ నిబంధనలు మరియు ఆస్తి హక్కులపై ప్రామాణిక సమాచారం.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/te/blog">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  
+  <!-- Schema.org CollectionPage & ItemList Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "SmartWill India తెలుగు లీగల్ గైడ్స్",
+    "description": "భారతీయ వారసత్వ చట్టం 1925 ప్రకారం వీలునామా తయారీ, సబ్ రిజిస్ట్రార్ నిబంధనలు, నామినీ వర్సెస్ లీగల్ హెయిర్ హక్కులపై సమగ్ర వ్యాసాలు.",
+    "url": "https://smartwill-india.vercel.app/te/blog",
+    "inLanguage": "te",
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "url": "https://smartwill-india.vercel.app/te/blog/veelunaama-ela-rayali",
+          "name": "వీలునామా ఎలా రాయాలి? పూర్తి చట్టబద్ధమైన గైడ్ (2026)"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "url": "https://smartwill-india.vercel.app/te/blog/sub-registrar-will-registration-ap-telangana",
+          "name": "సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో విల్లు రిజిస్ట్రేషన్ ఫీజు & ప్రాసెస్ (AP & తెలంగాణ)"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "url": "https://smartwill-india.vercel.app/te/blog/nominee-vs-legal-heir-telugu",
+          "name": "నామినీ వర్సెస్ లీగల్ హెయిర్: బ్యాంక్ ఖాతాలు, FD సొమ్ము అసలైన వారసులెవరు?"
+        }
+      ]
+    }
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .blog-header { 
+      padding: 7.5rem 0 3rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .blog-header h1 { 
+      font-size: clamp(2rem, 5vw, 3.2rem); 
+      font-weight: 700; 
+      margin-bottom: 0.75rem; 
+      color: var(--text-main); 
+    }
+    .blog-header p { 
+      color: var(--text-muted); 
+      max-width: 620px; 
+      font-size: 1.05rem; 
+      line-height: 1.6; 
+    }
+    .blog-grid { 
+      padding: 3rem 0 5rem; 
+    }
+    .post-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      transition: all 0.25s ease; 
+      text-decoration: none; 
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      color: inherit; 
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04); 
+    }
+    .post-card:hover { 
+      border-color: var(--accent-gold, #dfb76c); 
+      transform: translateY(-3px); 
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08); 
+      color: inherit; 
+    }
+    .post-tag { 
+      font-size: 0.75rem; 
+      font-weight: 700; 
+      letter-spacing: 0.08em; 
+      text-transform: uppercase; 
+      color: var(--primary, #dfb76c); 
+      margin-bottom: 0.75rem; 
+    }
+    [data-theme="light"] .post-tag { 
+      color: #b45309; 
+    }
+    .post-card h2 { 
+      font-size: 1.3rem; 
+      font-weight: 700; 
+      line-height: 1.4; 
+      margin-bottom: 0.75rem; 
+      color: var(--text-main); 
+    }
+    .post-card p { 
+      font-size: 0.95rem; 
+      color: var(--text-muted); 
+      line-height: 1.6; 
+      margin-bottom: 1.5rem; 
+      flex-grow: 1; 
+    }
+    .post-meta { 
+      font-size: 0.8rem; 
+      color: var(--text-subtle, var(--text-muted)); 
+    }
+    .read-more { 
+      font-size: 0.9rem; 
+      font-weight: 700; 
+      color: var(--primary, #dfb76c); 
+      margin-top: 0.75rem; 
+    }
+    [data-theme="light"] .read-more { 
+      color: #000000; 
+      text-decoration: underline; 
+    }
+    .blog-cta-section { 
+      padding: 4rem 0; 
+      border-top: 1px solid var(--border-light); 
+      text-align: center; 
+      background: var(--bg-surface); 
+    }
+    .blog-cta-section p { 
+      color: var(--text-muted); 
+      font-size: 1.1rem; 
+      margin-bottom: 1.5rem; 
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Navbar matching Telugu layout -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/te/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/te/#ila-pani-chestundi" class="nav-link">ఎలా పని చేస్తుంది</a>
+        <a href="/te/#pricing" class="nav-link">ధర</a>
+        <a href="/te/#faq" class="nav-link">సందేహాలు</a>
+        <a href="/te/blog" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">బ్లాగ్ (Blog)</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <div class="lang-switcher">
+          <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+          <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+          <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+        </div>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">వీలునామా రూపొందించండి — ₹299</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <div class="lang-switcher" style="justify-content:center; margin-bottom:1rem;">
+        <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+        <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+        <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+      </div>
+      <a href="/te/#ila-pani-chestundi" class="nav-link" style="font-size:1rem">ఎలా పని చేస్తుంది</a>
+      <a href="/te/#pricing" class="nav-link" style="font-size:1rem">ధర</a>
+      <a href="/te/#faq" class="nav-link" style="font-size:1rem">సందేహాలు</a>
+      <a href="/te/blog" class="nav-link active" style="font-size:1rem">బ్లాగ్ (Blog)</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">వీలునామా రూపొందించండి — ₹299</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="blog-header">
+      <div class="container">
+        <h1>తెలుగు లీగల్ గైడ్స్ &amp; వారసత్వ చట్టాలు</h1>
+        <p>వీలునామా తయారీ, ఆస్తి విభజన, బ్యాంక్ డిపాజిట్లు మరియు భారతీయ వారసత్వ చట్టం 1925 పై సులభమైన తెలుగు వ్యాసాలు.</p>
+      </div>
+    </section>
+
+    <section class="blog-grid">
+      <div class="container">
+        <div class="row g-4">
+          <!-- Post 1 -->
+          <div class="col-md-6 col-lg-4">
+            <a href="/te/blog/veelunaama-ela-rayali" class="post-card">
+              <div class="post-tag">వీలునామా మార్గదర్శి</div>
+              <h2>వీలునామా ఎలా రాయాలి? పూర్తి చట్టబద్ధమైన గైడ్ (2026)</h2>
+              <p>సాదా A4 పేపర్‌పై వీలునామా చెల్లుబాటు అవుతుందా? సాక్షులు ఎవరుండాలి? భారతీయ వారసత్వ చట్టం సెక్షన్ 63 ప్రకారం సరైన నిబంధనలు తెలుసుకోండి.</p>
+              <div class="post-meta">సెప్టెంబర్ 2026 &nbsp;&middot;&nbsp; 6 నిమిషాల పఠనం</div>
+              <div class="read-more">వ్యాసం చదవండి &rarr;</div>
+            </a>
+          </div>
+
+          <!-- Post 2 -->
+          <div class="col-md-6 col-lg-4">
+            <a href="/te/blog/sub-registrar-will-registration-ap-telangana" class="post-card">
+              <div class="post-tag">రిజిస్ట్రేషన్ &amp; ఫీజులు</div>
+              <h2>సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో విల్లు రిజిస్ట్రేషన్ ఫీజు &amp; ప్రాసెస్</h2>
+              <p>ఆంధ్రప్రదేశ్ &amp; తెలంగాణ రాష్ట్రాల్లో వీలునామా రిజిస్ట్రేషన్ తప్పనిసరా? ఫీజు ఎంత? సాక్షులు, ఆధార్ కార్డు నిబంధనల పూర్తి వివరాలు.</p>
+              <div class="post-meta">సెప్టెంబర్ 2026 &nbsp;&middot;&nbsp; 6 నిమిషాల పఠనం</div>
+              <div class="read-more">వ్యాసం చదవండి &rarr;</div>
+            </a>
+          </div>
+
+          <!-- Post 3 -->
+          <div class="col-md-6 col-lg-4">
+            <a href="/te/blog/nominee-vs-legal-heir-telugu" class="post-card">
+              <div class="post-tag">బ్యాంకింగ్ &amp; నామినీ చట్టం</div>
+              <h2>నామినీ వర్సెస్ లీగల్ హెయిర్: బ్యాంక్ సొమ్ము ఎవరికి చెందుతుంది?</h2>
+              <p>నామినీ అంటే కేవలం రక్షకుడేనా? సుప్రీంకోర్టు తీర్పుల ప్రకారం బ్యాంక్ FDలు, మ్యూచువల్ ఫండ్స్ అసలు యజమానులు ఎవరు? పూర్తి చట్టపరమైన విశ్లేషణ.</p>
+              <div class="post-meta">సెప్టెంబర్ 2026 &nbsp;&middot;&nbsp; 6 నిమిషాల పఠనం</div>
+              <div class="read-more">వ్యాసం చదవండి &rarr;</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="blog-cta-section">
+      <div class="container">
+        <p>మీ కుటుంబ భవిష్యత్తును సురక్షితం చేయండి — కేవలం 10 నిమిషాల్లో ₹299కే మీ వీలునామాను రూపొందించుకోండి.</p>
+        <a href="/app" class="btn btn-gold">వీలునామా రూపొందించండి &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Telugu Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/te/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          భారతీయ వారసత్వ చట్టం 1925 ప్రకారం భారతదేశంలో అత్యంత సరసమైన డిజిటల్ వీలునామా సృష్టి ప్లాట్‌ఫారమ్.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">త్వరిత లింకులు</h4>
+        <ul class="footer-links">
+          <li><a href="/te/">ముఖ్య పేజీ (Home)</a></li>
+          <li><a href="/app">వీలునామా సృష్టించండి</a></li>
+          <li><a href="/te/#ila-pani-chestundi">ఎలా పని చేస్తుంది</a></li>
+          <li><a href="/te/blog">తెలుగు లీగల్ బ్లాగ్</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">చట్టపరమైన సమాచారం</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">గోప్యతా విధానం (Privacy Policy)</a></li>
+          <li><a href="/terms">నిబంధనలు &amp; షరతులు</a></li>
+          <li><a href="/refunds">రీఫండ్ పాలసీ</a></li>
+          <li><a href="/contact">సహాయ కేంద్రం (Contact)</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p>&copy; 2026 SmartWill India. సర్వ హక్కులు ప్రత్యేకించబడ్డాయి. DPDP చట్టం, 2023 నిబంధనలకు కట్టుబడి ఉంది.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js"></script>
+</body>
+</html>
