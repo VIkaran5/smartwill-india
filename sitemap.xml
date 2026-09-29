@@ -66,6 +66,21 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://smartwill-india.vercel.app/blog/who-can-be-a-witness-to-a-will-in-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://smartwill-india.vercel.app/blog/can-a-registered-will-be-challenged-in-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://smartwill-india.vercel.app/blog/how-to-register-a-will-at-sub-registrar-office</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://smartwill-india.vercel.app/te/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
