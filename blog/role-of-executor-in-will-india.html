@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Role of Executor in a Will in India: Duties &amp; Powers (2026)</title>
+  <meta name="description" content="Who can be an executor of a Will in India? Learn duties, legal powers under Indian Succession Act 1925, probate procedures, and whether a beneficiary can be an executor.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/blog/role-of-executor-in-will-india">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Role of Executor in a Will in India: Duties, Rights &amp; Powers (2026)">
+  <meta property="og:description" content="Complete legal guide on executors of a Will in India. Learn the appointment process, statutory duties, beneficiary eligibility, and probate steps.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/blog/role-of-executor-in-will-india">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Article & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "Role of Executor in a Will in India: Duties, Rights & Powers (2026)",
+        "description": "Exhaustive legal guide covering the definition, selection, statutory duties, and probate powers of an executor under the Indian Succession Act 1925.",
+        "image": "https://smartwill-india.vercel.app/og-image.jpg",
+        "url": "https://smartwill-india.vercel.app/blog/role-of-executor-in-will-india",
+        "datePublished": "2026-09-29T00:00:00+05:30",
+        "dateModified": "2026-09-29T00:00:00+05:30",
+        "author": { "@type": "Organization", "name": "SmartWill India Legal Desk", "url": "https://smartwill-india.vercel.app/" },
+        "publisher": { "@type": "Organization", "name": "SmartWill India", "url": "https://smartwill-india.vercel.app/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can a beneficiary also be named as an executor in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, absolutely. Unlike witnesses who cannot receive bequests under Section 67 of the Indian Succession Act 1925, there is no legal bar against a beneficiary serving as an executor. In fact, under Section 141, appointing your spouse, eldest son, or trusted primary beneficiary as executor is common practice because they have a personal interest in wrapping up the estate quickly."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it mandatory to appoint an executor in an Indian Will?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "While a Will without a named executor is not legally invalid, failing to appoint one causes enormous complications. If no executor is appointed, the beneficiaries cannot apply for Probate; instead, they must petition the court for 'Letters of Administration with the Will Annexed' under Section 232, which is significantly slower and more expensive."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can an executor refuse to act after the testator dies?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. No person can be forced to act as an executor against their will. If a named executor chooses not to act, they can formally file a 'renunciation of executorship' in court. This is why SmartWill India always advises naming an alternate executor in your Will."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is an executor personally liable for the debts of the deceased person?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under Section 323 of the Indian Succession Act, an executor is only liable to clear the deceased's debts out of the assets of the deceased's estate. The executor's personal property and savings can never be attached to pay off the testator's debts."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .article-header { 
+      padding: 7.5rem 0 3.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
+    .article-title { 
+      font-size: clamp(2.1rem, 5vw, 3.2rem); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .article-subtitle { 
+      font-size: 1.15rem; 
+      line-height: 1.65; 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin-bottom: 2rem; 
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.08rem; 
+      line-height: 1.8; 
+      color: var(--text-main); 
+    }
+    .article-content h2 { 
+      font-size: 1.85rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.25rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .article-content h3 { 
+      font-size: 1.35rem; 
+      font-weight: 600; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+    .legal-alert { 
+      background: rgba(223, 183, 108, 0.08); 
+      border-left: 4px solid var(--accent-gold, #dfb76c); 
+      padding: 1.35rem 1.5rem; 
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
+      margin: 2rem 0; 
+    }
+    .article-sidebar { 
+      position: sticky; 
+      top: 6rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      margin-bottom: 2rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header -->
+    <section class="article-header">
+      <div class="container">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;background:rgba(223, 183, 108, 0.12);border:1px solid var(--accent-gold, #dfb76c);border-radius:9999px;font-size:0.85rem;font-weight:600;color:var(--primary, #dfb76c);margin-bottom:1.25rem;">
+          <i data-lucide="user-check" style="width:16px;height:16px;"></i> Legal Estate Roles
+        </div>
+        <h1 class="article-title">Role of an Executor in a Will in India: Duties &amp; Powers (2026)</h1>
+        <p class="article-subtitle">
+          When writing a Will, appointing the right executor is just as important as deciding who inherits your property. Learn who qualifies, statutory duties under the Indian Succession Act 1925, probate procedures, and common myths.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> ISA 1925 Sections 211 &amp; 222</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 8 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> September 2026</span>
+          <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body Content -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
+              
+              <p>
+                A Will is only as good as the person designated to carry out its terms. While most people spend weeks deciding which child receives which property or share portfolio, the appointment of an <strong>Executor</strong> (also known in Hindi as <em>Wasi</em> or in Telugu as <em>Karyakartha</em>) is often treated as an afterthought.
+              </p>
+              <p>
+                In Indian estate planning, the executor is the legal bridge between your wishes and actual ownership transfer. Under Section 211 of the <strong>Indian Succession Act 1925</strong>, the executor of a deceased person is their legal representative for all purposes, and all the property of the deceased vests in them upon death.
+              </p>
+
+              <h2>What is an Executor Under Indian Law?</h2>
+              <p>
+                Under Section 2(c) of the Indian Succession Act 1925:
+              </p>
+              <blockquote>
+                <em>"Executor means a person to whom the execution of the last Will of a deceased person is, by the testator's appointment, confided."</em>
+              </blockquote>
+              <p>
+                Unlike an administrator (who is appointed by a court when someone dies without a Will or without naming an executor), an executor derives their legal authority directly from the testator's pen.
+              </p>
+
+              <h2>Can a Beneficiary Be an Executor in India?</h2>
+              <p>
+                This is one of the most common legal misconceptions in India. Many testators mistakenly believe that an executor must be an outside third party (like an advocate or chartered accountant) and that a beneficiary cannot be named.
+              </p>
+              <div class="legal-alert">
+                <strong><i data-lucide="check-circle" style="width:16px;height:16px;vertical-align:text-bottom;"></i> Yes, a Beneficiary CAN Be an Executor:</strong> Under Section 141 of the Indian Succession Act 1925, appointing your spouse, your son, your daughter, or any principal beneficiary as executor is 100% legal. Unlike <em>attesting witnesses</em> who are barred from receiving gifts under Section 67, an executor can receive inheritances under the Will without any conflict of interest.
+              </div>
+              <p>
+                In fact, appointing a family member who is also a major beneficiary is standard practice in over 90% of Indian families because they have a direct personal incentive to expedite the transmission of assets without demanding hefty professional fees.
+              </p>
+
+              <h2>The 6 Primary Duties of an Executor</h2>
+              <p>
+                Once the testator passes away, the executor assumes fiduciary responsibility over the estate. Their duties unfold in 6 chronological stages:
+              </p>
+
+              <h3>1. Custody of the Original Will &amp; Death Certificate</h3>
+              <p>
+                The executor locates the original signed Will, secures all physical property papers (sale deeds, share certificates, bank passbooks), and obtains multiple original Death Certificates from the municipal corporation.
+              </p>
+
+              <h3>2. Securing and Cataloging Estate Assets</h3>
+              <p>
+                The executor prepares a complete inventory of all movable and immovable assets belonging to the deceased, ensuring bank lockers are not tampered with and tenanted flats continue to pay rent into an estate account.
+              </p>
+
+              <h3>3. Applying for Probate (Where Mandatory)</h3>
+              <p>
+                Under Section 213 of the Indian Succession Act 1925, probate is legally mandatory for Wills made by Hindus, Buddhists, Sikhs, and Jains if:
+              </p>
+              <ul>
+                <li>The Will was executed within the historic municipal limits of <strong>Mumbai, Chennai, or Kolkata</strong>; or</li>
+                <li>The Will relates to immovable property situated within those cities, even if signed elsewhere.</li>
+              </ul>
+              <p>
+                Under Section 222, <strong>probate can only be granted to an executor named in the Will</strong>. If no executor was named, the heirs must go through the far more cumbersome process of applying for Letters of Administration.
+              </p>
+
+              <h3>4. Settling Outstanding Debts, Taxes &amp; Funeral Expenses</h3>
+              <p>
+                Under Section 320 to 323 of the Act, before a single rupee can be distributed to heirs, the executor must pay:
+              </p>
+              <ol>
+                <li>Funeral expenses commensurate with the deceased's status in life.</li>
+                <li>Expenses of obtaining probate or legal representation.</li>
+                <li>Medical bills incurred during the last illness.</li>
+                <li>Outstanding income taxes, property taxes, and secured/unsecured loans of the deceased.</li>
+              </ol>
+
+              <h3>5. Distribution of Assets to Named Beneficiaries</h3>
+              <p>
+                Once liabilities are settled, the executor initiates asset transmission:
+              </p>
+              <ul>
+                <li>Submitting the Will and death certificate to banks, mutual fund AMCs, and demat depository participants (CDSL/NSDL).</li>
+                <li>Applying for property mutation before the municipal revenue office (e.g., BBMP, GHMC, BMC, MCD) or housing cooperative societies.</li>
+                <li>Executing assent deeds to hand over physical custody of specific bequests.</li>
+              </ul>
+
+              <h3>6. Submitting Inventory and Estate Accounts</h3>
+              <p>
+                Under Section 317, within 6 months of being granted probate (or within 1 year), the executor must exhibit an accurate inventory of the deceased's assets and a detailed balance sheet showing how every asset was distributed.
+              </p>
+
+              <h2>Executor vs Legal Heir vs Nominee</h2>
+              <div class="comparison-table-wrapper" style="overflow-x:auto;margin:2rem 0;">
+                <table class="styled-table" style="width:100%;border-collapse:collapse;background:var(--bg-card);border:1px solid var(--border-light);border-radius:12px;">
+                  <thead>
+                    <tr style="background:rgba(223, 183, 108, 0.1);color:var(--accent-gold);">
+                      <th style="padding:1rem;">Role</th>
+                      <th style="padding:1rem;">Legal Authority</th>
+                      <th style="padding:1rem;">Ultimate Ownership</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);"><strong>Executor</strong></td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">Authorized manager appointed by the Will to distribute assets</td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">Holds legal title strictly as a trustee; owns only what is specifically bequeathed to them</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);"><strong>Nominee</strong></td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">Custodian recognized by banks/societies to receive funds temporarily</td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">No ownership right. Must surrender funds to the beneficiaries named in the Will</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);"><strong>Legal Heir</strong></td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">Inherits under personal law (HSA 1956) if no Will exists</td>
+                      <td style="padding:1rem;border-bottom:1px solid var(--border-light);">Superseded by the Will. Only receives what the testator designates in the Will</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>Why You Must Always Appoint an Alternate Executor</h2>
+              <p>
+                What happens if your chosen executor predeceases you, moves abroad, or is incapacitated by dementia when you die? If you have named only one executor and that person cannot act, your family faces serious procedural hurdles:
+              </p>
+              <ul>
+                <li>The court cannot grant probate.</li>
+                <li>Your family members must apply for <strong>Letters of Administration with the Will Annexed</strong> under Section 232.</li>
+                <li>This process requires executing surety bonds, issuing public citations in newspapers, and paying higher court registry stamp fees.</li>
+              </ul>
+              <p>
+                To avoid this, SmartWill India's drafting engine automatically includes a designated <strong>Alternate Executor Clause</strong>, ensuring uninterrupted succession management.
+              </p>
+
+              <h2>Frequently Asked Questions</h2>
+              <div class="faq-card">
+                <h3>Can an executor charge a fee for administering the estate in India?</h3>
+                <p>Yes. If the testator explicitly provides for an executor fee or commission in the Will (common when naming professional advocates or corporate trust companies), the executor is entitled to claim it from the estate under Section 309 of the Indian Succession Act. If no fee is mentioned, family executors serve gratuitously.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>What if the executor refuses to distribute the property to the beneficiaries?</h3>
+                <p>An executor owes a strict fiduciary duty to the beneficiaries. If an executor misappropriates funds, refuses to account for assets, or causes unreasonable delay, the beneficiaries can file an application under Section 301 of the Indian Succession Act for the removal of the executor and appointment of an administrator.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Can an NRI living abroad be appointed as an executor?</h3>
+                <p>Yes. An NRI can be named as an executor. However, if probate is required in an Indian High Court or if physical attendance is needed at local Sub-Registrar Offices and banks, having an overseas executor can cause substantial travel costs and procedural delays. Appointing an executor resident in India is usually more practical.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- CTA Card -->
+              <div class="sidebar-card cta-card">
+                <i data-lucide="shield" style="width:36px;height:36px;color:var(--accent-gold);margin-bottom:0.75rem;"></i>
+                <h4>Appoint Your Executor with SmartWill</h4>
+                <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                  Our guided wizard lets you name primary and alternate executors in 30 seconds with automatic fiduciary safeguard clauses.
+                </p>
+                <div style="font-size:1.85rem;font-weight:800;color:var(--accent-gold);margin-bottom:1rem;">
+                  &#x20B9;299 <span style="font-size:0.95rem;font-weight:400;color:var(--text-muted);">one-time</span>
+                </div>
+                <a href="/app" class="btn btn-gold" style="width:100%;text-align:center;display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir in India</a></li>
+                  <li><a href="/will-format-india">&rarr; Simple Will Format (Word &amp; PDF)</a></li>
+                  <li><a href="/blog/doctor-certificate-for-will-india">&rarr; Doctor Certificate for Will in India</a></li>
+                  <li><a href="/blog/can-a-registered-will-be-challenged-in-india">&rarr; Grounds to Challenge a Will in Court</a></li>
+                  <li><a href="/online-will-maker-vs-lawyer">&rarr; Online Will vs Traditional Lawyer</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Protect Your Estate with Proper Executor Clauses</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Don't leave your family stranded with intestate probate hurdles. Draft your complete legally compliant Will today for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

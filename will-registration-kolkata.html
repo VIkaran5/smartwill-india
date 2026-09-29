@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Will Registration in Kolkata: SRO Fees, Probate &amp; Offices (2026)</title>
+  <meta name="description" content="Complete guide to Will registration in Kolkata. WBREGOV portal, SRO offices (Alipore, Bidhannagar, Sealdah), Calcutta High Court probate rules, and ₹299 online Will.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/will-registration-kolkata">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Will Registration in Kolkata: SRO Fees, Probate Rules &amp; Offices (2026)">
+  <meta property="og:description" content="Register your Will in Kolkata without paying ₹30,000 advocate fees. Covers Alipore, Bidhannagar, Writers' Building SROs, Calcutta HC probate, and KMC mutation.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/will-registration-kolkata">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Service & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "name": "Online Legal Will Drafting for Kolkata Residents",
+        "description": "Legally compliant digital Will drafting for Kolkata property owners, Salt Lake leasehold flat owners, and bank depositors under the Indian Succession Act 1925.",
+        "provider": {
+          "@type": "Organization",
+          "name": "SmartWill India",
+          "url": "https://smartwill-india.vercel.app/"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "Kolkata",
+          "containedInPlace": {
+            "@type": "State",
+            "name": "West Bengal"
+          }
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://smartwill-india.vercel.app/app"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is probate mandatory for a Will in Kolkata?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Under Section 213 and Section 57(a) of the Indian Succession Act 1925, probate is legally mandatory for Wills made by Hindus, Buddhists, Sikhs, and Jains if the Will was executed within the ordinary original civil jurisdiction of the High Court at Calcutta, or if it relates to immovable property situated within Kolkata municipal limits. Appointing a named executor is therefore essential."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How much does Will registration cost in Kolkata, West Bengal?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In West Bengal, Wills attract zero stamp duty (₹0) under the Indian Stamp Act as amended for West Bengal. The official government registration fee at any Kolkata Sub-Registrar Office is approximately ₹100 to ₹200, plus a nominal page scanning fee (~₹24 per page). The total official SRO cost is typically under ₹400."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where are the major Sub-Registrar Offices located in Kolkata?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Key registration offices in Kolkata include: 1) Registry Office Kolkata (ARA I, II, III at Council House Street), 2) District Sub-Registrar Office Alipore (covering South Kolkata, Jadavpur, Behala), 3) Bidhannagar SRO (covering Salt Lake, Rajarhat, New Town), and 4) Sealdah SRO (Central Kolkata)."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does a Will help with KMC (Kolkata Municipal Corporation) flat mutation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For KMC flat mutation after the owner's demise, the Assessment & Collection Department requires the Will (and Probate if located in Kolkata proper), death certificate, and Form P-36. Having an unambiguous Will naming specific shares prevents property tax assessment holds and co-heir disputes."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .city-hero { 
+      padding: 7.5rem 0 3.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
+    .badge-pill { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 0.5rem; 
+      padding: 0.4rem 1rem; 
+      background: rgba(223, 183, 108, 0.12); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      border-radius: 9999px; 
+      font-size: 0.85rem; 
+      font-weight: 600; 
+      color: var(--primary, #dfb76c); 
+      margin-bottom: 1.25rem; 
+    }
+    .city-title { 
+      font-size: clamp(2.2rem, 5vw, 3.4rem); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .city-subtitle { 
+      font-size: 1.15rem; 
+      line-height: 1.65; 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin-bottom: 2rem; 
+    }
+    .city-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .city-content { 
+      font-size: 1.08rem; 
+      line-height: 1.8; 
+      color: var(--text-main); 
+    }
+    .city-content h2 { 
+      font-size: 1.85rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.25rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .city-content h3 { 
+      font-size: 1.35rem; 
+      font-weight: 600; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .city-content p { 
+      margin-bottom: 1.35rem; 
+    }
+    .city-content ul, .city-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+    }
+    .city-content li { 
+      margin-bottom: 0.6rem; 
+    }
+    .legal-alert { 
+      background: rgba(223, 183, 108, 0.08); 
+      border-left: 4px solid var(--accent-gold, #dfb76c); 
+      padding: 1.35rem 1.5rem; 
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
+      margin: 2rem 0; 
+    }
+    .sro-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .sro-card h4 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .sro-card p {
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+    .city-sidebar { 
+      position: sticky; 
+      top: 6rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      margin-bottom: 2rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header -->
+    <section class="city-hero">
+      <div class="container">
+        <div class="badge-pill">
+          <i data-lucide="map-pin" style="width:16px;height:16px;"></i> Kolkata &amp; West Bengal Legal Guide
+        </div>
+        <h1 class="city-title">Will Registration in Kolkata: Fees, SRO Offices &amp; Probate (2026)</h1>
+        <p class="city-subtitle">
+          Everything you need to register a Will in Kolkata and West Bengal. Understand Calcutta High Court probate rules, WBREGOV portal fees under ₹400, SRO locations, and how to avoid ₹30,000 advocate fees.
+        </p>
+      </div>
+    </section>
+
+    <!-- Body Content -->
+    <section class="city-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="city-content">
+              
+              <p>
+                Whether you own a heritage flat in South Kolkata, an apartment in Bidhannagar (Salt Lake), or commercial property in Central Kolkata, securing your family's future requires an understanding of West Bengal's unique succession laws.
+              </p>
+              <p>
+                Unlike inland states like Telangana or Karnataka, <strong>Kolkata is subject to historic statutory probate mandates</strong> under the Indian Succession Act 1925. A poorly drafted Will in Kolkata can trap your heirs in Calcutta High Court litigation for years.
+              </p>
+
+              <h2>The Calcutta High Court Probate Mandate: Crucial Legal Context</h2>
+              <div class="legal-alert">
+                <strong><i data-lucide="scale" style="width:16px;height:16px;vertical-align:text-bottom;"></i> Section 213 &amp; Section 57(a) ISA 1925:</strong> Under Indian law, Kolkata (along with Mumbai and Chennai) is one of the three former Presidency Towns where probate is <strong>compulsory</strong> for Wills executed by Hindus, Buddhists, Sikhs, and Jains if:
+                <ul style="margin: 0.5rem 0 0 1.25rem;">
+                  <li>The Will was signed within the original civil jurisdiction of the Calcutta High Court; or</li>
+                  <li>The Will bequeaths immovable properties situated within the municipal territory of Kolkata.</li>
+                </ul>
+              </div>
+              <p>
+                Because probate can only be granted to an executor named in the Will (Section 222), your Will <strong>must explicitly name a primary and alternate executor</strong>. SmartWill India's drafting engine automatically embeds these statutory clauses.
+              </p>
+
+              <h2>Government Registration Fees in Kolkata (West Bengal)</h2>
+              <p>
+                Many traditional advocates in Kolkata claim that registering a Will costs ₹20,000 to ₹40,000. In reality, the official government charges at West Bengal Sub-Registrar Offices are negligible:
+              </p>
+              <ul>
+                <li><strong>Stamp Duty:</strong> ₹0 (Wills are 100% exempt from stamp duty under the Indian Stamp Act).</li>
+                <li><strong>Government Registration Fee:</strong> Approx ₹100 – ₹200 (Article EE / Table of Fees).</li>
+                <li><strong>Computer Scanning Fee:</strong> Approx ₹24 per page.</li>
+                <li><strong>Total Official Government Cost:</strong> <strong>Under ₹400 to ₹500</strong> for a standard 4-page Will.</li>
+              </ul>
+
+              <h2>Kolkata Sub-Registrar Offices Directory</h2>
+              <p>
+                You can register your Will at the Sub-Registrar Office having jurisdiction over your residential address or the location of your immovable property:
+              </p>
+
+              <div class="sro-card">
+                <h4>1. Registry Office Kolkata (ARA I, ARA II, ARA III)</h4>
+                <p><strong>Jurisdiction:</strong> Kolkata Metropolitan Area, Dalhousie, Park Street, Burrabazar, Bowbazar</p>
+                <p><strong>Address:</strong> 5, Council House Street (Near Writers' Buildings), Kolkata, West Bengal 700001</p>
+                <p><strong>Timing:</strong> Monday – Friday, 10:00 AM – 5:00 PM</p>
+              </div>
+
+              <div class="sro-card">
+                <h4>2. District Sub-Registrar Office, Alipore (24 Parganas South)</h4>
+                <p><strong>Jurisdiction:</strong> South Kolkata, Ballygunge, Jadavpur, Tollygunge, Behala, Kasba, Garia</p>
+                <p><strong>Address:</strong> Alipore Treasury Building, 18, Judges Court Road, Alipore, Kolkata 700027</p>
+                <p><strong>Timing:</strong> Monday – Friday, 10:00 AM – 5:00 PM</p>
+              </div>
+
+              <div class="sro-card">
+                <h4>3. Additional District Sub-Registrar Office, Bidhannagar</h4>
+                <p><strong>Jurisdiction:</strong> Salt Lake City (Sectors I to V), Rajarhat, New Town, Baguiati</p>
+                <p><strong>Address:</strong> Salt Lake Stadium Complex, Gate No. 3, Bidhannagar, Kolkata 700098</p>
+                <p><strong>Timing:</strong> Monday – Friday, 10:00 AM – 5:00 PM</p>
+              </div>
+
+              <div class="sro-card">
+                <h4>4. Sub-Registrar Office, Sealdah</h4>
+                <p><strong>Jurisdiction:</strong> Central &amp; East Kolkata, Beliaghata, Entally, Phoolbagan</p>
+                <p><strong>Address:</strong> Sealdah Court Building, Acharya Prafulla Chandra Road, Kolkata 700014</p>
+                <p><strong>Timing:</strong> Monday – Friday, 10:00 AM – 5:00 PM</p>
+              </div>
+
+              <h2>Step-by-Step Will Registration Process in West Bengal</h2>
+              <ol>
+                <li>
+                  <strong>Draft &amp; Print Your Will:</strong> Create your legally vetted Will on <a href="/app">SmartWill India</a> for ₹299. Print two copies on high-quality plain white A4 bond paper.
+                </li>
+                <li>
+                  <strong>Book WBREGOV Appointment:</strong> Visit the official West Bengal Directorate of Registration &amp; Stamp Revenue portal (<code>wbregistration.gov.in</code>) to book an e-appointment token at your nearest SRO.
+                </li>
+                <li>
+                  <strong>Sign Before Two Witnesses:</strong> Attend the SRO with two independent adult witnesses who hold valid Government photo ID (Aadhaar or Passport).
+                </li>
+                <li>
+                  <strong>Biometric Verification &amp; Photograph:</strong> The Sub-Registrar captures biometric thumb impressions and digital photos of you and both witnesses.
+                </li>
+                <li>
+                  <strong>Collect Registered Will:</strong> Pay the official fees (~₹400). The Sub-Registrar signs, stamps, and assigns a Volume &amp; Book 3 registration number. The registered original is returned to you.
+                </li>
+              </ol>
+
+              <h2>Frequently Asked Questions</h2>
+              <div class="faq-card">
+                <h3>Is Will registration mandatory in Kolkata?</h3>
+                <p>No. Under Section 18 of the Registration Act 1908, Will registration is optional. An unregistered Will signed by the testator and two witnesses is legally valid. However, in Kolkata, registering your Will provides powerful proof of genuineness in Calcutta High Court probate proceedings.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>What is the procedure for KMC (Kolkata Municipal Corporation) mutation?</h3>
+                <p>Upon the testator's demise, the beneficiary submits an application for mutation (Form P-36) to the KMC Assessment Department along with the death certificate, registered Will (or Probate), and latest property tax receipt.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Can I bequeath a 999-year leasehold plot in Salt Lake or New Town?</h3>
+                <p>Yes. Leasehold rights granted by the Urban Development Department (UDD) or HIDCO can be bequeathed in a Will. The beneficiary must later apply to the Department for mutation of tenancy rights.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <aside class="city-sidebar">
+              <!-- CTA Card -->
+              <div class="sidebar-card cta-card">
+                <i data-lucide="feather" style="width:36px;height:36px;color:var(--accent-gold);margin-bottom:0.75rem;"></i>
+                <h4>Create Your Kolkata Will</h4>
+                <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                  Tailored for Kolkata &amp; West Bengal property owners. Features mandatory executor clauses and KMC mutation readiness.
+                </p>
+                <div style="font-size:1.85rem;font-weight:800;color:var(--accent-gold);margin-bottom:1rem;">
+                  &#x20B9;299 <span style="font-size:0.95rem;font-weight:400;color:var(--text-muted);">one-time</span>
+                </div>
+                <a href="/app" class="btn btn-gold" style="width:100%;text-align:center;display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Other Metro Guides -->
+              <div class="sidebar-card">
+                <h4>Other Metro Cities</h4>
+                <ul>
+                  <li><a href="/will-registration-mumbai">&rarr; Will Registration in Mumbai</a></li>
+                  <li><a href="/will-registration-delhi">&rarr; Will Registration in Delhi NCR</a></li>
+                  <li><a href="/will-registration-bangalore">&rarr; Will Registration in Bangalore</a></li>
+                  <li><a href="/will-registration-hyderabad">&rarr; Will Registration in Hyderabad</a></li>
+                  <li><a href="/will-registration-chennai">&rarr; Will Registration in Chennai</a></li>
+                  <li><a href="/will-registration-pune">&rarr; Will Registration in Pune</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Secure Your Kolkata Family Assets Today</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Don't pay ₹30,000 for standard drafting. Create your legally bulletproof Will in 10 minutes for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
