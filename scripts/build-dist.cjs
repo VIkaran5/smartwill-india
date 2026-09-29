@@ -35,15 +35,11 @@ function copyRecursive(src, dest) {
 }
 
 // 2. Copy HTML pages
-const htmlFiles = ['index.html', 'app.html', 'contact.html', 'terms.html', 'refunds.html', 'pay.html', 'privacy.html'];
+const htmlFiles = fs.readdirSync(root).filter(f => f.endsWith('.html'));
 for (const f of htmlFiles) {
   const src = path.join(root, f);
-  if (fs.existsSync(src)) {
-    fs.copyFileSync(src, path.join(dist, f));
-    console.log('    Copied', f);
-  } else {
-    console.warn('    WARN:', f, 'not found, skipping.');
-  }
+  fs.copyFileSync(src, path.join(dist, f));
+  console.log('    Copied', f);
 }
 
 // 3. Copy asset folders

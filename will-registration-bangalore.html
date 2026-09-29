@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Will Registration in Bangalore: Process, Fees &amp; Online Will (2026)</title>
+  <meta name="description" content="Register a Will in Bangalore without ₹25,000 legal fees. Guide to Kaveri 2.0 portal, Bangalore SRO offices (Jayanagar, Indiranagar, Whitefield), and ₹299 Will.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/will-registration-bangalore">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Will Registration in Bangalore: Process, Fees &amp; Online Will (2026)">
+  <meta property="og:description" content="Step-by-step guide to registering a Will in Bangalore SRO offices via Kaveri 2.0, true government fees under ₹500, and instant ₹299 online Will creation.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/will-registration-bangalore">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Service & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "name": "Online Legal Will Drafting for Bangalore Residents",
+        "description": "Legally compliant digital Will drafting for Bangalore and Karnataka property owners, tech professionals with RSUs/ESOPs, and families under the Indian Succession Act 1925.",
+        "provider": {
+          "@type": "Organization",
+          "name": "SmartWill India",
+          "url": "https://smartwill-india.vercel.app/"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "Bengaluru",
+          "containedInPlace": {
+            "@type": "State",
+            "name": "Karnataka"
+          }
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://smartwill-india.vercel.app/app"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the fee for Will registration in Bangalore, Karnataka?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In Karnataka, Wills attract zero stamp duty (₹0) under the Indian Stamp Act 1899. The official government registration fee at any Bangalore Sub-Registrar Office is ₹200, plus scanning and electronic data entry charges of approximately ₹100 to ₹250. Total official government cost is under ₹500."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Will registration mandatory in Bangalore?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under Section 18(e) of the Indian Registration Act 1908, the registration of a Will is optional in Karnataka. An unregistered Will executed on plain A4 paper and attested by two independent witnesses is 100% legally enforceable in Indian courts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Kaveri 2.0 work for Will registration in Bangalore?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Karnataka's Kaveri 2.0 portal (kaverionline.karnataka.gov.in) allows citizens to pre-book appointment slots at any Bangalore Sub-Registrar Office (such as Jayanagar, Indiranagar, or K.R. Puram) to avoid long waiting lines. However, the testator and two witnesses must physically appear at the SRO for biometric verification."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Bangalore tech workers include ESOPs, RSUs and US stocks in a Will?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, absolutely. SmartWill India allows you to specify all types of movable assets including Indian demat shares, US stocks (Vested/Indmoney), company ESOPs/RSUs, bank fixed deposits, and cryptocurrencies to ensure your family inherits without court delays."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .city-hero {
+      padding: 7.5rem 0 3.5rem;
+      border-bottom: 1px solid var(--border-light);
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08) 0%, transparent 60%);
+    }
+    .city-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(223, 183, 108, 0.15);
+      border: 1px solid rgba(223, 183, 108, 0.35);
+      color: var(--primary, #dfb76c);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+    [data-theme="light"] .city-badge {
+      background: rgba(180, 83, 9, 0.1);
+      border-color: rgba(180, 83, 9, 0.25);
+      color: #b45309;
+    }
+    .city-title {
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      max-width: 820px;
+    }
+    .city-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+    .city-content {
+      padding: 3.5rem 0 5rem;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+    .city-content h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 2.75rem 0 1rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-light);
+      color: var(--text-main);
+    }
+    .city-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-main);
+    }
+    .city-content p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text-main);
+      margin-bottom: 1.25rem;
+    }
+    .city-content ul, .city-content ol {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+    .city-content li { margin-bottom: 0.5rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.95rem;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+    }
+    .callout {
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary, #dfb76c);
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .callout p { color: var(--text-main); margin-bottom: 0; }
+    .callout-success {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 4px solid #10b981;
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .callout-success p { color: var(--text-main); margin-bottom: 0; }
+    .blog-cta-box {
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%);
+      border: 1px solid rgba(223, 183, 108, 0.3);
+      border-radius: var(--radius-md, 16px);
+      padding: 2.5rem;
+      text-align: center;
+      margin: 3.5rem 0;
+    }
+    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-main); }
+    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <!-- Header Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Blog</a>
+        <a href="/will-registration-hyderabad" class="nav-link">Hyderabad</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Will &mdash; &#x20B9;299</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#how-it-works" class="nav-link">How It Works</a>
+      <a href="/#pricing" class="nav-link">Pricing</a>
+      <a href="/blog" class="nav-link">Blog</a>
+      <a href="/will-registration-hyderabad" class="nav-link">Hyderabad</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Will &mdash; &#x20B9;299</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="city-hero">
+      <div class="container">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+          <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
+          <span style="color:var(--primary, #dfb76c);">Will Registration Bangalore</span>
+        </nav>
+        <div class="city-badge">
+          <i data-lucide="map-pin" style="width:14px;height:14px;"></i> Bengaluru Urban &amp; Rural Legal Guide
+        </div>
+        <h1 class="city-title">Will Registration in Bangalore: Process, Fees &amp; Kaveri 2.0 (2026)</h1>
+        <p class="city-subtitle">
+          Don't spend ₹20,000 to ₹35,000 on law firms in Indiranagar or Koramangala. Complete guide to Sub-Registrar registration across Bengaluru, or create your legally binding Will online in 10 minutes for ₹299.
+        </p>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+            Create Your Will Online &mdash; &#x20B9;299 <i data-lucide="arrow-right"></i>
+          </a>
+          <a href="#sro-list" class="btn btn-secondary btn-lg">
+            View Bangalore SRO Directory
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <div class="container">
+      <div class="city-content">
+        <p>
+          As India's Silicon Valley, Bengaluru has a unique demographic of young professionals, startup founders, and families with complex portfolios: modern 2BHK/3BHK flats in <strong>Whitefield, Sarjapur Road, Bellandur, and Electronic City</strong>, alongside company stock options (ESOPs/RSUs), crypto, and mutual funds.
+        </p>
+        <p>
+          Unfortunately, many Bangaloreans postpone estate planning because local law firms charge exorbitant retainers ranging from <strong>₹20,000 to ₹35,000</strong>. Here is the exact legal truth on how Will registration works under the Karnataka Department of Stamps and Registration, true government fees, and how to get a fully enforceable Will for just ₹299.
+        </p>
+
+        <h2>Is Will Registration Mandatory in Bangalore?</h2>
+        <p>
+          <strong>No, registration is 100% optional.</strong>
+        </p>
+        <p>
+          Under <strong>Section 18(e) of the Indian Registration Act, 1908</strong>, testamentary documents (Wills) do not require mandatory registration in the state of Karnataka.
+        </p>
+        <div class="callout-success">
+          <p>
+            <strong>Supreme Court Precedent:</strong> A Will drafted on plain A4 white paper and duly signed by the testator in the presence of two independent witnesses is 100% legally enforceable in Indian civil courts under Section 63 of the Indian Succession Act 1925. Visiting a Sub-Registrar Office in Bangalore is completely optional.
+          </p>
+        </div>
+
+        <h2>When Should Bangalore Residents Register at an SRO?</h2>
+        <p>
+          While optional, registering your Will at a Bangalore SRO is advantageous in specific situations:
+        </p>
+        <ul>
+          <li><strong>Multiple Properties or High-Value Estates:</strong> If you own multiple properties across Bengaluru Urban and Rural districts (e.g., plots in Devanahalli and flats in Marathahalli), SRO registration creates an undisputed public record.</li>
+          <li><strong>Preventing Family Challenges:</strong> If you are distributing assets unequally among children or bequeathing to a spouse exclusively, SRO registration proves you were of sound mind without coercion.</li>
+          <li><strong>Official Archival in Book 3:</strong> SRO records are permanent. Even if your physical paper copy is lost, your beneficiaries can retrieve a certified copy from the Karnataka Registration Department.</li>
+        </ul>
+
+        <h2>Cost Comparison: Bangalore Law Firm vs. SmartWill India</h2>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Comparison Aspect</th>
+              <th>Bangalore Advocate / Firm</th>
+              <th>SmartWill India</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Will Drafting Fee</strong></td>
+              <td>₹20,000 – ₹35,000</td>
+              <td><strong>₹299</strong> (one-time)</td>
+            </tr>
+            <tr>
+              <td><strong>Turnaround Time</strong></td>
+              <td>2 to 4 weeks of consultations</td>
+              <td><strong>10 minutes</strong> (instant PDF)</td>
+            </tr>
+            <tr>
+              <td><strong>Digital &amp; ESOP Coverage</strong></td>
+              <td>Often ignored by traditional lawyers</td>
+              <td>ESOPs, RSUs, demat, crypto included</td>
+            </tr>
+            <tr>
+              <td><strong>Stamp Paper Charges</strong></td>
+              <td>₹500–₹1,000 falsely quoted</td>
+              <td><strong>₹0</strong> (plain A4 legal rule)</td>
+            </tr>
+            <tr>
+              <td><strong>SRO Readiness</strong></td>
+              <td>Additional ₹10,000 assistance fee</td>
+              <td>Print &amp; ready for any Bangalore SRO</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="sro-list">Major Sub-Registrar Offices (SRO) in Bangalore</h2>
+        <p>
+          Under Karnataka registration rules, you can register your Will at the SRO within whose jurisdiction you reside, regardless of where your other assets are situated in India.
+        </p>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>SRO Office Name</th>
+              <th>Areas Covered</th>
+              <th>District / Zone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Shivajinagar / Indiranagar SRO</strong></td>
+              <td>Indiranagar, Ulsoor, MG Road, Domlur, CV Raman Nagar</td>
+              <td>Bengaluru East</td>
+            </tr>
+            <tr>
+              <td><strong>Jayanagar SRO</strong></td>
+              <td>Jayanagar, JP Nagar, Banashankari, Basavanagudi</td>
+              <td>Bengaluru South</td>
+            </tr>
+            <tr>
+              <td><strong>K.R. Puram SRO</strong></td>
+              <td>Whitefield, Mahadevapura, Hoodi, Marathahalli, Varthur</td>
+              <td>Bengaluru East</td>
+            </tr>
+            <tr>
+              <td><strong>Bommanahalli SRO</strong></td>
+              <td>Electronic City, HSR Layout, BTM Layout, Kudlu Gate</td>
+              <td>Bengaluru South</td>
+            </tr>
+            <tr>
+              <td><strong>Koramangala / Gandhinagar SRO</strong></td>
+              <td>Koramangala, Adugodi, Shanti Nagar, Richmond Town</td>
+              <td>Bengaluru Central</td>
+            </tr>
+            <tr>
+              <td><strong>Yelahanka SRO</strong></td>
+              <td>Yelahanka, Hebbal, Sahakar Nagar, Jakkur, Thanisandra</td>
+              <td>Bengaluru North</td>
+            </tr>
+            <tr>
+              <td><strong>Rajajinagar SRO</strong></td>
+              <td>Rajajinagar, Malleshwaram, Vijayanagar, Yeshwanthpur</td>
+              <td>Bengaluru West</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>True Government Fees in Karnataka (Under ₹500)</h2>
+        <p>
+          Official Karnataka government fees for Will registration are minimal:
+        </p>
+        <ul>
+          <li><strong>Stamp Duty:</strong> <strong>₹0</strong> (Exempt under Indian Stamp Act 1899).</li>
+          <li><strong>Registration Fee:</strong> <strong>₹200</strong> flat government fee.</li>
+          <li><strong>Scanning &amp; User Charges:</strong> ₹100 to ₹250 (charged per page for Kaveri 2.0 digital scanning).</li>
+          <li><strong>Total Official Outlay:</strong> <strong>Under ₹500</strong>.</li>
+        </ul>
+
+        <h2>How to Use Karnataka's Kaveri 2.0 Portal for SRO Appointments</h2>
+        <ol>
+          <li>
+            <strong>Generate Your Document:</strong> Create your legally validated Will on <a href="/app" style="color:var(--primary, #dfb76c); font-weight:600;">SmartWill India</a> for ₹299. Print two original copies on plain A4 paper.
+          </li>
+          <li>
+            <strong>Book Slot on Kaveri 2.0:</strong> Visit <em>kaverionline.karnataka.gov.in</em>, select "Pre-Registration Data Entry" or appointment booking, and choose your local Bangalore SRO.
+          </li>
+          <li>
+            <strong>Assemble Identification Documents:</strong>
+            <ul>
+              <li>Testator original Aadhaar card + PAN card + passport size photographs</li>
+              <li>Two independent witnesses with original Aadhaar cards (Note: Witnesses must NOT be beneficiaries under Section 67!)</li>
+              <li>Medical fitness certificate from a registered MBBS doctor if the testator is 65+ years old</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Appear at the Sub-Registrar Office:</strong> The Sub-Registrar interviews the testator to ensure sound mind and free will, takes biometric fingerprint scans, and captures web-camera photographs.
+          </li>
+          <li>
+            <strong>Receipt &amp; Numbering:</strong> The SRO applies the official endorsement and registers the document into <em>Book 3</em>.
+          </li>
+        </ol>
+
+        <div class="blog-cta-box">
+          <h3>Create Your Bangalore-Ready Will Online for ₹299</h3>
+          <p>
+            No lawyer appointments, no endless paperwork. Protect your apartments, mutual funds, and stock portfolio in 10 minutes.
+          </p>
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+            Create Your Will Now &mdash; &#x20B9;299
+          </a>
+        </div>
+
+        <h2>Frequently Asked Questions</h2>
+        <h3>1. How do tech workers distribute RSUs / ESOPs in a Will?</h3>
+        <p>
+          Vested company shares, RSUs, and foreign brokerage accounts (such as Morgan Stanley, Charles Schwab, or Vested) can be enumerated under movable assets in your SmartWill, specifying the percentage allocation to your spouse or children.
+        </p>
+
+        <h3>2. What happens to Bangalore apartment ownership after demise?</h3>
+        <p>
+          When you have a legally valid Will, your beneficiaries can directly submit the Will, death certificate, and Khata transfer application to the Bruhat Bengaluru Mahanagara Palike (BBMP) or BDA for Khata transfer without fighting over succession certificates.
+        </p>
+
+        <h3>3. Can an IT professional execute a Will online while working from home?</h3>
+        <p>
+          Yes. The entire drafting and generation process on SmartWill India takes just 10 minutes from your laptop. You then print it on plain paper and sign with two adult witnesses (such as colleagues, neighbors, or friends).
+        </p>
+
+        <h3>4. Can I appoint my spouse as both Executor and Beneficiary?</h3>
+        <p>
+          Yes. Indian law allows an Executor to also be a beneficiary. However, they must NOT sign as one of the two attesting witnesses due to Section 67 of the Indian Succession Act.
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's most affordable digital estate planning platform. Legally compliant under the Indian Succession Act, 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#pricing">Pricing (₹299)</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
+          <li><a href="/blog">Legal Guides</a></li>
+          <li><a href="/will-registration-hyderabad">Hyderabad Guide</a></li>
+          <li><a href="/will-registration-bangalore">Bangalore Guide</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Legal &amp; Privacy</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">DPDP Act Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/refunds">Refund Policy</a></li>
+          <li><a href="/contact">Contact Helpdesk</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
