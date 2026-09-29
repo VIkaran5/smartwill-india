@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Digital Assets &amp; Crypto in Your Will in India (2026)</title>
+  <meta name="description" content="How to pass crypto, digital accounts, cloud photos, and online business assets to your family in India. Legal guidelines under IT Act and succession rules.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/blog/digital-assets-in-will-crypto-india">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Digital Assets &amp; Crypto in Your Will in India: Complete Guide (2026)">
+  <meta property="og:description" content="Learn how to include cryptocurrency, demat investments, cloud storage, and digital accounts in your Will without violating the IT Act 2000.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/blog/digital-assets-in-will-crypto-india">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Article & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "Digital Assets & Crypto in Your Will in India: Complete Guide (2026)",
+        "description": "Comprehensive legal guide on bequeathing cryptocurrencies, cloud data, digital business assets, and online accounts in a Will under Indian law.",
+        "image": "https://smartwill-india.vercel.app/og-image.jpg",
+        "url": "https://smartwill-india.vercel.app/blog/digital-assets-in-will-crypto-india",
+        "datePublished": "2026-09-29T00:00:00+05:30",
+        "dateModified": "2026-09-29T00:00:00+05:30",
+        "author": { "@type": "Organization", "name": "SmartWill India Legal Desk", "url": "https://smartwill-india.vercel.app/" },
+        "publisher": { "@type": "Organization", "name": "SmartWill India", "url": "https://smartwill-india.vercel.app/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can cryptocurrency (Bitcoin, Ethereum) be legally passed through a Will in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Cryptocurrencies and Virtual Digital Assets (VDAs) are recognized as moveable property under Section 2(47A) of the Income Tax Act, 1961. You can legally bequeath crypto holdings to your designated beneficiaries in your Will."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Should you write private wallet seed phrases or passwords inside your Will?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No! Never write private keys, seed phrases, or passwords directly inside the body of a Will. Wills may be viewed by witnesses or become public records if registered or probated. Instead, detail the asset name and wallet location in the Will, and store access credentials in a separate, encrypted digital memorandum or password manager shared with the executor."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What happens to social media and email accounts after death in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Major tech companies have specific legacy tools: Google Inactive Account Manager, Apple Legacy Contact, and Meta Memorialization. You can appoint an executor in your Will with explicit legal authority to manage or close your digital presence under the Information Technology Act 2000."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .article-header { padding: 7.5rem 0 2.5rem; }
+    .article-tag { 
+      font-size: .75rem; 
+      font-weight: 700; 
+      letter-spacing: .1em; 
+      text-transform: uppercase; 
+      color: var(--primary, #dfb76c); 
+      margin-bottom: 1rem; 
+    }
+    [data-theme="light"] .article-tag { color: #b45309; }
+    .article-title { 
+      font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-weight: 700; 
+      line-height: 1.3; 
+      margin-bottom: 1rem; 
+      max-width: 820px; 
+      color: var(--text-main); 
+    }
+    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
+    .article-body { max-width: 820px; padding-bottom: 5rem; }
+    .article-body h2 { 
+      font-size: 1.5rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1rem; 
+      padding-top: 1.25rem; 
+      border-top: 1px solid var(--border-light); 
+      color: var(--text-main); 
+    }
+    .article-body h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-main);
+    }
+    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
+    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.05rem; }
+    .article-body li { margin-bottom: .5rem; }
+    .callout { 
+      background: var(--bg-surface); 
+      border-left: 4px solid var(--primary, #dfb76c); 
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
+      padding: 1.25rem 1.5rem; 
+      margin: 2rem 0; 
+    }
+    .callout p { color: var(--text-main); margin-bottom: 0; }
+    .callout-success { 
+      background: rgba(16, 185, 129, 0.08); 
+      border-left: 4px solid #10b981; 
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
+      padding: 1.25rem 1.5rem; 
+      margin: 2rem 0; 
+    }
+    .callout-success p { color: var(--text-main); margin-bottom: 0; }
+    .blog-cta-box { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
+      border: 1px solid rgba(223, 183, 108, 0.3); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2.5rem; 
+      text-align: center; 
+      margin: 3.5rem 0; 
+    }
+    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
+    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2.25rem;
+      font-size: 0.95rem;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Blog</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Will &mdash; &#x20B9;299</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#how-it-works" class="nav-link">How It Works</a>
+      <a href="/#pricing" class="nav-link">Pricing</a>
+      <a href="/blog" class="nav-link">Blog</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Will &mdash; &#x20B9;299</a>
+    </div>
+  </header>
+
+  <main>
+    <article class="article-header">
+      <div class="container">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+          <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
+          <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
+          <span style="color:var(--primary, #dfb76c);">Digital Assets &amp; Crypto</span>
+        </nav>
+        <div class="article-tag">Tech &amp; Modern Estate Planning</div>
+        <h1 class="article-title">Digital Assets &amp; Crypto in Your Will in India: Complete Guide (2026)</h1>
+        <div class="article-meta">September 29, 2026 &nbsp;&middot;&nbsp; 8 min read &nbsp;&middot;&nbsp; Verified by SmartWill Legal Desk</div>
+      </div>
+    </article>
+
+    <div class="container">
+      <div class="article-body">
+        <p>
+          Today, a significant portion of our lives and wealth exists entirely in the digital realm: cryptocurrency portfolios, demat share accounts, domain names, YouTube channels, cloud photo archives, and SaaS business subscriptions.
+        </p>
+        <p>
+          Yet, when an individual passes away in India without a digital succession plan, billions of rupees in cryptocurrencies and irrecoverable family memories become permanently locked behind two-factor authentication (2FA) and encryption keys.
+        </p>
+        <div class="callout">
+          <p>
+            <strong>The Modern Dilemma:</strong> Traditional Wills written decades ago only considered physical land, cash, and gold. How do you bequeath cryptocurrencies and digital accounts under Indian succession law without violating privacy or cybersecurity regulations?
+          </p>
+        </div>
+
+        <h2>What Qualifies as a "Digital Asset" in India?</h2>
+        <p>
+          Under the <strong>Information Technology Act, 2000</strong> and the <strong>Finance Act, 2022</strong>, digital assets broadly fall into three categories:
+        </p>
+        <ol>
+          <li>
+            <strong>Financial Digital Assets:</strong> Virtual Digital Assets (VDAs) such as Bitcoin, Ethereum, and NFTs; balances on crypto exchanges (CoinDCX, CoinSwitch, Binance, WazirX); digital wallets (Paytm, PhonePe); and reward points.
+          </li>
+          <li>
+            <strong>Digital Business &amp; Intellectual Property:</strong> Website domain names, software codebases (GitHub), YouTube creator channels, affiliate accounts, and monetized blogs.
+          </li>
+          <li>
+            <strong>Personal Digital Footprint:</strong> Cloud storage (Google Drive, Apple iCloud), email archives (Gmail, Outlook), social media accounts, and digital family photos.
+          </li>
+        </ol>
+
+        <h2>The Golden Rule: Never Put Passwords in a Will</h2>
+        <div class="callout-success">
+          <p>
+            <strong>Critical Security Best Practice:</strong> Never write private keys, recovery seed phrases, passwords, or PINs inside your Will. Why? A Will may be read by attesting witnesses, viewed by registrar clerks, or submitted to courts during probate where it becomes a public record!
+          </p>
+        </div>
+        <p>
+          Instead, use the <strong>Two-Document System</strong>:
+        </p>
+        <ul>
+          <li><strong>Document 1 (The Legal Will):</strong> Declares ownership of the assets and legally names who inherits them (e.g., <em>"I bequeath all my cryptocurrency holdings stored on CoinDCX and cold storage hardware wallets to my wife, Anita."</em>).</li>
+          <li><strong>Document 2 (The Confidential Digital Access Letter):</strong> A private, encrypted document stored in a password manager (like Bitwarden or 1Password) or safe locker, containing instructions on how the executor can retrieve the keys post-demise.</li>
+        </ul>
+
+        <h2>Digital Asset Succession Framework</h2>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Asset Category</th>
+              <th>How to Specify in Will</th>
+              <th>Transfer Mechanism Post-Demise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Indian Crypto Exchanges</strong></td>
+              <td>Mention exchange name &amp; registered email</td>
+              <td>Executor presents Will + Death Cert to exchange KYC</td>
+            </tr>
+            <tr>
+              <td><strong>Self-Custody Hardware Wallets</strong></td>
+              <td>Identify hardware model (e.g., Ledger Nano)</td>
+              <td>Encrypted seed phrase instructions to executor</td>
+            </tr>
+            <tr>
+              <td><strong>Google &amp; Cloud Drive</strong></td>
+              <td>General digital asset clause</td>
+              <td>Setup Google Inactive Account Manager in advance</td>
+            </tr>
+            <tr>
+              <td><strong>Apple iCloud &amp; iPhone</strong></td>
+              <td>Bequeath Apple digital data</td>
+              <td>Configure Apple Legacy Contact via Apple ID settings</td>
+            </tr>
+            <tr>
+              <td><strong>Creator Monetization (YouTube)</strong></td>
+              <td>Bequeath AdSense revenue &amp; channel ownership</td>
+              <td>Google AdSense transfer protocol + Will probate</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Empowering the Digital Executor</h2>
+        <p>
+          In your SmartWill, you can grant your executor explicit powers to handle digital data:
+        </p>
+        <ul>
+          <li>Authority to access, download, or delete personal digital accounts under the Information Technology Act 2000.</li>
+          <li>Power to liquidate or transfer cryptocurrencies and digital investments to designated bank accounts.</li>
+          <li>Right to permanently delete or archive sensitive personal files and emails.</li>
+        </ul>
+
+        <div class="blog-cta-box">
+          <h3>Include Your Crypto &amp; Digital Assets for ₹299</h3>
+          <p>
+            Ensure your digital wealth and accounts pass securely to your family without getting lost in cyberspace. Draft your Will online in 10 minutes.
+          </p>
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+            Create Your Will Online &mdash; &#x20B9;299
+          </a>
+        </div>
+
+        <h2>Frequently Asked Questions</h2>
+        <h3>1. Is cryptocurrency taxable when inherited through a Will in India?</h3>
+        <p>
+          Under Section 56(2)(x) of the Income Tax Act 1961, assets (including VDAs and cryptocurrencies) received under a Will or by way of inheritance are <strong>completely exempt from income tax</strong> at the time of receipt. Capital gains tax only applies when the beneficiary eventually sells the crypto.
+        </p>
+
+        <h3>2. What happens to a deceased person's WhatsApp and Instagram accounts?</h3>
+        <p>
+          Meta permits immediate family members or the legal executor to request memorialization or permanent deletion of the deceased's account upon submitting a death certificate.
+        </p>
+
+        <h3>3. Can an online Will generated by SmartWill cover digital assets?</h3>
+        <p>
+          Yes. SmartWill India allows you to categorize both traditional financial assets (bank FDs, mutual funds, flats) and modern digital assets with comprehensive residuary clauses protecting future digital earnings.
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's most affordable digital estate planning platform. Legally compliant under the Indian Succession Act, 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#pricing">Pricing (₹299)</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
+          <li><a href="/blog">Legal Guides</a></li>
+          <li><a href="/online-will-maker-vs-lawyer">Online Will vs Lawyer</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Legal &amp; Privacy</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">DPDP Act Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/refunds">Refund Policy</a></li>
+          <li><a href="/contact">Contact Helpdesk</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
