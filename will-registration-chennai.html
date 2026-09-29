@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Will Registration in Chennai: Process, SRO Offices &amp; Fees (2026)</title>
+  <meta name="description" content="Register a Will in Chennai without ₹25,000 legal fees. Guide to TNREGINET portal, Chennai SRO offices (Adyar, T. Nagar, Anna Nagar), and ₹299 online Will.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/will-registration-chennai">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Will Registration in Chennai: Process, SRO Offices &amp; Fees (2026)">
+  <meta property="og:description" content="Complete guide to Sub-Registrar offices in Chennai (Adyar, T. Nagar, Anna Nagar, Mylapore), TNREGINET online booking, fees under ₹500, and instant ₹299 online Will.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/will-registration-chennai">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Service & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Service",
+        "name": "Online Legal Will Drafting for Chennai Residents",
+        "description": "Legally compliant digital Will drafting for Chennai and Tamil Nadu property owners, ancestral landholders, and families under the Indian Succession Act 1925.",
+        "provider": {
+          "@type": "Organization",
+          "name": "SmartWill India",
+          "url": "https://smartwill-india.vercel.app/"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "Chennai",
+          "containedInPlace": {
+            "@type": "State",
+            "name": "Tamil Nadu"
+          }
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://smartwill-india.vercel.app/app"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the fee for Will registration in Chennai, Tamil Nadu?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In Tamil Nadu, Wills are completely exempt from stamp duty (₹0) under the Indian Stamp Act 1899. The official government registration fee at any Chennai Sub-Registrar Office is ₹100, plus computer data entry charges of approximately ₹50 to ₹100. The total official government expenditure is under ₹300."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Will registration mandatory in Chennai?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under Section 18(e) of the Indian Registration Act 1908, Will registration is optional in Tamil Nadu. A Will executed on plain A4 white paper and attested by two independent witnesses is 100% legally enforceable in Indian civil courts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does TNREGINET work for Will registration in Chennai?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Tamil Nadu Registration Department portal TNREGINET (tnreginet.gov.in) enables citizens to create an account, select their local Chennai Sub-Registrar Office (such as Adyar, T. Nagar, or Anna Nagar), and book an appointment token to minimize in-person waiting time."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is probate mandatory in Chennai under the Madras High Court?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Under Section 57 and Section 213 of the Indian Succession Act 1925, probate from the Madras High Court is required if the Will is executed within the ordinary original civil jurisdiction of Chennai, or if immovable properties covered under the Will are located in Chennai city limits."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .city-hero {
+      padding: 7.5rem 0 3.5rem;
+      border-bottom: 1px solid var(--border-light);
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08) 0%, transparent 60%);
+    }
+    .city-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(223, 183, 108, 0.15);
+      border: 1px solid rgba(223, 183, 108, 0.35);
+      color: var(--primary, #dfb76c);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.25rem;
+    }
+    [data-theme="light"] .city-badge {
+      background: rgba(180, 83, 9, 0.1);
+      border-color: rgba(180, 83, 9, 0.25);
+      color: #b45309;
+    }
+    .city-title {
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      max-width: 840px;
+    }
+    .city-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 740px;
+      margin-bottom: 2rem;
+    }
+    .city-content {
+      padding: 3.5rem 0 5rem;
+      max-width: 840px;
+      margin: 0 auto;
+    }
+    .city-content h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 2.75rem 0 1rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-light);
+      color: var(--text-main);
+    }
+    .city-content h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--text-main);
+    }
+    .city-content p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text-main);
+      margin-bottom: 1.25rem;
+    }
+    .city-content ul, .city-content ol {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      padding-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+    }
+    .city-content li { margin-bottom: 0.5rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0 2rem;
+      font-size: 0.95rem;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 12px 16px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+    }
+    .callout {
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary, #dfb76c);
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .callout p { color: var(--text-main); margin-bottom: 0; }
+    .callout-success {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 4px solid #10b981;
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .callout-success p { color: var(--text-main); margin-bottom: 0; }
+    .blog-cta-box {
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%);
+      border: 1px solid rgba(223, 183, 108, 0.3);
+      border-radius: var(--radius-md, 16px);
+      padding: 2.5rem;
+      text-align: center;
+      margin: 3.5rem 0;
+    }
+    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-main); }
+    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <!-- Header Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-menu d-none d-md-flex">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Blog</a>
+        <a href="/will-registration-chennai" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">Chennai</a>
+      </nav>
+
+      <div class="nav-actions d-none d-md-flex">
+        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+          <span class="toggle-icon"><i data-lucide="moon"></i></span>
+          <span class="toggle-text">Dark</span>
+        </button>
+        <a href="/app" class="btn btn-gold btn-sm">Create Will &mdash; &#x20B9;299</a>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Mobile slide-down menu -->
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#how-it-works" class="nav-link">How It Works</a>
+      <a href="/#pricing" class="nav-link">Pricing</a>
+      <a href="/blog" class="nav-link">Blog</a>
+      <a href="/will-registration-chennai" class="nav-link active">Chennai</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">Create Will &mdash; &#x20B9;299</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="city-hero">
+      <div class="container">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+          <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
+          <span style="color:var(--primary, #dfb76c);">Will Registration Chennai</span>
+        </nav>
+        <div class="city-badge">
+          <i data-lucide="map-pin" style="width:14px;height:14px;"></i> Chennai &amp; Tamil Nadu Legal Guide
+        </div>
+        <h1 class="city-title">Will Registration in Chennai: Process, SRO Offices &amp; Fees (2026)</h1>
+        <p class="city-subtitle">
+          Don't spend ₹15,000 to ₹30,000 on advocates in George Town or T. Nagar. Complete guide to Sub-Registrar registration across Chennai via TNREGINET, or draft your legally valid Will online in 10 minutes for ₹299.
+        </p>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+            Create Your Will Online &mdash; &#x20B9;299 <i data-lucide="arrow-right"></i>
+          </a>
+          <a href="#sro-list" class="btn btn-secondary btn-lg">
+            View Chennai SRO Directory
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <div class="container">
+      <div class="city-content">
+        <p>
+          Chennai has a rich legacy of traditional property ownership alongside modern developments. From ancestral homes in <strong>Mylapore, George Town, and Triplicane</strong> to contemporary high-rises along the <strong>OMR IT Corridor, ECR, Anna Nagar, and Velachery</strong>, estate planning in Chennai requires precision.
+        </p>
+        <p>
+          Local advocates and legal consultants often quote anywhere between <strong>₹15,000 and ₹30,000</strong> for preparing a Will. Here is the complete statutory breakdown of how Will registration works under the Tamil Nadu Registration Department, true government fees, and how to get an authentic Will for just ₹299.
+        </p>
+
+        <h2>Is Will Registration Mandatory in Chennai?</h2>
+        <p>
+          <strong>No, it is strictly optional.</strong>
+        </p>
+        <p>
+          Under <strong>Section 18(e) of the Indian Registration Act 1908</strong>, the registration of a testamentary document (Will) is voluntary across the state of Tamil Nadu.
+        </p>
+        <div class="callout-success">
+          <p>
+            <strong>The Law:</strong> A Will drafted on plain A4 white paper and attested by two independent witnesses satisfies every requirement of Section 63 of the Indian Succession Act 1925. Visiting a Sub-Registrar Office in Chennai is not legally required for your Will to be enforceable in court.
+          </p>
+        </div>
+
+        <h2>When is SRO Registration Recommended in Chennai?</h2>
+        <p>
+          While voluntary, registering your Will at a Chennai SRO provides critical evidentiary protection:
+        </p>
+        <ul>
+          <li><strong>Dispute-Proofing Ancestral vs. Self-Acquired Properties:</strong> If you are bequeathing self-acquired property to one child over another, an SRO registration proves you were of sound mind and acted freely.</li>
+          <li><strong>Permanent State Archival in Book 3:</strong> The Tamil Nadu Registration Department maintains permanent certified records in <em>Book 3</em>, safeguarding your family against lost or destroyed physical documents.</li>
+          <li><strong>Patta &amp; Revenue Record Transfer:</strong> Having a registered Will simplifies the mutation of land records and Patta transfer across Greater Chennai Corporation and taluk offices.</li>
+        </ul>
+
+        <h2>Understanding the Madras High Court Probate Jurisdiction</h2>
+        <p>
+          Chennai has special testamentary rules under the Indian Succession Act 1925:
+        </p>
+        <ul>
+          <li>
+            Under <strong>Sections 57 and 213</strong>, if a Will is executed within the ordinary original civil jurisdiction of the <strong>High Court of Madras (Chennai city limits)</strong>, or covers immovable properties situated within Chennai city, obtaining a <strong>Probate</strong> from the Madras High Court may be required to establish the executor's legal right before commercial banks or registrars.
+          </li>
+          <li>
+            Executing an unambiguous, legally sound Will using SmartWill ensures smooth probate approval without lengthy citations or caveat delays.
+          </li>
+        </ul>
+
+        <h2>Cost Comparison: Chennai Advocate vs. SmartWill India</h2>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>Service Factor</th>
+              <th>Chennai High Court Advocate</th>
+              <th>SmartWill India</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Will Drafting Fee</strong></td>
+              <td>₹15,000 – ₹30,000</td>
+              <td><strong>₹299</strong> (one-time)</td>
+            </tr>
+            <tr>
+              <td><strong>Turnaround Time</strong></td>
+              <td>1 to 3 weeks of consultations</td>
+              <td><strong>10 minutes</strong> (instant PDF)</td>
+            </tr>
+            <tr>
+              <td><strong>Stamp Paper Charges</strong></td>
+              <td>₹500–₹1,000 falsely quoted</td>
+              <td><strong>₹0</strong> (plain A4 legal rule)</td>
+            </tr>
+            <tr>
+              <td><strong>Statutory Compliance</strong></td>
+              <td>Manual template</td>
+              <td>Indian Succession Act 1925 validated</td>
+            </tr>
+            <tr>
+              <td><strong>SRO Readiness</strong></td>
+              <td>Extra fee for clerk assistance</td>
+              <td>Print &amp; ready for any SRO in Tamil Nadu</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="sro-list">Major Sub-Registrar Offices (SRO) in Chennai</h2>
+        <p>
+          Under Tamil Nadu registration rules, you can register your Will at the SRO within whose jurisdiction you reside, or where any of your properties are located.
+        </p>
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th>SRO Office Name</th>
+              <th>Areas Covered</th>
+              <th>Registration Zone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Adyar SRO</strong></td>
+              <td>Adyar, Thiruvanmiyur, Besant Nagar, Kotturpuram, OMR</td>
+              <td>Chennai South</td>
+            </tr>
+            <tr>
+              <td><strong>T. Nagar SRO</strong></td>
+              <td>T. Nagar, Kodambakkam, West Mambalam, Ashok Nagar</td>
+              <td>Chennai Central</td>
+            </tr>
+            <tr>
+              <td><strong>Anna Nagar SRO</strong></td>
+              <td>Anna Nagar, Kilpauk, Shenoy Nagar, Aminjikarai</td>
+              <td>Chennai Central</td>
+            </tr>
+            <tr>
+              <td><strong>Mylapore SRO</strong></td>
+              <td>Mylapore, Mandaveli, Alwarpet, R.A. Puram, Santhome</td>
+              <td>Chennai Central</td>
+            </tr>
+            <tr>
+              <td><strong>Central Registration Office</strong></td>
+              <td>Rajaji Salai, George Town, Parrys, Royapuram</td>
+              <td>Chennai North</td>
+            </tr>
+            <tr>
+              <td><strong>Velachery SRO</strong></td>
+              <td>Velachery, Madipakkam, Perungudi, Thoraipakkam</td>
+              <td>Chennai South</td>
+            </tr>
+            <tr>
+              <td><strong>Tambaram SRO</strong></td>
+              <td>Tambaram, Chromepet, Sanatorium, Pallavaram</td>
+              <td>Chennai South</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>True Government Fees in Tamil Nadu (Under ₹300)</h2>
+        <p>
+          Official Tamil Nadu government registration fees are minimal:
+        </p>
+        <ul>
+          <li><strong>Stamp Duty:</strong> <strong>₹0</strong> (Wills are 100% exempt from stamp duty under the Indian Stamp Act 1899).</li>
+          <li><strong>Registration Fee:</strong> <strong>₹100</strong> statutory government fee.</li>
+          <li><strong>Computer / Data Entry Charges:</strong> Approximately ₹50 to ₹100.</li>
+          <li><strong>Total Official Government Outlay:</strong> <strong>Under ₹300</strong>.</li>
+        </ul>
+
+        <h2>Step-by-Step Registration Procedure via TNREGINET</h2>
+        <ol>
+          <li>
+            <strong>Draft Your Will:</strong> Create your customized legal Will on <a href="/app" style="color:var(--primary, #dfb76c); font-weight:600;">SmartWill India</a> for ₹299. Print two original copies on plain A4 paper.
+          </li>
+          <li>
+            <strong>Book Slot on TNREGINET:</strong> Visit <em>tnreginet.gov.in</em>, select "Document Registration" &gt; "Create Token", and select your local Chennai SRO.
+          </li>
+          <li>
+            <strong>Prepare Required Documents:</strong>
+            <ul>
+              <li>Testator original Aadhaar card + PAN card + 2 passport photos</li>
+              <li>Two independent adult witnesses with original Aadhaar cards (Witnesses must NOT be beneficiaries under Section 67!)</li>
+              <li>Doctor's fitness certificate from an MBBS practitioner if the testator is 65+ years old</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Biometric Verification at SRO:</strong> Appear with your witnesses at the SRO counter. The Sub-Registrar verifies identity, captures digital thumb impressions, and takes a web-camera photo.
+          </li>
+          <li>
+            <strong>Archival in Book 3:</strong> The Sub-Registrar endorses the Will and records it permanently into <em>Book 3</em>.
+          </li>
+        </ol>
+
+        <div class="blog-cta-box">
+          <h3>Create Your Chennai-Ready Will for ₹299</h3>
+          <p>
+            Secure your Chennai properties, fixed deposits, and family's future in just 10 minutes without legal middlemen.
+          </p>
+          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+            Draft Your Will Online Now &mdash; &#x20B9;299
+          </a>
+        </div>
+
+        <h2>Frequently Asked Questions</h2>
+        <h3>1. Can I register a Will for ancestral property in Tamil Nadu?</h3>
+        <p>
+          You can bequeath only your undivided legitimate share in ancestral property, or your self-acquired assets. Specifying clear property boundaries or survey numbers ensures zero ambiguity for Patta transfer.
+        </p>
+
+        <h3>2. What if a witness lives in another city or abroad?</h3>
+        <p>
+          Witnesses must physically be present with you at the moment of signing. You can select any two adult acquaintances in Chennai, such as family friends, colleagues, or your family doctor.
+        </p>
+
+        <h3>3. Can an unregistered plain paper Will be probated in the Madras High Court?</h3>
+        <p>
+          Yes. The Madras High Court probates both registered and unregistered Wills. The court examines the authenticity of the signatures and attestation under Section 68 of the Evidence Act.
+        </p>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's most affordable digital estate planning platform. Legally compliant under the Indian Succession Act, 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Platform</h4>
+        <ul class="footer-links">
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#pricing">Pricing (₹299)</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
+          <li><a href="/blog">Legal Guides</a></li>
+          <li><a href="/will-registration-chennai">Chennai Guide</a></li>
+          <li><a href="/will-registration-mumbai">Mumbai Guide</a></li>
+          <li><a href="/will-registration-bangalore">Bangalore Guide</a></li>
+          <li><a href="/will-registration-hyderabad">Hyderabad Guide</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-title">Legal &amp; Privacy</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">DPDP Act Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/refunds">Refund Policy</a></li>
+          <li><a href="/contact">Contact Helpdesk</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
