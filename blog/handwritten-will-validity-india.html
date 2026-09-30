@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Can a Handwritten Will Be Valid in India? (2026 Rules)</title>
+  <meta name="description" content="Is a handwritten Will on plain paper legally valid in Indian courts? Learn Section 63 witness rules, holographic Will legal standards, and common pitfalls.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/blog/handwritten-will-validity-india">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Can a Handwritten Will Be Valid in India? (Holographic Will Rules 2026)">
+  <meta property="og:description" content="Complete legal analysis of handwritten (holographic) Wills in India. Section 63 ISA rules, witness requirements, and why courts scrutinize handwritten drafts.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/blog/handwritten-will-validity-india">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Article & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "Can a Handwritten Will Be Valid in India? (Holographic Will Rules 2026)",
+        "description": "Comprehensive legal guide on the validity, statutory requirements, and evidentiary challenges of handwritten (holographic) Wills under the Indian Succession Act 1925.",
+        "image": "https://smartwill-india.vercel.app/og-image.jpg",
+        "url": "https://smartwill-india.vercel.app/blog/handwritten-will-validity-india",
+        "datePublished": "2026-09-30T00:00:00+05:30",
+        "dateModified": "2026-09-30T00:00:00+05:30",
+        "author": { "@type": "Organization", "name": "SmartWill India Legal Desk", "url": "https://smartwill-india.vercel.app/" },
+        "publisher": { "@type": "Organization", "name": "SmartWill India", "url": "https://smartwill-india.vercel.app/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is a handwritten Will legally valid in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Under Section 63 of the Indian Succession Act 1925, Indian law recognizes handwritten Wills (legally called holographic Wills). There is no requirement that a Will must be typed or printed. As long as it is written by a testator of sound mind and physically attested by two independent witnesses, it is 100% legally binding."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a handwritten Will need witnesses in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, absolutely. A very dangerous misconception in India is that handwritten Wills do not require witnesses. Unlike some international jurisdictions that permit unwitnessed holographic Wills, Section 63(c) of the Indian Succession Act strictly mandates that EVERY Will—whether handwritten or typed—must be signed or attested by at least two independent adult witnesses."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a handwritten Will need to be written on stamp paper?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under the Indian Stamp Act 1899, a Will is completely exempt from stamp duty. You can write your Will on plain white paper, notebook paper, or legal bond paper with a pen. Using stamp paper provides zero additional legal validity."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Why are handwritten Wills challenged more frequently in court?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Handwritten Wills face higher dispute rates because disgruntled heirs frequently allege forgery under Section 45 of the Indian Evidence Act, illegible handwriting, or lack of testamentary capacity. Typed Wills with structured clauses and consistent formatting are significantly easier to defend in probate court."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .article-header { 
+      padding: 7.5rem 0 3.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
+    .article-title { 
+      font-size: clamp(2.1rem, 5vw, 3.2rem); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .article-subtitle { 
+      font-size: 1.15rem; 
+      line-height: 1.65; 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin-bottom: 2rem; 
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.08rem; 
+      line-height: 1.8; 
+      color: var(--text-main); 
+    }
+    .article-content h2 { 
+      font-size: 1.85rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.25rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .article-content h3 { 
+      font-size: 1.35rem; 
+      font-weight: 600; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+    .legal-alert { 
+      background: rgba(223, 183, 108, 0.08); 
+      border-left: 4px solid var(--accent-gold, #dfb76c); 
+      padding: 1.35rem 1.5rem; 
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
+      margin: 2rem 0; 
+    }
+    .danger-alert {
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 4px solid #ef4444;
+      padding: 1.35rem 1.5rem;
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0;
+      margin: 2rem 0;
+    }
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      margin: 2rem 0;
+    }
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: var(--radius-md, 16px);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+    .styled-table th, .styled-table td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .styled-table th {
+      background: rgba(223, 183, 108, 0.1);
+      color: var(--accent-gold, #dfb76c);
+      font-weight: 700;
+    }
+    .article-sidebar { 
+      position: sticky; 
+      top: 6rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      margin-bottom: 2rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header -->
+    <section class="article-header">
+      <div class="container">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;background:rgba(223, 183, 108, 0.12);border:1px solid var(--accent-gold, #dfb76c);border-radius:9999px;font-size:0.85rem;font-weight:600;color:var(--primary, #dfb76c);margin-bottom:1.25rem;">
+          <i data-lucide="pen-tool" style="width:16px;height:16px;"></i> Holographic Will Law
+        </div>
+        <h1 class="article-title">Can a Handwritten Will Be Valid in India? (2026 Rules)</h1>
+        <p class="article-subtitle">
+          Can you simply write your Will on a piece of paper with a ballpoint pen? Learn Section 63 statutory rules, witness requirements, court evidentiary standards, and why handwritten Wills face heavy probate litigation.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> Indian Succession Act 1925</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 7 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="scale" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body Content -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
+              
+              <p>
+                In Indian cinema and popular lore, people often write a sudden Will on their deathbed using a scrap of paper or a diary page. But does this hold up in a real Indian civil court under the <strong>Indian Succession Act 1925</strong>?
+              </p>
+              <p>
+                The short answer is <strong>yes, a handwritten Will (legally known as a holographic Will) is recognized as legally valid in India</strong>. However, there are strict statutory requirements that must be met, and a single procedural misstep can cause the entire document to be discarded during probate.
+              </p>
+
+              <h2>The Legal Basis: Section 63 of the Indian Succession Act 1925</h2>
+              <p>
+                Under Section 63 of the Act, there is no restriction regarding the medium or form of execution:
+              </p>
+              <ul>
+                <li>The law does <strong>not require</strong> a Will to be typed or computer-printed.</li>
+                <li>The law does <strong>not require</strong> stamp paper or official government stationary.</li>
+                <li>A Will can be written in ink, ballpoint pen, or pencil (though ink is strongly recommended) in any language understood by the testator.</li>
+              </ul>
+
+              <div class="danger-alert">
+                <strong><i data-lucide="alert-triangle" style="width:16px;height:16px;vertical-align:text-bottom;"></i> The Deadly Myth: "Handwritten Wills Do Not Need Witnesses"</strong><br>
+                Many people mistakenly believe that because the entire document is in their personal handwriting, it proves its own genuineness and needs no witnesses. <strong>This is completely FALSE under Indian law!</strong><br><br>
+                Under Section 63(c), <strong>every Will in India MUST be physically witnessed and attested by at least two independent adult witnesses</strong> who saw the testator sign. An unwitnessed handwritten Will is completely void and unenforceable in Indian courts!
+              </div>
+
+              <h2>Mandatory Requirements for a Valid Handwritten Will</h2>
+              <p>
+                For a handwritten Will to successfully stand up in court and facilitate property mutation before municipal bodies:
+              </p>
+              <ol>
+                <li><strong>Sound Mind &amp; Volition:</strong> The testator must declare they are of sound disposing mind and acting without coercion, fraud, or undue influence.</li>
+                <li><strong>Entirely Legible:</strong> The handwriting must be clear and unambiguous. Overwritten words, scribbles, or insertions must be separately initialed by the testator and witnesses.</li>
+                <li><strong>Clear Date &amp; Place:</strong> The exact date and location of execution are critical to establish testamentary capacity and establish that it supersedes any older Wills.</li>
+                <li><strong>Specific Property Identification:</strong> Mention exact flat numbers, survey numbers, bank account numbers, and demat client IDs rather than vague descriptions like <em>"all my savings"</em>.</li>
+                <li><strong>Residuary Clause:</strong> A statement specifying who inherits any future or unlisted assets to prevent partial intestacy.</li>
+                <li><strong>Signatures on Every Page:</strong> The testator must sign (or affix thumb impression) at the bottom of each page to prevent substitution of sheets.</li>
+                <li><strong>Attestation by Two Witnesses:</strong> Two adult witnesses who are NOT beneficiaries (Section 67) must sign with their full names, addresses, and ID details.</li>
+              </ol>
+
+              <h2>Why Handwritten Wills Face 3x More Probate Litigation</h2>
+              <p>
+                While writing a Will by hand is cost-free, estate lawyers across High Courts caution that handwritten Wills are the most frequently contested documents in Indian civil litigation:
+              </p>
+
+              <h3>1. Allegations of Forgery &amp; Handwriting Analysis</h3>
+              <p>
+                Under Section 45 and Section 47 of the Indian Evidence Act 1872, dissatisfied heirs can easily file an objection claiming the handwriting is forged or manipulated. This triggers lengthy forensic expert testimonies, sample comparisons of decades-old signatures, and court delays lasting 5 to 10 years.
+              </p>
+
+              <h3>2. Physical Degradation and Faded Ink</h3>
+              <p>
+                Handwritten notes in ballpoint pen or gel ink frequently fade, smudge, or tear when stored in home almirahs for 15–20 years. When the document is finally produced before a Sub-Registrar or bank manager, illegible passages create deadlock.
+              </p>
+
+              <h3>3. Omission of Crucial Safeguard Clauses</h3>
+              <p>
+                Laypersons drafting handwritten Wills almost invariably forget vital legal mechanics:
+              </p>
+              <ul>
+                <li>They forget to name an <strong>Executor</strong> (meaning the family must petition for slow Letters of Administration under Section 232).</li>
+                <li>They forget the <strong>Residuary Clause</strong> (causing future investments or PF balances to be divided among disputing Class 1 heirs).</li>
+                <li>They inadvertently ask their son or daughter to sign as a witness—which immediately <strong>cancels their inheritance under Section 67</strong>!</li>
+              </ul>
+
+              <h2>Handwritten Will vs SmartWill Digital Will</h2>
+              <div class="comparison-table-wrapper">
+                <table class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Factor</th>
+                      <th>Handwritten (Holographic) Will</th>
+                      <th>SmartWill Automated Platform</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Legal Validity</strong></td>
+                      <td>Valid if attested by 2 witnesses</td>
+                      <td>100% compliant with ISA 1925</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Litigation Vulnerability</strong></td>
+                      <td>Very High (Handwriting challenges)</td>
+                      <td>Extremely Low (Standardized clauses)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Witness Error Prevention</strong></td>
+                      <td>None (Heirs often sign as witness)</td>
+                      <td>Built-in Section 67 barrier check</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Residuary Clause</strong></td>
+                      <td>Frequently forgotten</td>
+                      <td>Automatically generated</td>
+                    </tr>
+                    <tr>
+                      <td><strong>SRO Registration Readiness</strong></td>
+                      <td>Sub-Registrars often question legibility</td>
+                      <td>Pre-formatted for immediate SRO acceptance</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Cost</strong></td>
+                      <td>₹0 (High future dispute cost)</td>
+                      <td>₹299 one-time</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>Frequently Asked Questions</h2>
+              <div class="faq-card">
+                <h3>Can I write my Will in my regional language like Hindi, Tamil, or Telugu?</h3>
+                <p>Yes. Section 63 permits a Will in any language understood by the testator. If written in a regional language, certified English translations are typically submitted if applying for probate in High Courts or presenting to central financial institutions.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Can a handwritten Will be registered at the Sub-Registrar Office?</h3>
+                <p>Yes. Sub-Registrar Offices accept handwritten Wills provided the text is clearly legible, written in durable ink, signed on every page, and presented with two witnesses. However, many SROs encourage typed copies to ensure clear digital document scanning.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>What if there are cross-outs or corrections in my handwritten Will?</h3>
+                <p>Under Section 71 of the Indian Succession Act, any alteration, erasure, or interlineation made in a Will after execution is invalid unless the testator and both witnesses sign their initials directly next to the alteration. If you make major changes, it is far safer to draft a fresh Will.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- CTA Card -->
+              <div class="sidebar-card cta-card">
+                <i data-lucide="shield-alert" style="width:36px;height:36px;color:var(--accent-gold);margin-bottom:0.75rem;"></i>
+                <h4>Avoid Handwriting Disputes</h4>
+                <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                  Generate a clean, unambiguous, registered-ready typed Will in 10 minutes with mandatory legal protections.
+                </p>
+                <div style="font-size:1.85rem;font-weight:800;color:var(--accent-gold);margin-bottom:1rem;">
+                  &#x20B9;299 <span style="font-size:0.95rem;font-weight:400;color:var(--text-muted);">one-time</span>
+                </div>
+                <a href="/app" class="btn btn-gold" style="width:100%;text-align:center;display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/will-format-india">&rarr; Simple Will Format (Word &amp; PDF)</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/is-stamp-paper-required-for-will-india">&rarr; Is Stamp Paper Required for Will?</a></li>
+                  <li><a href="/blog/can-a-registered-will-be-challenged-in-india">&rarr; Can a Registered Will Be Challenged?</a></li>
+                  <li><a href="/blog/role-of-executor-in-will-india">&rarr; Role &amp; Duties of an Executor</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Protect Your Family from Probate Contests</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Don't leave a handwritten note open to forensic challenges. Draft a legally sound Will today for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

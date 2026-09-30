@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>Joint Will vs Mirror Will in India: Which for Couples? (2026)</title>
+  <meta name="description" content="Should husband and wife make a Joint Will or Mirror Wills in India? Learn legal traps of joint wills, probate complexities, and how mirror wills protect spouses.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/blog/joint-will-vs-mirror-will-india">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Joint Will vs Mirror Will in India: Which Is Better for Couples? (2026)">
+  <meta property="og:description" content="Detailed legal comparison of Joint Wills vs Mirror Wills for married couples in India. Understand revocation rights, probate issues, and estate protection.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/blog/joint-will-vs-mirror-will-india">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Article & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "Joint Will vs Mirror Will in India: Which Is Better for Couples? (2026)",
+        "description": "Comprehensive comparative legal guide examining the legal mechanics, probate procedures, and revocability of Joint Wills versus Mirror Wills under Indian law.",
+        "image": "https://smartwill-india.vercel.app/og-image.jpg",
+        "url": "https://smartwill-india.vercel.app/blog/joint-will-vs-mirror-will-india",
+        "datePublished": "2026-09-30T00:00:00+05:30",
+        "dateModified": "2026-09-30T00:00:00+05:30",
+        "author": { "@type": "Organization", "name": "SmartWill India Legal Desk", "url": "https://smartwill-india.vercel.app/" },
+        "publisher": { "@type": "Organization", "name": "SmartWill India", "url": "https://smartwill-india.vercel.app/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can husband and wife make a single joint Will in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, legally a husband and wife can execute a single joint Will under Indian law. However, estate planning advocates strongly advise AGAINST it because of severe procedural deadlocks, loss of flexibility for the surviving spouse, and complex probate procedures."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a Mirror Will in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Mirror Wills are two separate, individual legal Wills executed by each spouse. Typically, each spouse leaves their entire estate to the other spouse first, and then specifies that upon the second spouse's death, the combined estate devolves upon their children. Because they are separate documents, each retains independent legal validity."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can a surviving spouse change a joint Will after one partner passes away?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "This is the primary legal trap of joint wills. Indian courts have held that if a joint Will creates reciprocal benefits, it may be treated as a binding mutual contract. After one spouse dies, the survivor may be legally restrained from altering the Will or selling the property, even if funds are urgently needed for medical emergencies."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the best way for couples to write Wills in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The gold standard in Indian estate planning is for husband and wife to each draft their own separate Mirror Will. Platforms like SmartWill India allow both partners to draft customized, legally sound individual Wills in 10 minutes each for ₹299."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .article-header { 
+      padding: 7.5rem 0 3.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
+    .article-title { 
+      font-size: clamp(2.1rem, 5vw, 3.2rem); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .article-subtitle { 
+      font-size: 1.15rem; 
+      line-height: 1.65; 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin-bottom: 2rem; 
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.08rem; 
+      line-height: 1.8; 
+      color: var(--text-main); 
+    }
+    .article-content h2 { 
+      font-size: 1.85rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.25rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .article-content h3 { 
+      font-size: 1.35rem; 
+      font-weight: 600; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+    .legal-alert { 
+      background: rgba(223, 183, 108, 0.08); 
+      border-left: 4px solid var(--accent-gold, #dfb76c); 
+      padding: 1.35rem 1.5rem; 
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
+      margin: 2rem 0; 
+    }
+    .danger-alert {
+      background: rgba(239, 68, 68, 0.08);
+      border-left: 4px solid #ef4444;
+      padding: 1.35rem 1.5rem;
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0;
+      margin: 2rem 0;
+    }
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      margin: 2rem 0;
+    }
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: var(--radius-md, 16px);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+    .styled-table th, .styled-table td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .styled-table th {
+      background: rgba(223, 183, 108, 0.1);
+      color: var(--accent-gold, #dfb76c);
+      font-weight: 700;
+    }
+    .article-sidebar { 
+      position: sticky; 
+      top: 6rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      margin-bottom: 2rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header -->
+    <section class="article-header">
+      <div class="container">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;background:rgba(223, 183, 108, 0.12);border:1px solid var(--accent-gold, #dfb76c);border-radius:9999px;font-size:0.85rem;font-weight:600;color:var(--primary, #dfb76c);margin-bottom:1.25rem;">
+          <i data-lucide="users" style="width:16px;height:16px;"></i> Couples Estate Planning
+        </div>
+        <h1 class="article-title">Joint Will vs Mirror Will in India: Which for Couples? (2026)</h1>
+        <p class="article-subtitle">
+          Married couples in India often wonder whether they should draft a single joint Will or separate mirror Wills. Understand the legal mechanics, revocation rights, probate risks, and why advocates strongly recommend mirror Wills.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> Indian Succession Act 1925</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 8 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> September 2026</span>
+          <span><i data-lucide="scale" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body Content -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
+              
+              <p>
+                When a married couple sits down to plan their family's estate, the most natural thought is: <em>"Why don't we just write one single Will together that covers all our properties, bank accounts, and children?"</em>
+              </p>
+              <p>
+                While this sounds simple and romantic, in Indian jurisprudence, a <strong>Joint Will</strong> is considered a legal minefield. Experienced estate advocates and Supreme Court precedents overwhelmingly advise couples to execute <strong>Mirror Wills</strong> instead.
+              </p>
+
+              <h2>What is a Joint Will in India?</h2>
+              <p>
+                A <strong>Joint Will</strong> is a single legal document executed jointly by two or more individuals (typically husband and wife). It disposes of either their jointly held properties, their separate individual properties, or both.
+              </p>
+              <p>
+                In a typical joint will, the couple declares that whoever passes away first leaves their estate to the survivor, and upon the death of the survivor, the entire property passes to their children.
+              </p>
+
+              <h2>What is a Mirror Will in India?</h2>
+              <p>
+                A <strong>Mirror Will</strong> (or reciprocal Will) consists of <strong>two separate, distinct legal documents</strong>—one written by the husband, and one written by the wife.
+              </p>
+              <p>
+                The provisions "mirror" each other:
+              </p>
+              <ul>
+                <li>The <strong>husband's Will</strong> states: <em>"I leave all my self-acquired assets to my wife; and if she predeceases me, to our children in equal shares."</em></li>
+                <li>The <strong>wife's Will</strong> states: <em>"I leave all my self-acquired assets to my husband; and if he predeceases me, to our children in equal shares."</em></li>
+              </ul>
+
+              <h2>The 4 Dangerous Legal Traps of Joint Wills in India</h2>
+
+              <h3>1. The Revocation Trap (Loss of Testamentary Freedom)</h3>
+              <p>
+                The fundamental essence of a Will under Section 62 of the Indian Succession Act 1925 is that it is <strong>ambulatory</strong>—meaning it can be revoked, cancelled, or altered by the testator at any point during their lifetime.
+              </p>
+              <div class="danger-alert">
+                <strong><i data-lucide="alert-triangle" style="width:16px;height:16px;vertical-align:text-bottom;"></i> The Surviving Spouse's Hands Are Tied:</strong> Under Indian case law, if a Joint Will contains reciprocal commitments, courts often interpret it as an irrevocable contract (a Mutual Will). If the husband dies first, the surviving wife may be legally barred from selling or mortgaging the flat, even to pay for critical cancer treatments or elder care, because the children can obtain a court injunction claiming their vested future rights!
+              </div>
+
+              <h3>2. Probate Deadlock</h3>
+              <p>
+                In presidency cities like Mumbai, Chennai, and Kolkata where probate is compulsory under Section 213 of the Indian Succession Act, probating a Joint Will is an administrative nightmare:
+              </p>
+              <ul>
+                <li>Does the court grant probate upon the first spouse's death or wait until both die?</li>
+                <li>If probate is granted on the first death, how does the court treat the surviving spouse's assets listed in the same document?</li>
+              </ul>
+
+              <h3>3. Marital Breakdown or Estrangement</h3>
+              <p>
+                If a couple experiences marital disputes, separation, or divorce later in life, revoking a joint Will often requires mutual consent or complex legal notices, triggering litigation before family courts.
+              </p>
+
+              <h3>4. Remarriage Complications</h3>
+              <p>
+                If the surviving spouse remarries, a Joint Will cannot easily adapt to provide for stepchildren, second spouses, or unexpected financial liabilities, often resulting in prolonged civil suits between the second family and the original children.
+              </p>
+
+              <h2>Why Mirror Wills Are the Gold Standard for Indian Couples</h2>
+              <p>
+                Mirror Wills solve all four problems while providing 100% of the peace of mind:
+              </p>
+              <ol>
+                <li><strong>Complete Independence:</strong> Each spouse maintains total ownership and control over their own self-acquired assets during their lifetime.</li>
+                <li><strong>Instant Transmission:</strong> When the first spouse passes away, their Will is executed immediately. Bank accounts, demat folios, and residential properties transfer smoothly to the survivor without judicial deadlock.</li>
+                <li><strong>Emergency Flexibility:</strong> If the surviving spouse outlives the partner by 20 years and needs to downsize their home or pay for medical bills, they have full legal liberty to do so.</li>
+                <li><strong>Full Protection for Children:</strong> The secondary clause in each Will guarantees that whatever remains upon the second death passes cleanly to the children.</li>
+              </ol>
+
+              <h2>Head-to-Head Comparison: Joint Will vs Mirror Will</h2>
+              <div class="comparison-table-wrapper">
+                <table class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Factor</th>
+                      <th>Joint Will</th>
+                      <th>Mirror Wills (Recommended)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Number of Documents</strong></td>
+                      <td>1 single document</td>
+                      <td>2 separate individual Wills</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Revocability</strong></td>
+                      <td>Very difficult after first spouse's death</td>
+                      <td>Each spouse can freely update their own</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Probate Complexity</strong></td>
+                      <td>High court resistance and delay</td>
+                      <td>Standard, straightforward probate</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Protection for Survivor</strong></td>
+                      <td>Restricted; survivor's hands are often tied</td>
+                      <td>Complete financial freedom and security</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sub-Registrar Registration</strong></td>
+                      <td>Both must attend SRO simultaneously</td>
+                      <td>Can be registered independently</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Cost on SmartWill</strong></td>
+                      <td>Not recommended</td>
+                      <td>₹299 each (Complete peace of mind)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>Frequently Asked Questions</h2>
+              <div class="faq-card">
+                <h3>Can we mention joint bank accounts in Mirror Wills?</h3>
+                <p>Yes. In your individual Will, you simply specify your 50% undivided interest in the joint account or declare that upon your death, your share devolves completely upon the surviving joint holder.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Can husband and wife use the same witnesses for Mirror Wills?</h3>
+                <p>Yes! In fact, having the same two trusted family friends or neighbors witness both Wills at the same sitting is standard practice and provides strong corroborating evidence in court.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>What happens if both spouses die together in an accident?</h3>
+                <p>SmartWill India's mirror will templates include a standard <strong>Simultaneous Demise Clause</strong> (common disaster clause). If both spouses pass away together, the estate bypasses the deceased spouse and passes directly to the named children or secondary beneficiaries.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- CTA Card -->
+              <div class="sidebar-card cta-card">
+                <i data-lucide="heart-handshake" style="width:36px;height:36px;color:var(--accent-gold);margin-bottom:0.75rem;"></i>
+                <h4>Protect Each Other with Mirror Wills</h4>
+                <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                  Create reciprocal Wills for husband &amp; wife in 10 minutes each. Protect your spouse and secure your children's future.
+                </p>
+                <div style="font-size:1.85rem;font-weight:800;color:var(--accent-gold);margin-bottom:1rem;">
+                  &#x20B9;299 <span style="font-size:0.95rem;font-weight:400;color:var(--text-muted);">per Will</span>
+                </div>
+                <a href="/app" class="btn btn-gold" style="width:100%;text-align:center;display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/handwritten-will-validity-india">&rarr; Can a Handwritten Will Be Valid?</a></li>
+                  <li><a href="/will-format-india">&rarr; Simple Will Format (Word &amp; PDF)</a></li>
+                  <li><a href="/blog/can-you-disinherit-a-child-in-india">&rarr; Disinheriting a Son or Daughter</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir in India</a></li>
+                  <li><a href="/online-will-maker-vs-lawyer">&rarr; Online Will vs Traditional Lawyer</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Ensure Complete Freedom for Your Surviving Spouse</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Avoid the rigid traps of joint wills. Draft your individual mirror wills today for just &#x20B9;299 each.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
