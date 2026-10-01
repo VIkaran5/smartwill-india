@@ -52,8 +52,8 @@ for (const folder of folders) {
   }
 }
 
-// 3b. Copy root static files (SEO, OG image)
-const staticFiles = ['sitemap.xml', 'robots.txt', 'og-image.jpg'];
+// 3b. Copy root static files (SEO, OG image, AI LLM standard)
+const staticFiles = ['sitemap.xml', 'robots.txt', 'og-image.jpg', 'llms.txt'];
 for (const f of staticFiles) {
   const src = path.join(root, f);
   if (fs.existsSync(src)) {

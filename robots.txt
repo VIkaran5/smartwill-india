@@ -1,7 +1,47 @@
+# Robots.txt for SmartWill India (https://smartwill-india.vercel.app)
+# Standard Web Crawlers
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /functions/
 Disallow: /pay.html
 
+# AI Search Engines & LLM Crawlers (Generative Engine Optimization)
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /api/
+Disallow: /pay.html
+
+# Sitemaps & Machine-Readable AI Summaries
 Sitemap: https://smartwill-india.vercel.app/sitemap.xml
+# LLM Knowledge Standard: https://smartwill-india.vercel.app/llms.txt
