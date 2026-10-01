@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){
+      try {
+        var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', t);
+      } catch(e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
+  <script src="/js/consent-banner.js" defer></script>
+  <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
+  <title>How to Distribute Property Fairly in a Will in India (2026)</title>
+  <meta name="description" content="How to divide property equally or fairly among children in an Indian Will. Solving the single flat dilemma, per stirpes rules, and partition suit prevention.">
+  <link rel="canonical" href="https://smartwill-india.vercel.app/blog/how-to-distribute-property-equally-in-will-india">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="How to Distribute Property Fairly in a Will in India (2026 Guide)">
+  <meta property="og:description" content="Practical legal strategies for dividing residential flats, bank deposits, and shares among children without triggering family partition suits.">
+  <meta property="og:url" content="https://smartwill-india.vercel.app/blog/how-to-distribute-property-equally-in-will-india">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SmartWill India">
+  <meta property="og:image" content="https://smartwill-india.vercel.app/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Schema.org Article & FAQ Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Article",
+        "headline": "How to Distribute Property Fairly in a Will in India (2026 Guide)",
+        "description": "Comprehensive guide on legally drafting equal and equitable property distribution clauses in Indian Wills under the Indian Succession Act 1925.",
+        "image": "https://smartwill-india.vercel.app/og-image.jpg",
+        "url": "https://smartwill-india.vercel.app/blog/how-to-distribute-property-equally-in-will-india",
+        "datePublished": "2026-10-01T00:00:00+05:30",
+        "dateModified": "2026-10-01T00:00:00+05:30",
+        "author": { "@type": "Organization", "name": "SmartWill India Legal Desk", "url": "https://smartwill-india.vercel.app/" },
+        "publisher": { "@type": "Organization", "name": "SmartWill India", "url": "https://smartwill-india.vercel.app/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can a parent distribute property unequally among children in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. If the property is self-acquired (purchased with personal earnings, received via gift, or inherited under a previous personal will), an Indian parent has 100% testamentary freedom to distribute it however they wish—including giving more to one child or excluding another entirely. However, adding an explanatory clause is critical to prevent allegations of undue influence."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do you divide a single residential flat among two or three children in a Will?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Since an apartment cannot be physically split, parents typically use three legal mechanisms: 1) Give an explicit direction to the executor to sell the flat upon demise and divide the net sale proceeds equally; 2) Give Child A the flat and compensate Child B with equivalent liquid cash, FDs, or demat equities; or 3) Bequeath equal undivided tenancy-in-common shares with a pre-emption buy-out clause."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between per stirpes and per capita distribution?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "In per stirpes distribution, if a child passes away before the testator, that child's share automatically flows downward to their own children (the grandchildren). In per capita distribution, the deceased child's share lapses and is divided equally among the remaining surviving siblings."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Favicons — Dual Theme -->
+  <link rel="icon" type="image/webp" href="/assets/logo-light.webp" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/webp" href="/assets/logo-dark.webp" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="/assets/logo-light.webp">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/assets/fonts/fonts.css">
+  <link rel="stylesheet" href="/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="/css/design-system.css">
+  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/legal-bot.css">
+  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    body { 
+      background-color: var(--bg-dark); 
+      color: var(--text-main); 
+      font-family: var(--font-body, sans-serif); 
+    }
+    .article-header { 
+      padding: 7.5rem 0 3.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
+    .article-title { 
+      font-size: clamp(2.1rem, 5vw, 3.2rem); 
+      font-weight: 800; 
+      line-height: 1.15; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .article-subtitle { 
+      font-size: 1.15rem; 
+      line-height: 1.65; 
+      color: var(--text-muted); 
+      max-width: 780px; 
+      margin-bottom: 2rem; 
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.08rem; 
+      line-height: 1.8; 
+      color: var(--text-main); 
+    }
+    .article-content h2 { 
+      font-size: 1.85rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.25rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+    }
+    .article-content h3 { 
+      font-size: 1.35rem; 
+      font-weight: 600; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+    .legal-alert { 
+      background: rgba(223, 183, 108, 0.08); 
+      border-left: 4px solid var(--accent-gold, #dfb76c); 
+      padding: 1.35rem 1.5rem; 
+      border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
+      margin: 2rem 0; 
+    }
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      margin: 2rem 0;
+    }
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: var(--radius-md, 16px);
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+    .styled-table th, .styled-table td {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .styled-table th {
+      background: rgba(223, 183, 108, 0.1);
+      color: var(--accent-gold, #dfb76c);
+      font-weight: 700;
+    }
+    .article-sidebar { 
+      position: sticky; 
+      top: 6rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 2rem; 
+      margin-bottom: 2rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+    }
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 12px);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      margin-bottom: 0;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+        <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
+        <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
+        <span class="logo-text">SmartWill India</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#pricing" class="nav-link">Pricing</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Header -->
+    <section class="article-header">
+      <div class="container">
+        <div style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.4rem 1rem;background:rgba(223, 183, 108, 0.12);border:1px solid var(--accent-gold, #dfb76c);border-radius:9999px;font-size:0.85rem;font-weight:600;color:var(--primary, #dfb76c);margin-bottom:1.25rem;">
+          <i data-lucide="split" style="width:16px;height:16px;"></i> Estate Distribution Strategy
+        </div>
+        <h1 class="article-title">How to Distribute Property Fairly in a Will in India (2026)</h1>
+        <p class="article-subtitle">
+          Dividing real estate, shares, and savings among multiple children without sparking bitter family partition suits. Learn how to solve the single-flat dilemma, per stirpes rules, and valuation balancing.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> Indian Succession Act 1925</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 8 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> October 2026</span>
+          <span><i data-lucide="scale" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Body Content -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
+              
+              <p>
+                Every Indian parent dreams of treating their children equally and leaving behind harmony. Yet in reality, property division is the number one cause of prolonged civil partition lawsuits across Indian district courts and High Courts.
+              </p>
+              <p>
+                Why? Because <strong>physical properties are indivisible</strong>. You cannot physically slice a 3BHK flat in Bangalore or Mumbai into two equal halves for a son and a daughter. Without precise legal clauses, simply writing <em>"I leave my flat equally to my children"</em> creates joint tenancy deadlock where neither can sell, live in peace, or obtain bank loans.
+              </p>
+
+              <h2>The Single Flat Dilemma: 4 Legal Solutions</h2>
+              <p>
+                When parents own one primary residential home and have two or more adult heirs, estate planning advocates recommend four proven legal strategies:
+              </p>
+
+              <h3>1. The "Sell &amp; Distribute Proceeds" Clause (Cleanest Exit)</h3>
+              <p>
+                The testator empowers their appointed Executor with a mandatory direction:
+              </p>
+              <div class="legal-alert">
+                <em>"I direct my Executor that upon my demise, my residential apartment at Flat No. 402 shall be sold in the open market within 12 months at prevailing market value, and the net proceeds after clearing municipal dues shall be distributed in equal shares (50% each) to my son and daughter."</em>
+              </div>
+              <p>
+                This prevents either child from squatting in the property or denying the other their legitimate financial share.
+              </p>
+
+              <h3>2. Asset Balancing &amp; Equalization (Set-off Strategy)</h3>
+              <p>
+                If one child wants to retain the family home while the other lives in another city or abroad:
+              </p>
+              <ul>
+                <li><strong>Child A</strong> inherits 100% ownership of the residential flat (e.g., valued at ₹1.2 Crore).</li>
+                <li><strong>Child B</strong> inherits the equivalent financial portfolio (e.g., ₹70 Lakhs in Mutual Funds + ₹50 Lakhs in Fixed Deposits).</li>
+              </ul>
+              <p>
+                This ensures each child receives equivalent financial net worth without sharing title deeds.
+              </p>
+
+              <h3>3. Preemptive Buy-Out Right (Right of First Refusal)</h3>
+              <p>
+                If the flat is bequeathed to both children in equal 50% undivided shares, add a pre-emption clause:
+              </p>
+              <ul>
+                <li>If Child A wishes to sell, they must first offer their 50% share to Child B at a valuation determined by an independent government-registered valuer.</li>
+                <li>Only if Child B declines in writing can Child A seek third-party buyers.</li>
+              </ul>
+
+              <h3>4. Life Interest to Surviving Spouse First</h3>
+              <p>
+                Before children inherit anything, ensure your spouse's shelter is 100% protected. A <strong>Life Interest clause</strong> guarantees the surviving spouse can occupy the home peacefully for their entire lifetime, with equal distribution among children triggering only upon the second spouse's demise.
+              </p>
+
+              <h2>Can You Distribute Property Unequally in India?</h2>
+              <p>
+                Yes. Under the <strong>Hindu Succession Act 1956</strong> and <strong>Indian Succession Act 1925</strong>, you have absolute testamentary freedom over your <strong>self-acquired property</strong>. You are under no legal obligation to divide assets equally.
+              </p>
+              <p>
+                You may choose to give 70% to a daughter who supported you in old age, or 100% to a son with special medical needs. However, to prevent disgruntled children from claiming <em>"fraud or undue influence"</em> in court:
+              </p>
+              <ol>
+                <li><strong>Explicitly state your reasons:</strong> Write a 2-sentence rationale in the Will (e.g., <em>"I have allocated a larger share to my daughter Priya as I have already funded my son Rahul's overseas medical education during my lifetime"</em>).</li>
+                <li><strong>Attach a Doctor's Medical Fitness Certificate:</strong> Proves sound disposing mind at the time of execution.</li>
+              </ol>
+
+              <h2>Per Stirpes vs Per Capita: Protecting Grandchildren</h2>
+              <div class="comparison-table-wrapper">
+                <table class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Rule</th>
+                      <th>Legal Mechanism</th>
+                      <th>Example Outcome</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Per Stirpes (By Branch)</strong></td>
+                      <td>If a child predeceases you, their allocated share automatically passes down to their own children.</td>
+                      <td>If Son passes away before you, his 50% share goes directly to his children (your grandchildren).</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Per Capita (By Head)</strong></td>
+                      <td>If a child predeceases you, their share lapses and is divided equally among surviving living siblings.</td>
+                      <td>If Son passes away, Daughter receives 100% of the estate; grandchildren receive nothing.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>
+                SmartWill India's platform lets you easily configure per stirpes succession with a single toggle.
+              </p>
+
+              <h2>Frequently Asked Questions</h2>
+              <div class="faq-card">
+                <h3>Can married daughters claim a share in the father's self-acquired property?</h3>
+                <p>If a father leaves a valid Will distributing his self-acquired property, the Will prevails over all intestate claims. A married daughter cannot challenge a father's Will simply because she was excluded from self-acquired assets.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>What if one child refuses to sell the inherited joint flat?</h3>
+                <p>If a Will explicitly directs the Executor to sell the flat, the Executor has statutory authority under Section 211 of the ISA 1925 to execute the sale deed without needing the consent of uncooperative co-beneficiaries.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- CTA Card -->
+              <div class="sidebar-card cta-card">
+                <i data-lucide="scale" style="width:36px;height:36px;color:var(--accent-gold);margin-bottom:0.75rem;"></i>
+                <h4>Fair Division Without Disputes</h4>
+                <p style="font-size:0.95rem;color:var(--text-muted);margin-bottom:1.5rem;">
+                  Generate a customized Will with clean distribution clauses and executor powers in 10 minutes.
+                </p>
+                <div style="font-size:1.85rem;font-weight:800;color:var(--accent-gold);margin-bottom:1rem;">
+                  &#x20B9;299 <span style="font-size:0.95rem;font-weight:400;color:var(--text-muted);">one-time</span>
+                </div>
+                <a href="/app" class="btn btn-gold" style="width:100%;text-align:center;display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/can-you-disinherit-a-child-in-india">&rarr; Can You Disinherit a Child in India?</a></li>
+                  <li><a href="/blog/role-of-executor-in-will-india">&rarr; Role &amp; Powers of an Executor</a></li>
+                  <li><a href="/blog/joint-will-vs-mirror-will-india">&rarr; Joint Will vs Mirror Will for Couples</a></li>
+                  <li><a href="/will-format-india">&rarr; Simple Will Format (Word &amp; PDF)</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir in India</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Prevent Family Disputes Before They Start</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Draft an unambiguous, legally sound Will with clear asset division today for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modern Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-col">
+        <a href="/" class="nav-logo" aria-label="SmartWill India Home">
+          <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34" loading="lazy">
+          <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34" loading="lazy">
+          <span class="logo-text">SmartWill India</span>
+        </a>
+        <p class="footer-desc">
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal &amp; Compliance</h4>
+        <ul class="footer-links">
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

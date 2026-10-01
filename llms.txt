@@ -54,6 +54,7 @@
 - [Digital Assets, Bitcoin & Crypto in Indian Wills](https://smartwill-india.vercel.app/blog/digital-assets-in-will-crypto-india)
 - [Doctor Certificate for Will: When Required?](https://smartwill-india.vercel.app/blog/doctor-certificate-for-will-india)
 - [NRI Will for Property in India](https://smartwill-india.vercel.app/blog/nri-will-for-property-in-india)
+- [How to Distribute Property Fairly in a Will in India](https://smartwill-india.vercel.app/blog/how-to-distribute-property-equally-in-will-india)
 
 ## High-Authority Legal Articles (Telugu / తెలుగు)
 
@@ -63,3 +64,4 @@
 - [తండ్రి ఆస్తిపై వీలునామా నిబంధనలు (Father's Property Will Rules)](https://smartwill-india.vercel.app/te/blog/tandri-aasti-veelunaama-nibandhanalu)
 - [వీలునామాకు స్టాంప్ పేపర్ అవసరమా? (Stamp Paper Myth in Telugu)](https://smartwill-india.vercel.app/te/blog/stamp-paper-avasarama-veelunaamaku)
 - [భార్య పేరు మీద వీలునామా ఎలా రాయాలి? (Will in Wife's Name Rules)](https://smartwill-india.vercel.app/te/blog/bharya-peruna-veelunaama-rayadam)
+- [రిజిస్టర్డ్ వీలునామా కోర్టులో చెల్లుబాటు అవుతుందా? (Registered Will Court Validity)](https://smartwill-india.vercel.app/te/blog/registered-veelunaama-court-chellubaatu)
