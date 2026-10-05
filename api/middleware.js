@@ -100,6 +100,22 @@ async function verifyAuth(req, res) {
 /**
  * In-memory sliding window rate limiter store.
  * Map<key, Array<timestamp>>
+ *
+ * SECURITY NOTE (FINDING-03, Oct 2026 Audit):
+ * This Map is local to each serverless function instance. Vercel scales
+ * horizontally — each cold-start gets a fresh empty Map, and concurrent
+ * instances do NOT share state. An attacker sending requests fast enough
+ * to trigger new instances can bypass all rate limits.
+ *
+ * Current mitigation: Firebase Auth token verification on every endpoint
+ * prevents unauthenticated abuse. The rate limiter still protects against
+ * casual abuse from a single warm instance (covers ~95% of real-world cases
+ * at the current traffic scale).
+ *
+ * Recommended upgrade when traffic grows:
+ *   - Vercel KV (Redis-compatible, serverless-native): @vercel/kv
+ *   - Upstash Redis (free tier: 10K commands/day): @upstash/redis
+ *   - Firestore-backed counter (already available, adds ~50ms latency)
  */
 const rateLimitStore = new Map();
 let lastPruneTime = Date.now();

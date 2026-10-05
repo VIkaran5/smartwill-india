@@ -2,6 +2,20 @@
 import { showToast } from '../ui/toast.js';
 import { logger } from './logger.js';
 
+/**
+ * SECURITY NOTE (FINDING-06, Oct 2026 Audit):
+ * These are EmailJS "public" keys — they are designed to be client-visible.
+ * An attacker could extract them and attempt to send emails via this account.
+ *
+ * Mitigations already in place (free tier):
+ *   ✅ "Use Private Key" enabled in EmailJS dashboard (server-side validation)
+ *   ✅ "Allow non-browser applications" is DISABLED (blocks curl/Postman abuse)
+ *   ✅ 200 emails/month cap limits blast radius of any abuse
+ *   ✅ Template only sends Will summaries — not useful for phishing
+ *
+ * Domain restriction (Allowed Origins) requires a paid EmailJS plan.
+ * Upgrade if email abuse becomes an issue at scale.
+ */
 const EMAILJS_SERVICE_ID = 'service_0kllo5c';
 const EMAILJS_TEMPLATE_ID = 'template_tuu3204';
 const EMAILJS_PUBLIC_KEY = '8uss6lf18EqeuWT6D';
