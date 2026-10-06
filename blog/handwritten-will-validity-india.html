@@ -228,14 +228,24 @@
     .sidebar-card li { 
       margin-bottom: 0.75rem; 
     }
-    .sidebar-card a { 
+    .sidebar-card ul a, .sidebar-card li a { 
       color: var(--text-muted); 
       text-decoration: none; 
       font-size: 0.95rem; 
       transition: color 0.2s ease; 
     }
-    .sidebar-card a:hover { 
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
       color: var(--accent-gold, #dfb76c); 
+    }
+    .sidebar-card .btn, .sidebar-card a.btn, .cta-card .btn {
+      color: var(--btn-gold-text) !important;
+      font-weight: 700 !important;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    .mobile-menu.open {
+      display: flex;
     }
     .cta-card { 
       background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 

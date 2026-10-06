@@ -923,7 +923,8 @@
 }
 
 /* Slide-down navigation menu (Desktop & Mobile) */
-.nav-mobile-menu {
+.nav-mobile-menu,
+.mobile-menu {
   display: none;
   position: fixed;
   top: calc(var(--banner-height, 0px) + 72px);
@@ -941,9 +942,11 @@
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(20px);
 }
-.nav-mobile-menu.open { display: flex; }
+.nav-mobile-menu.open,
+.mobile-menu.open { display: flex; }
 
-.nav-mobile-menu .nav-link {
+.nav-mobile-menu .nav-link,
+.mobile-menu .mobile-link {
   display: flex;
   align-items: center;
   padding: 0.55rem 0.85rem;
@@ -955,9 +958,22 @@
   transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
 }
 
-.nav-mobile-menu .nav-link:hover {
+.nav-mobile-menu .nav-link:hover,
+.mobile-menu .mobile-link:hover {
   background: rgba(0, 0, 0, 0.05);
   color: var(--accent-gold);
+}
+
+/* Sidebar & CTA Card Button Contrast Guarantee */
+.sidebar-card .btn,
+.sidebar-card .btn-gold,
+.sidebar-card a.btn,
+.sidebar-card a.btn-gold,
+.cta-card .btn,
+.cta-card .btn-gold {
+  color: var(--btn-gold-text) !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
 }
 
 .nav-mobile-menu .nav-link.nav-link-nominee {
