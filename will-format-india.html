@@ -245,18 +245,69 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      background: var(--accent-gold, #dfb76c);
-      color: #111;
-      border: none;
-      padding: 0.4rem 0.85rem;
+      background: var(--btn-gold-bg, #000000);
+      color: var(--btn-gold-text, #ffffff);
+      border: 1px solid var(--btn-gold-border, rgba(0,0,0,0.15));
+      padding: 0.45rem 0.95rem;
       border-radius: 8px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
     }
     .copy-btn:hover {
-      background: #c89e52;
+      background: var(--btn-gold-hover, #222222);
+      color: var(--btn-gold-text, #ffffff);
+    }
+    [data-theme="dark"] .copy-btn {
+      background: var(--btn-gold-bg, #dfb76c);
+      color: var(--btn-gold-text, #080c1a);
+      border-color: var(--btn-gold-border, #dfb76c);
+    }
+    [data-theme="dark"] .copy-btn:hover {
+      background: var(--btn-gold-hover, #c89e52);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .hamburger-btn {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+      border: none;
+      background: none;
+      z-index: 200;
+      border-radius: var(--radius-sm);
+    }
+    .hamburger-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-main);
+      border-radius: 2px;
+      transition: all 0.25s ease;
+    }
+    .hamburger-btn.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-btn.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+    @media (max-width: 991px) {
+      .nav-links {
+        display: none !important;
+      }
+      .hamburger-btn {
+        display: flex !important;
+      }
     }
     .legal-alert { 
       background: rgba(223, 183, 108, 0.08); 
@@ -319,14 +370,18 @@
     .sidebar-card li { 
       margin-bottom: 0.75rem; 
     }
-    .sidebar-card a { 
+    .sidebar-card ul a, .sidebar-card li a { 
       color: var(--text-muted); 
       text-decoration: none; 
       font-size: 0.95rem; 
       transition: color 0.2s ease; 
     }
-    .sidebar-card a:hover { 
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
       color: var(--accent-gold, #dfb76c); 
+    }
+    .sidebar-card .btn, .sidebar-card a.btn {
+      color: var(--btn-gold-text) !important;
+      font-weight: 700 !important;
     }
     .cta-card { 
       background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
@@ -377,7 +432,7 @@
           <i data-lucide="sun" class="sun-icon"></i>
           <i data-lucide="moon" class="moon-icon"></i>
         </button>
-        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <a href="/app" class="btn btn-gold nav-cta">Create Will &mdash; &#x20B9;299</a>
         <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
           <span></span><span></span><span></span>
         </button>
@@ -390,7 +445,7 @@
       <a href="/blog" class="mobile-link">Legal Blog</a>
       <a href="/online-will-maker-vs-lawyer" class="mobile-link">Compare vs Lawyer</a>
       <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
-      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Create Will &mdash; &#x20B9;299</a>
     </div>
   </header>
 

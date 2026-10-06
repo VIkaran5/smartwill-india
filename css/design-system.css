@@ -2,6 +2,7 @@
 /* Self-hosted GDPR/DPDP privacy-safe fonts loaded via HTML <link> */
 
 :root, [data-theme="light"] {
+  color-scheme: light;
   /* Dayos Brutalist Editorial Showroom — Color System */
   --color-carbon-black: #000000;
   --color-paper-white: #ffffff;
@@ -115,6 +116,7 @@
    THEME TOKENS: DARK (Editorial Luxury / Obsidian Navy & Champagne Brass)
    ========================================================================== */
 [data-theme="dark"] {
+  color-scheme: dark;
   /* Surfaces & Canvas */
   --bg-dark: #080C1A;               /* Obsidian Navy page background */
   --bg-card: rgba(13, 19, 43, 0.75);/* Translucent executive card */
@@ -297,7 +299,7 @@ body, .glass-card, .navbar, .nav-container, .wizard-card, .stepper-wrapper, .leg
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100vw;
 }
 
@@ -306,7 +308,7 @@ body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   min-height: 100vh;
   position: relative;
   width: 100%;
@@ -514,6 +516,26 @@ a {
 .form-select option {
   background: var(--bg-surface);
   color: var(--text-main);
+}
+
+/* Native Date Picker & Form Controls — Crisp Cross-Theme Contrast */
+input[type="date"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 /* Container */

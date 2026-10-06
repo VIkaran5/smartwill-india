@@ -879,6 +879,55 @@
   line-height: 1.6;
 }
 
+/* Horizontal Metro City Guides Bar */
+.footer-cities {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.25rem 0;
+  font-size: 0.86rem;
+  color: #94a3b8;
+}
+
+.footer-cities-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.85rem;
+  text-align: center;
+}
+
+.footer-cities-title {
+  color: #cbd5e1;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.footer-cities-links {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.7rem;
+}
+
+.footer-cities-links a {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.86rem;
+  transition: color 0.2s ease;
+}
+
+.footer-cities-links a:hover {
+  color: #dfb76c;
+}
+
+.footer-cities .sep {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.7rem;
+}
+
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding: 1.5rem 0;

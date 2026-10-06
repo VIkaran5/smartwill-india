@@ -27,6 +27,22 @@
     h2 { font-size: 1.3rem; margin-bottom: 8px; font-weight: 600; }
     p { opacity: 0.65; font-size: 0.9rem; line-height: 1.5; }
     .secured { margin-top: 32px; opacity: 0.4; font-size: 0.75rem; }
+    .btn-return {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 22px;
+      background: #ffb700;
+      color: #000;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-return:hover {
+      background: #e6a500;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -35,6 +51,7 @@
     <div class="loader" id="loader"></div>
     <h2 id="title">Secure Payment</h2>
     <p id="msg">Initializing Cashfree checkout...</p>
+    <a href="/app" class="btn-return" id="returnBtn">Back to Will Generator</a>
     <p class="secured">🔒 256-bit SSL · PCI DSS Certified</p>
   </div>
 
@@ -62,8 +79,10 @@
     // ── Error path: neither param present ────────────────────────────────────
     if (!sessionId) {
       document.getElementById('loader').style.display = 'none';
-      document.getElementById('title').textContent = 'Invalid Link';
-      document.getElementById('msg').textContent = 'This payment link is invalid. Please close and tap Pay again.';
+      document.getElementById('title').textContent = 'Invalid Payment Link';
+      document.getElementById('msg').textContent = 'Payment links are generated dynamically during checkout. To start or continue creating your Will, please use the generator.';
+      var btn = document.getElementById('returnBtn');
+      if (btn) btn.style.display = 'inline-block';
       return; // IIFE return — valid here
     }
 
@@ -77,7 +96,9 @@
     var timer = setTimeout(function () {
       document.getElementById('loader').style.display = 'none';
       document.getElementById('title').textContent = 'Taking too long';
-      document.getElementById('msg').textContent = 'Could not load Cashfree checkout. Please close and tap Pay again.';
+      document.getElementById('msg').textContent = 'Could not load Cashfree checkout. Please return to the generator and try again.';
+      var btn = document.getElementById('returnBtn');
+      if (btn) btn.style.display = 'inline-block';
     }, 12000);
 
     try {
@@ -96,7 +117,9 @@
       clearTimeout(timer);
       document.getElementById('loader').style.display = 'none';
       document.getElementById('title').textContent = 'Error';
-      document.getElementById('msg').textContent = 'Could not start payment: ' + err.message + '. Please close and tap Pay again.';
+      document.getElementById('msg').textContent = 'Could not start payment: ' + err.message + '. Please return to the generator and try again.';
+      var btn = document.getElementById('returnBtn');
+      if (btn) btn.style.display = 'inline-block';
     }
   })();
   </script>

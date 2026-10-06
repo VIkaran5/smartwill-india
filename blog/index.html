@@ -191,7 +191,9 @@
       padding: 2rem; 
       transition: all 0.25s ease; 
       text-decoration: none; 
-      display: block; 
+      display: flex; 
+      flex-direction: column; 
+      height: 100%; 
       color: inherit; 
       box-shadow: 0 4px 16px rgba(0,0,0,0.04); 
     }
@@ -223,11 +225,13 @@
       color: var(--text-muted); 
       font-size: 0.95rem; 
       line-height: 1.65; 
-      margin-bottom: 1.25rem; 
+      margin-bottom: 1.5rem; 
+      flex-grow: 1; 
     }
     .post-meta { 
       font-size: 0.85rem; 
       color: var(--text-subtle, var(--text-muted)); 
+      margin-top: auto; 
     }
     .read-more { 
       font-size: 0.9rem; 
