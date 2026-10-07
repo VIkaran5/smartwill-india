@@ -283,6 +283,25 @@ export function unlockPostPaymentUI(orderId, isSilent = false) {
   logger.info('PDF unlocked');
   if (!isSilent) {
     showToast('success', 'Payment Successful! 🎉', 'You have unlocked your official Will document. Download your PDF below.');
+
+    // GA4 E-Commerce Purchase Conversion Event
+    try {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'purchase', {
+          transaction_id: orderId,
+          value: 299,
+          currency: 'INR',
+          items: [{
+            item_id: 'smartwill_legal_draft',
+            item_name: 'SmartWill Legal Will Document',
+            price: 299,
+            quantity: 1
+          }]
+        });
+      }
+    } catch (gaErr) {
+      logger.warn('GA4 purchase event tracking notice:', gaErr);
+    }
   }
 }
 

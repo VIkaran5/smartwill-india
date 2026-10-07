@@ -2,6 +2,7 @@ const { db } = require('./firebase');
 const { handleCORS, enforcePost, getCashfreeCredentials, verifyAuth, generateRequestId, checkRateLimit } = require('./middleware');
 const { fetchCreditDocs, applyCreditWrites } = require('./referral-helpers');
 const { validateVerifyPaymentPayload } = require('./validation/verifyPaymentSchema');
+const { sendTransactionEmail } = require('./email');
 
 const WILL_PRICE_INR = 299;
 
@@ -153,6 +154,19 @@ module.exports = async function handler(req, res) {
     }
 
     console.log(`[Order Verified] requestId=${requestId}, uid=${auth.uid}, orderId=${orderId}, status=${result.order_status}, isPaid=${isPaid}`);
+
+    // 8. Automated Transaction & Thank You Email (Non-blocking)
+    if (isPaid && auth && auth.email) {
+      sendTransactionEmail({
+        to: auth.email,
+        name: auth.name || auth.displayName || null,
+        orderId: orderId,
+        amount: result.order_amount,
+        paidAt: Date.now()
+      }).catch((emailErr) => {
+        console.warn(`[Automated Mailer Warning] orderId=${orderId}, error=${emailErr.message}`);
+      });
+    }
 
     return res.status(200).json({
       order_id: result.order_id,

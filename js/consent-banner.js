@@ -4,7 +4,8 @@
  */
 (function () {
   const CONSENT_KEY = 'sw_analytics_consent';
-  const GA_ID = 'G-1QEJP9NTE1';
+  const GA_ID = 'G-HGQ9XHMEWH';
+  const ALT_GA_ID = 'G-1QEJP9NTE1';
 
   function loadGA() {
     if (window._gaLoaded) return;
@@ -16,19 +17,21 @@
 
     window.dataLayer = window.dataLayer || [];
     function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
     gtag('js', new Date());
     gtag('config', GA_ID);
+    if (ALT_GA_ID && ALT_GA_ID !== GA_ID) {
+      gtag('config', ALT_GA_ID);
+    }
   }
+  window.loadGA = loadGA;
 
   function initConsent() {
-    // Inside the Will creation wizard (app.html), legal DPDP consent is explicitly handled in-form via #dpdpConsentCheckbox
-    if (window.location.pathname.includes('app.html') || window.location.pathname === '/app') {
-      return;
-    }
-
+    const isApp = window.location.pathname.includes('app.html') || window.location.pathname === '/app';
     const currentConsent = localStorage.getItem(CONSENT_KEY);
 
-    if (currentConsent === 'accepted') {
+    // On app wizard, load GA to capture checkout funnel conversions
+    if (isApp || currentConsent === 'accepted') {
       loadGA();
       return;
     }
