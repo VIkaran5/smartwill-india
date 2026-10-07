@@ -62,7 +62,12 @@
     }
   }
 
+  var lastToggleTime = 0;
+
   window.toggleTheme = function() {
+    var now = Date.now();
+    if (now - lastToggleTime < 150) return; // Debounce against accidental double-invocation
+    lastToggleTime = now;
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     var next = current === 'dark' ? 'light' : 'dark';
     applyTheme(next, true);
@@ -75,6 +80,17 @@
   window.getTheme = function() {
     return document.documentElement.getAttribute('data-theme') || getPreferredTheme();
   };
+
+  // Global click delegation for any .theme-toggle-btn without inline onclick
+  document.addEventListener('click', function(e) {
+    var btn = e.target && e.target.closest && e.target.closest('.theme-toggle-btn');
+    if (btn) {
+      if (!btn.getAttribute('onclick')) {
+        e.preventDefault();
+        window.toggleTheme();
+      }
+    }
+  });
 
   // Listen for storage events across other tabs
   window.addEventListener('storage', function(e) {
