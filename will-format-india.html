@@ -405,6 +405,264 @@
       margin-bottom: 0;
       color: var(--text-muted);
     }
+
+    /* ── High-Impact Visual UI Components ── */
+    .stat-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 2rem 0 2.5rem;
+    }
+    .stat-card-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 14px);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .stat-card-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-gold, #dfb76c);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .stat-number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0.35rem 0;
+      font-family: var(--font-heading, inherit);
+    }
+    .stat-gold { color: #dfb76c; }
+    .stat-red { color: #f87171; }
+    .stat-green { color: #34d399; }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .doc-showcase-box {
+      background: var(--bg-card);
+      border: 1px solid rgba(223, 183, 108, 0.35);
+      border-radius: var(--radius-md, 16px);
+      padding: 1.75rem;
+      margin: 2.5rem 0;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    .doc-showcase-info h3 {
+      margin-top: 0 !important;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .doc-showcase-info p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .doc-preview-paper {
+      background: #ffffff;
+      color: #1a1a1a;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 8px;
+      padding: 1.25rem;
+      box-shadow: 0 12px 28px -6px rgba(0,0,0,0.25);
+      font-family: 'Times New Roman', serif;
+      font-size: 0.7rem;
+      line-height: 1.45;
+      position: relative;
+      user-select: none;
+      transition: transform 0.25s ease;
+    }
+    .doc-preview-paper:hover {
+      transform: scale(1.02);
+    }
+    .doc-stamp {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      border: 1px solid #b45309;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1;
+    }
+    .doc-title-line {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #9ca3af;
+      padding-bottom: 0.35rem;
+      margin-bottom: 0.6rem;
+      color: #111827;
+    }
+    .doc-clause-title {
+      font-weight: 700;
+      font-size: 0.68rem;
+      color: #1f2937;
+      margin-top: 0.4rem;
+    }
+    .doc-clause-text {
+      color: #4b5563;
+      font-size: 0.62rem;
+    }
+    .doc-witness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px dashed #9ca3af;
+      font-family: sans-serif;
+      font-size: 0.58rem;
+    }
+    .doc-witness-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      padding: 0.35rem;
+      color: #374151;
+    }
+    .doc-court-badge {
+      margin-top: 0.6rem;
+      background: #ecfdf5;
+      color: #065f46;
+      border-radius: 4px;
+      padding: 0.25rem;
+      text-align: center;
+      font-family: sans-serif;
+      font-weight: 700;
+      font-size: 0.62rem;
+    }
+
+    .stepper-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin: 2.25rem 0;
+    }
+    .stepper-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md, 14px);
+      padding: 1.5rem 1.25rem;
+      position: relative;
+    }
+    .stepper-num {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: var(--btn-gold-bg, #000000);
+      color: var(--btn-gold-text, #ffffff);
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.85rem;
+    }
+    [data-theme="dark"] .stepper-num {
+      background: var(--btn-gold-bg, #dfb76c);
+      color: var(--btn-gold-text, #080c1a);
+    }
+    .stepper-card h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+    .stepper-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 0;
+    }
+
+    .dos-donts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 2.25rem 0;
+    }
+    .dos-card {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md, 14px);
+      padding: 1.5rem;
+    }
+    .donts-card {
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-md, 14px);
+      padding: 1.5rem;
+    }
+    .dos-title {
+      color: #10b981;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .donts-title {
+      color: #ef4444;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dos-card ul, .donts-card ul {
+      list-style: none !important;
+      padding-left: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .dos-card li, .donts-card li {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      margin-bottom: 0.65rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .stat-cards-grid,
+      .stepper-grid,
+      .dos-donts-grid {
+        grid-template-columns: 1fr;
+      }
+      .doc-showcase-box {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -480,9 +738,24 @@
               <p>
                 Every day in India, over 15,000 citizens search for a <em>"simple will format in Word"</em>, <em>"sample will format pdf"</em>, or <em>"will drafting format for self-acquired property"</em>. While the urge to download a free 2-page Microsoft Word template and fill in the blanks is understandable, an improperly phrased clause can render the entire document void in probate court.
               </p>
-              <p>
-                Under Section 63 of the <strong>Indian Succession Act 1925</strong>, Indian law does not mandate any single official format. A Will can be typed on plain A4 paper or handwritten in any language. However, to survive scrutiny in civil court and facilitate hassle-free mutation across municipal corporations and Sub-Registrar Offices, your Will must contain <strong>7 non-negotiable clauses</strong>.
-              </p>
+              <!-- 1. Key Statistics Hook -->
+              <div class="stat-cards-grid">
+                <div class="stat-card-item">
+                  <span class="stat-label">Unclaimed in Indian Banks</span>
+                  <div class="stat-number stat-gold">&#x20B9;40,000+ Cr</div>
+                  <span class="stat-sub">Frozen across banks due to deceased account holders having no legal Will.</span>
+                </div>
+                <div class="stat-card-item">
+                  <span class="stat-label">Unprepared Estates</span>
+                  <div class="stat-number stat-red">70% Indians</div>
+                  <span class="stat-sub">Pass away intestate, subjecting heirs to lengthy court succession battles.</span>
+                </div>
+                <div class="stat-card-item">
+                  <span class="stat-label">SmartWill Engine</span>
+                  <div class="stat-number stat-green">10 Minutes</div>
+                  <span class="stat-sub">Average time to complete statutory questionnaire and generate valid draft.</span>
+                </div>
+              </div>
 
               <h2>The 7 Essential Clauses of a Legally Valid Will in India</h2>
 
@@ -527,6 +800,52 @@
 
               <div class="danger-alert">
                 <strong><i data-lucide="alert-triangle" style="width:16px;height:16px;vertical-align:text-bottom;"></i> Critical Rule Under Section 67:</strong> Never let a beneficiary or the spouse of a beneficiary sign as an attesting witness. If a beneficiary witnesses your Will, the Will remains valid, but their entire gift or inheritance becomes completely void under Indian law!
+              </div>
+
+              <!-- 2. Document Mockup Showcase -->
+              <div class="doc-showcase-box">
+                <div class="doc-showcase-info">
+                  <div class="badge-pill" style="margin-bottom:0.75rem;">
+                    <i data-lucide="shield-check" style="width:14px;height:14px;"></i> ISA 1925 Compliant Instrument
+                  </div>
+                  <h3>See What an Official Legal Will Looks Like</h3>
+                  <p>
+                    A legally binding Indian Will does not require green legal ledger sheets or &#x20B9;500 non-judicial stamps. When printed on plain A4 paper with dual witnesses, it possesses 100% evidentiary power across all Indian civil courts and municipal mutation desks.
+                  </p>
+                  <div style="display:flex; flex-wrap:wrap; gap:0.5rem; font-size:0.82rem; color:var(--text-muted);">
+                    <span><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:text-bottom;"></i> Plain A4 Ready</span>
+                    <span>&bull;</span>
+                    <span><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:text-bottom;"></i> Zero Stamp Duty</span>
+                    <span>&bull;</span>
+                    <span><i data-lucide="check-circle" style="width:14px;height:14px;color:#10b981;vertical-align:text-bottom;"></i> Dual Witness Seals</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="doc-preview-paper">
+                    <div class="doc-stamp">
+                      <span>SEC</span>
+                      <span>63</span>
+                    </div>
+                    <div class="doc-title-line">Last Will &amp; Testament</div>
+                    <div class="doc-clause-title">1. TESTATOR DECLARATION</div>
+                    <div class="doc-clause-text">I, [Name], aged 45 years, sound mind, revoking all prior codicils...</div>
+                    <div class="doc-clause-title">2. EXECUTOR APPOINTMENT</div>
+                    <div class="doc-clause-text">I appoint [Spouse Name] as sole executor with full rights...</div>
+                    <div class="doc-clause-title">3. ASSET SCHEDULE &amp; RESIDUARY</div>
+                    <div class="doc-clause-text">Flat No. 402, Demat portfolio, Bank FDs, and all future assets...</div>
+                    <div class="doc-witness-grid">
+                      <div class="doc-witness-box">
+                        <strong>Witness 1</strong><br>[Neutral Adult]
+                      </div>
+                      <div class="doc-witness-box">
+                        <strong>Witness 2</strong><br>[Neutral Adult]
+                      </div>
+                    </div>
+                    <div class="doc-court-badge">
+                      ✓ Enforceable Across All Indian Courts
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <h2>Copyable Sample: Standard Indian Simple Will Format</h2>
@@ -613,6 +932,57 @@ Aadhaar/ID: [ID NUMBER]
                   <strong>No Digital Asset or Crypto Governance:</strong> Standard templates printed from 2010 never account for modern Demat accounts, mutual fund folios, crypto exchange wallets, or cloud accounts.
                 </li>
               </ol>
+
+              <!-- 3. Visual Do's and Don'ts Checklist -->
+              <div class="dos-donts-grid">
+                <div class="dos-card">
+                  <div class="dos-title">
+                    <i data-lucide="check-circle-2" style="width:18px;height:18px;"></i> Recommended Best Practices
+                  </div>
+                  <ul>
+                    <li>&bull; <strong>Print on plain white A4 paper:</strong> 100% legally recognized by Indian courts without any stamp duty.</li>
+                    <li>&bull; <strong>Choose two neutral adult witnesses:</strong> Close family friends, doctors, or colleagues who receive nothing under the Will.</li>
+                    <li>&bull; <strong>Always insert a residuary clause:</strong> Ensures newly purchased properties or future bank accounts never trigger intestacy.</li>
+                    <li>&bull; <strong>Appoint an alternate executor:</strong> Prevents administrative deadlock if your primary executor is unable to act.</li>
+                  </ul>
+                </div>
+
+                <div class="donts-card">
+                  <div class="donts-title">
+                    <i data-lucide="x-circle" style="width:18px;height:18px;"></i> Fatal Mistakes to Avoid
+                  </div>
+                  <ul>
+                    <li>&bull; <strong>Never let a beneficiary or spouse witness:</strong> Section 67 ISA completely invalidates their bequest!</li>
+                    <li>&bull; <strong>Don't waste money on &#x20B9;500 stamp paper:</strong> Non-judicial stamp paper adds zero legal validity to an Indian Will.</li>
+                    <li>&bull; <strong>Don't rely only on bank nominees:</strong> Nominees are mere custodians; a valid Will legally supersedes nominations.</li>
+                    <li>&bull; <strong>Avoid vague property lines:</strong> Always detail flat number, wing, society name, and city to prevent mutation disputes.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <h2>How to Create &amp; Execute Your Will in 3 Simple Steps</h2>
+              <p>
+                Forget spending &#x20B9;25,000 on lawyer retainers or hours struggling to format static Word templates. SmartWill turns estate planning into a streamlined 10-minute digital experience:
+              </p>
+
+              <!-- 4. Visual 3-Step Process Stepper -->
+              <div class="stepper-grid">
+                <div class="stepper-card">
+                  <div class="stepper-num">1</div>
+                  <h4>Answer 5 Quick Questions</h4>
+                  <p>Our guided wizard gathers details on your family, real estate, bank FDs, Demat portfolios, and special gifts in plain English or Telugu.</p>
+                </div>
+                <div class="stepper-card">
+                  <div class="stepper-num">2</div>
+                  <h4>Instant Statutory Generation</h4>
+                  <p>Our legal rules engine automatically injects sound mind recitals, residuary safeguards, and executor nominations compliant with ISA 1925.</p>
+                </div>
+                <div class="stepper-card">
+                  <div class="stepper-num">3</div>
+                  <h4>Print &amp; Dual-Witness Sign</h4>
+                  <p>Download your PDF instantly for &#x20B9;299. Print on plain white A4, sign before two adult friends, and store securely. 100% legally binding.</p>
+                </div>
+              </div>
 
               <h2>Word Template vs SmartWill Automated Engine</h2>
               <div class="comparison-table-wrapper">
