@@ -233,7 +233,7 @@
 </head>
 <body>
   <!-- Header Navbar -->
-  <header class="navbar">
+  <header class="navbar" id="navbar">
     <div class="container nav-container">
       <a href="/" class="nav-logo" aria-label="SmartWill India Home">
         <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
@@ -241,38 +241,34 @@
         <span class="logo-text">SmartWill India</span>
       </a>
 
-      <nav class="nav-menu d-none d-md-flex">
-        <a href="/" class="nav-link">Home</a>
+      <nav class="nav-links" aria-label="Main Navigation">
         <a href="/#features" class="nav-link">Features</a>
         <a href="/#how-it-works" class="nav-link">How It Works</a>
         <a href="/#pricing" class="nav-link">Pricing</a>
-        <a href="/blog" class="nav-link">Blog</a>
-        <a href="/will-registration-delhi" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">Delhi NCR</a>
+        <a href="/blog" class="nav-link">Guides</a>
+        <a href="/will-format-india" class="nav-link">Formats</a>
+        <a href="/te/" class="nav-link lang-badge" title="తెలుగు వెర్షన్">తెలుగు</a>
       </nav>
 
-      <div class="nav-actions d-none d-md-flex">
-        <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
-          <span class="toggle-icon"><i data-lucide="moon"></i></span>
-          <span class="toggle-text">Dark</span>
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle light/dark theme" title="Toggle theme" onclick="toggleTheme()">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
         </button>
-        <a href="/app" class="btn btn-gold btn-sm">Create Will &mdash; &#x20B9;299</a>
+        <a href="/app" class="btn btn-gold nav-cta">Create Your Will</a>
+        <button class="hamburger-btn" id="navHamburger" aria-label="Toggle navigation menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-
-      <!-- Hamburger (mobile only) -->
-      <button class="nav-hamburger d-flex d-md-none" id="navHamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
-
-    <!-- Mobile slide-down menu -->
-    <div class="nav-mobile-menu" id="navMobileMenu">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/#features" class="nav-link">Features</a>
-      <a href="/#how-it-works" class="nav-link">How It Works</a>
-      <a href="/#pricing" class="nav-link">Pricing</a>
-      <a href="/blog" class="nav-link">Blog</a>
-      <a href="/will-registration-delhi" class="nav-link active">Delhi NCR</a>
-      <a href="/app" class="btn btn-gold" style="text-align:center">Create Will &mdash; &#x20B9;299</a>
+    <div class="mobile-menu" id="navMobileMenu">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#how-it-works" class="mobile-link">How It Works</a>
+      <a href="/#pricing" class="mobile-link">Pricing</a>
+      <a href="/blog" class="mobile-link">Legal Blog</a>
+      <a href="/will-format-india" class="mobile-link">Will Formats</a>
+      <a href="/te/" class="mobile-link">తెలుగు వెర్షన్</a>
+      <a href="/app" class="btn btn-gold mobile-cta">Start Will Now &rarr;</a>
     </div>
   </header>
 
@@ -498,6 +494,17 @@
 
       </div>
     </div>
+  
+    <!-- Bottom Banner CTA -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Secure Your Delhi NCR Family Assets Today</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Don't pay ₹35,000 for standard drafting. Create your legally bulletproof Will in 10 minutes for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -510,35 +517,32 @@
           <span class="logo-text">SmartWill India</span>
         </a>
         <p class="footer-desc">
-          India's most affordable digital estate planning platform. Legally compliant under the Indian Succession Act, 1925.
+          India's leading digital platform for creating legally compliant Wills under the Indian Succession Act 1925.
         </p>
       </div>
 
       <div class="footer-col">
-        <h4 class="footer-title">Platform</h4>
+        <h4 class="footer-title">Quick Navigation</h4>
         <ul class="footer-links">
-          <li><a href="/#how-it-works">How It Works</a></li>
-          <li><a href="/#pricing">Pricing (₹299)</a></li>
-          <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
-          <li><a href="/blog">Legal Guides</a></li>
-          <li><a href="/will-registration-delhi">Delhi NCR Guide</a></li>
-          <li><a href="/will-registration-mumbai">Mumbai Guide</a></li>
-          <li><a href="/will-registration-bangalore">Bangalore Guide</a></li>
-          <li><a href="/will-registration-hyderabad">Hyderabad Guide</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/app">Create Will</a></li>
+          <li><a href="/te/">తెలుగు వెర్షన్</a></li>
+          <li><a href="/blog">Legal Blog</a></li>
+          <li><a href="/will-format-india">Will Formats</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4 class="footer-title">Legal &amp; Privacy</h4>
+        <h4 class="footer-title">Legal &amp; Compliance</h4>
         <ul class="footer-links">
-          <li><a href="/privacy">DPDP Act Privacy Policy</a></li>
-          <li><a href="/terms">Terms of Service</a></li>
-          <li><a href="/refunds">Refund Policy</a></li>
-          <li><a href="/contact">Contact Helpdesk</a></li>
+          <li><a href="/privacy">Privacy Policy (DPDP)</a></li>
+          <li><a href="/terms">Terms &amp; Conditions</a></li>
+          <li><a href="/refunds">Refunds &amp; Cancellations</a></li>
+          <li><a href="/contact">Contact &amp; Grievance</a></li>
+          <li><a href="javascript:void(0)" onclick="window.openCookieConsent && window.openCookieConsent()">Cookie Settings</a></li>
         </ul>
       </div>
     </div>
-
     <div class="footer-bottom">
       <div class="container footer-bottom-container">
         <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>

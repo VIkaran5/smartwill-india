@@ -99,14 +99,30 @@
     }
   });
 
+  // Universal Navbar Scroll Guardian
+  function handleNavbarScroll() {
+    var nav = document.querySelector('.navbar');
+    if (!nav) return;
+    if (window.scrollY > 20) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  }
+  window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+  handleNavbarScroll();
+
   // Initialize button state as soon as DOM is interactive
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
       updateToggleButtons(current);
+      handleNavbarScroll();
     });
   } else {
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     updateToggleButtons(current);
+    handleNavbarScroll();
   }
 })();
+
