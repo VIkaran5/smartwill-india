@@ -89,12 +89,10 @@
   <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" integrity="sha384-v15JX+vZHMR3T6LQR9N6e6wIKrKOdNTbdj8j+e5irqq3L9gCauJz2vGlUzomWyUp" crossorigin="anonymous" defer></script>
   <style>
     body { 
-      background-color: #fafafa; 
+      background-color: var(--bg-dark); 
       color: var(--text-main); 
       font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif); 
-    }
-    [data-theme="dark"] body {
-      background-color: var(--bg-dark);
+      -webkit-font-smoothing: antialiased;
     }
     
     /* Center the Reading Column on Desktop so it's not stuck on the left */
