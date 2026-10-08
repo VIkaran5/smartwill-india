@@ -118,7 +118,7 @@
         <p>
           SmartWill India provides automated, customized digital legal documents that are generated and delivered immediately upon payment authorization. In accordance with e-commerce standards for irreversible digital downloads:
         </p>
-        <ul style="margin: 0.75rem 0 0.75rem 1.25rem; line-height: 1.6; color: var(--text-muted); font-size: 0.9rem;">
+        <ul style="margin: 0.75rem 0 0.75rem 1.25rem; line-height: 1.7; color: var(--text-muted); font-size: 0.92rem; overflow-wrap: break-word;">
           <li><strong>Post-Download Finality:</strong> Due to the intangible and irreversible nature of digital legal document files, once a finalized Will PDF has been successfully generated and unlocked or downloaded to your device (as confirmed by our server audit verification logs), the service is deemed fully delivered and the purchase is strictly non-refundable.</li>
           <li><strong>Change of Mind:</strong> Refunds are not granted for change of mind, personal dispute between heirs, or user-side typographical mistakes (which users review and confirm in the step-by-step summary prior to payment).</li>
           <li><strong>Server Delivery Audit:</strong> All download requests are authenticated and logged with server-side audit timestamps. In the event of a dispute, these delivery logs serve as definitive proof of fulfillment.</li>
@@ -150,8 +150,8 @@
         <p>
           We do not make you jump through hoops. Simply email our dedicated support desk:
         </p>
-        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1.25rem; font-size: 0.875rem; line-height: 1.7; margin-top: 0.5rem; color: var(--text-muted);">
-          <strong style="color:var(--text-main);">Email:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--primary); font-weight:700;">smartwillindia.help@gmail.com</a><br>
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1.25rem; font-size: 0.875rem; line-height: 1.7; margin-top: 0.5rem; color: var(--text-muted); overflow-wrap: anywhere; word-break: break-word;">
+          <strong style="color:var(--text-main);">Email:</strong> <a href="mailto:smartwillindia.help@gmail.com" style="color:var(--primary); font-weight:700; word-break: break-all;">smartwillindia.help@gmail.com</a><br>
           <strong style="color:var(--text-main);">Subject:</strong> Refund Request — [Your Order ID, e.g. SW_...]<br>
           <strong style="color:var(--text-main);">Include:</strong> Your registered email address and a brief note on the technical issue encountered.
         </div>
@@ -207,7 +207,17 @@
   <script src="/js/consent-banner.js"></script>
   <script src="/js/theme-switcher.js"></script>
   <script>
-    if (window.lucide) lucide.createIcons();
+    function initLucide() {
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLucide);
+    } else {
+      initLucide();
+    }
+    window.addEventListener('load', initLucide);
 
     // ── Hamburger menu toggle ──
     const hamburger = document.getElementById('navHamburger');

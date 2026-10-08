@@ -324,20 +324,21 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
+  line-height: var(--headline-line-height);
+  letter-spacing: -0.025em;
+  text-transform: var(--headline-transform);
+  color: var(--text-main);
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 p {
   text-wrap: pretty;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-  line-height: var(--headline-line-height);
-  letter-spacing: -0.025em;
-  text-transform: var(--headline-transform);
-  color: var(--text-main);
+  text-rendering: optimizeLegibility;
 }
 
 h1 { font-size: clamp(2.8rem, 6.5vw, 5.5rem); line-height: var(--headline-line-height); }
