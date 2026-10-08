@@ -220,7 +220,7 @@
     }
     .article-body li { margin-bottom: .5rem; }
 
-    /* Cards Grid — Responsive on Mobile */
+    /* ── High-Impact Colorful Comparison Cards ── */
     .stat-cards-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -229,23 +229,23 @@
     }
     .stat-card-item {
       background: var(--bg-card);
-      border: 1px solid var(--border-light);
+      border: 1.5px solid var(--border-light);
       border-radius: 14px;
-      padding: 1.35rem 1.15rem;
+      padding: 1.5rem 1.25rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
     }
     .stat-card-item:hover {
       transform: translateY(-2px);
-      border-color: rgba(0, 0, 0, 0.2);
     }
     .stat-label {
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
     }
     .stat-number {
       font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
@@ -258,6 +258,80 @@
       font-size: 0.8rem;
       color: var(--text-muted);
       line-height: 1.45;
+    }
+
+    /* Card 1: Traditional Advocate (Costly / Red Accent) */
+    .stat-card-danger {
+      border-color: rgba(239, 68, 68, 0.35) !important;
+      background: rgba(239, 68, 68, 0.03) !important;
+    }
+    .stat-card-danger .stat-label {
+      color: #b91c1c !important;
+    }
+    .stat-number.stat-red,
+    .stat-card-danger .stat-number {
+      color: #dc2626 !important;
+    }
+    [data-theme="dark"] .stat-card-danger {
+      border-color: rgba(239, 68, 68, 0.45) !important;
+      background: rgba(239, 68, 68, 0.08) !important;
+    }
+    [data-theme="dark"] .stat-card-danger .stat-label {
+      color: #fca5a5 !important;
+    }
+    [data-theme="dark"] .stat-number.stat-red,
+    [data-theme="dark"] .stat-card-danger .stat-number {
+      color: #f87171 !important;
+    }
+
+    /* Card 2: SmartWill India (Featured Highlight / Gold & Emerald) */
+    .stat-card-highlight {
+      border: 2px solid var(--accent-gold, #dfb76c) !important;
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.14) 0%, rgba(223, 183, 108, 0.04) 100%) !important;
+      box-shadow: 0 6px 20px rgba(223, 183, 108, 0.16) !important;
+    }
+    .stat-card-highlight .stat-label {
+      color: #b45309 !important;
+    }
+    .stat-number.stat-green,
+    .stat-card-highlight .stat-number {
+      color: #059669 !important;
+    }
+    [data-theme="dark"] .stat-card-highlight {
+      border-color: #dfb76c !important;
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.2) 0%, rgba(223, 183, 108, 0.06) 100%) !important;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+    }
+    [data-theme="dark"] .stat-card-highlight .stat-label {
+      color: #fcd34d !important;
+    }
+    [data-theme="dark"] .stat-number.stat-green,
+    [data-theme="dark"] .stat-card-highlight .stat-number {
+      color: #34d399 !important;
+    }
+
+    /* Card 3: Statutory Stamp Duty (Free / Blue Accent) */
+    .stat-card-success {
+      border-color: rgba(59, 130, 246, 0.35) !important;
+      background: rgba(59, 130, 246, 0.03) !important;
+    }
+    .stat-card-success .stat-label {
+      color: #1d4ed8 !important;
+    }
+    .stat-number.stat-blue,
+    .stat-card-success .stat-number {
+      color: #2563eb !important;
+    }
+    [data-theme="dark"] .stat-card-success {
+      border-color: rgba(59, 130, 246, 0.45) !important;
+      background: rgba(59, 130, 246, 0.08) !important;
+    }
+    [data-theme="dark"] .stat-card-success .stat-label {
+      color: #93c5fd !important;
+    }
+    [data-theme="dark"] .stat-number.stat-blue,
+    [data-theme="dark"] .stat-card-success .stat-number {
+      color: #60a5fa !important;
     }
 
     /* Comparison Table — Touch Scrollable on Mobile */
@@ -526,17 +600,17 @@
 
         <!-- Cost Comparison Metric Cards -->
         <div class="stat-cards-grid">
-          <div class="stat-card-item">
+          <div class="stat-card-item stat-card-danger">
             <span class="stat-label">Traditional Advocate</span>
             <div class="stat-number stat-red">&#x20B9;15,000+</div>
             <span class="stat-sub">High upfront legal fees, plus revisions and registration upselling</span>
           </div>
-          <div class="stat-card-item">
+          <div class="stat-card-item stat-card-highlight">
             <span class="stat-label">SmartWill India</span>
             <div class="stat-number stat-green">&#x20B9;299 <span style="font-size:1.1rem;font-weight:400;color:var(--text-muted);">flat</span></div>
             <span class="stat-sub">Save 98% with an instant, lawyer-vetted ISA 1925 compliant PDF</span>
           </div>
-          <div class="stat-card-item">
+          <div class="stat-card-item stat-card-success">
             <span class="stat-label">Statutory Stamp Duty</span>
             <div class="stat-number stat-blue">&#x20B9;0 (Free)</div>
             <span class="stat-sub">Wills are 100% exempt from stamp duty across all Indian states</span>
