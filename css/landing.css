@@ -1710,25 +1710,68 @@ html[lang="te"] h2,
 html[lang="te"] h3,
 html[lang="te"] h4,
 html[lang="te"] .section-title {
-  font-family: 'Nirmala UI', 'Gautami', 'Mandali', sans-serif !important;
+  font-family: 'Noto Sans Telugu', 'Nirmala UI', 'Gautami', 'Mandali', sans-serif !important;
   text-transform: none !important;
   line-height: 1.36 !important;
   letter-spacing: 0.015em !important;
+  text-wrap: balance !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
-html[lang="te"] .hero-container {
-  max-width: 1220px !important;
-  grid-template-columns: 1.32fr 0.85fr !important;
-  gap: 2.25rem !important;
+@media (min-width: 992px) {
+  html[lang="te"] .hero-container {
+    max-width: 1220px !important;
+    grid-template-columns: 1.32fr 0.85fr !important;
+    gap: 2.25rem !important;
+  }
+
+  html[lang="te"] .hero-content {
+    max-width: 660px !important;
+    width: 100% !important;
+  }
+
+  html[lang="te"] .hero-cta-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1rem !important;
+    flex-wrap: nowrap !important;
+  }
 }
 
-html[lang="te"] .hero-content {
-  max-width: 660px !important;
-  width: 100% !important;
+@media (max-width: 991px) {
+  html[lang="te"] .hero-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+  }
+
+  html[lang="te"] .hero-content {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  html[lang="te"] .hero-cta-group {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1rem !important;
+    width: 100% !important;
+  }
+
+  html[lang="te"] .hero-cta-group .btn {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
 }
 
 html[lang="te"] .hero-title {
-  font-family: 'Nirmala UI', 'Gautami', 'Mandali', sans-serif !important;
+  font-family: 'Noto Sans Telugu', 'Nirmala UI', 'Gautami', 'Mandali', sans-serif !important;
   font-size: clamp(1.85rem, 2.7vw, 2.45rem) !important;
   line-height: 1.34 !important;
   letter-spacing: 0.015em !important;
@@ -1737,6 +1780,8 @@ html[lang="te"] .hero-title {
   font-weight: 800 !important;
   margin-bottom: 0.85rem !important;
   max-width: 640px !important;
+  text-wrap: balance !important;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 html[lang="te"] .hero-subtitle {
@@ -1745,14 +1790,8 @@ html[lang="te"] .hero-subtitle {
   word-spacing: 0.04em !important;
   max-width: 600px !important;
   margin-bottom: 1.25rem !important;
-}
-
-html[lang="te"] .hero-cta-group {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  margin-bottom: 1rem !important;
-  flex-wrap: nowrap !important;
+  text-wrap: pretty !important;
+  -webkit-font-smoothing: antialiased !important;
 }
 
 html[lang="te"] .hero-cta-group .btn {
