@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
     const orderId = 'SW_' + require('crypto').randomUUID().replace(/-/g, '').slice(0, 16).toUpperCase();
     const requestOriginHeader = req.headers.origin || '';
     const isAndroidReq = requestOriginHeader === 'https://localhost' || requestOriginHeader === 'capacitor://localhost';
-    const appBaseUrl = 'https://smartwill-india.vercel.app';
+    const appBaseUrl = 'https://www.smartwillindia.in';
     // Android uses Chrome Custom Tab with pay.html relay → return to pay.html
     // Web uses direct checkout → return to app.html
     const returnUrl = isAndroidReq

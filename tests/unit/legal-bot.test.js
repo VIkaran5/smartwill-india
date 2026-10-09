@@ -213,34 +213,34 @@ describe('SmartWill Legal Assistant Bot — Conversational AI & Legal Engine', (
 
     it('should detect English for /terms route (never false-positive match /te)', () => {
       delete window.location;
-      window.location = new URL('https://smartwill-india.vercel.app/terms');
+      window.location = new URL('https://www.smartwillindia.in/terms');
       document.documentElement.lang = 'en';
       expect(bot.detectLanguage()).toBe('en');
     });
 
     it('should detect English for /terms.html route', () => {
       delete window.location;
-      window.location = new URL('https://smartwill-india.vercel.app/terms.html');
+      window.location = new URL('https://www.smartwillindia.in/terms.html');
       document.documentElement.lang = 'en';
       expect(bot.detectLanguage()).toBe('en');
     });
 
     it('should detect English for /blog route', () => {
       delete window.location;
-      window.location = new URL('https://smartwill-india.vercel.app/blog');
+      window.location = new URL('https://www.smartwillindia.in/blog');
       document.documentElement.lang = 'en';
       expect(bot.detectLanguage()).toBe('en');
     });
 
     it('should detect Telugu for /te/ route', () => {
       delete window.location;
-      window.location = new URL('https://smartwill-india.vercel.app/te/');
+      window.location = new URL('https://www.smartwillindia.in/te/');
       expect(bot.detectLanguage()).toBe('te');
     });
 
     it('should detect Telugu for /te route', () => {
       delete window.location;
-      window.location = new URL('https://smartwill-india.vercel.app/te');
+      window.location = new URL('https://www.smartwillindia.in/te');
       expect(bot.detectLanguage()).toBe('te');
     });
   });

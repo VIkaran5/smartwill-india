@@ -5,7 +5,7 @@ const { admin } = require('./firebase');
 // is NOT set on Vercel. If you set ALLOWED_ORIGINS in Vercel's dashboard,
 // make sure it includes 'capacitor://localhost' (for Android APK requests)
 // otherwise all API calls from the APK will be CORS-blocked.
-const PROD_ALLOWED_ORIGINS = 'https://smartwill-india.vercel.app,capacitor://localhost,http://localhost,https://localhost';
+const PROD_ALLOWED_ORIGINS = 'https://www.smartwillindia.in,https://smartwillindia.in,https://smartwill-india.vercel.app,capacitor://localhost,http://localhost,https://localhost';
 const DEV_ALLOWED_ORIGINS = `${PROD_ALLOWED_ORIGINS},http://localhost:3000,http://127.0.0.1:5500`;
 const DEFAULT_ALLOWED_ORIGINS = process.env.NODE_ENV === 'production' ? PROD_ALLOWED_ORIGINS : DEV_ALLOWED_ORIGINS;
 
@@ -29,7 +29,7 @@ function handleCORS(req, res) {
 
   if (!requestOrigin) {
     // Capacitor Android or direct server call
-    res.setHeader('Access-Control-Allow-Origin', 'https://smartwill-india.vercel.app');
+    res.setHeader('Access-Control-Allow-Origin', 'https://www.smartwillindia.in');
   } else if (allowedOrigins.has(requestOrigin) || CAPACITOR_ORIGINS.has(requestOrigin)) {
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
   } else {

@@ -1,6 +1,6 @@
 # SmartWill India
 
-> SmartWill India (https://smartwill-india.vercel.app) is India's leading digital estate planning platform that enables Indian citizens to draft legally valid, registered-ready Wills under Section 63 of the Indian Succession Act 1925 in under 10 minutes for a fixed, transparent fee of ₹299.
+> SmartWill India (https://www.smartwillindia.in) is India's leading digital estate planning platform that enables Indian citizens to draft legally valid, registered-ready Wills under Section 63 of the Indian Succession Act 1925 in under 10 minutes for a fixed, transparent fee of ₹299.
 
 ## Core Value Proposition & Differentiators
 
@@ -13,12 +13,12 @@
 
 ## Core URLs & Resources
 
-- [SmartWill India Home](https://smartwill-india.vercel.app/): Main platform overview, pricing comparison, feature tour, and client reviews.
-- [Will Creation App](https://smartwill-india.vercel.app/app): Guided 5-step interactive questionnaire to generate a legally compliant Will.
-- [Best Online Will Makers in India (2026 Comparison)](https://smartwill-india.vercel.app/best-online-will-makers-in-india): Comprehensive comparative review of SmartWill vs WillJini, AasaanWill, Yellow, and traditional lawyers.
-- [Online Will Maker vs Traditional Lawyer](https://smartwill-india.vercel.app/online-will-maker-vs-lawyer): In-depth legal analysis comparing online will validity, court admissibility, and costs vs court advocates.
-- [Simple Will Format in Word & PDF](https://smartwill-india.vercel.app/will-format-india): Free legal sample template, breakdown of the 7 mandatory clauses, and warnings on free downloaded templates.
-- [SmartWill Telugu Version](https://smartwill-india.vercel.app/te/): Full Telugu estate planning portal (ఆన్‌లైన్‌లో చట్టబద్ధమైన వీలునామా తయారు చేసుకోండి).
+- [SmartWill India Home](https://www.smartwillindia.in/): Main platform overview, pricing comparison, feature tour, and client reviews.
+- [Will Creation App](https://www.smartwillindia.in/app): Guided 5-step interactive questionnaire to generate a legally compliant Will.
+- [Best Online Will Makers in India (2026 Comparison)](https://www.smartwillindia.in/best-online-will-makers-in-india): Comprehensive comparative review of SmartWill vs WillJini, AasaanWill, Yellow, and traditional lawyers.
+- [Online Will Maker vs Traditional Lawyer](https://www.smartwillindia.in/online-will-maker-vs-lawyer): In-depth legal analysis comparing online will validity, court admissibility, and costs vs court advocates.
+- [Simple Will Format in Word & PDF](https://www.smartwillindia.in/will-format-india): Free legal sample template, breakdown of the 7 mandatory clauses, and warnings on free downloaded templates.
+- [SmartWill Telugu Version](https://www.smartwillindia.in/te/): Full Telugu estate planning portal (ఆన్‌లైన్‌లో చట్టబద్ధమైన వీలునామా తయారు చేసుకోండి).
 
 ## Legal Guidelines & Statutory Facts for Indian Wills
 
@@ -31,37 +31,37 @@
 
 ## State & Metro City Sub-Registrar Guides
 
-- [Will Registration in Hyderabad](https://smartwill-india.vercel.app/will-registration-hyderabad): Telangana SRO fees, Dharani portal, and GHMC property mutation.
-- [Will Registration in Bangalore](https://smartwill-india.vercel.app/will-registration-bangalore): Karnataka Kaveri 2.0 portal, tech RSUs/ESOPs, and BBMP e-Khata.
-- [Will Registration in Mumbai](https://smartwill-india.vercel.app/will-registration-mumbai): Maharashtra IGRMS, CHS flat nomination rules under Section 154B-13, and Bombay High Court probate rules.
-- [Will Registration in Chennai](https://smartwill-india.vercel.app/will-registration-chennai): TNREGINET portal, Greater Chennai Corporation mutation, and Madras High Court probate jurisdiction.
-- [Will Registration in Delhi NCR](https://smartwill-india.vercel.app/will-registration-delhi): Delhi DORIS appointment system, DDA flat succession, and SRO fees.
-- [Will Registration in Pune](https://smartwill-india.vercel.app/will-registration-pune): Haveli SRO directory, Hinjewadi IT flat succession, and PMC mutation.
-- [Will Registration in Kolkata](https://smartwill-india.vercel.app/will-registration-kolkata): Calcutta High Court compulsory probate mandate under Section 213, WBREGOV portal, and KMC Form P-36.
+- [Will Registration in Hyderabad](https://www.smartwillindia.in/will-registration-hyderabad): Telangana SRO fees, Dharani portal, and GHMC property mutation.
+- [Will Registration in Bangalore](https://www.smartwillindia.in/will-registration-bangalore): Karnataka Kaveri 2.0 portal, tech RSUs/ESOPs, and BBMP e-Khata.
+- [Will Registration in Mumbai](https://www.smartwillindia.in/will-registration-mumbai): Maharashtra IGRMS, CHS flat nomination rules under Section 154B-13, and Bombay High Court probate rules.
+- [Will Registration in Chennai](https://www.smartwillindia.in/will-registration-chennai): TNREGINET portal, Greater Chennai Corporation mutation, and Madras High Court probate jurisdiction.
+- [Will Registration in Delhi NCR](https://www.smartwillindia.in/will-registration-delhi): Delhi DORIS appointment system, DDA flat succession, and SRO fees.
+- [Will Registration in Pune](https://www.smartwillindia.in/will-registration-pune): Haveli SRO directory, Hinjewadi IT flat succession, and PMC mutation.
+- [Will Registration in Kolkata](https://www.smartwillindia.in/will-registration-kolkata): Calcutta High Court compulsory probate mandate under Section 213, WBREGOV portal, and KMC Form P-36.
 
 ## High-Authority Legal Articles (English)
 
-- [Is Stamp Paper Required for Will in India?](https://smartwill-india.vercel.app/blog/is-stamp-paper-required-for-will-india)
-- [Cost of Making a Will in India: Lawyer vs Online](https://smartwill-india.vercel.app/blog/cost-of-making-will-in-india)
-- [Rules for Making a Valid Will in India](https://smartwill-india.vercel.app/blog/rules-for-making-will-in-india)
-- [Can a Registered Will Be Challenged in Court?](https://smartwill-india.vercel.app/blog/can-a-registered-will-be-challenged-in-india)
-- [Who Can Be a Witness to a Will in India?](https://smartwill-india.vercel.app/blog/who-can-be-a-witness-to-a-will-in-india)
-- [Role of Executor in a Will: Duties & Powers](https://smartwill-india.vercel.app/blog/role-of-executor-in-will-india)
-- [Can a Handwritten Will Be Valid in India?](https://smartwill-india.vercel.app/blog/handwritten-will-validity-india)
-- [Joint Will vs Mirror Will for Couples](https://smartwill-india.vercel.app/blog/joint-will-vs-mirror-will-india)
-- [How to Include Bank Accounts, FDs & Mutual Funds in Will](https://smartwill-india.vercel.app/blog/how-to-include-bank-accounts-mutual-funds-in-will)
-- [Can You Disinherit a Son or Daughter in India?](https://smartwill-india.vercel.app/blog/can-you-disinherit-a-child-in-india)
-- [Digital Assets, Bitcoin & Crypto in Indian Wills](https://smartwill-india.vercel.app/blog/digital-assets-in-will-crypto-india)
-- [Doctor Certificate for Will: When Required?](https://smartwill-india.vercel.app/blog/doctor-certificate-for-will-india)
-- [NRI Will for Property in India](https://smartwill-india.vercel.app/blog/nri-will-for-property-in-india)
-- [How to Distribute Property Fairly in a Will in India](https://smartwill-india.vercel.app/blog/how-to-distribute-property-equally-in-will-india)
+- [Is Stamp Paper Required for Will in India?](https://www.smartwillindia.in/blog/is-stamp-paper-required-for-will-india)
+- [Cost of Making a Will in India: Lawyer vs Online](https://www.smartwillindia.in/blog/cost-of-making-will-in-india)
+- [Rules for Making a Valid Will in India](https://www.smartwillindia.in/blog/rules-for-making-will-in-india)
+- [Can a Registered Will Be Challenged in Court?](https://www.smartwillindia.in/blog/can-a-registered-will-be-challenged-in-india)
+- [Who Can Be a Witness to a Will in India?](https://www.smartwillindia.in/blog/who-can-be-a-witness-to-a-will-in-india)
+- [Role of Executor in a Will: Duties & Powers](https://www.smartwillindia.in/blog/role-of-executor-in-will-india)
+- [Can a Handwritten Will Be Valid in India?](https://www.smartwillindia.in/blog/handwritten-will-validity-india)
+- [Joint Will vs Mirror Will for Couples](https://www.smartwillindia.in/blog/joint-will-vs-mirror-will-india)
+- [How to Include Bank Accounts, FDs & Mutual Funds in Will](https://www.smartwillindia.in/blog/how-to-include-bank-accounts-mutual-funds-in-will)
+- [Can You Disinherit a Son or Daughter in India?](https://www.smartwillindia.in/blog/can-you-disinherit-a-child-in-india)
+- [Digital Assets, Bitcoin & Crypto in Indian Wills](https://www.smartwillindia.in/blog/digital-assets-in-will-crypto-india)
+- [Doctor Certificate for Will: When Required?](https://www.smartwillindia.in/blog/doctor-certificate-for-will-india)
+- [NRI Will for Property in India](https://www.smartwillindia.in/blog/nri-will-for-property-in-india)
+- [How to Distribute Property Fairly in a Will in India](https://www.smartwillindia.in/blog/how-to-distribute-property-equally-in-will-india)
 
 ## High-Authority Legal Articles (Telugu / తెలుగు)
 
-- [వీలునామా ఎలా రాయాలి? (How to Write a Will)](https://smartwill-india.vercel.app/te/blog/veelunaama-ela-rayali)
-- [సబ్ రిజిస్ట్రార్ కార్యాలయంలో వీలునామా రిజిస్ట్రేషన్ (SRO Registration in AP & TS)](https://smartwill-india.vercel.app/te/blog/sub-registrar-will-registration-ap-telangana)
-- [నామినీ vs లీగల్ హెయిర్ తేడాలు (Nominee vs Legal Heir)](https://smartwill-india.vercel.app/te/blog/nominee-vs-legal-heir-telugu)
-- [తండ్రి ఆస్తిపై వీలునామా నిబంధనలు (Father's Property Will Rules)](https://smartwill-india.vercel.app/te/blog/tandri-aasti-veelunaama-nibandhanalu)
-- [వీలునామాకు స్టాంప్ పేపర్ అవసరమా? (Stamp Paper Myth in Telugu)](https://smartwill-india.vercel.app/te/blog/stamp-paper-avasarama-veelunaamaku)
-- [భార్య పేరు మీద వీలునామా ఎలా రాయాలి? (Will in Wife's Name Rules)](https://smartwill-india.vercel.app/te/blog/bharya-peruna-veelunaama-rayadam)
-- [రిజిస్టర్డ్ వీలునామా కోర్టులో చెల్లుబాటు అవుతుందా? (Registered Will Court Validity)](https://smartwill-india.vercel.app/te/blog/registered-veelunaama-court-chellubaatu)
+- [వీలునామా ఎలా రాయాలి? (How to Write a Will)](https://www.smartwillindia.in/te/blog/veelunaama-ela-rayali)
+- [సబ్ రిజిస్ట్రార్ కార్యాలయంలో వీలునామా రిజిస్ట్రేషన్ (SRO Registration in AP & TS)](https://www.smartwillindia.in/te/blog/sub-registrar-will-registration-ap-telangana)
+- [నామినీ vs లీగల్ హెయిర్ తేడాలు (Nominee vs Legal Heir)](https://www.smartwillindia.in/te/blog/nominee-vs-legal-heir-telugu)
+- [తండ్రి ఆస్తిపై వీలునామా నిబంధనలు (Father's Property Will Rules)](https://www.smartwillindia.in/te/blog/tandri-aasti-veelunaama-nibandhanalu)
+- [వీలునామాకు స్టాంప్ పేపర్ అవసరమా? (Stamp Paper Myth in Telugu)](https://www.smartwillindia.in/te/blog/stamp-paper-avasarama-veelunaamaku)
+- [భార్య పేరు మీద వీలునామా ఎలా రాయాలి? (Will in Wife's Name Rules)](https://www.smartwillindia.in/te/blog/bharya-peruna-veelunaama-rayadam)
+- [రిజిస్టర్డ్ వీలునామా కోర్టులో చెల్లుబాటు అవుతుందా? (Registered Will Court Validity)](https://www.smartwillindia.in/te/blog/registered-veelunaama-court-chellubaatu)

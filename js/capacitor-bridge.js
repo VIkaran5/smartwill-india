@@ -264,8 +264,8 @@ function setupPaymentBridge(Browser) {
     try {
       // Open pay.html relay (hosted on whitelisted Vercel domain).
       // pay.html uses the Cashfree JS SDK so the origin is
-      // https://smartwill-india.vercel.app — already approved in Cashfree.
-      const relayUrl = `https://smartwill-india.vercel.app/pay.html?session_id=${encodeURIComponent(paymentSessionId)}&order_id=${encodeURIComponent(orderId || '')}`;
+      // https://www.smartwillindia.in — already approved in Cashfree.
+      const relayUrl = `https://www.smartwillindia.in/pay.html?session_id=${encodeURIComponent(paymentSessionId)}&order_id=${encodeURIComponent(orderId || '')}`;
       await Browser.open({
         url: relayUrl,
         presentationStyle: 'popover',

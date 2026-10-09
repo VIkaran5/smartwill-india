@@ -47,11 +47,11 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const targetUrl = new URL(req.url, 'https://smartwill-india.vercel.app');
+    const targetUrl = new URL(req.url, 'https://www.smartwillindia.in');
     const proxyHeaders = { ...req.headers };
     proxyHeaders.host = 'smartwill-india.vercel.app';
     if (!proxyHeaders.origin) {
-      proxyHeaders.origin = 'https://smartwill-india.vercel.app';
+      proxyHeaders.origin = 'https://www.smartwillindia.in';
     }
 
     const proxyReq = https.request(targetUrl, {

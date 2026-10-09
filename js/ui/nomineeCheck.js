@@ -245,7 +245,7 @@ export function initNomineeCheck() {
     if (waBtn) {
       waBtn.addEventListener('click', () => {
         const text = encodeURIComponent(
-          "⚠️ Did you know? In India, a Bank Nominee does NOT own your money—they are only temporary caretakers under Supreme Court law! Without a written Will, families face frozen accounts and court succession delays.\n\nTake the 30-Second Asset Safety Check here:\nhttps://smartwill-india.vercel.app/#nominee-check"
+          "⚠️ Did you know? In India, a Bank Nominee does NOT own your money—they are only temporary caretakers under Supreme Court law! Without a written Will, families face frozen accounts and court succession delays.\n\nTake the 30-Second Asset Safety Check here:\nhttps://www.smartwillindia.in/#nominee-check"
         );
         window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
       });

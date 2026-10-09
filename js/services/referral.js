@@ -94,7 +94,7 @@ export function getReferralShareUrl(user) {
   if (!user || !user.uid) return window.location.origin;
   const baseUrl = window.location.origin.includes('localhost')
     ? window.location.origin
-    : 'https://smartwill-india.vercel.app';
+    : 'https://www.smartwillindia.in';
   return `${baseUrl}/?ref=${user.uid}`;
 }
 

@@ -170,7 +170,7 @@ export async function getAuthHeaders() {
 function getApiBaseUrl() {
   if (typeof window !== 'undefined' && window.location) {
     if (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
-      return 'https://smartwill-india.vercel.app';
+      return 'https://www.smartwillindia.in';
     }
   }
   return '';

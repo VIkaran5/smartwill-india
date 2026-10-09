@@ -23,7 +23,7 @@ export async function generateWillPDF(willData) {
   try {
     const headers = await getAuthHeaders();
     const apiBase = (typeof window !== 'undefined' && window.location && (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())))
-      ? 'https://smartwill-india.vercel.app' : '';
+      ? 'https://www.smartwillindia.in' : '';
 
     const res = await fetch(`${apiBase}/api/verify-download`, {
       method: 'POST',

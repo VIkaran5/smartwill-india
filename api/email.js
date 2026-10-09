@@ -11,7 +11,7 @@
 
 const SENDER_EMAIL = process.env.SENDER_EMAIL || 'SmartWill India <onboarding@resend.dev>';
 const SUPPORT_EMAIL = 'smartwillindia.help@gmail.com';
-const DASHBOARD_URL = 'https://smartwill-india.vercel.app/app';
+const DASHBOARD_URL = 'https://www.smartwillindia.in/app';
 
 /**
  * Builds responsive, branded HTML email template
@@ -147,7 +147,7 @@ Need help? Contact support at: ${SUPPORT_EMAIL}
 
 Warm regards,
 SmartWill India Team
-https://smartwill-india.vercel.app
+https://www.smartwillindia.in
 `;
 }
 
