@@ -187,12 +187,166 @@
       border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0; 
       margin: 2rem 0; 
     }
+    /* Typography Overrides: Smooth Title Case Plus Jakarta Sans */
+    h1, h2, h3, h4, .city-title, .city-content h2, .city-content h3, .city-content h4, .sidebar-card h4, .sro-card h4, .faq-card h3 {
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif) !important;
+      text-transform: none !important;
+      letter-spacing: -0.015em !important;
+    }
+
+    /* ── Stepper 3-Box Vibrant Color System ── */
+    .stepper-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin: 2rem 0 3rem;
+    }
+    @media (max-width: 991px) {
+      .stepper-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+      }
+    }
+    .stepper-card {
+      position: relative;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .stepper-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+    .stepper-card:hover {
+      transform: translateY(-4px);
+    }
+    .stepper-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      flex-shrink: 0;
+    }
+    .stepper-card h4 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      line-height: 1.35;
+    }
+    .stepper-card p {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      margin-bottom: 0;
+      opacity: 0.9;
+    }
+
+    /* ── Box 1: Royal Sapphire Blue ── */
+    .stepper-step-1 {
+      background: linear-gradient(150deg, rgba(37, 99, 235, 0.12) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+    }
+    .stepper-step-1::before {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+    .stepper-step-1 .stepper-num {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .stepper-step-1 h4 { color: #60a5fa; }
+    .stepper-step-1:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 8px 30px rgba(37, 99, 235, 0.2);
+    }
+    [data-theme="light"] .stepper-step-1 {
+      background: linear-gradient(150deg, #f0f7ff 0%, #e0effe 100%);
+      border: 1px solid #93c5fd;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+    }
+    [data-theme="light"] .stepper-step-1 h4 { color: #1d4ed8; }
+    [data-theme="light"] .stepper-step-1 p { color: #334155; }
+
+    /* ── Box 2: Warm Gold (Signature SmartWill) ── */
+    .stepper-step-2 {
+      background: linear-gradient(150deg, rgba(223, 183, 108, 0.15) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border: 1px solid rgba(223, 183, 108, 0.45);
+      box-shadow: 0 4px 20px rgba(223, 183, 108, 0.1);
+    }
+    .stepper-step-2::before {
+      background: linear-gradient(90deg, #dfb76c, #f6c860);
+    }
+    .stepper-step-2 .stepper-num {
+      background: linear-gradient(135deg, #f6c860, #d4a337);
+      color: #0a0b10;
+      box-shadow: 0 4px 12px rgba(223, 183, 108, 0.4);
+    }
+    .stepper-step-2 h4 { color: #f6c860; }
+    .stepper-step-2:hover {
+      border-color: rgba(223, 183, 108, 0.7);
+      box-shadow: 0 8px 30px rgba(223, 183, 108, 0.22);
+    }
+    [data-theme="light"] .stepper-step-2 {
+      background: linear-gradient(150deg, #fefce8 0%, #fef9c3 100%);
+      border: 1px solid #facc15;
+      box-shadow: 0 4px 16px rgba(202, 138, 4, 0.08);
+    }
+    [data-theme="light"] .stepper-step-2 h4 { color: #b45309; }
+    [data-theme="light"] .stepper-step-2 p { color: #334155; }
+
+    /* ── Box 3: Emerald Green ── */
+    .stepper-step-3 {
+      background: linear-gradient(150deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+    }
+    .stepper-step-3::before {
+      background: linear-gradient(90deg, #10b981, #34d399);
+    }
+    .stepper-step-3 .stepper-num {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+    .stepper-step-3 h4 { color: #34d399; }
+    .stepper-step-3:hover {
+      border-color: rgba(16, 185, 129, 0.6);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+    }
+    [data-theme="light"] .stepper-step-3 {
+      background: linear-gradient(150deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1px solid #6ee7b7;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+    }
+    [data-theme="light"] .stepper-step-3 h4 { color: #047857; }
+    [data-theme="light"] .stepper-step-3 p { color: #334155; }
+
+    /* ── SRO Location Cards with Accent Borders ── */
     .sro-card {
       background: var(--bg-card);
       border: 1px solid var(--border-light);
+      border-left: 4px solid var(--accent-gold, #dfb76c);
       border-radius: var(--radius-md, 12px);
       padding: 1.5rem;
       margin-bottom: 1.25rem;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sro-card:hover {
+      border-color: var(--accent-gold, #dfb76c);
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     }
     .sro-card h4 {
       font-size: 1.2rem;
@@ -205,6 +359,13 @@
       font-size: 0.95rem;
       color: var(--text-muted);
     }
+    [data-theme="light"] .sro-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #d4a337;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
     .city-sidebar { 
       position: sticky; 
       top: 6rem; 
@@ -244,6 +405,11 @@
       border: 1px solid var(--accent-gold, #dfb76c); 
       text-align: center; 
     }
+    [data-theme="light"] .cta-card {
+      background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%);
+      border: 1px solid #fde047;
+      box-shadow: 0 4px 16px rgba(223, 183, 108, 0.12);
+    }
     .faq-card {
       background: var(--bg-card);
       border: 1px solid var(--border-light);
@@ -260,6 +426,70 @@
     .faq-card p {
       margin-bottom: 0;
       color: var(--text-muted);
+    }
+
+    /* ── Signature Gold Button (Always Vibrant in Light & Dark) ── */
+    .btn-gold {
+      background: linear-gradient(135deg, #dfb76c 0%, #c9983e 100%) !important;
+      color: #0b0c16 !important;
+      font-weight: 700 !important;
+      border: none !important;
+      box-shadow: 0 4px 16px rgba(223, 183, 108, 0.35) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #e8c682 0%, #d8a74a 100%) !important;
+      color: #0b0c16 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 20px rgba(223, 183, 108, 0.45) !important;
+    }
+
+    /* ── Mobile Sticky Conversion Bar ── */
+    .mobile-sticky-bar {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .mobile-sticky-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 850;
+        background: #121420;
+        border-top: 1px solid #262c45;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
+        padding: 0.75rem 1rem;
+        align-items: center;
+        justify-content: space-between;
+        transform: translateY(110%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      [data-theme="light"] .mobile-sticky-bar {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+      }
+      .mobile-sticky-bar.visible {
+        transform: translateY(0);
+      }
+      .mobile-sticky-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .mobile-sticky-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #dfb76c;
+        line-height: 1.1;
+      }
+      [data-theme="light"] .mobile-sticky-price {
+        color: #b45309;
+      }
+      .mobile-sticky-sub {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
     }
   </style>
 </head>
@@ -391,17 +621,17 @@
 
               <h2>How Will Execution Works in Kolkata in 3 Simple Steps</h2>
               <div class="stepper-grid">
-                <div class="stepper-card">
+                <div class="stepper-card stepper-step-1">
                   <div class="stepper-num">1</div>
                   <h4>Draft Online in 10 Mins</h4>
                   <p>Answer guided questions on SmartWill. Formatted for KMC mutation, HIDCO/Salt Lake leasehold, and mandatory executor rules for ₹299.</p>
                 </div>
-                <div class="stepper-card">
+                <div class="stepper-card stepper-step-2">
                   <div class="stepper-num">2</div>
                   <h4>Print &amp; Attest (Legally Complete)</h4>
                   <p>Print 2 copies on plain A4 paper and sign before 2 independent witnesses. Legally binding in civil courts under Section 63.</p>
                 </div>
-                <div class="stepper-card">
+                <div class="stepper-card stepper-step-3">
                   <div class="stepper-num">3</div>
                   <h4>Optional WBREGOV SRO Registration</h4>
                   <p>If desired, book an appointment on WBREGOV and visit your local SRO (Alipore, Bidhannagar, Sealdah) for official Book 3 registration.</p>
@@ -537,6 +767,17 @@
     </div>
   </footer>
 
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>
   <script>
@@ -572,6 +813,25 @@
           hamburger.classList.remove('active');
         }
       });
+    }
+
+    // ── Mobile Sticky Bar Scroll Reveal ──
+    const stickyBar = document.getElementById('mobileStickyBar');
+    if (stickyBar) {
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            if (window.scrollY > 380) {
+              stickyBar.classList.add('visible');
+            } else {
+              stickyBar.classList.remove('visible');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
     }
   </script>
 </body>
