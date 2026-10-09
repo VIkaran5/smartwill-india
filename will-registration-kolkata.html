@@ -428,20 +428,36 @@
       color: var(--text-muted);
     }
 
-    /* ── Signature Gold Button (Always Vibrant in Light & Dark) ── */
+    /* ── Theme-Responsive CTA Button ── */
+    /* Dark Theme: Vibrant Warm Gold with dark text */
     .btn-gold {
       background: linear-gradient(135deg, #dfb76c 0%, #c9983e 100%) !important;
       color: #0b0c16 !important;
       font-weight: 700 !important;
       border: none !important;
       box-shadow: 0 4px 16px rgba(223, 183, 108, 0.35) !important;
-      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
     }
     .btn-gold:hover {
       background: linear-gradient(135deg, #e8c682 0%, #d8a74a 100%) !important;
       color: #0b0c16 !important;
       transform: translateY(-2px) !important;
       box-shadow: 0 6px 20px rgba(223, 183, 108, 0.45) !important;
+    }
+
+    /* Light/White Theme: Sleek Solid Black with crisp white text */
+    [data-theme="light"] .btn-gold {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #000000 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+    }
+    [data-theme="light"] .btn-gold:hover {
+      background: #222222 !important;
+      color: #ffffff !important;
+      border-color: #222222 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
     }
 
     /* ── Mobile Sticky Conversion Bar ── */
