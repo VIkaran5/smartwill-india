@@ -2896,13 +2896,25 @@ p, .article-content p, .article-subtitle {
   line-height: 1.4 !important;
   text-wrap: balance !important;
 }
-.faq-card p {
+.faq-card p,
+.faq-card .faq-answer p {
   font-size: 0.95rem !important;
   line-height: 1.65 !important;
   color: var(--text-muted) !important;
   margin-bottom: 0 !important;
   letter-spacing: -0.005em !important;
   text-wrap: pretty !important;
+}
+
+/* Bulletproof safeguard: FAQ answers in blog cards are always visible, never collapsed by accordion CSS */
+.faq-card .faq-answer,
+.article-content .faq-answer {
+  max-height: none !important;
+  overflow: visible !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  margin-top: 0.35rem !important;
 }
 
 /* 8. Comparison Table: Sleek Glass Scroll Container */
