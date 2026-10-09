@@ -112,17 +112,80 @@
   window.addEventListener('scroll', handleNavbarScroll, { passive: true });
   handleNavbarScroll();
 
-  // Initialize button state as soon as DOM is interactive
+  // Universal Mobile Sticky Conversion Bar Scroll Reveal
+  function initMobileStickyBar() {
+    var bar = document.getElementById('mobileStickyBar');
+    if (!bar) return;
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        window.requestAnimationFrame(function() {
+          if (window.scrollY > 380) {
+            bar.classList.add('visible');
+          } else {
+            bar.classList.remove('visible');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // Universal Mobile Hamburger Menu Guardian
+  function initMobileMenu() {
+    var hamburger = document.getElementById('navHamburger');
+    var mobileMenu = document.getElementById('navMobileMenu') || document.querySelector('.nav-mobile-menu') || document.querySelector('.mobile-menu');
+    if (!hamburger || !mobileMenu) return;
+    if (hamburger.dataset.menuBound === 'true') return;
+    hamburger.dataset.menuBound = 'true';
+
+    hamburger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      mobileMenu.classList.toggle('open');
+      mobileMenu.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(function(el) {
+      el.addEventListener('click', function() {
+        mobileMenu.classList.remove('open');
+        mobileMenu.classList.remove('active');
+        hamburger.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if ((mobileMenu.classList.contains('open') || mobileMenu.classList.contains('active')) &&
+          !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        mobileMenu.classList.remove('open');
+        mobileMenu.classList.remove('active');
+        hamburger.classList.remove('active');
+      }
+    });
+  }
+
+  // Initialize button state and features as soon as DOM is interactive
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
       updateToggleButtons(current);
       handleNavbarScroll();
+      initMobileStickyBar();
+      initMobileMenu();
     });
   } else {
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     updateToggleButtons(current);
     handleNavbarScroll();
+    initMobileStickyBar();
+    initMobileMenu();
   }
+
+  window.addEventListener('load', function() {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  });
 })();
 

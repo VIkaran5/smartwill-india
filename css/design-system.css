@@ -2457,6 +2457,90 @@ h1, h2, h3, h4, section, article {
   gap: 0.5rem !important;
 }
 
+/* ── Global Theme-Responsive CTA Button (.btn-gold) ── */
+[data-theme="light"] .btn-gold {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid #000000 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+}
+[data-theme="light"] .btn-gold:hover {
+  background: #222222 !important;
+  color: #ffffff !important;
+  border-color: #222222 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .btn-gold {
+  background: linear-gradient(135deg, #dfb76c 0%, #c9983e 100%) !important;
+  color: #0b0c16 !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(223, 183, 108, 0.35) !important;
+}
+[data-theme="dark"] .btn-gold:hover {
+  background: linear-gradient(135deg, #e8c682 0%, #d8a74a 100%) !important;
+  color: #0b0c16 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(223, 183, 108, 0.45) !important;
+}
+
+/* ── Global Mobile Sticky Conversion Bar ── */
+.mobile-sticky-bar {
+  display: none;
+}
+@media (max-width: 768px) {
+  .mobile-sticky-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 850;
+    background: #121420;
+    border-top: 1px solid #262c45;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
+    padding: 0.75rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    transform: translateY(110%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  [data-theme="light"] .mobile-sticky-bar {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .mobile-sticky-bar.visible {
+    transform: translateY(0);
+  }
+  .mobile-sticky-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-sticky-price {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #dfb76c;
+    line-height: 1.1;
+  }
+  [data-theme="light"] .mobile-sticky-price {
+    color: #b45309;
+  }
+  .mobile-sticky-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .mobile-sticky-bar .btn-gold {
+    padding: 0.6rem 1.25rem !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+}
+
+
 
 
 
