@@ -61,7 +61,9 @@
 }
 
 .nav-menu {
-  display: none !important; /* All links tucked into the 3-line hamburger menu */
+  display: flex;
+  align-items: center;
+  gap: clamp(0.4rem, 1vw, 1.25rem);
 }
 
 .nav-link {
@@ -941,9 +943,9 @@
    Fixes: navbar overflow, hero font sizes, pricing cards
    ===================================================== */
 
-/* Hamburger button (The Three Line Menu) — visible across all screens */
+/* Hamburger button (The Three Line Menu) — visible on mobile/tablets only */
 .nav-hamburger {
-  display: flex !important;
+  display: none;
   flex-direction: column;
   justify-content: center;
   gap: 5px;

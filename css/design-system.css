@@ -2384,11 +2384,12 @@ h1, h2, h3, h4, section, article {
   scroll-margin-top: 100px;
 }
 
-/* Universal Desktop Nav Links */
-.nav-links {
+/* Universal Desktop Nav Links & Menu */
+.nav-links,
+.nav-menu {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: clamp(0.6rem, 1.2vw, 1.25rem);
 }
 .nav-link {
   color: var(--text-muted);
@@ -2396,6 +2397,7 @@ h1, h2, h3, h4, section, article {
   font-size: 0.92rem;
   font-weight: 500;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 .nav-link:hover, .nav-link.active {
   color: var(--text-main);
@@ -2410,7 +2412,8 @@ h1, h2, h3, h4, section, article {
 }
 
 /* Universal Hamburger Button for responsive headers */
-.hamburger-btn {
+.hamburger-btn,
+.nav-hamburger {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -2421,8 +2424,10 @@ h1, h2, h3, h4, section, article {
   background: none;
   z-index: 200;
   border-radius: var(--radius-sm, 6px);
+  transition: background 0.2s ease;
 }
-.hamburger-btn span {
+.hamburger-btn span,
+.nav-hamburger span {
   display: block;
   width: 22px;
   height: 2px;
@@ -2430,20 +2435,46 @@ h1, h2, h3, h4, section, article {
   border-radius: 2px;
   transition: all 0.25s ease;
 }
-.hamburger-btn.active span:nth-child(1) {
+.hamburger-btn.active span:nth-child(1),
+.nav-hamburger.active span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
-.hamburger-btn.active span:nth-child(2) {
+.hamburger-btn.active span:nth-child(2),
+.nav-hamburger.active span:nth-child(2) {
   opacity: 0;
 }
-.hamburger-btn.active span:nth-child(3) {
+.hamburger-btn.active span:nth-child(3),
+.nav-hamburger.active span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
-@media (max-width: 991px) {
-  .nav-links {
+
+@media (min-width: 992px) {
+  .nav-links,
+  .nav-menu,
+  .navbar .nav-menu,
+  .navbar .nav-links {
+    display: flex !important;
+    align-items: center !important;
+  }
+  .hamburger-btn,
+  .nav-hamburger,
+  .navbar .nav-hamburger,
+  .navbar .hamburger-btn {
     display: none !important;
   }
-  .hamburger-btn {
+}
+
+@media (max-width: 991px) {
+  .nav-links,
+  .nav-menu,
+  .navbar .nav-menu,
+  .navbar .nav-links {
+    display: none !important;
+  }
+  .hamburger-btn,
+  .nav-hamburger,
+  .navbar .nav-hamburger,
+  .navbar .hamburger-btn {
     display: flex !important;
   }
 }
@@ -2541,6 +2572,481 @@ h1, h2, h3, h4, section, article {
 }
 
 
+/* ==========================================================================
+   APPLE-INSPIRED BUTTER-SMOOTH TYPOGRAPHY & REFINED BOX SYSTEM
+   ========================================================================== */
 
+/* 1. Global Font Smoothing & Typography Engine */
+html, body {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
 
+/* 2. Apple Headings: Smooth, Title Case, Negative Display Tracking, Balanced */
+h1, h2, h3, h4, h5, h6,
+.article-title,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.sidebar-card h4,
+.blog-cta-section h2,
+.section-title {
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif) !important;
+  text-transform: none !important;
+  letter-spacing: -0.022em !important;
+  text-wrap: balance !important;
+  font-weight: 700 !important;
+  line-height: 1.28 !important;
+}
+
+.article-title {
+  font-size: clamp(2rem, 4.5vw, 2.75rem) !important;
+  line-height: 1.22 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.article-content h2 {
+  font-size: clamp(1.4rem, 2.8vw, 1.65rem) !important;
+  margin: 2.75rem 0 1rem !important;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  line-height: 1.3 !important;
+}
+
+.article-content h3 {
+  font-size: clamp(1.18rem, 2.2vw, 1.35rem) !important;
+  margin: 2rem 0 0.75rem !important;
+  line-height: 1.35 !important;
+  color: var(--accent-gold, #dfb76c);
+}
+
+[data-theme="light"] .article-content h3 {
+  color: #92400e !important;
+}
+
+/* 3. Apple Body Typography: Relaxed, Breathable, Smooth Reading Rhythm */
+p, .article-content p, .article-subtitle {
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Plus Jakarta Sans", sans-serif);
+  font-size: 1.05rem;
+  line-height: 1.72;
+  letter-spacing: -0.009em;
+  text-wrap: pretty;
+  margin-bottom: 1.4rem;
+  color: var(--text-main);
+}
+
+.article-subtitle {
+  font-size: 1.12rem;
+  line-height: 1.68;
+  color: var(--text-muted);
+  max-width: 820px;
+  margin-bottom: 1.85rem;
+}
+
+.article-content ul, .article-content ol {
+  line-height: 1.72;
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.article-content li {
+  margin-bottom: 0.65rem;
+  letter-spacing: -0.007em;
+}
+
+/* 4. Redesigned Stat Cards / Boxes: Apple Squircle, No Clunkiness */
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0 2.5rem;
+}
+
+.stat-card-item {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 18px !important;
+  padding: 1.35rem 1.25rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease !important;
+}
+
+[data-theme="dark"] .stat-card-item {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .stat-card-item {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04) !important;
+}
+
+.stat-label {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--text-muted) !important;
+  line-height: 1.35 !important;
+}
+
+.stat-number {
+  font-size: 1.85rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.15 !important;
+  margin: 0.4rem 0 !important;
+}
+
+.stat-sub {
+  font-size: 0.78rem !important;
+  line-height: 1.45 !important;
+  color: var(--text-muted) !important;
+  letter-spacing: -0.005em !important;
+}
+
+/* Stat Box (Telugu & Regional Pages) */
+.stat-box {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 18px !important;
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  gap: 1.25rem !important;
+  text-align: center !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="dark"] .stat-box {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="light"] .stat-box {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* 5. Apple-Style Callout & Alert Banners (No Clumsy 4px Border Stripes) */
+.callout,
+.legal-alert,
+.callout-warning,
+.danger-alert,
+.callout-success,
+.disclaimer-box {
+  border-radius: 16px !important;
+  border-left: none !important;
+  padding: 1.25rem 1.4rem !important;
+  margin: 1.85rem 0 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.65 !important;
+  letter-spacing: -0.008em !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+}
+
+.callout p,
+.legal-alert p,
+.callout-warning p,
+.danger-alert p,
+.callout-success p,
+.disclaimer-box p {
+  font-size: 0.95rem !important;
+  line-height: 1.65 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Gold / Informational Callout */
+.callout,
+.legal-alert {
+  background: rgba(223, 183, 108, 0.08) !important;
+  border: 1px solid rgba(223, 183, 108, 0.28) !important;
+  color: var(--text-main) !important;
+}
+[data-theme="light"] .callout,
+[data-theme="light"] .legal-alert {
+  background: rgba(245, 158, 11, 0.06) !important;
+  border: 1px solid rgba(217, 119, 6, 0.24) !important;
+}
+
+/* Warning / Alert Callout */
+.callout-warning,
+.danger-alert {
+  background: rgba(239, 68, 68, 0.07) !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  color: var(--text-main) !important;
+}
+[data-theme="light"] .callout-warning,
+[data-theme="light"] .danger-alert {
+  background: rgba(239, 68, 68, 0.05) !important;
+  border: 1px solid rgba(220, 38, 38, 0.22) !important;
+}
+
+/* Success Callout */
+.callout-success {
+  background: rgba(16, 185, 129, 0.07) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+  color: var(--text-main) !important;
+}
+[data-theme="light"] .callout-success {
+  background: rgba(16, 185, 129, 0.05) !important;
+  border: 1px solid rgba(5, 150, 105, 0.22) !important;
+}
+
+/* Disclaimer Box */
+.disclaimer-box {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-muted) !important;
+  margin: 0 0 2rem !important;
+}
+[data-theme="light"] .disclaimer-box {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* 6. Sidebar Cards & CTA Cards */
+.sidebar-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 18px !important;
+  padding: 1.5rem 1.35rem !important;
+  margin-bottom: 1.35rem !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="dark"] .sidebar-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+[data-theme="light"] .sidebar-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+.cta-card {
+  background: linear-gradient(135deg, rgba(223, 183, 108, 0.12), rgba(223, 183, 108, 0.03)) !important;
+  border: 1px solid rgba(223, 183, 108, 0.35) !important;
+  border-radius: 18px !important;
+  padding: 1.6rem 1.35rem !important;
+  text-align: center !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05) !important;
+}
+[data-theme="light"] .cta-card {
+  background: linear-gradient(135deg, #fffbeb, #ffffff) !important;
+  border: 1px solid #fde047 !important;
+}
+
+/* 7. FAQ Cards: Apple-Smooth Q&A */
+.faq-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 16px !important;
+  padding: 1.35rem 1.45rem !important;
+  margin-bottom: 1rem !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+[data-theme="dark"] .faq-card {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+[data-theme="light"] .faq-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
+.faq-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--accent-gold, #dfb76c) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important;
+}
+.faq-card h3 {
+  font-size: 1.08rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--text-main) !important;
+  line-height: 1.4 !important;
+  text-wrap: balance !important;
+}
+.faq-card p {
+  font-size: 0.95rem !important;
+  line-height: 1.65 !important;
+  color: var(--text-muted) !important;
+  margin-bottom: 0 !important;
+  letter-spacing: -0.005em !important;
+  text-wrap: pretty !important;
+}
+
+/* 8. Comparison Table: Sleek Glass Scroll Container */
+.comparison-table-wrapper {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  margin: 2rem 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="dark"] .comparison-table-wrapper {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+[data-theme="light"] .comparison-table-wrapper {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
+.styled-table th, .styled-table td,
+.table-custom th, .table-custom td {
+  padding: 0.9rem 1.15rem !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+/* 9. Mobile Precision: Zero Clunkiness, Butter-Smooth Readability (<768px) */
+@media (max-width: 768px) {
+  /* Smooth Typography on Mobile */
+  .article-header {
+    padding: 5.75rem 0 2rem !important;
+  }
+  .article-title {
+    font-size: clamp(1.65rem, 6.2vw, 2.1rem) !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.022em !important;
+    margin-bottom: 1rem !important;
+  }
+  .article-subtitle {
+    font-size: 0.98rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.35rem !important;
+  }
+  .article-meta {
+    font-size: 0.8rem !important;
+    gap: 0.85rem !important;
+    padding-top: 1rem !important;
+  }
+  .article-body {
+    padding: 2rem 0 6.5rem !important;
+  }
+  p, .article-content p {
+    font-size: 0.98rem !important;
+    line-height: 1.68 !important;
+    margin-bottom: 1.25rem !important;
+  }
+  .article-content h2 {
+    font-size: 1.35rem !important;
+    margin: 2.25rem 0 0.85rem !important;
+  }
+  .article-content h3 {
+    font-size: 1.15rem !important;
+    margin: 1.6rem 0 0.6rem !important;
+  }
+
+  /* Compact, Refined Mobile Stat Cards (No Clumsy Blocks!) */
+  .stat-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+    margin: 1.5rem 0 2rem !important;
+  }
+  .stat-card-item {
+    border-radius: 14px !important;
+    padding: 1rem 1.15rem !important;
+  }
+  .stat-number {
+    font-size: 1.55rem !important;
+    margin: 0.2rem 0 !important;
+  }
+  .stat-sub {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .stat-box {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+    padding: 1.1rem 1rem !important;
+    border-radius: 14px !important;
+  }
+  .stat-box .stat-number {
+    font-size: 1.45rem !important;
+  }
+
+  /* Mobile Callouts: Soft, Rounded, Compact */
+  .callout,
+  .legal-alert,
+  .callout-warning,
+  .danger-alert,
+  .callout-success,
+  .disclaimer-box {
+    border-radius: 14px !important;
+    padding: 1rem 1.1rem !important;
+    font-size: 0.88rem !important;
+    line-height: 1.58 !important;
+    margin: 1.25rem 0 !important;
+  }
+  .callout p,
+  .legal-alert p,
+  .callout-warning p,
+  .danger-alert p,
+  .callout-success p,
+  .disclaimer-box p {
+    font-size: 0.88rem !important;
+    line-height: 1.58 !important;
+  }
+
+  /* Mobile Sidebar Cards */
+  .article-sidebar {
+    position: static !important;
+    margin-top: 2.5rem !important;
+  }
+  .sidebar-card {
+    border-radius: 14px !important;
+    padding: 1.2rem 1.15rem !important;
+    margin-bottom: 1rem !important;
+  }
+  .cta-card {
+    border-radius: 16px !important;
+    padding: 1.35rem 1.15rem !important;
+  }
+
+  /* Mobile FAQ Cards */
+  .faq-card {
+    border-radius: 14px !important;
+    padding: 1.1rem 1.15rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .faq-card h3 {
+    font-size: 0.98rem !important;
+    line-height: 1.38 !important;
+  }
+  .faq-card p {
+    font-size: 0.88rem !important;
+    line-height: 1.56 !important;
+  }
+
+  /* Mobile Table Wrapper */
+  .comparison-table-wrapper {
+    border-radius: 12px !important;
+    margin: 1.35rem 0 !important;
+  }
+  .styled-table th, .styled-table td,
+  .table-custom th, .table-custom td {
+    padding: 0.75rem 0.9rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* Mobile Bottom CTA Banner */
+  .blog-cta-section {
+    border-radius: 16px !important;
+    padding: 2.25rem 1.25rem !important;
+    margin: 2.5rem 0 1.5rem !important;
+  }
+}
 
