@@ -54,44 +54,127 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif); 
+      -webkit-font-smoothing: antialiased;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+
+    /* ── Smooth, Eye-Comfort Typography (Title Case & Plus Jakarta Sans) ── */
+    h1, h2, h3, h4,
+    .article-title,
+    .article-content h2,
+    .article-content h3,
+    .sidebar-card h4,
+    .blog-cta-section h2 {
+      font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif) !important;
+      text-transform: none !important;
+      letter-spacing: -0.015em;
+    }
+
+    .article-header { 
+      padding: 7.5rem 0 3.25rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: radial-gradient(circle at top right, rgba(223, 183, 108, 0.08), transparent 70%); 
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: .82rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: .08em; 
       text-transform: uppercase; 
       color: var(--primary, #dfb76c); 
-      margin-bottom: 1rem; 
+      margin-bottom: 1.15rem; 
+      background: rgba(223, 183, 108, 0.12);
+      border: 1px solid rgba(223, 183, 108, 0.35);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-subtitle { 
+      font-size: 1.12rem; 
+      line-height: 1.68; 
+      color: var(--text-muted); 
+      max-width: 820px; 
+      margin-bottom: 1.75rem; 
+      text-wrap: pretty;
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance;
+    }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 {
+      color: #92400e;
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -99,7 +182,7 @@
       background: rgba(239, 68, 68, 0.08); 
       border-left: 4px solid #ef4444; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-warning p { color: var(--text-main); margin-bottom: 0; font-size: .95rem; }
@@ -113,17 +196,105 @@
       color: var(--text-muted); 
       line-height: 1.65; 
     }
-    .cta-box { 
+
+    /* ── Stat Cards Grid ── */
+    .stat-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin: 2rem 0 2.5rem;
+    }
+    .stat-card-item {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card-item:hover {
+      transform: translateY(-2px);
+    }
+    .stat-label {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .stat-number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin: 0.35rem 0;
+      line-height: 1.1;
+    }
+    .stat-red { color: #f43f5e; }
+    .stat-gold { color: var(--accent-gold, #dfb76c); }
+    [data-theme="light"] .stat-gold { color: #b45309; }
+    .stat-blue { color: #3b82f6; }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
       border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem 2rem; 
-      text-align: center; 
-      margin-top: 3.5rem; 
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
     }
-    .cta-box h3 { font-size: 1.5rem; margin-bottom: .5rem; color: var(--text-main); }
-    .cta-box p { color: var(--text-muted); margin-bottom: 1.75rem; font-size: 1.05rem; }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { position: static; margin-top: 2.5rem; }
+    }
   </style>
 </head>
 <body>
@@ -177,17 +348,36 @@
     </div>
   </header>
 
+  <!-- Header -->
   <section class="article-header">
     <div class="container">
-      <div class="article-tag">Succession Law &nbsp;&middot;&nbsp; India</div>
-      <h1 class="article-title">What Happens If You Die Without a Will in India?</h1>
-      <div class="article-meta">By SmartWill India &nbsp;&middot;&nbsp; September 2026 &nbsp;&middot;&nbsp; 7 min read</div>
+      <nav aria-label="breadcrumb" style="margin-bottom:1.25rem; font-size:0.88rem;">
+        <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
+        <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
+        <span style="color:var(--primary, #dfb76c);">Dying Without a Will in India</span>
+      </nav>
+      <div class="article-tag">
+        <i data-lucide="alert-octagon" style="width:16px;height:16px;"></i> Succession Law &bull; Intestate Rules
+      </div>
+      <h1 class="article-title">What Happens If You Die Without a Will in India? (2026 Legal Reality)</h1>
+      <p class="article-subtitle">
+        If you die intestate in India, your assets don't go to the government—but your family faces frozen accounts, succession certificate suits, and years of court delays. Here is what the law dictates.
+      </p>
+      <div class="article-meta">
+        <span><i data-lucide="shield-alert" style="width:16px;height:16px;"></i> Hindu &amp; Indian Succession Acts</span>
+        <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 7 min read</span>
+        <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+        <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+      </div>
     </div>
   </section>
 
-  <article>
+  <!-- Body Content Grid -->
+  <section class="article-body">
     <div class="container">
-      <div class="article-body">
+      <div class="row">
+        <div class="col-lg-8">
+          <article class="article-content">
 
         <div class="disclaimer-box">
           <strong>Informational purposes only:</strong> This article describes general legal principles under Indian succession law. It is not a substitute for legal advice. The rules that apply to you depend on your specific circumstances, religion, the type of assets involved, and where you live. If you have questions about your situation, consult a qualified legal professional.
@@ -266,19 +456,119 @@
           <p><strong>Important:</strong> Your downloaded Will must be printed, signed by you on every page, and attested by two independent witnesses (who are not beneficiaries named in the Will) to be legally valid under the Indian Succession Act, 1925.</p>
         </div>
 
-        <div class="cta-box">
-          <h3>Create Your Will in 10 Minutes</h3>
-          <p>Legally valid under the Indian Succession Act 1925. Available in English, Telugu &amp; Hindi. &#x20B9;299 one-time.</p>
-          <a href="/app" class="btn btn-gold">Create Your Will &rarr;</a>
+        <div class="blog-cta-box" style="margin: 2.5rem 0; padding: 2rem; background: rgba(223, 183, 108, 0.08); border: 1px solid rgba(223, 183, 108, 0.25); border-radius: 12px; text-align: center;">
+          <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-main);">Protect Your Family from Court Delays. Create Your Will for &#x20B9;299.</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem; max-width: 620px; margin-left: auto; margin-right: auto;">
+            Avoid frozen bank accounts, family disputes, and lengthy succession certificate proceedings. SmartWill India generates an ISA 1925 compliant Will in 10 minutes.
+          </p>
+          <a href="/app" class="btn btn-gold btn-lg">Create Your Will Online &mdash; &#x20B9;299 &rarr;</a>
         </div>
 
-      </div>
-    </div>
-  </article>
+        <h2>Frequently Asked Questions About Dying Without a Will</h2>
 
-  <div class="container" style="padding-bottom:3rem;">
-    <a href="/blog" style="color:var(--text-muted);font-size:0.95rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;">&larr; Back to all articles</a>
-  </div>
+        <div class="faq-card" style="margin-bottom: 1.25rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text-main);">Does my property automatically go to the government if I die without a Will?</h3>
+          <p style="color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+            No. Under Indian law (the doctrine of escheat), property goes to the government only if a person dies leaving absolutely zero legal heirs (Class I, Class II, agnates, or cognates). If you have any surviving family members, assets are divided strictly among them according to your personal succession law.
+          </p>
+        </div>
+
+        <div class="faq-card" style="margin-bottom: 1.25rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text-main);">What is a Succession Certificate and why is it needed?</h3>
+          <p style="color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+            A Succession Certificate is a document issued by a civil district court certifying who the rightful legal heirs of a deceased person are to realize movable debts and securities (bank accounts, fixed deposits, shares, mutual funds). Without a Will, banks and financial institutions typically insist on this certificate before releasing funds exceeding basic threshold limits.
+          </p>
+        </div>
+
+        <div class="faq-card" style="margin-bottom: 1.25rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text-main);">Does a bank nominee become the owner of the money if there is no Will?</h3>
+          <p style="color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+            No. The Supreme Court of India has repeatedly ruled (including in <em>Sarbati Devi v. Usha Devi</em>) that a nominee is merely a trustee or custodian holding the funds on behalf of the legal heirs. The nominee does not own the funds; they must distribute them equally among all legal heirs as per succession laws unless named as the sole legatee in a valid Will.
+          </p>
+        </div>
+
+        <div class="faq-card" style="margin-bottom: 1.25rem; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--text-main);">Who inherits first under the Hindu Succession Act if someone dies intestate?</h3>
+          <p style="color: var(--text-muted); margin-bottom: 0; line-height: 1.6;">
+            For a Hindu male dying intestate, property is divided equally among all Class I heirs: the widow, mother, sons, and daughters (all sons and daughters inherit equal shares). If no Class I heirs are alive, the property passes to Class II heirs (father, siblings, nephews/nieces).
+          </p>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <a href="/blog" style="color:var(--text-muted);font-size:0.95rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;">&larr; Back to all articles</a>
+        </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar (col-lg-4) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Fast Action Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--accent-gold, #dfb76c); font-weight:700; margin-bottom:4px;">
+                  ⚡ Protect Your Estate
+                </div>
+                <h4 style="font-size:1.25rem; margin-bottom:0.6rem; color:var(--text-main);">Create Your Legally Valid Will for &#x20B9;299</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  Take 10 minutes to secure your bank accounts, property, and investments. Prevent succession certificate court delays for your loved ones.
+                </p>
+                <a href="/app" class="btn btn-gold" style="width:100%; text-align:center; display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Quick Intestacy Risks Card -->
+              <div class="sidebar-card">
+                <h4>Risks of Dying Without a Will</h4>
+                <ul style="display:flex; flex-direction:column; gap:0.85rem; font-size:0.92rem; color:var(--text-muted);">
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="lock" style="color:#ef4444; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Frozen Accounts:</strong> Banks freeze accounts without court clearance or probate.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="clock" style="color:var(--primary, #dfb76c); width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>1&ndash;3 Year Delays:</strong> District court succession certificate cases drag on.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="scale" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Rigid Law:</strong> State formulas decide who gets what, not your personal wishes.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="alert-triangle" style="color:#ef4444; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Nominee &ne; Owner:</strong> Nominees are only trustees; disputes frequently arise.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Succession Guides</h4>
+                <ul>
+                  <li><a href="/blog/is-will-registration-mandatory-in-india">&rarr; Is Will Registration Mandatory in India?</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir Rights</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/role-of-executor-in-will-india">&rarr; Role &amp; Duties of an Executor</a></li>
+                  <li><a href="/blog/cost-of-making-will-in-india">&rarr; Cost of Making a Will in India</a></li>
+                  <li><a href="/blog/handwritten-will-validity-india">&rarr; Handwritten Will Validity in India</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Don't Leave Your Family's Future to Court Bureaucracy</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Draft your legally valid Will in under 10 minutes from the comfort of home. Backed by the Indian Succession Act, 1925.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will for &#x20B9;299 &rarr;</a>
+      </div>
+    </section>
 
   <!-- Modern Footer -->
   <footer class="footer">
@@ -321,6 +611,17 @@
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>

@@ -92,56 +92,114 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); 
+      text-transform: none !important;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.3; 
-      margin-bottom: 1rem; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-header .container,
-    .article-body { 
-      max-width: 860px; 
-      margin-left: auto; 
-      margin-right: auto; 
-      padding-bottom: 5rem; 
+    .article-subtitle { 
+      font-size: 1.12rem; 
+      line-height: 1.68; 
+      color: var(--text-muted); 
+      max-width: 820px; 
+      margin-bottom: 1.75rem; 
+      text-wrap: pretty;
     }
-    .article-header .container { padding-bottom: 0; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.75rem 0 1rem; 
-      padding-top: 1.25rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance;
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 {
+      color: #92400e;
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -149,34 +207,112 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
     .table-custom {
       width: 100%;
       border-collapse: collapse;
-      margin: 1.5rem 0 2.25rem;
       font-size: 0.95rem;
+      min-width: 580px;
     }
     .table-custom th, .table-custom td {
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
+      padding: 14px 18px;
       text-align: left;
     }
     .table-custom th {
       background: var(--bg-surface);
       font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -224,21 +360,36 @@
   </header>
 
   <main>
-    <article class="article-header">
+    <section class="article-header">
       <div class="container">
-        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.25rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
           <span style="color:var(--primary, #dfb76c);">Disinheriting a Child in India</span>
         </nav>
-        <div class="article-tag">Succession Law &amp; Family Rights</div>
+        <div class="article-tag">
+          <i data-lucide="shield-alert" style="width:16px;height:16px;"></i> Succession Law &bull; Family Property Rights
+        </div>
         <h1 class="article-title">Can You Disinherit a Son or Daughter in India? (2026 Legal Reality)</h1>
-        <div class="article-meta">September 29, 2026 &nbsp;&middot;&nbsp; 7 min read &nbsp;&middot;&nbsp; Verified by SmartWill Legal Desk</div>
+        <p class="article-subtitle">
+          Learn what the Hindu Succession Act and Indian Succession Act say about cutting a child out of your estate, the vital difference between self-acquired and ancestral property, and how to prevent court challenges.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="scale" style="width:16px;height:16px;"></i> Hindu Succession Act 1956</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 7 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
+        </div>
       </div>
-    </article>
+    </section>
 
-    <div class="container">
-      <div class="article-body">
+    <!-- Body Content Grid -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
+
         <p>
           One of the most emotionally charged legal questions in India is whether parents can legally cut a son or daughter out of their inheritance. In Indian society, strained relationships, estrangement, abandonment in old age, or deep family disputes frequently prompt parents to ask:
         </p>
@@ -248,7 +399,7 @@
           </p>
         </div>
         <p>
-          The answer depends entirely on <strong>the nature of the property</strong> — specifically whether it is <em>Self-Acquired Property</em> or <em>Ancestral Property</em>. In this guide, we break down the statutory framework under the <em>Hindu Succession Act, 1956</em> and the <em>Indian Succession Act, 1925</em>.
+          The answer depends entirely on <strong>the nature of the property</strong> &mdash; specifically whether it is <em>Self-Acquired Property</em> or <em>Ancestral Property</em>. In this guide, we break down the statutory framework under the <em>Hindu Succession Act, 1956</em> and the <em>Indian Succession Act, 1925</em>.
         </p>
 
         <h2>1. Self-Acquired Property: 100% Disinheritance is Legal</h2>
@@ -282,37 +433,40 @@
         </div>
 
         <h2>Property Types &amp; Disinheritance Rules Comparison</h2>
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>Property Type</th>
-              <th>Can You Disinherit?</th>
-              <th>Legal Standing of Child</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Self-Acquired Flat / House</strong></td>
-              <td><strong>Yes, 100%</strong></td>
-              <td>Zero claim if excluded in a valid Will</td>
-            </tr>
-            <tr>
-              <td><strong>Bank FDs &amp; Mutual Funds</strong></td>
-              <td><strong>Yes, 100%</strong></td>
-              <td>Will beneficiary supersedes all nominees</td>
-            </tr>
-            <tr>
-              <td><strong>Ancestral Land / Property</strong></td>
-              <td><strong>No</strong> (Only parent's share)</td>
-              <td>Child has independent birthright</td>
-            </tr>
-            <tr>
-              <td><strong>EPF &amp; Gratuity</strong></td>
-              <td>Subject to EPFO family rules</td>
-              <td>Defined statutory dependents</td>
-            </tr>
-          </tbody>
-        </table>
+        
+        <div class="comparison-table-wrapper">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Property Type</th>
+                <th>Can You Disinherit?</th>
+                <th>Legal Standing of Child</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Self-Acquired Flat / House</strong></td>
+                <td><strong>Yes, 100%</strong></td>
+                <td>Zero claim if excluded in a valid Will</td>
+              </tr>
+              <tr>
+                <td><strong>Bank FDs &amp; Mutual Funds</strong></td>
+                <td><strong>Yes, 100%</strong></td>
+                <td>Will beneficiary supersedes all nominees</td>
+              </tr>
+              <tr>
+                <td><strong>Ancestral Land / Property</strong></td>
+                <td><strong>No</strong> (Only parent's share)</td>
+                <td>Child has independent birthright</td>
+              </tr>
+              <tr>
+                <td><strong>EPF &amp; Gratuity</strong></td>
+                <td>Subject to EPFO family rules</td>
+                <td>Defined statutory dependents</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <h2>How to Draft a Challenge-Proof Will When Disinheriting</h2>
         <p>
@@ -330,34 +484,114 @@
           </li>
         </ol>
 
-        <div class="blog-cta-box">
-          <h3>Create Your Legally Valid Will for ₹299</h3>
-          <p>
+        <div class="blog-cta-box" style="margin: 2.5rem 0; padding: 2rem; background: rgba(223, 183, 108, 0.08); border: 1px solid rgba(223, 183, 108, 0.25); border-radius: 12px; text-align: center;">
+          <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-main);">Create Your Legally Valid Will for &#x20B9;299</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem; max-width: 620px; margin-left: auto; margin-right: auto;">
             Ensure your assets pass exactly as you intend. Protect your spouse and chosen heirs with a customized, legally binding Will in 10 minutes.
           </p>
           <a href="/app" class="btn btn-gold btn-lg shadow-gold">
-            Draft Your Will Online Now &mdash; &#x20B9;299
+            Draft Your Will Online Now &mdash; &#x20B9;299 &rarr;
           </a>
         </div>
 
         <h2>Frequently Asked Questions</h2>
-        <h3>1. Can married daughters claim a share if excluded from a Will?</h3>
-        <p>
-          If the property is self-acquired by the parent and disposed of via a valid Will, married daughters (like sons) cannot claim a share. However, in ancestral property, daughters enjoy full coparcenary rights following the 2005 Hindu Succession Amendment Act.
-        </p>
+        
+        <div class="faq-card">
+          <h3>Can married daughters claim a share if excluded from a Will?</h3>
+          <p>
+            If the property is self-acquired by the parent and disposed of via a valid Will, married daughters (like sons) cannot claim a share. However, in ancestral property, daughters enjoy full coparcenary rights following the 2005 Hindu Succession Amendment Act.
+          </p>
+        </div>
 
-        <h3>2. What is the Maintenance and Welfare of Parents and Senior Citizens Act?</h3>
-        <p>
-          Under the Senior Citizens Act, 2007, if an elderly parent gifts property to a child on the condition of basic care, and the child subsequently neglects or abuses the parent, the parent can apply to the Maintenance Tribunal to revoke the transfer.
-        </p>
+        <div class="faq-card">
+          <h3>What is the Maintenance and Welfare of Parents and Senior Citizens Act?</h3>
+          <p>
+            Under the Senior Citizens Act, 2007, if an elderly parent gifts property to a child on the condition of basic care, and the child subsequently neglects or abuses the parent, the parent can apply to the Maintenance Tribunal to revoke the transfer.
+          </p>
+        </div>
 
-        <h3>3. Can an unregistered Will be used to disinherit a child?</h3>
-        <p>
-          Yes. Under Section 18(e) of the Registration Act 1908, registration is optional. An unregistered plain paper Will fulfilling Section 63 execution criteria is 100% legally enforceable in court.
-        </p>
+        <div class="faq-card">
+          <h3>Can an unregistered Will be used to disinherit a child?</h3>
+          <p>
+            Yes. Under Section 18(e) of the Registration Act 1908, registration is optional. An unregistered plain paper Will fulfilling Section 63 execution criteria is 100% legally enforceable in court.
+          </p>
+        </div>
 
+        <div style="margin-top: 2rem;">
+          <a href="/blog" style="color:var(--text-muted);font-size:0.95rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;">&larr; Back to all articles</a>
+        </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar (col-lg-4) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Fast Action Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--accent-gold, #dfb76c); font-weight:700; margin-bottom:4px;">
+                  ⚡ Bulletproof Estate
+                </div>
+                <h4 style="font-size:1.25rem; margin-bottom:0.6rem; color:var(--text-main);">Protect Your Assets with a Valid Will</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  Safeguard your spouse and favored beneficiaries. Draft your legally binding Will in 10 minutes for just &#x20B9;299.
+                </p>
+                <a href="/app" class="btn btn-gold" style="width:100%; text-align:center; display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Key Rules / Highlights Card -->
+              <div class="sidebar-card">
+                <h4>Disinheritance Rules at a Glance</h4>
+                <ul style="display:flex; flex-direction:column; gap:0.85rem; font-size:0.92rem; color:var(--text-muted);">
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="check-circle" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Self-Acquired:</strong> 100% disinheritance is legally valid via a Will.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="x-circle" style="color:#ef4444; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Ancestral Property:</strong> Child has coparcenary birthright under HSA.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="alert-triangle" style="color:#ef4444; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Newspaper Notice:</strong> Zero legal value; intestacy gives child full share.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="file-text" style="color:var(--primary, #dfb76c); width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>State Clear Reasons:</strong> Preempts undue influence / capacity lawsuits.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Succession Guides</h4>
+                <ul>
+                  <li><a href="/blog/what-happens-without-will-india">&rarr; What Happens Without a Will (Intestate)</a></li>
+                  <li><a href="/blog/is-will-registration-mandatory-in-india">&rarr; Is Will Registration Mandatory?</a></li>
+                  <li><a href="/blog/can-a-registered-will-be-challenged-in-india">&rarr; Can a Will Be Challenged in Court?</a></li>
+                  <li><a href="/blog/doctor-certificate-for-will-india">&rarr; Doctor Certificate for Will in India</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir Rights</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Leave Your Property Exactly to Whom You Choose</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Don't let statutory intestacy laws override your life's earnings. Draft your customized Will in 10 minutes for &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Draft Your Will for &#x20B9;299 &rarr;</a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -378,7 +612,7 @@
         <h4 class="footer-title">Platform</h4>
         <ul class="footer-links">
           <li><a href="/#how-it-works">How It Works</a></li>
-          <li><a href="/#pricing">Pricing (₹299)</a></li>
+          <li><a href="/#pricing">Pricing (&#x20B9;299)</a></li>
           <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
           <li><a href="/blog">Legal Guides</a></li>
           <li><a href="/online-will-maker-vs-lawyer">Online Will vs Lawyer</a></li>
@@ -402,6 +636,17 @@
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>

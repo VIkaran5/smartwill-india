@@ -91,50 +91,114 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); 
+      text-transform: none !important;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-subtitle { 
+      font-size: 1.12rem; 
+      line-height: 1.68; 
+      color: var(--text-muted); 
+      max-width: 820px; 
+      margin-bottom: 1.75rem; 
+      text-wrap: pretty;
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance;
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 {
+      color: #92400e;
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85;
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -142,34 +206,115 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
+
+    /* ── Stat Box ── */
     .stat-box { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
-      border-radius: var(--radius-md, 12px); 
-      padding: 1.5rem; 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
       margin: 2rem 0; 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
       gap: 1.5rem; 
       text-align: center; 
     }
-    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
     [data-theme="light"] .stat-number { color: #b45309; }
-    .stat-label { font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 580px;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── Decision Matrix Grid ── */
+    .vs-matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    @media (max-width: 768px) {
+      .vs-matrix-grid { grid-template-columns: 1fr; }
+    }
+    .vs-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .vs-card.highlight {
+      border-color: rgba(223, 183, 108, 0.4);
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.06), transparent);
+    }
+    .vs-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .vs-card-header h3 {
+      font-size: 1.15rem;
+      margin: 0;
+      color: var(--text-main);
+    }
+    .vs-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+    }
+    .vs-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .vs-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.93rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* ── Telugu Guidance Box ── */
     .telugu-snippet-box {
       background: var(--bg-card);
       border: 1px dashed var(--accent-gold, #dfb76c);
@@ -182,20 +327,85 @@
       font-size: 1.15rem;
       margin-bottom: 0.5rem;
     }
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0 2rem;
-      font-size: 0.95rem;
+    [data-theme="light"] .telugu-snippet-box h4 {
+      color: #b45309;
     }
-    .table-custom th, .table-custom td {
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
-      text-align: left;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .table-custom th {
-      background: var(--bg-surface);
+    .faq-card h3 {
+      font-size: 1.15rem;
       font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -251,25 +461,35 @@
   </header>
 
   <main>
-    <article class="article-header">
+    <section class="article-header">
       <div class="container">
-        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.25rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
           <span style="color:var(--primary, #dfb76c);">Will Registration in India</span>
         </nav>
-        <div class="article-tag">Indian Succession Law &amp; Registration</div>
+        <div class="article-tag">
+          <i data-lucide="file-check-2" style="width:16px;height:16px;"></i> Registration Act 1908 &bull; Section 18
+        </div>
         <h1 class="article-title">Is Registration of a Will Mandatory in India? (Section 18 Explained)</h1>
+        <p class="article-subtitle">
+          Learn why Will registration is strictly optional under Indian law, how plain A4 paper Wills are 100% legally enforceable in court, and when registration might actually be helpful.
+        </p>
         <div class="article-meta">
-          <span>By SmartWill India Legal Desk</span> &nbsp;&middot;&nbsp; 
-          <span>Updated September 2026</span> &nbsp;&middot;&nbsp; 
-          <span>5 min read</span>
+          <span><i data-lucide="shield-check" style="width:16px;height:16px;"></i> Registration Act 1908 &amp; ISA 1925</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 5 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
         </div>
       </div>
-    </article>
+    </section>
 
-    <div class="container">
-      <div class="article-body">
+    <!-- Body Content Grid -->
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
 
         <div class="callout-success">
           <p><strong>The Short Legal Answer:</strong> <strong>NO.</strong> Under Section 18(e) of the Indian Registration Act, 1908, the registration of a Will is <strong>completely optional</strong> in India. A Will typed on plain A4 paper, signed by the testator, and attested by two witnesses is <strong>100% legally enforceable</strong> in Indian courts.</p>
@@ -299,7 +519,7 @@
         <p><strong>Wills are deliberately excluded from Section 17.</strong> Instead, Wills appear under <strong>Section 18(e)</strong>, which explicitly lists documents for which registration is optional:</p>
 
         <div class="callout">
-          <p><em>"Section 18: Documents of which registration is optional — Any of the following documents may be registered under this Act, namely: ... (e) Wills;"</em></p>
+          <p><em>"Section 18: Documents of which registration is optional &mdash; Any of the following documents may be registered under this Act, namely: ... (e) Wills;"</em></p>
         </div>
 
         <p>Because registration is optional, an unregistered Will carries the <strong>exact same legal weight</strong> in probate and succession matters as a registered Will, provided the formal requirements under the <em>Indian Succession Act, 1925</em> are satisfied.</p>
@@ -315,42 +535,44 @@
         <h2>3. Registered Will vs. Unregistered Will: The Real Differences</h2>
         <p>While registration is not mandatory, understanding the practical differences helps you decide what is right for you:</p>
 
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th>Unregistered Plain Paper Will</th>
-              <th>Registered Will (Sub-Registrar)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Legal Validity</strong></td>
-              <td>100% valid under Indian Succession Act 1925</td>
-              <td>100% valid under Indian Succession Act 1925</td>
-            </tr>
-            <tr>
-              <td><strong>Stamp Duty</strong></td>
-              <td>Zero (₹0)</td>
-              <td>Zero (Nominal registration fee applies)</td>
-            </tr>
-            <tr>
-              <td><strong>Creation Speed</strong></td>
-              <td>10 minutes online (e.g., via SmartWill India)</td>
-              <td>Requires physically booking slot at Sub-Registrar</td>
-            </tr>
-            <tr>
-              <td><strong>Ease of Updating / Revocation</strong></td>
-              <td>Instant: Simply execute a new Will with date</td>
-              <td>Updating requires registering a new Codicil/Will</td>
-            </tr>
-            <tr>
-              <td><strong>Tampering Protection</strong></td>
-              <td>Safeguarded by physical witness testimony &amp; duplicate copies</td>
-              <td>Copy archived in government Sub-Registrar records</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="comparison-table-wrapper">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Factor</th>
+                <th>Unregistered Plain Paper Will</th>
+                <th>Registered Will (Sub-Registrar)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Legal Validity</strong></td>
+                <td>100% valid under Indian Succession Act 1925</td>
+                <td>100% valid under Indian Succession Act 1925</td>
+              </tr>
+              <tr>
+                <td><strong>Stamp Duty</strong></td>
+                <td>Zero (&#x20B9;0)</td>
+                <td>Zero (Nominal registration fee applies)</td>
+              </tr>
+              <tr>
+                <td><strong>Creation Speed</strong></td>
+                <td>10 minutes online (e.g., via SmartWill India)</td>
+                <td>Requires physically booking slot at Sub-Registrar</td>
+              </tr>
+              <tr>
+                <td><strong>Ease of Updating / Revocation</strong></td>
+                <td>Instant: Simply execute a new Will with date</td>
+                <td>Updating requires registering a new Codicil/Will</td>
+              </tr>
+              <tr>
+                <td><strong>Tampering Protection</strong></td>
+                <td>Safeguarded by physical witness testimony &amp; duplicate copies</td>
+                <td>Copy archived in government Sub-Registrar records</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- Registered vs Unregistered Decision Cards -->
         <div class="vs-matrix-grid">
@@ -400,25 +622,111 @@
         <p>Even in such cases, having a clean, well-drafted Will on plain paper executed today is infinitely better than waiting months or years for a Sub-Registrar appointment. If you do choose to register for extra peace of mind, follow our step-by-step walkthrough on <a href="/blog/how-to-register-a-will-at-sub-registrar-office" style="color:var(--accent-gold, #dfb76c); font-weight:600;">how to register a Will at the Sub-Registrar Office</a>.</p>
 
         <!-- CTA Box -->
-        <div class="blog-cta-box">
-          <h3>Create Your Legally Valid Will in 10 Minutes</h3>
-          <p>Don't leave your family's future to chance. Draft your plain-paper Will legally valid under the Indian Succession Act 1925 for just ₹299.</p>
+        <div class="blog-cta-box" style="margin: 2.5rem 0; padding: 2rem; background: rgba(223, 183, 108, 0.08); border: 1px solid rgba(223, 183, 108, 0.25); border-radius: 12px; text-align: center;">
+          <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--text-main);">Create Your Legally Valid Will in 10 Minutes</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem; max-width: 620px; margin-left: auto; margin-right: auto;">
+            Don't leave your family's future to chance. Draft your plain-paper Will legally valid under the Indian Succession Act 1925 for just &#x20B9;299.
+          </p>
           <a href="/app" class="btn btn-gold btn-lg">Create Your Will Online &mdash; &#x20B9;299 &rarr;</a>
         </div>
 
-        <h2>Frequently Asked Questions</h2>
+        <h2>Frequently Asked Questions About Will Registration</h2>
         
-        <h3>Can I write a Will on plain A4 paper?</h3>
-        <p>Yes. Any paper (ruled or unruled, printed or handwritten) is legally valid in India under the Indian Succession Act 1925. No legal paper (green sheet) or stamp paper is mandatory.</p>
+        <div class="faq-card">
+          <h3>Can I write a Will on plain A4 paper in India?</h3>
+          <p>Yes. Any paper (ruled or unruled, printed or handwritten) is 100% legally valid under the Indian Succession Act 1925. No legal paper (green sheet) or judicial stamp paper is required.</p>
+        </div>
 
-        <h3>Can a beneficiary be a witness?</h3>
-        <p>No. Section 67 of the Indian Succession Act states that any bequest or gift made to an attesting witness is void. Always choose two neutral witnesses (friends, colleagues, doctors, neighbors) who receive nothing under the Will.</p>
+        <div class="faq-card">
+          <h3>Is stamp paper required for registering a Will in India?</h3>
+          <p>No. Under the Indian Stamp Act and state stamp schedules, Wills attract zero stamp duty (&#x20B9;0) across all Indian states and Union Territories. Even if you choose to register at the Sub-Registrar, you only pay a nominal government registration/scanning fee, not stamp duty.</p>
+        </div>
 
-        <h3>What happens if I make a new Will later?</h3>
-        <p>Under Section 62 of the Indian Succession Act, every Will can be revoked or modified at any time by the testator during their lifetime. The latest dated, properly executed Will automatically revokes all prior Wills.</p>
+        <div class="faq-card">
+          <h3>Can a beneficiary sign as a witness to a Will?</h3>
+          <p>No. Under Section 67 of the Indian Succession Act 1925, any bequest or legacy made to an attesting witness (or their spouse) becomes completely void. Always choose two neutral adult witnesses who inherit nothing under the Will.</p>
+        </div>
 
+        <div class="faq-card">
+          <h3>What happens if I make a new Will later after registering one?</h3>
+          <p>Under Section 62 of the Indian Succession Act 1925, every Will can be revoked or modified at any time by the testator during their lifetime. A newer, properly executed and dated Will automatically revokes all prior Wills, even if the prior Will was registered at the Sub-Registrar.</p>
+        </div>
+
+        <div style="margin-top: 2rem;">
+          <a href="/blog" style="color:var(--text-muted);font-size:0.95rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;">&larr; Back to all articles</a>
+        </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar (col-lg-4) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Fast Action Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--accent-gold, #dfb76c); font-weight:700; margin-bottom:4px;">
+                  ⚡ 10-Minute Plain Paper Will
+                </div>
+                <h4 style="font-size:1.25rem; margin-bottom:0.6rem; color:var(--text-main);">Create Your Legally Valid Will for &#x20B9;299</h4>
+                <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  Print on standard A4 paper, sign before two witnesses, and keep your family protected. 100% compliant with ISA 1925.
+                </p>
+                <a href="/app" class="btn btn-gold" style="width:100%; text-align:center; display:block;">
+                  Create Your Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Quick Rules / Highlights Card -->
+              <div class="sidebar-card">
+                <h4>Key Registration Facts at a Glance</h4>
+                <ul style="display:flex; flex-direction:column; gap:0.85rem; font-size:0.92rem; color:var(--text-muted);">
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="check-circle" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Strictly Optional:</strong> Section 18(e) Registration Act 1908 exempts Wills.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="check-circle" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>&#x20B9;0 Stamp Duty:</strong> No stamp paper or court fee stamps required.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="users" style="color:var(--primary, #dfb76c); width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>2 Witnesses:</strong> Mandatory under Section 63 Indian Succession Act.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="file-check" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Plain A4 Paper:</strong> Handwritten or printed carries full court weight.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Popular Guides -->
+              <div class="sidebar-card">
+                <h4>Related Registration Guides</h4>
+                <ul>
+                  <li><a href="/blog/is-stamp-paper-required-for-will-india">&rarr; Is Stamp Paper Required for a Will?</a></li>
+                  <li><a href="/blog/can-a-registered-will-be-challenged-in-india">&rarr; Can a Registered Will Be Challenged?</a></li>
+                  <li><a href="/blog/how-to-register-a-will-at-sub-registrar-office">&rarr; How to Register at Sub-Registrar Office</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/what-happens-without-will-india">&rarr; What Happens Without a Will (Intestate)</a></li>
+                  <li><a href="/blog/handwritten-will-validity-india">&rarr; Handwritten Will Validity in India</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Make Your Legally Enforceable Will Today</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          No stamp paper, no advocate fees, no waiting at the Sub-Registrar office. Create your legally compliant Will for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will in 10 Mins &rarr;</a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -437,7 +745,7 @@
         <h4 class="footer-title">Platform</h4>
         <ul class="footer-links">
           <li><a href="/#how-it-works">How It Works</a></li>
-          <li><a href="/#pricing">Pricing (₹299)</a></li>
+          <li><a href="/#pricing">Pricing (&#x20B9;299)</a></li>
           <li><a href="/#faq">Legal Validity FAQ</a></li>
           <li><a href="/te/">తెలుగు వెర్షన్ (Telugu)</a></li>
           <li><a href="/blog">Legal Guides</a></li>
@@ -461,6 +769,17 @@
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js"></script>
 </body>
