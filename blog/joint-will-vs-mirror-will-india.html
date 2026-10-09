@@ -100,7 +100,8 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); 
+      text-transform: none !important;
     }
     .article-header { 
       padding: 7.5rem 0 3.5rem; 
@@ -489,6 +490,29 @@
                 </a>
               </div>
 
+              <!-- Key Rules / Highlights Card -->
+              <div class="sidebar-card">
+                <h4>Mirror Will Rules at a Glance</h4>
+                <ul style="display:flex; flex-direction:column; gap:0.85rem; font-size:0.92rem; color:var(--text-muted);">
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="check-circle" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Separate Documents:</strong> Each spouse executes their own independent Will.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="refresh-cw" style="color:var(--primary, #dfb76c); width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Free to Revoke:</strong> Surviving spouse retains total autonomy to modify.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="shield-alert" style="color:#ef4444; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Joint Will Risk:</strong> Joint Wills freeze assets &amp; cause probate deadlock.</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.6rem;">
+                    <i data-lucide="users" style="color:#10b981; width:18px; height:18px; flex-shrink:0; margin-top:2px;"></i>
+                    <span><strong>Same Witnesses OK:</strong> Spouses can use the same 2 independent witnesses.</span>
+                  </li>
+                </ul>
+              </div>
+
               <!-- Popular Guides -->
               <div class="sidebar-card">
                 <h4>Related Legal Guides</h4>
@@ -560,6 +584,17 @@
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>
