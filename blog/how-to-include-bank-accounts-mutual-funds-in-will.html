@@ -99,50 +99,112 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    h1, h2, h3, h4, .article-title, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
+    }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -150,42 +212,62 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
-    .callout-alert { 
+    .callout-alert, .callout-danger { 
       background: rgba(239, 68, 68, 0.08); 
       border-left: 4px solid #ef4444; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
-    .callout-alert p { color: var(--text-main); margin-bottom: 0; }
+    .callout-alert p, .callout-danger p { color: var(--text-main); margin-bottom: 0; }
+
+    /* ── Stat Box ── */
     .stat-box { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
-      border-radius: var(--radius-md, 12px); 
-      padding: 1.5rem; 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
       margin: 2rem 0; 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
       gap: 1.5rem; 
       text-align: center; 
     }
-    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
     [data-theme="light"] .stat-number { color: #b45309; }
-    .stat-label { font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 580px;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── Telugu Guidance Box ── */
     .telugu-snippet-box {
       background: var(--bg-card);
       border: 1px dashed var(--accent-gold, #dfb76c);
@@ -198,20 +280,85 @@
       font-size: 1.15rem;
       margin-bottom: 0.5rem;
     }
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0 2rem;
-      font-size: 0.95rem;
+    [data-theme="light"] .telugu-snippet-box h4 {
+      color: #b45309;
     }
-    .table-custom th, .table-custom td {
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
-      text-align: left;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .table-custom th {
-      background: var(--bg-surface);
+    .faq-card h3 {
+      font-size: 1.15rem;
       font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -272,254 +419,328 @@
         <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
-          <span style="color:var(--primary, #dfb76c);">Bank Accounts &amp; Mutual Funds in Will</span>
+          <span style="color:var(--accent-gold, #dfb76c);">Bank Accounts &amp; Mutual Funds in Will</span>
         </nav>
-        <div class="article-tag">Banking, Demat &amp; Succession Law</div>
+        <div class="article-tag">
+          <i data-lucide="wallet" style="width:14px; height:14px;"></i>
+          <span>Banking, Demat &amp; Succession Law</span>
+        </div>
         <h1 class="article-title">How to Include Bank Accounts &amp; Mutual Funds in Will (2026)</h1>
+        <p class="article-subtitle" style="font-size:1.12rem; line-height:1.68; color:var(--text-muted); max-width:820px; margin-bottom:1.75rem;">
+          A comprehensive guide to safeguarding your liquid wealth. Understand why bank nominees don't own your money, how to detail FDs, demat shares, and SIPs, and how the residuary clause prevents &#x20B9;40,000+ Cr in unclaimed assets.
+        </p>
         <div class="article-meta">
-          <span>By SmartWill India Legal Desk</span> &nbsp;&middot;&nbsp; 
-          <span>Updated September 2026</span> &nbsp;&middot;&nbsp; 
-          <span>7 min read</span>
+          <span><i data-lucide="shield-check" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c);"></i> SmartWill India Legal Desk</span>
+          <span><i data-lucide="calendar" style="width:16px; height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="clock" style="width:16px; height:16px;"></i> 7 min read</span>
+          <span><i data-lucide="scale" style="width:16px; height:16px;"></i> Indian Succession Act &sect; 102</span>
         </div>
       </div>
     </article>
 
-    <div class="container">
-      <div class="article-body">
+    <section class="article-body">
+      <div class="container">
+        <div class="row g-lg-5">
+          <!-- Main Content Column (8 cols) -->
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <div class="callout-alert">
-          <p><strong>The Cost of the "Nominee Trap":</strong> According to official Reserve Bank of India (RBI) records, over <strong>&#x20B9;40,000 Crore</strong> in unclaimed deposits sits abandoned in the Depositor Education and Awareness Fund (DEAF). A substantial fraction of this money was abandoned because families assumed filling out a simple bank nomination form was enough to transfer absolute ownership. In Indian jurisprudence, that assumption is legally false.</p>
-        </div>
+              <div class="callout-alert">
+                <p><strong>The Cost of the "Nominee Trap":</strong> According to official Reserve Bank of India (RBI) records, over <strong>&#x20B9;40,000 Crore</strong> in unclaimed deposits sits abandoned in the Depositor Education and Awareness Fund (DEAF). A substantial fraction of this money was abandoned because families assumed filling out a simple bank nomination form was enough to transfer absolute ownership. In Indian jurisprudence, that assumption is legally false.</p>
+              </div>
 
-        <p>In modern urban India, financial portfolios have shifted dramatically away from physical gold and ancestral land toward liquid, market-linked financial instruments. Middle-class Indian families today hold wealth distributed across savings accounts, fixed deposits (FDs), recurring deposits (RDs), demat equity holdings, Systematic Investment Plans (SIPs) in mutual funds, Sovereign Gold Bonds (SGBs), and provident fund balances.</p>
+              <p>In modern urban India, financial portfolios have shifted dramatically away from physical gold and ancestral land toward liquid, market-linked financial instruments. Middle-class Indian families today hold wealth distributed across savings accounts, fixed deposits (FDs), recurring deposits (RDs), demat equity holdings, Systematic Investment Plans (SIPs) in mutual funds, Sovereign Gold Bonds (SGBs), and provident fund balances.</p>
 
-        <p>Yet, when creating an estate plan, drafting a proper <strong>will for bank accounts mutual funds</strong> is frequently neglected or executed with catastrophic vagueness. Account holders mistakenly believe that their bank nominees or registered Demat co-holders will automatically inherit everything without dispute.</p>
+              <p>Yet, when creating an estate plan, drafting a proper <strong>will for bank accounts mutual funds</strong> is frequently neglected or executed with catastrophic vagueness. Account holders mistakenly believe that their bank nominees or registered Demat co-holders will automatically inherit everything without dispute.</p>
 
-        <p>This comprehensive guide details the governing legal frameworks under the <em>Indian Succession Act, 1925</em>, the <em>Banking Regulation Act, 1949</em>, and key Supreme Court precedents. You will learn how to describe liquid financial assets with surgical precision, utilize the residuary clause to safeguard future wealth, handle joint accounts, and expedite claim settlements for your grieving beneficiaries.</p>
+              <p>This comprehensive guide details the governing legal frameworks under the <em>Indian Succession Act, 1925</em>, the <em>Banking Regulation Act, 1949</em>, and key Supreme Court precedents. You will learn how to describe liquid financial assets with surgical precision, utilize the residuary clause to safeguard future wealth, handle joint accounts, and expedite claim settlements for your grieving beneficiaries.</p>
 
-        <div class="stat-box">
-          <div>
-            <div class="stat-number">&#x20B9;40,000+ Cr</div>
-            <div class="stat-label">Unclaimed Bank Deposits in India (RBI Data)</div>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">&#x20B9;40,000+ Cr</div>
+                  <div class="stat-label">Unclaimed Bank Deposits in India (RBI Data)</div>
+                </div>
+                <div>
+                  <div class="stat-number">2023</div>
+                  <div class="stat-label">SC Landmark Ruling on Demat Shares (Shakti Yezdani)</div>
+                </div>
+                <div>
+                  <div class="stat-number">Sec 102</div>
+                  <div class="stat-label">Residuary Clause in Indian Succession Act</div>
+                </div>
+              </div>
+
+              <h2>1. The Critical Legal Distinction: Bank Nominee vs. Will Beneficiary</h2>
+              <p>The single most dangerous misconception in Indian personal finance is confusing a <strong>Nominee</strong> with a <strong>Legal Beneficiary</strong>. Every banking customer is urged to register a nominee when opening a savings account or investing through discount brokers like Zerodha, Groww, or Angel One. Most investors tick this box assuming it functions as a Will.</p>
+
+              <p>Under Indian law, nomination is purely an <em>administrative facilitation mechanism</em>. It gives the bank, asset management company (AMC), or depository participant (DP) a valid legal discharge from liability upon transferring the proceeds to the nominee. However, <strong>nominees do not inherit beneficial ownership</strong>.</p>
+
+              <h3>The Foundational Precedents: Sarbati Devi &amp; Shakti Yezdani</h3>
+              <p>The Supreme Court of India has firmly established the subordinate status of nominees across multiple landmark rulings:</p>
+
+              <ul>
+                <li><strong><em>Sarbati Devi and Anr. v. Usha Devi (1984 1 SCC 424):</em></strong> The Supreme Court held that nomination under Section 39 of the Insurance Act (and symmetrically under banking regulations) simply specifies the person authorized to collect the funds. The nominee receives the corpus merely as a <strong>trustee</strong> and holds it in fiduciary capacity for the true legal heirs or beneficiaries specified in the deceased person's Will.</li>
+                <li><strong><em>Shakti Yezdani and Anr. v. Jayanand Jayant Salgaonkar (Supreme Court, December 2023):</em></strong> For decades, stock market investors believed that Section 109A of the Companies Act 1956 (and Section 72 of the Companies Act 2013) granted demat nominees complete ownership of shares over legal heirs. In late 2023, a two-judge bench of the Supreme Court conclusively rejected this theory. The apex court ruled that the Companies Act and SEBI regulations cannot override general succession laws or testamentary bequests. A demat nominee is merely a caretaker who must deliver the shares to the legitimate Will beneficiaries.</li>
+              </ul>
+
+              <div class="callout">
+                <p><em>"Legal Reality: If you designate your brother as the nominee in your &#x20B9;50 Lakh Fixed Deposit, but execute a Will leaving your entire movable estate to your daughter, your daughter is the sole legal owner of that money. While the bank will release the funds to your brother, he is legally bound to hand over every single rupee to your daughter. If you fail to write a Will, that money is carved up according to the intestate succession laws of your religion, regardless of your personal wishes."</em></p>
+              </div>
+
+              <p>To understand the full consequences of dying without a testament, read our detailed analysis on <a href="/blog/what-happens-without-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">what happens if you die without a Will in India</a> and our breakdown of <a href="/blog/nominee-vs-legal-heir-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">Nominee vs Legal Heir in India</a>.</p>
+
+              <h2>2. How to Specifically Detail Financial Assets in Your Will</h2>
+              <p>When drafting a will for bank accounts and mutual funds, ambiguity is the primary cause of administrative delays and probate litigation. If a Will vaguely states, <em>"I leave all my bank money to my son,"</em> the executor must spend months corresponding with bank compliance officers, answering customer identification queries, and producing affidavits.</p>
+
+              <p>To ensure swift, uncontested transmission, your Will should document each category of financial holding using standard institutional identifiers:</p>
+
+              <h3>A. Bank Savings Accounts &amp; Fixed Deposits (FDs / RDs)</h3>
+              <p>For every bank account, provide the following precise parameters:</p>
+              <ul>
+                <li><strong>Full Legal Name of the Bank:</strong> (e.g., State Bank of India, HDFC Bank Ltd, ICICI Bank).</li>
+                <li><strong>Branch Name &amp; IFSC Code:</strong> (e.g., Koramangala Branch, Bengaluru &mdash; IFSC: SBIN0001234).</li>
+                <li><strong>Account Number:</strong> Include the complete savings or current account number.</li>
+                <li><strong>Customer Information File (CIF) / Customer ID:</strong> Including the CIF is vital because it links all recurring deposits, fixed deposit receipts, and ancillary accounts under one customer profile.</li>
+                <li><strong>Percentage Allocation:</strong> Specify exact percentage shares (e.g., "60% to my spouse [Name] and 40% to my son [Name]"). Avoid indeterminate phrases like "sufficient funds for their care."</li>
+                <li><strong>Accrued Interest Clause:</strong> Explicitly state that the bequest includes all principal balances along with interest accrued up to the date of settlement.</li>
+                <li><strong>NRE / NRO / FCNR Accounts for NRIs:</strong> If you hold Non-Resident External (NRE) or Non-Resident Ordinary (NRO) accounts, indicate their foreign currency status and compliance with Foreign Exchange Management Act (FEMA) guidelines.</li>
+              </ul>
+
+              <h3>B. Mutual Funds (Folios, AMCs &amp; Systematic Plans)</h3>
+              <p>Mutual funds can be held either in physical/Statement of Account (SOA) format via Registrar and Transfer Agents (RTAs like CAMS and KFintech) or in dematerialized form within a broker app:</p>
+              <ul>
+                <li><strong>Asset Management Company (AMC):</strong> (e.g., Mirae Asset Mutual Fund, SBI Funds Management Ltd, Parag Parikh Financial Advisory Services).</li>
+                <li><strong>Folio Number:</strong> The unique master identifier for that fund house.</li>
+                <li><strong>Scheme Names &amp; Growth/Dividend Options:</strong> Mention specific schemes (e.g., "Parag Parikh Flexi Cap Fund - Direct Plan - Growth").</li>
+                <li><strong>SIP Continuity &amp; Redemption Rights:</strong> Clarify whether the executor or beneficiary should terminate active SIP mandates upon death or allow units to compound until maturity.</li>
+                <li><strong>RTA Aggregation Clause:</strong> Because investors often switch schemes within the same folio, include a blanket clause: <em>"Including all existing units, dividend reinvestments, and any prospective units purchased under Folio No. [XXXXX] at the time of my demise."</em></li>
+              </ul>
+
+              <h3>C. Demat Accounts &amp; Equity Shares</h3>
+              <p>In modern trading platforms such as Zerodha (Kite), Groww, Upstox, or ICICI Direct, your stocks and Exchange Traded Funds (ETFs) do not sit with the broker. They are held electronically with one of India's two national depositories: <strong>NSDL</strong> or <strong>CDSL</strong>.</p>
+              <p>To properly bequeath shares, do NOT list individual company stocks one by one unless you wish to bequeath specific shares to separate individuals. Company share counts change frequently through stock splits, bonus shares, rights issues, and mergers. Instead, identify the repository container:</p>
+              <ul>
+                <li><strong>Depository:</strong> CDSL (Central Depository Services India Ltd) or NSDL (National Securities Depository Ltd).</li>
+                <li><strong>Depository Participant (DP) Name:</strong> (e.g., Zerodha Broking Ltd).</li>
+                <li><strong>16-Digit Demat Account Number:</strong> Comprising the 8-digit DP ID (e.g., 12081600) and the 8-digit Client ID / Beneficiary ID.</li>
+                <li><strong>Scope of Bequest:</strong> State that the bequest includes all listed equities, Sovereign Gold Bonds (SGBs), Real Estate Investment Trusts (REITs), and cash balances lying in the linked trading ledger.</li>
+              </ul>
+
+              <h3>D. Provident Funds: EPF vs. PPF Legal Nuances</h3>
+              <p>Provident fund balances require special legal care because their statutory regimes differ fundamentally:</p>
+              <ul>
+                <li><strong>EPF (Employees' Provident Fund):</strong> Governed by the <em>Employees' Provident Funds Scheme, 1952</em>. Under Paragraph 61 of the EPF Scheme, an employee who has a family (spouse, children, dependent parents) can <strong>only</strong> make an EPF nomination in favor of family members. A testamentary bequest in a Will attempting to pass EPF corpus to an outsider or third party cannot override this statutory limitation.</li>
+                <li><strong>PPF (Public Provident Fund):</strong> Governed by the <em>Government Savings Promotion General Rules, 2018</em>. Although a nominee is appointed at the post office or bank branch, the High Courts and Supreme Court have affirmed that PPF proceeds form part of the deceased's general estate and can be bequeathed via a Will to any designated beneficiary.</li>
+              </ul>
+
+              <h2>3. The Power of the "Residuary Clause": Your Future Wealth Safety Net</h2>
+              <p>A fatal mistake made by self-drafted testators is attempting an exhaustive list of assets without adding a <strong>Residuary Clause</strong>. Over a typical 10 to 30 year lifespan, financial portfolios are dynamic:</p>
+              <ul>
+                <li>Fixed deposits mature and are converted into new FD numbers at different banks.</li>
+                <li>Old savings accounts are closed and new digital savings accounts are opened.</li>
+                <li>Dividends and bonus shares accumulate in new trading portfolios.</li>
+                <li>You may inherit unexpected ancestral funds or receive insurance bonuses.</li>
+              </ul>
+
+              <p>Under <strong>Section 102 and Section 103 of the Indian Succession Act, 1925</strong>, if an asset is not expressly mentioned in your Will and there is no residuary legatee named, that omitted asset suffers from <em>partial intestacy</em>. The unlisted bank accounts will not go to your primary beneficiary; instead, they will be frozen by bank managers and subjected to protracted legal heir distribution under personal succession laws.</p>
+
+              <div class="callout-success">
+                <p><strong>Gold-Standard Residuary Clause:</strong><br>
+                <em>"All the rest, residue, and remainder of my estate, both movable and immovable, of whatsoever nature and wheresoever situated, including any bank accounts, fixed deposits, mutual funds, demat securities, cash balances, dividends, refunds, and assets acquired after the execution of this Will, which I may be possessed of or entitled to at the time of my death, I hereby bequeath absolutely and forever to my spouse [Name], or if they predecease me, equally to my children [Name] and [Name]."</em></p>
+              </div>
+
+              <p>By including this single paragraph, you eliminate the tedious necessity of updating your Will every single time you open an account or purchase a new investment.</p>
+
+              <h2>4. Joint Accounts: "Either or Survivor" vs. "Former or Survivor"</h2>
+              <p>Millions of married couples in India maintain joint savings accounts and joint fixed deposits with operational mandates like "Either or Survivor" (E or S) or "Former or Survivor" (F or S). What happens to the money when the first holder passes away?</p>
+
+              <p>The Reserve Bank of India issued clear operational directives in its Master Circular on Customer Service in Banks:</p>
+              <ul>
+                <li><strong>Operational Mandate:</strong> In an "Either or Survivor" account, upon the death of the primary holder, the surviving joint holder is legally entitled to operate the account and withdraw the entire balance without producing a Succession Certificate or Will. The bank obtains a complete discharge.</li>
+                <li><strong>Beneficial Ownership Reality:</strong> However, operational authority does not extinguish the legal claims of the deceased's estate. Under Indian civil jurisprudence, if the deceased holder was the sole source of funds in that account, the money forms part of the deceased's estate. If the deceased's Will leaves their movable wealth to their dependent mother or children from an earlier marriage, the surviving co-holder is legally accountable to pay over the deceased's proportion to the Will beneficiaries.</li>
+                <li><strong>Eliminating Spousal Friction:</strong> To prevent bitter intra-family litigation between a surviving spouse and other legal heirs, your Will must explicitly state whether joint account balances are intended as an outright gift to the surviving holder or are subject to estate distribution.</li>
+              </ul>
+
+              <h2>5. Step-by-Step Claim Procedure for Beneficiaries Post-Demise</h2>
+              <p>When the testator passes away, how do the nominated executor or beneficiaries actually interact with banks and fund houses? Follow this structured protocol:</p>
+
+              <ol>
+                <li><strong>Obtain Official Death Certificates:</strong> Procure at least 15&ndash;20 original certified copies of the Death Certificate from the municipal corporation or local registrar of births and deaths. Every financial institution requires an original or notarized true copy.</li>
+                <li><strong>Freeze Operational Access:</strong> Promptly notify the bank and depository participants of the demise in writing. This halts unauthorized ATM withdrawals, net-banking transactions, or automated debit mandates that could complicate accounting.</li>
+                <li><strong>Claiming Bank Deposits via Standard Claim Form (Form 14):</strong>
+                  <ul>
+                    <li>For accounts where a nominee exists, banks settle claims swiftly under RBI guidelines within 15 days upon submission of the death certificate, nominee KYC, and standard claim application.</li>
+                    <li>Where accounts are claimed by a Will beneficiary who is not the nominee, the claimant must submit the Will, an Indemnity Bond (Bank Annexure B), No-Objection Certificates (NOCs) from other legal heirs, and two third-party guarantors of acceptable financial net worth.</li>
+                    <li>For claims below internal bank thresholds (often up to &#x20B9;5,00,000 or &#x20B9;15,00,000 depending on the bank's board-approved policy), banks settle without demanding a court Probate or Succession Certificate.</li>
+                  </ul>
+                </li>
+                <li><strong>Transmitting Mutual Funds via MFCentral or RTAs:</strong>
+                  <ul>
+                    <li>Submit <strong>Form T3</strong> (Transmission Request Form for succession/Will cases) to CAMS or KFintech.</li>
+                    <li>Attach self-attested KYC documents, bank account verification (cancelled cheque) of the new claimant, and a notarized copy of the Will.</li>
+                    <li>For portfolios exceeding SEBI's threshold (currently &#x20B9;5 Lakh without nomination), a legal heir certificate or probate copy may be requested.</li>
+                  </ul>
+                </li>
+                <li><strong>Transmitting Demat Securities:</strong>
+                  <ul>
+                    <li>Submit a Transmission Request Form (TRF) to the Depository Participant (Zerodha, Groww, etc.).</li>
+                    <li>Provide Client Master Report (CMR) of the beneficiary's active demat account so the equity shares can be moved electronically via off-market transfer without incurring capital gains tax.</li>
+                  </ul>
+                </li>
+              </ol>
+
+              <!-- Telugu Regional Guidance Snippet -->
+              <div class="telugu-snippet-box">
+                <h4>&#x1f1ee;&#x1f1f3; బ్యాంక్ ఖాతాలు, మ్యూచువల్ ఫండ్స్ వీలునామాలో ఎలా చేర్చాలి? (Guidance in Telugu)</h4>
+                <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
+                  <strong>నామినీ ఉంటే వీలునామా (Will) అవసరమా?</strong><br>
+                  ఖచ్చితంగా అవసరం! సుప్రీంకోర్టు తీర్పుల ప్రకారం (Sarbati Devi &amp; Shakti Yezdani కేసులు), బ్యాంక్ లేదా మ్యూచువల్ ఫండ్లలో నామినీగా ఉన్న వ్యక్తి కేవలం డబ్బు తీసుకునే "ట్రస్టీ" మాత్రమే. అసలు యాజమాన్య హక్కులు వీలునామాలో పేర్కొన్న వారసులకే చెందుతాయి. మీ బ్యాంక్ సేవింగ్స్, ఫిక్స్‌డ్ డిపాజిట్లు, డిమాట్ అకౌంట్ మరియు మ్యూచువల్ ఫండ్ వివరాలను మీ వీలునామాలో స్పష్టంగా రాసి, "Residuary Clause" జోడించడం ద్వారా మీ కుటుంబానికి భవిష్యత్తులో వచ్చే కోర్టు వివాదాలను నివారించవచ్చు.
+                </p>
+              </div>
+
+              <h2>6. Nominee Rights vs. Will Beneficiary Rights: Statutory Comparison</h2>
+              <p>To appreciate how Indian courts and banking regulations treat competing claims, examine the comparative statutory matrix below:</p>
+
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>Legal Dimension</th>
+                      <th>Bank / AMC Nominee</th>
+                      <th>Will Beneficiary (Legatee)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Governing Statute</strong></td>
+                      <td>Banking Regulation Act 1949 / Companies Act 2013</td>
+                      <td>Indian Succession Act, 1925 (Sec 57 &amp; 63)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Legal Status</strong></td>
+                      <td>Trustee / Temporary Custodian / Fiduciary Agent</td>
+                      <td>Absolute Beneficial Owner of the corpus</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Bank Discharge Function</strong></td>
+                      <td>Releases the bank from third-party liability</td>
+                      <td>Establishes conclusive ownership title in court</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Can They Legally Spend the Funds?</strong></td>
+                      <td><strong>NO.</strong> Accountable to legal heirs and beneficiaries</td>
+                      <td><strong>YES.</strong> Free to consume, invest, or transfer funds</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Effect in Case of Conflict</strong></td>
+                      <td>Overridden by the testamentary disposition of the Will</td>
+                      <td>Prevails conclusively under Supreme Court precedents</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Supreme Court Authority</strong></td>
+                      <td><em>Sarbati Devi (1984)</em>; <em>Ram Chander (2010)</em></td>
+                      <td><em>Shakti Yezdani v. Salgaonkar (Dec 2023)</em></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Need for Succession Certificate</strong></td>
+                      <td>Exempt from Succession Certificate for bank release</td>
+                      <td>Usually exempt if Will is accepted or probate produced</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>7. Key Practical Rules to Make Your Financial Will Bulletproof</h2>
+              <p>Before finalizing your document, verify these five practical drafting principles:</p>
+              <ul>
+                <li><strong>Never Write Account Balances:</strong> Do not write, <em>"I give my &#x20B9;2,45,000 in SBI Account to my brother."</em> Balances change constantly due to daily expenses, UPI transfers, and interest credits. Always specify <strong>percentages</strong> (e.g., "100% of the balance in my SBI Account").</li>
+                <li><strong>Appoint an Able Executor:</strong> The executor is the legally appointed manager of your estate. Name a trusted family member, close professional friend, or chartered accountant who understands digital banking and knows where your financial passwords and documents are filed.</li>
+                <li><strong>Synchronize Nominations with the Will:</strong> While the Will overrides the nomination, conflicting entries create friction. If your Will leaves an FD to your daughter, update the bank nomination to name your daughter as well. When the nominee and the Will beneficiary are the exact same individual, the bank releases funds immediately with zero disputes.</li>
+                <li><strong>Ensure Valid Attestation:</strong> Under Section 63 of the Indian Succession Act 1925, your Will must be signed in the physical presence of <strong>two independent witnesses</strong> who must not be beneficiaries under the Will. Learn more about <a href="/blog/who-can-be-a-witness-to-a-will-in-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">who can legally be a witness to a Will in India</a>.</li>
+                <li><strong>Plain Paper Validity:</strong> You do not need expensive green stamp paper or judicial stamp duty. A Will on simple A4 white paper is 100% enforceable across India. Read our guide on <a href="/blog/is-stamp-paper-required-for-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">why stamp paper is not required for a Will</a>.</li>
+              </ul>
+
+              <h2>Frequently Asked Questions (FAQs)</h2>
+              
+              <div class="faq-card">
+                <h3>Does a Will override a bank account nominee or mutual fund nominee in India?</h3>
+                <p>Yes, absolutely. Under Indian law and landmark Supreme Court rulings in <em>Sarbati Devi (1984)</em> and <em>Shakti Yezdani (2023)</em>, a nominee is only a temporary custodian or trustee appointed to collect funds from financial institutions. The nominee does not obtain beneficial ownership. The person named as the beneficiary in your Will is the true legal owner and has full legal right to inherit the bank balances, fixed deposits, mutual funds, and demat shares.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Do I need to rewrite my Will whenever my bank balance changes or I purchase new mutual fund units?</h3>
+                <p>No. You do not need to update your Will every time your account balances fluctuate or you execute new SIP transactions. By including a properly drafted "Residuary Clause" under Section 102 of the Indian Succession Act 1925, all present and future bank accounts, accumulated interest, newly issued shares, dividends, and rolled-over fixed deposits automatically pass to your designated residuary beneficiaries without requiring amendments.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Is probate mandatory for claiming bank accounts and mutual funds under a Will in India?</h3>
+                <p>In the majority of India, probate is not mandatory for claiming movable financial assets like bank accounts and mutual funds. Under Section 213 read with Section 57 of the Indian Succession Act 1925, probate is mandatory only for Wills executed by Hindus, Buddhists, Jains, or Sikhs within the historical presidential towns of Mumbai, Kolkata, and Chennai, or if immovable properties covered by the Will are situated there. For movable financial assets elsewhere, banks and asset management companies settle claims upon submission of the registered or unregistered Will, death certificate, KYC documents, and standard indemnity bonds.</p>
+              </div>
+
+            </article>
           </div>
-          <div>
-            <div class="stat-number">2023</div>
-            <div class="stat-label">SC Landmark Ruling on Demat Shares (Shakti Yezdani)</div>
+
+          <!-- Sticky Sidebar Column (4 cols) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Primary CTA Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:2rem; margin-bottom:0.75rem;">&#x1f4bc;</div>
+                <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-main);">Protect Your Investments</h4>
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  Don't leave &#x20B9;40,000+ Cr unclaimed. Specify your FDs, mutual funds, and demat accounts in a legally valid Will in just 10 minutes.
+                </p>
+                <a href="/app" class="btn btn-gold w-100" style="display:block; text-align:center;">
+                  Create Will &mdash; &#x20B9;299 &rarr;
+                </a>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+                  &check; 100% Legal &bull; Succession Act 1925 &bull; Instant PDF
+                </div>
+              </div>
+
+              <!-- Financial Assets Checklist Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="check-circle-2" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> Financial Checklist</h4>
+                <ul>
+                  <li>&bull; <strong>Bank Accounts:</strong> Bank name, branch IFSC &amp; CIF ID</li>
+                  <li>&bull; <strong>Mutual Funds:</strong> Master Folio No. &amp; AMC name</li>
+                  <li>&bull; <strong>Demat Shares:</strong> 16-digit Demat ID (NSDL/CDSL)</li>
+                  <li>&bull; <strong>Provident Fund:</strong> Family rule under EPF Para 61</li>
+                  <li>&bull; <strong>Residuary Clause:</strong> Covers future income &amp; FDs</li>
+                </ul>
+              </div>
+
+              <!-- Related Guides Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="book-open" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir in India</a></li>
+                  <li><a href="/blog/what-happens-without-will-india">&rarr; What Happens Without a Will in India</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/is-stamp-paper-required-for-will-india">&rarr; Is Stamp Paper Required for a Will?</a></li>
+                  <li><a href="/blog/doctor-certificate-for-will-india">&rarr; Doctor Certificate for Will in India</a></li>
+                </ul>
+              </div>
+            </aside>
           </div>
-          <div>
-            <div class="stat-number">Sec 102</div>
-            <div class="stat-label">Residuary Clause in Indian Succession Act</div>
-          </div>
         </div>
-
-        <h2>1. The Critical Legal Distinction: Bank Nominee vs. Will Beneficiary</h2>
-        <p>The single most dangerous misconception in Indian personal finance is confusing a <strong>Nominee</strong> with a <strong>Legal Beneficiary</strong>. Every banking customer is urged to register a nominee when opening a savings account or investing through discount brokers like Zerodha, Groww, or Angel One. Most investors tick this box assuming it functions as a Will.</p>
-
-        <p>Under Indian law, nomination is purely an <em>administrative facilitation mechanism</em>. It gives the bank, asset management company (AMC), or depository participant (DP) a valid legal discharge from liability upon transferring the proceeds to the nominee. However, <strong>nominees do not inherit beneficial ownership</strong>.</p>
-
-        <h3>The Foundational Precedents: Sarbati Devi &amp; Shakti Yezdani</h3>
-        <p>The Supreme Court of India has firmly established the subordinate status of nominees across multiple landmark rulings:</p>
-
-        <ul>
-          <li><strong><em>Sarbati Devi and Anr. v. Usha Devi (1984 1 SCC 424):</em></strong> The Supreme Court held that nomination under Section 39 of the Insurance Act (and symmetrically under banking regulations) simply specifies the person authorized to collect the funds. The nominee receives the corpus merely as a <strong>trustee</strong> and holds it in fiduciary capacity for the true legal heirs or beneficiaries specified in the deceased person's Will.</li>
-          <li><strong><em>Shakti Yezdani and Anr. v. Jayanand Jayant Salgaonkar (Supreme Court, December 2023):</em></strong> For decades, stock market investors believed that Section 109A of the Companies Act 1956 (and Section 72 of the Companies Act 2013) granted demat nominees complete ownership of shares over legal heirs. In late 2023, a two-judge bench of the Supreme Court conclusively rejected this theory. The apex court ruled that the Companies Act and SEBI regulations cannot override general succession laws or testamentary bequests. A demat nominee is merely a caretaker who must deliver the shares to the legitimate Will beneficiaries.</li>
-        </ul>
-
-        <div class="callout">
-          <p><em>"Legal Reality: If you designate your brother as the nominee in your &#x20B9;50 Lakh Fixed Deposit, but execute a Will leaving your entire movable estate to your daughter, your daughter is the sole legal owner of that money. While the bank will release the funds to your brother, he is legally bound to hand over every single rupee to your daughter. If you fail to write a Will, that money is carved up according to the intestate succession laws of your religion, regardless of your personal wishes."</em></p>
-        </div>
-
-        <p>To understand the full consequences of dying without a testament, read our detailed analysis on <a href="/blog/what-happens-without-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">what happens if you die without a Will in India</a> and our breakdown of <a href="/blog/nominee-vs-legal-heir-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">Nominee vs Legal Heir in India</a>.</p>
-
-        <h2>2. How to Specifically Detail Financial Assets in Your Will</h2>
-        <p>When drafting a will for bank accounts and mutual funds, ambiguity is the primary cause of administrative delays and probate litigation. If a Will vaguely states, <em>"I leave all my bank money to my son,"</em> the executor must spend months corresponding with bank compliance officers, answering customer identification queries, and producing affidavits.</p>
-
-        <p>To ensure swift, uncontested transmission, your Will should document each category of financial holding using standard institutional identifiers:</p>
-
-        <h3>A. Bank Savings Accounts &amp; Fixed Deposits (FDs / RDs)</h3>
-        <p>For every bank account, provide the following precise parameters:</p>
-        <ul>
-          <li><strong>Full Legal Name of the Bank:</strong> (e.g., State Bank of India, HDFC Bank Ltd, ICICI Bank).</li>
-          <li><strong>Branch Name &amp; IFSC Code:</strong> (e.g., Koramangala Branch, Bengaluru &mdash; IFSC: SBIN0001234).</li>
-          <li><strong>Account Number:</strong> Include the complete savings or current account number.</li>
-          <li><strong>Customer Information File (CIF) / Customer ID:</strong> Including the CIF is vital because it links all recurring deposits, fixed deposit receipts, and ancillary accounts under one customer profile.</li>
-          <li><strong>Percentage Allocation:</strong> Specify exact percentage shares (e.g., "60% to my spouse [Name] and 40% to my son [Name]"). Avoid indeterminate phrases like "sufficient funds for their care."</li>
-          <li><strong>Accrued Interest Clause:</strong> Explicitly state that the bequest includes all principal balances along with interest accrued up to the date of settlement.</li>
-          <li><strong>NRE / NRO / FCNR Accounts for NRIs:</strong> If you hold Non-Resident External (NRE) or Non-Resident Ordinary (NRO) accounts, indicate their foreign currency status and compliance with Foreign Exchange Management Act (FEMA) guidelines.</li>
-        </ul>
-
-        <h3>B. Mutual Funds (Folios, AMCs &amp; Systematic Plans)</h3>
-        <p>Mutual funds can be held either in physical/Statement of Account (SOA) format via Registrar and Transfer Agents (RTAs like CAMS and KFintech) or in dematerialized form within a broker app:</p>
-        <ul>
-          <li><strong>Asset Management Company (AMC):</strong> (e.g., Mirae Asset Mutual Fund, SBI Funds Management Ltd, Parag Parikh Financial Advisory Services).</li>
-          <li><strong>Folio Number:</strong> The unique master identifier for that fund house.</li>
-          <li><strong>Scheme Names &amp; Growth/Dividend Options:</strong> Mention specific schemes (e.g., "Parag Parikh Flexi Cap Fund - Direct Plan - Growth").</li>
-          <li><strong>SIP Continuity &amp; Redemption Rights:</strong> Clarify whether the executor or beneficiary should terminate active SIP mandates upon death or allow units to compound until maturity.</li>
-          <li><strong>RTA Aggregation Clause:</strong> Because investors often switch schemes within the same folio, include a blanket clause: <em>"Including all existing units, dividend reinvestments, and any prospective units purchased under Folio No. [XXXXX] at the time of my demise."</em></li>
-        </ul>
-
-        <h3>C. Demat Accounts &amp; Equity Shares</h3>
-        <p>In modern trading platforms such as Zerodha (Kite), Groww, Upstox, or ICICI Direct, your stocks and Exchange Traded Funds (ETFs) do not sit with the broker. They are held electronically with one of India's two national depositories: <strong>NSDL</strong> or <strong>CDSL</strong>.</p>
-        <p>To properly bequeath shares, do NOT list individual company stocks one by one unless you wish to bequeath specific shares to separate individuals. Company share counts change frequently through stock splits, bonus shares, rights issues, and mergers. Instead, identify the repository container:</p>
-        <ul>
-          <li><strong>Depository:</strong> CDSL (Central Depository Services India Ltd) or NSDL (National Securities Depository Ltd).</li>
-          <li><strong>Depository Participant (DP) Name:</strong> (e.g., Zerodha Broking Ltd).</li>
-          <li><strong>16-Digit Demat Account Number:</strong> Comprising the 8-digit DP ID (e.g., 12081600) and the 8-digit Client ID / Beneficiary ID.</li>
-          <li><strong>Scope of Bequest:</strong> State that the bequest includes all listed equities, Sovereign Gold Bonds (SGBs), Real Estate Investment Trusts (REITs), and cash balances lying in the linked trading ledger.</li>
-        </ul>
-
-        <h3>D. Provident Funds: EPF vs. PPF Legal Nuances</h3>
-        <p>Provident fund balances require special legal care because their statutory regimes differ fundamentally:</p>
-        <ul>
-          <li><strong>EPF (Employees' Provident Fund):</strong> Governed by the <em>Employees' Provident Funds Scheme, 1952</em>. Under Paragraph 61 of the EPF Scheme, an employee who has a family (spouse, children, dependent parents) can <strong>only</strong> make an EPF nomination in favor of family members. A testamentary bequest in a Will attempting to pass EPF corpus to an outsider or third party cannot override this statutory limitation.</li>
-          <li><strong>PPF (Public Provident Fund):</strong> Governed by the <em>Government Savings Promotion General Rules, 2018</em>. Although a nominee is appointed at the post office or bank branch, the High Courts and Supreme Court have affirmed that PPF proceeds form part of the deceased's general estate and can be bequeathed via a Will to any designated beneficiary.</li>
-        </ul>
-
-        <h2>3. The Power of the "Residuary Clause": Your Future Wealth Safety Net</h2>
-        <p>A fatal mistake made by self-drafted testators is attempting an exhaustive list of assets without adding a <strong>Residuary Clause</strong>. Over a typical 10 to 30 year lifespan, financial portfolios are dynamic:</p>
-        <ul>
-          <li>Fixed deposits mature and are converted into new FD numbers at different banks.</li>
-          <li>Old savings accounts are closed and new digital savings accounts are opened.</li>
-          <li>Dividends and bonus shares accumulate in new trading portfolios.</li>
-          <li>You may inherit unexpected ancestral funds or receive insurance bonuses.</li>
-        </ul>
-
-        <p>Under <strong>Section 102 and Section 103 of the Indian Succession Act, 1925</strong>, if an asset is not expressly mentioned in your Will and there is no residuary legatee named, that omitted asset suffers from <em>partial intestacy</em>. The unlisted bank accounts will not go to your primary beneficiary; instead, they will be frozen by bank managers and subjected to protracted legal heir distribution under personal succession laws.</p>
-
-        <div class="callout-success">
-          <p><strong>Gold-Standard Residuary Clause:</strong><br>
-          <em>"All the rest, residue, and remainder of my estate, both movable and immovable, of whatsoever nature and wheresoever situated, including any bank accounts, fixed deposits, mutual funds, demat securities, cash balances, dividends, refunds, and assets acquired after the execution of this Will, which I may be possessed of or entitled to at the time of my death, I hereby bequeath absolutely and forever to my spouse [Name], or if they predecease me, equally to my children [Name] and [Name]."</em></p>
-        </div>
-
-        <p>By including this single paragraph, you eliminate the tedious necessity of updating your Will every single time you open an account or purchase a new investment.</p>
-
-        <h2>4. Joint Accounts: "Either or Survivor" vs. "Former or Survivor"</h2>
-        <p>Millions of married couples in India maintain joint savings accounts and joint fixed deposits with operational mandates like "Either or Survivor" (E or S) or "Former or Survivor" (F or S). What happens to the money when the first holder passes away?</p>
-
-        <p>The Reserve Bank of India issued clear operational directives in its Master Circular on Customer Service in Banks:</p>
-        <ul>
-          <li><strong>Operational Mandate:</strong> In an "Either or Survivor" account, upon the death of the primary holder, the surviving joint holder is legally entitled to operate the account and withdraw the entire balance without producing a Succession Certificate or Will. The bank obtains a complete discharge.</li>
-          <li><strong>Beneficial Ownership Reality:</strong> However, operational authority does not extinguish the legal claims of the deceased's estate. Under Indian civil jurisprudence, if the deceased holder was the sole source of funds in that account, the money forms part of the deceased's estate. If the deceased's Will leaves their movable wealth to their dependent mother or children from an earlier marriage, the surviving co-holder is legally accountable to pay over the deceased's proportion to the Will beneficiaries.</li>
-          <li><strong>Eliminating Spousal Friction:</strong> To prevent bitter intra-family litigation between a surviving spouse and other legal heirs, your Will must explicitly state whether joint account balances are intended as an outright gift to the surviving holder or are subject to estate distribution.</li>
-        </ul>
-
-        <h2>5. Step-by-Step Claim Procedure for Beneficiaries Post-Demise</h2>
-        <p>When the testator passes away, how do the nominated executor or beneficiaries actually interact with banks and fund houses? Follow this structured protocol:</p>
-
-        <ol>
-          <li><strong>Obtain Official Death Certificates:</strong> Procure at least 15&ndash;20 original certified copies of the Death Certificate from the municipal corporation or local registrar of births and deaths. Every financial institution requires an original or notarized true copy.</li>
-          <li><strong>Freeze Operational Access:</strong> Promptly notify the bank and depository participants of the demise in writing. This halts unauthorized ATM withdrawals, net-banking transactions, or automated debit mandates that could complicate accounting.</li>
-          <li><strong>Claiming Bank Deposits via Standard Claim Form (Form 14):</strong>
-            <ul>
-              <li>For accounts where a nominee exists, banks settle claims swiftly under RBI guidelines within 15 days upon submission of the death certificate, nominee KYC, and standard claim application.</li>
-              <li>Where accounts are claimed by a Will beneficiary who is not the nominee, the claimant must submit the Will, an Indemnity Bond (Bank Annexure B), No-Objection Certificates (NOCs) from other legal heirs, and two third-party guarantors of acceptable financial net worth.</li>
-              <li>For claims below internal bank thresholds (often up to &#x20B9;5,00,000 or &#x20B9;15,00,000 depending on the bank's board-approved policy), banks settle without demanding a court Probate or Succession Certificate.</li>
-            </ul>
-          </li>
-          <li><strong>Transmitting Mutual Funds via MFCentral or RTAs:</strong>
-            <ul>
-              <li>Submit <strong>Form T3</strong> (Transmission Request Form for succession/Will cases) to CAMS or KFintech.</li>
-              <li>Attach self-attested KYC documents, bank account verification (cancelled cheque) of the new claimant, and a notarized copy of the Will.</li>
-              <li>For portfolios exceeding SEBI's threshold (currently &#x20B9;5 Lakh without nomination), a legal heir certificate or probate copy may be requested.</li>
-            </ul>
-          </li>
-          <li><strong>Transmitting Demat Securities:</strong>
-            <ul>
-              <li>Submit a Transmission Request Form (TRF) to the Depository Participant (Zerodha, Groww, etc.).</li>
-              <li>Provide Client Master Report (CMR) of the beneficiary's active demat account so the equity shares can be moved electronically via off-market transfer without incurring capital gains tax.</li>
-            </ul>
-          </li>
-        </ol>
-
-        <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
-        <div class="telugu-snippet-box">
-          <h4>&#x1f1ee;&#x1f1f3; బ్యాంక్ ఖాతాలు, మ్యూచువల్ ఫండ్స్ వీలునామాలో ఎలా చేర్చాలి? (Guidance in Telugu)</h4>
-          <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
-            <strong>నామినీ ఉంటే వీలునామా (Will) అవసరమా?</strong><br>
-            ఖచ్చితంగా అవసరం! సుప్రీంకోర్టు తీర్పుల ప్రకారం (Sarbati Devi &amp; Shakti Yezdani కేసులు), బ్యాంక్ లేదా మ్యూచువల్ ఫండ్లలో నామినీగా ఉన్న వ్యక్తి కేవలం డబ్బు తీసుకునే "ట్రస్టీ" మాత్రమే. అసలు యాజమాన్య హక్కులు వీలునామాలో పేర్కొన్న వారసులకే చెందుతాయి. మీ బ్యాంక్ సేవింగ్స్, ఫిక్స్‌డ్ డిపాజిట్లు, డిమాట్ అకౌంట్ మరియు మ్యూచువల్ ఫండ్ వివరాలను మీ వీలునామాలో స్పష్టంగా రాసి, "Residuary Clause" జోడించడం ద్వారా మీ కుటుంబానికి భవిష్యత్తులో వచ్చే కోర్టు వివాదాలను నివారించవచ్చు.
-          </p>
-        </div>
-
-        <h2>6. Nominee Rights vs. Will Beneficiary Rights: Statutory Comparison</h2>
-        <p>To appreciate how Indian courts and banking regulations treat competing claims, examine the comparative statutory matrix below:</p>
-
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>Legal Dimension</th>
-              <th>Bank / AMC Nominee</th>
-              <th>Will Beneficiary (Legatee)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Governing Statute</strong></td>
-              <td>Banking Regulation Act 1949 / Companies Act 2013</td>
-              <td>Indian Succession Act, 1925 (Sec 57 &amp; 63)</td>
-            </tr>
-            <tr>
-              <td><strong>Legal Status</strong></td>
-              <td>Trustee / Temporary Custodian / Fiduciary Agent</td>
-              <td>Absolute Beneficial Owner of the corpus</td>
-            </tr>
-            <tr>
-              <td><strong>Bank Discharge Function</strong></td>
-              <td>Releases the bank from third-party liability</td>
-              <td>Establishes conclusive ownership title in court</td>
-            </tr>
-            <tr>
-              <td><strong>Can They Legally Spend the Funds?</strong></td>
-              <td><strong>NO.</strong> Accountable to legal heirs and beneficiaries</td>
-              <td><strong>YES.</strong> Free to consume, invest, or transfer funds</td>
-            </tr>
-            <tr>
-              <td><strong>Effect in Case of Conflict</strong></td>
-              <td>Overridden by the testamentary disposition of the Will</td>
-              <td>Prevails conclusively under Supreme Court precedents</td>
-            </tr>
-            <tr>
-              <td><strong>Supreme Court Authority</strong></td>
-              <td><em>Sarbati Devi (1984)</em>; <em>Ram Chander (2010)</em></td>
-              <td><em>Shakti Yezdani v. Salgaonkar (Dec 2023)</em></td>
-            </tr>
-            <tr>
-              <td><strong>Need for Succession Certificate</strong></td>
-              <td>Exempt from Succession Certificate for bank release</td>
-              <td>Usually exempt if Will is accepted or probate produced</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>7. Key Practical Rules to Make Your Financial Will Bulletproof</h2>
-        <p>Before finalizing your document, verify these five practical drafting principles:</p>
-        <ul>
-          <li><strong>Never Write Account Balances:</strong> Do not write, <em>"I give my &#x20B9;2,45,000 in SBI Account to my brother."</em> Balances change constantly due to daily expenses, UPI transfers, and interest credits. Always specify <strong>percentages</strong> (e.g., "100% of the balance in my SBI Account").</li>
-          <li><strong>Appoint an Able Executor:</strong> The executor is the legally appointed manager of your estate. Name a trusted family member, close professional friend, or chartered accountant who understands digital banking and knows where your financial passwords and documents are filed.</li>
-          <li><strong>Synchronize Nominations with the Will:</strong> While the Will overrides the nomination, conflicting entries create friction. If your Will leaves an FD to your daughter, update the bank nomination to name your daughter as well. When the nominee and the Will beneficiary are the exact same individual, the bank releases funds immediately with zero disputes.</li>
-          <li><strong>Ensure Valid Attestation:</strong> Under Section 63 of the Indian Succession Act 1925, your Will must be signed in the physical presence of <strong>two independent witnesses</strong> who must not be beneficiaries under the Will. Learn more about <a href="/blog/who-can-be-a-witness-to-a-will-in-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">who can legally be a witness to a Will in India</a>.</li>
-          <li><strong>Plain Paper Validity:</strong> You do not need expensive green stamp paper or judicial stamp duty. A Will on simple A4 white paper is 100% enforceable across India. Read our guide on <a href="/blog/is-stamp-paper-required-for-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">why stamp paper is not required for a Will</a>.</li>
-        </ul>
-
-        <!-- CTA Box -->
-        <div class="blog-cta-box">
-          <h3>Secure Your Financial Portfolio Today. Create Your Will for &#x20B9;299.</h3>
-          <p>Don't leave your hard-earned bank savings, demat shares, and mutual funds trapped in legal disputes. SmartWill India drafts a customized, legally bulletproof Will compliant with the Indian Succession Act 1925 in just 10 minutes.</p>
-          <a href="/app" class="btn btn-gold btn-lg">Protect Your Investments Online &mdash; &#x20B9;299 &rarr;</a>
-        </div>
-
-        <h2>Frequently Asked Questions (FAQs)</h2>
-        
-        <h3>Does a Will override a bank account nominee or mutual fund nominee in India?</h3>
-        <p>Yes, absolutely. Under Indian law and landmark Supreme Court rulings in <em>Sarbati Devi (1984)</em> and <em>Shakti Yezdani (2023)</em>, a nominee is only a temporary custodian or trustee appointed to collect funds from financial institutions. The nominee does not obtain beneficial ownership. The person named as the beneficiary in your Will is the true legal owner and has full legal right to inherit the bank balances, fixed deposits, mutual funds, and demat shares.</p>
-
-        <h3>Do I need to rewrite my Will whenever my bank balance changes or I purchase new mutual fund units?</h3>
-        <p>No. You do not need to update your Will every time your account balances fluctuate or you execute new SIP transactions. By including a properly drafted "Residuary Clause" under Section 102 of the Indian Succession Act 1925, all present and future bank accounts, accumulated interest, newly issued shares, dividends, and rolled-over fixed deposits automatically pass to your designated residuary beneficiaries without requiring amendments.</p>
-
-        <h3>Is probate mandatory for claiming bank accounts and mutual funds under a Will in India?</h3>
-        <p>In the majority of India, probate is not mandatory for claiming movable financial assets like bank accounts and mutual funds. Under Section 213 read with Section 57 of the Indian Succession Act 1925, probate is mandatory only for Wills executed by Hindus, Buddhists, Jains, or Sikhs within the historical presidential towns of Mumbai, Kolkata, and Chennai, or if immovable properties covered by the Will are situated there. For movable financial assets elsewhere, banks and asset management companies settle claims upon submission of the registered or unregistered Will, death certificate, KYC documents, and standard indemnity bonds.</p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="background:linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); border-top:1px solid rgba(223, 183, 108, 0.25); border-bottom:1px solid rgba(223, 183, 108, 0.25); padding:4rem 0; text-align:center;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); font-weight:700; margin-bottom:1rem; color:var(--text-main);">
+          Secure Your Bank Accounts &amp; Investments in 10 Minutes
+        </h2>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:650px; margin:0 auto 2rem; line-height:1.65;">
+          Join thousands of Indians protecting their life's savings from administrative freezes and bitter family litigation. Legally compliant under the Indian Succession Act, 1925.
+        </p>
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" style="padding:0.9rem 2.5rem; font-weight:700; font-size:1.1rem;">
+          Start Drafting Your Will &mdash; &#x20B9;299 &rarr;
+        </a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -563,26 +784,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
   <script>
-    // Mobile navigation toggle
-    (function() {
-      const hamburger = document.getElementById('navHamburger');
-      const mobileMenu = document.getElementById('navMobileMenu');
-      if (hamburger && mobileMenu) {
-        hamburger.addEventListener('click', function(e) {
-          e.stopPropagation();
-          mobileMenu.classList.toggle('open');
-          hamburger.classList.toggle('active');
-        });
-        document.addEventListener('click', function(e) {
-          if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
-            mobileMenu.classList.remove('open');
-            hamburger.classList.remove('active');
-          }
-        });
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
       }
-    })();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
   </script>
 </body>
 </html>

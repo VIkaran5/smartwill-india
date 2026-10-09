@@ -107,11 +107,19 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4, .blog-header h1, .post-card h2, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
     }
     .blog-header { 
       padding: 7.5rem 0 3rem; 
       border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
     }
     .blog-header h1 { 
       font-size: clamp(2rem, 5vw, 3.2rem); 
@@ -188,7 +196,7 @@
       text-decoration: underline; 
     }
     .blog-cta-section { 
-      padding: 4rem 0; 
+      padding: 4.5rem 0; 
       border-top: 1px solid var(--border-light); 
       text-align: center; 
       background: var(--bg-surface); 
@@ -392,6 +400,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 నిమిషాలు &bull; చట్టబద్ధం</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      వీలునామా రాయండి &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
 </body>
 </html>

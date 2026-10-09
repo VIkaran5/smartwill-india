@@ -93,56 +93,112 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    h1, h2, h3, h4, .article-title, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
+    }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.4; 
-      margin-bottom: 1rem; 
+      line-height: 1.25; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-header .container,
-    .article-body { 
-      max-width: 860px; 
-      margin-left: auto; 
-      margin-right: auto; 
-      padding-bottom: 5rem; 
-    }
-    .article-header .container { padding-bottom: 0; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.75rem 0 1rem; 
-      padding-top: 1.25rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.85; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.9; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.9; padding-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -150,34 +206,128 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
+
+    /* ── Stat Box ── */
+    .stat-box { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
+      margin: 2rem 0; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+      gap: 1.5rem; 
       text-align: center; 
-      margin: 3.5rem 0; 
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
+    [data-theme="light"] .stat-number { color: #b45309; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
+    }
     .table-custom {
       width: 100%;
       border-collapse: collapse;
-      margin: 1.5rem 0 2.25rem;
       font-size: 0.95rem;
+      min-width: 580px;
     }
     .table-custom th, .table-custom td {
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
+      padding: 14px 18px;
       text-align: left;
     }
     .table-custom th {
       background: var(--bg-surface);
       font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -185,27 +335,30 @@
   <!-- Header Navbar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="/te/" class="nav-logo" aria-label="SmartWill India Telugu">
+      <a href="/te/" class="nav-logo" aria-label="SmartWill India Home">
         <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
         <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text">SmartWill India</span>
       </a>
 
       <nav class="nav-menu d-none d-md-flex">
-        <a href="/te/" class="nav-link">హోమ్</a>
-        <a href="/te/#features" class="nav-link">ఫీచర్లు</a>
-        <a href="/te/#how-it-works" class="nav-link">ఎలా పనిచేస్తుంది</a>
+        <a href="/te/#ila-pani-chestundi" class="nav-link">ఎలా పని చేస్తుంది</a>
         <a href="/te/#pricing" class="nav-link">ధర</a>
-        <a href="/te/blog" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">బ్లాగ్ గైడ్స్</a>
-        <a href="/" class="nav-link">English</a>
+        <a href="/te/#faq" class="nav-link">సందేహాలు</a>
+        <a href="/te/blog" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">బ్లాగ్</a>
       </nav>
 
       <div class="nav-actions d-none d-md-flex">
+        <div class="lang-switcher">
+          <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+          <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+          <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+        </div>
         <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
           <span class="toggle-icon"><i data-lucide="moon"></i></span>
           <span class="toggle-text">Dark</span>
         </button>
-        <a href="/app" class="btn btn-gold btn-sm">వీలునామా రాయండి &mdash; &#x20B9;299</a>
+        <a href="/app" class="btn btn-gold btn-sm">వీలునామా రూపొందించండి — ₹299</a>
       </div>
 
       <!-- Hamburger (mobile only) -->
@@ -216,13 +369,16 @@
 
     <!-- Mobile slide-down menu -->
     <div class="nav-mobile-menu" id="navMobileMenu">
-      <a href="/te/" class="nav-link">హోమ్</a>
-      <a href="/te/#features" class="nav-link">ఫీచర్లు</a>
-      <a href="/te/#how-it-works" class="nav-link">ఎలా పనిచేస్తుంది</a>
-      <a href="/te/#pricing" class="nav-link">ధర</a>
-      <a href="/te/blog" class="nav-link active">బ్లాగ్ గైడ్స్</a>
-      <a href="/" class="nav-link">English</a>
-      <a href="/app" class="btn btn-gold" style="text-align:center">వీలునామా రాయండి &mdash; &#x20B9;299</a>
+      <div class="lang-switcher" style="justify-content:center; margin-bottom:1rem;">
+        <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+        <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+        <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+      </div>
+      <a href="/te/#ila-pani-chestundi" class="nav-link" style="font-size:1rem">ఎలా పని చేస్తుంది</a>
+      <a href="/te/#pricing" class="nav-link" style="font-size:1rem">ధర</a>
+      <a href="/te/#faq" class="nav-link" style="font-size:1rem">సందేహాలు</a>
+      <a href="/te/blog" class="nav-link active" style="font-size:1rem">బ్లాగ్</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">వీలునామా రూపొందించండి — ₹299</a>
     </div>
   </header>
 
@@ -230,138 +386,229 @@
     <article class="article-header">
       <div class="container">
         <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
-          <a href="/te/" style="color:var(--text-muted); text-decoration:none;">హోమ్</a> &nbsp;&gt;&nbsp; 
-          <a href="/te/blog" style="color:var(--text-muted); text-decoration:none;">తెలుగు బ్లాగ్</a> &nbsp;&gt;&nbsp; 
-          <span style="color:var(--primary, #dfb76c);">తండ్రి ఆస్తి వీలునామా నిబంధనలు</span>
+          <a href="/te/" style="color:var(--text-muted); text-decoration:none;">ముఖ్య పేజీ</a> &nbsp;&gt;&nbsp; 
+          <a href="/te/blog" style="color:var(--text-muted); text-decoration:none;">బ్లాగ్</a> &nbsp;&gt;&nbsp; 
+          <span style="color:var(--accent-gold, #dfb76c);">తండ్రి ఆస్తి వీలునామా నిబంధనలు</span>
         </nav>
-        <div class="article-tag">వారసత్వ చట్టం &amp; హక్కులు</div>
+        <div class="article-tag">
+          <i data-lucide="scale" style="width:14px; height:14px;"></i>
+          <span>వారసత్వ చట్టం &amp; హక్కులు</span>
+        </div>
         <h1 class="article-title">తండ్రి ఆస్తిపై వీలునామా నిబంధనలు &amp; పిల్లల హక్కులు (2026 చట్టం)</h1>
-        <div class="article-meta">సెప్టెంబర్ 29, 2026 &nbsp;&middot;&nbsp; 7 నిమిషాల చదువు &nbsp;&middot;&nbsp; SmartWill India లీగల్ డెస్క్</div>
+        <p class="article-subtitle" style="font-size:1.12rem; line-height:1.68; color:var(--text-muted); max-width:820px; margin-bottom:1.75rem;">
+          తండ్రి తన ఆస్తిని ఎవరికైనా వీలునామా రాయవచ్చా? పూర్వీకుల ఆస్తి vs స్వార్జిత ఆస్తిపై పిల్లల హక్కులు, హిందూ వారసత్వ చట్టం నిబంధనల సమగ్ర విశ్లేషణ.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c);"></i> SmartWill లీగల్ డెస్క్ పరిశీలన</span>
+          <span><i data-lucide="calendar" style="width:16px; height:16px;"></i> సెప్టెంబర్ 29, 2026</span>
+          <span><i data-lucide="clock" style="width:16px; height:16px;"></i> 7 నిమిషాల పఠనం</span>
+          <span><i data-lucide="book-open" style="width:16px; height:16px;"></i> హిందూ వారసత్వ చట్టం 1956</span>
+        </div>
       </div>
     </article>
 
-    <div class="container">
-      <div class="article-body">
-        <p>
-          తెలుగు రాష్ట్రాలైన ఆంధ్రప్రదేశ్ మరియు తెలంగాణలలో ఆస్తి తగాదాలలో అత్యధికం <strong>తండ్రి ఆస్తి పంపకాలు</strong> మరియు <strong>వీలునామా చెల్లుబాటు</strong> చుట్టూనే తిరుగుతుంటాయి. చాలా మంది కుటుంబాలలో తండ్రి తన ఆస్తిని ఒకే సంతానానికి రాసినప్పుడు లేదా భార్య పేరిట వీలునామా చేసినప్పుడు ఇతరులు కోర్టులకు వెళ్తుంటారు.
-        </p>
-        <p>
-          భారతీయ చట్టం ప్రకారం తండ్రి ఆస్తిపై పిల్లలకు ఎటువంటి హక్కులు ఉంటాయి? తండ్రి తన ఇష్టానుసారం ఆస్తిని ఎవరికైనా రాయవచ్చా? ఈ గైడ్‌లో <strong>హిందూ వారసత్వ చట్టం (Hindu Succession Act, 1956)</strong> మరియు <strong>భారతీయ వారసత్వ చట్టం, 1925</strong> నిబంధనలను స్పష్టంగా వివరిస్తున్నాం.
-        </p>
+    <section class="article-body">
+      <div class="container">
+        <div class="row g-lg-5">
+          <!-- Main Content Column (8 cols) -->
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <h2>ఆస్తి రకాలు: స్వార్జిత ఆస్తి vs పూర్వీకుల ఆస్తి</h2>
-        <p>
-          తండ్రి ఆస్తిపై వీలునామా చెల్లుబాటు కావాలంటే, మొదట ఆ ఆస్తి ఏ రకానికి చెందినదో గుర్తించాలి:
-        </p>
+              <p>
+                తెలుగు రాష్ట్రాలైన ఆంధ్రప్రదేశ్ మరియు తెలంగాణలలో ఆస్తి తగాదాలలో అత్యధికం <strong>తండ్రి ఆస్తి పంపకాలు</strong> మరియు <strong>వీలునామా చెల్లుబాటు</strong> చుట్టూనే తిరుగుతుంటాయి. చాలా మంది కుటుంబాలలో తండ్రి తన ఆస్తిని ఒకే సంతానానికి రాసినప్పుడు లేదా భార్య పేరిట వీలునామా చేసినప్పుడు ఇతరులు కోర్టులకు వెళ్తుంటారు.
+              </p>
+              <p>
+                భారతీయ చట్టం ప్రకారం తండ్రి ఆస్తిపై పిల్లలకు ఎటువంటి హక్కులు ఉంటాయి? తండ్రి తన ఇష్టానుసారం ఆస్తిని ఎవరికైనా రాయవచ్చా? ఈ గైడ్‌లో <strong>హిందూ వారసత్వ చట్టం (Hindu Succession Act, 1956)</strong> మరియు <strong>భారతీయ వారసత్వ చట్టం, 1925</strong> నిబంధనలను స్పష్టంగా వివరిస్తున్నాం.
+              </p>
 
-        <h3>1. స్వార్జిత ఆస్తి (Self-Acquired Property)</h3>
-        <p>
-          తండ్రి తన స్వంత ఆదాయంతో, ఉద్యోగం, వ్యాపారం ద్వారా కొనుగోలు చేసిన ఆస్తిని లేదా గిఫ్ట్ డీడ్ ద్వారా పొందిన ఆస్తిని స్వార్జిత ఆస్తి అంటారు.
-        </p>
-        <div class="callout-success">
-          <p>
-            <strong>చట్టపరమైన నిజం:</strong> స్వార్జిత ఆస్తిపై తండ్రికి 100% సర్వహక్కులు ఉంటాయి. ఆయన బ్రతికి ఉన్నంత కాలం ఆ ఆస్తిని ఎవరికైనా అమ్మవచ్చు, గిఫ్ట్ ఇవ్వవచ్చు లేదా వీలునామా ద్వారా ఎవరికైనా (భార్యకు, కూతురికి లేదా బయటి ట్రస్టుకు) రాసివ్వవచ్చు. తండ్రి బ్రతికుండగా పిల్లలకు ఎటువంటి వాటా హక్కు ఉండదు.
-          </p>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">100%</div>
+                  <div class="stat-label">స్వార్జిత ఆస్తిపై తండ్రికి సంపూర్ణ స్వేచ్ఛ</div>
+                </div>
+                <div>
+                  <div class="stat-number">సమాన హక్కు</div>
+                  <div class="stat-label">2005 సవరణ ప్రకారం కూతుళ్లకు పూర్వీకుల వాటా</div>
+                </div>
+                <div>
+                  <div class="stat-number">క్లాస్-1</div>
+                  <div class="stat-label">వీలునామా లేకపోతే భార్య, పిల్లలందరికీ సమాన వాటా</div>
+                </div>
+              </div>
+
+              <h2>ఆస్తి రకాలు: స్వార్జిత ఆస్తి vs పూర్వీకుల ఆస్తి</h2>
+              <p>
+                తండ్రి ఆస్తిపై వీలునామా చెల్లుబాటు కావాలంటే, మొదట ఆ ఆస్తి ఏ రకానికి చెందినదో గుర్తించాలి:
+              </p>
+
+              <h3>1. స్వార్జిత ఆస్తి (Self-Acquired Property)</h3>
+              <p>
+                తండ్రి తన స్వంత ఆదాయంతో, ఉద్యోగం, వ్యాపారం ద్వారా కొనుగోలు చేసిన ఆస్తిని లేదా గిఫ్ట్ డీడ్ ద్వారా పొందిన ఆస్తిని స్వార్జిత ఆస్తి అంటారు.
+              </p>
+              <div class="callout-success">
+                <p>
+                  <strong>చట్టపరమైన నిజం:</strong> స్వార్జిత ఆస్తిపై తండ్రికి 100% సర్వహక్కులు ఉంటాయి. ఆయన బ్రతికి ఉన్నంత కాలం ఆ ఆస్తిని ఎవరికైనా అమ్మవచ్చు, గిఫ్ట్ ఇవ్వవచ్చు లేదా వీలునామా ద్వారా ఎవరికైనా (భార్యకు, కూతురికి లేదా బయటి ట్రస్టుకు) రాసివ్వవచ్చు. తండ్రి బ్రతికుండగా పిల్లలకు ఎటువంటి వాటా హక్కు ఉండదు.
+                </p>
+              </div>
+
+              <h3>2. పూర్వీకుల ఆస్తి (Ancestral Property)</h3>
+              <p>
+                తండ్రికి తన తండ్రి, తాత లేదా ముత్తాతల నుండి వారసత్వంగా విభజన కాకుండా వచ్చిన ఆస్తిని పూర్వీకుల ఆస్తి అంటారు.
+              </p>
+              <div class="callout">
+                <p>
+                  <strong>ముఖ్యమైన నిబంధన:</strong> పూర్వీకుల ఆస్తిలో కొడుకులు మరియు కూతుళ్లకు పుట్టుకతోనే జన్మహక్కు లభిస్తుంది. కాబట్టి తండ్రి మొత్తం పూర్వీకుల ఆస్తిపై వీలునామా రాయడానికి చట్టబద్ధంగా అధికారం లేదు. ఆయన కేవలం ఆ ఆస్తిలో తన విభజించబడిన స్వంత వాటాకు మాత్రమే వీలునామా రాయగలరు.
+                </p>
+              </div>
+
+              <h2>ఆస్తి రకాల పోలిక పట్టిక</h2>
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>అంశం</th>
+                      <th>స్వార్జిత ఆస్తి (Self-Acquired)</th>
+                      <th>పూర్వీకుల ఆస్తి (Ancestral)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>పిల్లల హక్కు</strong></td>
+                      <td>తండ్రి మరణించే వరకు పిల్లలకు ఎటువంటి హక్కు ఉండదు</td>
+                      <td>పుట్టుకతోనే సమాన జన్మహక్కు లభిస్తుంది</td>
+                    </tr>
+                    <tr>
+                      <td><strong>వీలునామా రాయవచ్చా?</strong></td>
+                      <td><strong>అవును, 100% ఎవరికైనా రాయవచ్చు</strong></td>
+                      <td>కేవలం తండ్రి స్వంత వాటాకు మాత్రమే రాయవచ్చు</td>
+                    </tr>
+                    <tr>
+                      <td><strong>పిల్లలు కోర్టులో సవాలు చేయవచ్చా?</strong></td>
+                      <td>సాధారణంగా సవాలు చేయడానికి వీలులేదు</td>
+                      <td>అవును, తమ వాటా కోసం పార్టిషన్ దావా వేయవచ్చు</td>
+                    </tr>
+                    <tr>
+                      <td><strong>కూతుళ్ల హక్కు</strong></td>
+                      <td>తండ్రి వీలునామా రాస్తే దాని ప్రకారమే</td>
+                      <td>2005 చట్టం ప్రకారం కొడుకులతో సమాన హక్కు</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>కూతుళ్ల హక్కులు: 2005 సవరణ చట్టం</h2>
+              <p>
+                2005 లో హిందూ వారసత్వ చట్టానికి చేసిన సవరణ ద్వారా భారత ప్రభుత్వం చారిత్రాత్మక మార్పు తీసుకొచ్చింది. సుప్రీం కోర్టు <em>వినీత శర్మ వర్సెస్ రాకేశ్ శర్మ (2020)</em> కేసులో స్పష్టం చేసిన తీర్పు ప్రకారం:
+              </p>
+              <ul>
+                <li>పూర్వీకుల ఆస్తిలో కూతుళ్లకు కొడుకులతో సమానంగా పుట్టుకతోనే కోపార్సెనరీ హక్కు ఉంటుంది.</li>
+                <li>తండ్రి 2005 కంటే ముందే మరణించినప్పటికీ కూతుళ్లకు ఈ హక్కు వర్తిస్తుంది.</li>
+                <li>కానీ తండ్రి స్వార్జిత ఆస్తి విషయంలో ఆయన చెల్లుబాటయ్యే వీలునామా రాస్తే, ఆ వీలునామా ప్రకారమే ఆస్తి చెందుతుంది.</li>
+              </ul>
+
+              <h2>తండ్రి వీలునామా రాయకుండా చనిపోతే ఏమవుతుంది?</h2>
+              <p>
+                తండ్రి ఎటువంటి వీలునామా రాయకుండా మరణిస్తే (Intestate Death), ఆయన ఆస్తి మొత్తం హిందూ వారసత్వ చట్టం సెక్షన్ 8 ప్రకారం <strong>క్లాస్-1 వారసులందరికీ</strong> సమానంగా పంపకం అవుతుంది:
+              </p>
+              <ol>
+                <li>భార్య (వితంతువు)</li>
+                <li>తల్లి (బ్రతికి ఉంటే)</li>
+                <li>కొడుకులు (ప్రతి ఒక్కరికి సమాన వాటా)</li>
+                <li>కూతుళ్లు (ప్రతి ఒక్కరికి సమాన వాటా)</li>
+              </ol>
+              <p>
+                అంటే తండ్రి ఒకరికే ఆస్తి దక్కాలని అనుకుంటే, ఖచ్చితంగా <strong>వీలునామా రాయడం తప్పనిసరి</strong>.
+              </p>
+
+              <h2>తరచూ అడిగే ప్రశ్నలు (FAQs)</h2>
+              <div class="faq-card">
+                <h3>1. తండ్రి తన కొడుకును ఆస్తి నుండి బేదఖల్ (Disinherit) చేయవచ్చా?</h3>
+                <p>
+                  అవును. స్వార్జిత ఆస్తి విషయంలో తండ్రి తన కొడుకుకు ఎటువంటి ఆస్తి ఇవ్వకుండా వీలునామా రాయవచ్చు. భారతీయ చట్టం ప్రకారం స్వార్జిత ఆస్తిపై తల్లిదండ్రులకు పూర్తి విచక్షణాధికారం ఉంటుంది.
+                </p>
+              </div>
+
+              <div class="faq-card">
+                <h3>2. రిజిస్ట్రేషన్ లేని వీలునామా కోర్టులో చెల్లుతుందా?</h3>
+                <p>
+                  అవును. భారతీయ వారసత్వ చట్టం సెక్షన్ 63 ప్రకారం, సాదా తెల్ల కాగితంపై రాసి ఇద్దరు సాక్షులు సంతకం చేసిన వీలునామా 100% చట్టబద్ధమైనది. రిజిస్ట్రేషన్ ఐచ్ఛికం మాత్రమే.
+                </p>
+              </div>
+
+              <div class="faq-card">
+                <h3>3. తండ్రి వీలునామా రాసిన తర్వాత దాన్ని మార్చవచ్చా?</h3>
+                <p>
+                  అవును. తండ్రి తన జీవితకాలంలో ఎప్పుడైనా వీలునామాను రద్దు చేయవచ్చు లేదా కొత్త వీలునామా రాయవచ్చు. ఎల్లప్పుడూ చివరిగా రాసిన వీలునామా మాత్రమే చట్టపరంగా చెల్లుబాటు అవుతుంది.
+                </p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar Column (4 cols) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Primary CTA Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:2rem; margin-bottom:0.75rem;">&#x270d;&#xfe0f;</div>
+                <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-main);">వీలునామా సృష్టించండి</h4>
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  కోర్టుల చుట్టూ తిరిగే బాధ లేకుండా, మీ పిల్లల భవిష్యత్తు కోసం 10 నిమిషాల్లో చట్టబద్ధమైన వీలునామాను సిద్ధం చేసుకోండి.
+                </p>
+                <a href="/app" class="btn btn-gold w-100" style="display:block; text-align:center;">
+                  ప్రారంభించండి &mdash; &#x20B9;299 &rarr;
+                </a>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+                  &check; 100% చట్టబద్ధం &bull; హిందూ వారసత్వ చట్టం ప్రకారం &bull; తక్షణ PDF
+                </div>
+              </div>
+
+              <!-- Property Summary Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="check-circle-2" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> ఆస్తి పంపకాల ముఖ్యాంశాలు</h4>
+                <ul>
+                  <li>&bull; <strong>స్వార్జిత ఆస్తి:</strong> తండ్రికి 100% పూర్తి విచక్షణాధికారం</li>
+                  <li>&bull; <strong>పిల్లల హక్కు:</strong> తండ్రి బ్రతికుండగా స్వార్జిత ఆస్తిలో హక్కు ఉండదు</li>
+                  <li>&bull; <strong>పూర్వీకుల ఆస్తి:</strong> కొడుకులు &amp; కూతుళ్లకు పుట్టుకతోనే జన్మహక్కు</li>
+                  <li>&bull; <strong>2005 సవరణ:</strong> కూతుళ్లకు పూర్వీకుల ఆస్తిలో సమాన హక్కు</li>
+                  <li>&bull; <strong>వీలునామా లేకపోతే:</strong> క్లాస్-1 వారసులందరికీ సమాన వాటా</li>
+                </ul>
+              </div>
+
+              <!-- Related Guides Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="book-open" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> సంబంధిత తెలుగు గైడ్స్</h4>
+                <ul>
+                  <li><a href="/te/blog/veelunaama-ela-rayali">&rarr; వీలునామా ఎలా రాయాలి? పూర్తి గైడ్</a></li>
+                  <li><a href="/te/blog/bharya-peruna-veelunaama-rayadam">&rarr; భార్య పేరున వీలునామా ఎలా రాయాలి?</a></li>
+                  <li><a href="/te/blog/nominee-vs-legal-heir-telugu">&rarr; నామినీ వర్సెస్ లీగల్ హెయిర్</a></li>
+                  <li><a href="/te/blog/stamp-paper-avasarama-veelunaamaku">&rarr; స్టాంప్ పేపర్ అవసరమా?</a></li>
+                  <li><a href="/te/blog/sub-registrar-will-registration-ap-telangana">&rarr; సబ్ రిజిస్ట్రార్ రిజిస్ట్రేషన్ ఫీజు &amp; ప్రాసెస్</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
         </div>
-
-        <h3>2. పూర్వీకుల ఆస్తి (Ancestral Property)</h3>
-        <p>
-          తండ్రికి తన తండ్రి, తాత లేదా ముత్తాతల నుండి వారసత్వంగా విభజన కాకుండా వచ్చిన ఆస్తిని పూర్వీకుల ఆస్తి అంటారు.
-        </p>
-        <div class="callout">
-          <p>
-            <strong>ముఖ్యమైన నిబంధన:</strong> పూర్వీకుల ఆస్తిలో కొడుకులు మరియు కూతుళ్లకు పుట్టుకతోనే జన్మహక్కు లభిస్తుంది. కాబట్టి తండ్రి మొత్తం పూర్వీకుల ఆస్తిపై వీలునామా రాయడానికి చట్టబద్ధంగా అధికారం లేదు. ఆయన కేవలం ఆ ఆస్తిలో తన విభజించబడిన స్వంత వాటాకు మాత్రమే వీలునామా రాయగలరు.
-          </p>
-        </div>
-
-        <h2>ఆస్తి రకాల పోలిక పట్టిక</h2>
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>అంశం</th>
-              <th>స్వార్జిత ఆస్తి (Self-Acquired)</th>
-              <th>పూర్వీకుల ఆస్తి (Ancestral)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>పిల్లల హక్కు</strong></td>
-              <td>తండ్రి మరణించే వరకు పిల్లలకు ఎటువంటి హక్కు ఉండదు</td>
-              <td>పుట్టుకతోనే సమాన జన్మహక్కు లభిస్తుంది</td>
-            </tr>
-            <tr>
-              <td><strong>వీలునామా రాయవచ్చా?</strong></td>
-              <td><strong>అవును, 100% ఎవరికైనా రాయవచ్చు</strong></td>
-              <td>కేవలం తండ్రి స్వంత వాటాకు మాత్రమే రాయవచ్చు</td>
-            </tr>
-            <tr>
-              <td><strong>పిల్లలు కోర్టులో సవాలు చేయవచ్చా?</strong></td>
-              <td>సాధారణంగా సవాలు చేయడానికి వీలులేదు</td>
-              <td>అవును, తమ వాటా కోసం పార్టిషన్ దావా వేయవచ్చు</td>
-            </tr>
-            <tr>
-              <td><strong>కూతుళ్ల హక్కు</strong></td>
-              <td>తండ్రి వీలునామా రాస్తే దాని ప్రకారమే</td>
-              <td>2005 చట్టం ప్రకారం కొడుకులతో సమాన హక్కు</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>కూతుళ్ల హక్కులు: 2005 సవరణ చట్టం</h2>
-        <p>
-          2005 లో హిందూ వారసత్వ చట్టానికి చేసిన సవరణ ద్వారా భారత ప్రభుత్వం చారిత్రాత్మక మార్పు తీసుకొచ్చింది. సుప్రీం కోర్టు <em>వినీత శర్మ వర్సెస్ రాకేశ్ శర్మ (2020)</em> కేసులో స్పష్టం చేసిన తీర్పు ప్రకారం:
-        </p>
-        <ul>
-          <li>పూర్వీకుల ఆస్తిలో కూతుళ్లకు కొడుకులతో సమానంగా పుట్టుకతోనే కోపార్సెనరీ హక్కు ఉంటుంది.</li>
-          <li>తండ్రి 2005 కంటే ముందే మరణించినప్పటికీ కూతుళ్లకు ఈ హక్కు వర్తిస్తుంది.</li>
-          <li>కానీ తండ్రి స్వార్జిత ఆస్తి విషయంలో ఆయన చెల్లుబాటయ్యే వీలునామా రాస్తే, ఆ వీలునామా ప్రకారమే ఆస్తి చెందుతుంది.</li>
-        </ul>
-
-        <h2>తండ్రి వీలునామా రాయకుండా చనిపోతే ఏమవుతుంది?</h2>
-        <p>
-          తండ్రి ఎటువంటి వీలునామా రాయకుండా మరణిస్తే (Intestate Death), ఆయన ఆస్తి మొత్తం హిందూ వారసత్వ చట్టం సెక్షన్ 8 ప్రకారం <strong>క్లాస్-1 వారసులందరికీ</strong> సమానంగా పంపకం అవుతుంది:
-        </p>
-        <ol>
-          <li>భార్య (వితంతువు)</li>
-          <li>తల్లి (బ్రతికి ఉంటే)</li>
-          <li>కొడుకులు (ప్రతి ఒక్కరికి సమాన వాటా)</li>
-          <li>కూతుళ్లు (ప్రతి ఒక్కరికి సమాన వాటా)</li>
-        </ol>
-        <p>
-          అంటే తండ్రి ఒకరికే ఆస్తి దక్కాలని అనుకుంటే, ఖచ్చితంగా <strong>వీలునామా రాయడం తప్పనిసరి</strong>.
-        </p>
-
-        <div class="blog-cta-box">
-          <h3>మీ కుటుంబ ఆస్తులకు భద్రత కల్పించండి — ₹299 కే</h3>
-          <p>
-            కోర్టుల చుట్టూ తిరిగే బాధ లేకుండా, మీ పిల్లల భవిష్యత్తు కోసం 10 నిమిషాల్లో చట్టబద్ధమైన వీలునామాను తయారు చేసుకోండి.
-          </p>
-          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
-            ఆన్‌లైన్‌లో వీలునామా రాయండి &mdash; &#x20B9;299
-          </a>
-        </div>
-
-        <h2>తరచూ అడిగే ప్రశ్నలు (FAQs)</h2>
-        <h3>1. తండ్రి తన కొడుకును ఆస్తి నుండి బేదఖల్ (Disinherit) చేయవచ్చా?</h3>
-        <p>
-          అవును. స్వార్జిత ఆస్తి విషయంలో తండ్రి తన కొడుకుకు ఎటువంటి ఆస్తి ఇవ్వకుండా వీలునామా రాయవచ్చు. భారతీయ చట్టం ప్రకారం స్వార్జిత ఆస్తిపై తల్లిదండ్రులకు పూర్తి విచక్షణాధికారం ఉంటుంది.
-        </p>
-
-        <h3>2. రిజిస్ట్రేషన్ లేని వీలునామా కోర్టులో చెల్లుతుందా?</h3>
-        <p>
-          అవును. భారతీయ వారసత్వ చట్టం సెక్షన్ 63 ప్రకారం, సాదా తెల్ల కాగితంపై రాసి ఇద్దరు సాక్షులు సంతకం చేసిన వీలునామా 100% చట్టబద్ధమైనది. రిజిస్ట్రేషన్ ఐచ్ఛికం మాత్రమే.
-        </p>
-
-        <h3>3. తండ్రి వీలునామా రాసిన తర్వాత దాన్ని మార్చవచ్చా?</h3>
-        <p>
-          అవును. తండ్రి తన జీవితకాలంలో ఎప్పుడైనా వీలునామాను రద్దు చేయవచ్చు లేదా కొత్త వీలునామా రాయవచ్చు. ఎల్లప్పుడూ చివరిగా రాసిన వీలునామా మాత్రమే చట్టపరంగా చెల్లుబాటు అవుతుంది.
-        </p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="background:linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); border-top:1px solid rgba(223, 183, 108, 0.25); border-bottom:1px solid rgba(223, 183, 108, 0.25); padding:4rem 0; text-align:center;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); font-weight:700; margin-bottom:1rem; color:var(--text-main);">
+          మీ కుటుంబ ఆస్తులకు భద్రత కల్పించండి — ₹299 కే
+        </h2>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:650px; margin:0 auto 2rem; line-height:1.65;">
+          కోర్టుల చుట్టూ తిరిగే బాధ లేకుండా, మీ పిల్లల భవిష్యత్తు కోసం 10 నిమిషాల్లో చట్టబద్ధమైన వీలునామాను తయారు చేసుకోండి.
+        </p>
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" style="padding:0.9rem 2.5rem; font-weight:700; font-size:1.1rem;">
+          ఆన్‌లైన్‌లో వీలునామా రాయండి &mdash; &#x20B9;299 &rarr;
+        </a>
+      </div>
+    </section>
   </main>
 
-  <!-- Modern Footer -->
+  <!-- Telugu Footer -->
   <footer class="footer">
     <div class="container footer-container">
       <div class="footer-col">
@@ -371,38 +618,48 @@
           <span class="logo-text">SmartWill India</span>
         </a>
         <p class="footer-desc">
-          భారతీయ వారసత్వ చట్టం 1925 ప్రకారం ఆన్‌లైన్‌లో చట్టబద్ధమైన వీలునామాను తయారుచేసే విశ్వసనీయ వేదిక.
+          భారతీయ వారసత్వ చట్టం 1925 ప్రకారం భారతదేశంలో అత్యంత సరసమైన డిజిటల్ వీలునామా సృష్టి ప్లాట్‌ఫారమ్.
         </p>
       </div>
 
       <div class="footer-col">
         <h4 class="footer-title">త్వరిత లింకులు</h4>
         <ul class="footer-links">
-          <li><a href="/te/#how-it-works">ఎలా పనిచేస్తుంది</a></li>
-          <li><a href="/te/#pricing">ధర (₹299)</a></li>
-          <li><a href="/te/blog">తెలుగు లీగల్ గైడ్స్</a></li>
-          <li><a href="/will-registration-hyderabad">హైదరాబాద్ రిజిస్ట్రేషన్</a></li>
-          <li><a href="/">English Version</a></li>
+          <li><a href="/te/">ముఖ్య పేజీ (Home)</a></li>
+          <li><a href="/app">వీలునామా సృష్టించండి</a></li>
+          <li><a href="/te/#ila-pani-chestundi">ఎలా పని చేస్తుంది</a></li>
+          <li><a href="/te/blog">తెలుగు లీగల్ బ్లాగ్</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4 class="footer-title">చట్టపరమైనవి</h4>
+        <h4 class="footer-title">చట్టపరమైన సమాచారం</h4>
         <ul class="footer-links">
-          <li><a href="/privacy">గోప్యతా విధానం (DPDP)</a></li>
-          <li><a href="/terms">నిబంధనలు</a></li>
+          <li><a href="/privacy">గోప్యతా విధానం (Privacy Policy)</a></li>
+          <li><a href="/terms">నిబంధనలు &amp; షరతులు</a></li>
           <li><a href="/refunds">రీఫండ్ పాలసీ</a></li>
-          <li><a href="/contact">సంప్రదించండి</a></li>
+          <li><a href="/contact">సహాయ కేంద్రం (Contact)</a></li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="container footer-bottom-container">
-        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+        <p>&copy; 2026 SmartWill India. సర్వ హక్కులు ప్రత్యేకించబడ్డాయి. DPDP చట్టం, 2023 నిబంధనలకు కట్టుబడి ఉంది.</p>
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 నిమిషాలు &bull; చట్టబద్ధం</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      వీలునామా రాయండి &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>
@@ -418,6 +675,7 @@
       initIcons();
     }
 
+    // ── Hamburger menu toggle ──
     const hamburger = document.getElementById('navHamburger');
     const mobileMenu = document.getElementById('navMobileMenu');
     if (hamburger && mobileMenu) {

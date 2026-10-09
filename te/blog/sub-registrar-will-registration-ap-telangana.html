@@ -98,50 +98,112 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    h1, h2, h3, h4, .article-title, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
+    }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.3; 
-      margin-bottom: 1rem; 
-      max-width: 800px; 
+      line-height: 1.25; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 800px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.45rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.85; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -149,34 +211,128 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
+
+    /* ── Stat Box ── */
+    .stat-box { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
+      margin: 2rem 0; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+      gap: 1.5rem; 
       text-align: center; 
-      margin: 3.5rem 0; 
     }
-    .blog-cta-box h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 520px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
+    [data-theme="light"] .stat-number { color: #b45309; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
+    }
     .table-custom {
       width: 100%;
       border-collapse: collapse;
-      margin: 1.5rem 0 2rem;
       font-size: 0.95rem;
+      min-width: 580px;
     }
     .table-custom th, .table-custom td {
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
+      padding: 14px 18px;
       text-align: left;
     }
     .table-custom th {
       background: var(--bg-surface);
       font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -237,102 +393,198 @@
         <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
           <a href="/te/" style="color:var(--text-muted); text-decoration:none;">ముఖ్య పేజీ</a> &nbsp;&gt;&nbsp; 
           <a href="/te/blog" style="color:var(--text-muted); text-decoration:none;">బ్లాగ్</a> &nbsp;&gt;&nbsp; 
-          <span style="color:var(--primary, #dfb76c);">సబ్ రిజిస్ట్రార్ విల్లు రిజిస్ట్రేషన్</span>
+          <span style="color:var(--accent-gold, #dfb76c);">సబ్ రిజిస్ట్రార్ విల్లు రిజిస్ట్రేషన్</span>
         </nav>
-        <div class="article-tag">రిజిస్ట్రేషన్ &amp; ఫీజుల గైడ్</div>
+        <div class="article-tag">
+          <i data-lucide="building-2" style="width:14px; height:14px;"></i>
+          <span>రిజిస్ట్రేషన్ &amp; ఫీజుల గైడ్</span>
+        </div>
         <h1 class="article-title">సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో విల్లు రిజిస్ట్రేషన్ ఫీజు &amp; ప్రాసెస్</h1>
-        <div class="article-meta">సెప్టెంబర్ 28, 2026 &nbsp;&middot;&nbsp; 6 నిమిషాల పఠనం &nbsp;&middot;&nbsp; SmartWill లీగల్ డెస్క్</div>
+        <p class="article-subtitle" style="font-size:1.12rem; line-height:1.68; color:var(--text-muted); max-width:820px; margin-bottom:1.75rem;">
+          ఆంధ్రప్రదేశ్ &amp; తెలంగాణ సబ్ రిజిస్ట్రార్ కార్యాలయాలలో వీలునామా రిజిస్ట్రేషన్ విధానం, ప్రభుత్వ ఫీజులు, అవసరమైన పత్రాలు మరియు చట్టపరమైన వాస్తవాల సమగ్ర విశ్లేషణ.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c);"></i> SmartWill లీగల్ డెస్క్ పరిశీలన</span>
+          <span><i data-lucide="calendar" style="width:16px; height:16px;"></i> సెప్టెంబర్ 28, 2026</span>
+          <span><i data-lucide="clock" style="width:16px; height:16px;"></i> 6 నిమిషాల పఠనం</span>
+          <span><i data-lucide="landmark" style="width:16px; height:16px;"></i> రిజిస్ట్రేషన్ చట్టం సెక్షన్ 18</span>
+        </div>
       </div>
     </article>
 
-    <div class="container">
-      <div class="article-body">
-        <p>తెలంగాణ మరియు ఆంధ్రప్రదేశ్ రాష్ట్రాలలో భూములు, స్థలాలు మరియు ఇళ్ల విలువలు శరవేగంగా పెరిగాయి. హైదరాబాద్, విశాఖపట్నం, విజయవాడ వంటి నగరాల్లో ఆస్తి విలువలు కోట్లలోకి చేరడంతో, కుటుంబాలలో వీలునామా రిజిస్ట్రేషన్ గురించిన అవగాహన పెరుగుతోంది.</p>
+    <section class="article-body">
+      <div class="container">
+        <div class="row g-lg-5">
+          <!-- Main Content Column (8 cols) -->
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <p>చాలామంది ప్రజలు స్థానిక డాక్యుమెంట్ రైటర్లు లేదా దళారుల వద్దకు వెళ్ళినప్పుడు, "వీలునామా రిజిస్ట్రేషన్ చేయకపోతే కోర్టులో చెల్లదు" అని చెప్పి వేల రూపాయలు వసూలు చేస్తుంటారు. కానీ అసలు చట్టం ఏమి చెబుతోంది? సబ్ రిజిస్ట్రార్ ఆఫీస్ (SRO) లో రిజిస్ట్రేషన్ ఫీజు నిజంగా ఎంత ఉంటుంది? ఈ వ్యాసంలో పూర్తి వాస్తవాలు తెలుసుకుందాం.</p>
+              <p>తెలంగాణ మరియు ఆంధ్రప్రదేశ్ రాష్ట్రాలలో భూములు, స్థలాలు మరియు ఇళ్ల విలువలు శరవేగంగా పెరిగాయి. హైదరాబాద్, విశాఖపట్నం, విజయవాడ వంటి నగరాల్లో ఆస్తి విలువలు కోట్లలోకి చేరడంతో, కుటుంబాలలో వీలునామా రిజిస్ట్రేషన్ గురించిన అవగాహన పెరుగుతోంది.</p>
 
-        <h2>రిజిస్ట్రేషన్ చట్టం 1908: సెక్షన్ 18 నిబంధన</h2>
-        <p>భారత రిజిస్ట్రేషన్ చట్టం 1908 (Registration Act, 1908) లోని <strong>సెక్షన్ 18(e)</strong> ప్రకారం వీలునామా అనేది ఐచ్ఛిక డాక్యుమెంట్ల (Optional Registration) జాబితాలో ఉంది.</p>
+              <p>చాలామంది ప్రజలు స్థానిక డాక్యుమెంట్ రైటర్లు లేదా దళారుల వద్దకు వెళ్ళినప్పుడు, "వీలునామా రిజిస్ట్రేషన్ చేయకపోతే కోర్టులో చెల్లదు" అని చెప్పి వేల రూపాయలు వసూలు చేస్తుంటారు. కానీ అసలు చట్టం ఏమి చెబుతోంది? సబ్ రిజిస్ట్రార్ ఆఫీస్ (SRO) లో రిజిస్ట్రేషన్ ఫీజు నిజంగా ఎంత ఉంటుంది? ఈ వ్యాసంలో పూర్తి వాస్తవాలు తెలుసుకుందాం.</p>
 
-        <div class="callout-success">
-          <p><strong>స్పష్టమైన చట్టం:</strong> సేల్ డీడ్ లేదా గిఫ్ట్ డీడ్ వంటి డాక్యుమెంట్లకు రిజిస్ట్రేషన్ తప్పనిసరి. కానీ వీలునామా రిజిస్ట్రేషన్ చేయకపోయినా, అది సాదా కాగితంపై ఇద్దరు సాక్షుల అటెస్టేషన్‌తో ఉంటే భారతీయ వారసత్వ చట్టం సెక్షన్ 63 ప్రకారం 100% చట్టబద్ధమైనది.</p>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">₹0</div>
+                  <div class="stat-label">స్టాంప్ డ్యూటీ చట్టప్రకారం మినహాయింపు</div>
+                </div>
+                <div>
+                  <div class="stat-number">₹300 - 500</div>
+                  <div class="stat-label">అధికారిక ప్రభుత్వ SRO రిజిస్ట్రేషన్ ఛార్జీ</div>
+                </div>
+                <div>
+                  <div class="stat-number">సెక్షన్ 18</div>
+                  <div class="stat-label">రిజిస్ట్రేషన్ చట్టం 1908 ప్రకారం ఐచ్ఛికం</div>
+                </div>
+              </div>
+
+              <h2>రిజిస్ట్రేషన్ చట్టం 1908: సెక్షన్ 18 నిబంధన</h2>
+              <p>భారత రిజిస్ట్రేషన్ చట్టం 1908 (Registration Act, 1908) లోని <strong>సెక్షన్ 18(e)</strong> ప్రకారం వీలునామా అనేది ఐచ్ఛిక డాక్యుమెంట్ల (Optional Registration) జాబితాలో ఉంది.</p>
+
+              <div class="callout-success">
+                <p><strong>స్పష్టమైన చట్టం:</strong> సేల్ డీడ్ లేదా గిఫ్ట్ డీడ్ వంటి డాక్యుమెంట్లకు రిజిస్ట్రేషన్ తప్పనిసరి. కానీ వీలునామా రిజిస్ట్రేషన్ చేయకపోయినా, అది సాదా కాగితంపై ఇద్దరు సాక్షుల అటెస్టేషన్‌తో ఉంటే భారతీయ వారసత్వ చట్టం సెక్షన్ 63 ప్రకారం 100% చట్టబద్ధమైనది.</p>
+              </div>
+
+              <h2>మరి రిజిస్ట్రేషన్ ఎందుకు చేయించుకోవాలి?</h2>
+              <p>రిజిస్ట్రేషన్ తప్పనిసరి కాకపోయినా, సబ్ రిజిస్ట్రార్ వద్ద రిజిస్టర్ చేయడం వలన కొన్ని స్పష్టమైన ప్రయోజనాలు ఉంటాయి:</p>
+              <ul>
+                <li><strong>నకిలీ ఆరోపణలకు చెక్:</strong> టెస్టేటర్ స్వయంగా సబ్ రిజిస్ట్రార్ ఎదుట హాజరై సంతకం చేస్తారు కాబట్టి, భవిష్యత్తులో ఎవరైనా ఇది నకిలీ వీలునామా అని ఆరోపిస్తే కోర్టులలో సులభంగా వీగిపోతుంది.</li>
+                <li><strong>సురక్షిత రికార్డు:</strong> సబ్ రిజిస్ట్రార్ కార్యాలయంలో వీలునామా కాపీ శాశ్వతంగా 'బుక్ 3' (Book 3 - Register of Wills) లో భద్రపరచబడుతుంది. అసలు కాపీ పోయినా సర్టిఫైడ్ కాపీ తీసుకోవచ్చు.</li>
+                <li><strong>రహస్య డిపాజిట్:</strong> సెక్షన్ 42 ప్రకారం వీలునామాను సీల్డ్ కవర్‌లో సబ్ రిజిస్ట్రార్ వద్ద డిపాజిట్ చేసే సదుపాయం కూడా ఉంటుంది.</li>
+              </ul>
+
+              <h2>AP &amp; తెలంగాణలలో రిజిస్ట్రేషన్ ఫీజుల వివరాలు</h2>
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>ఫీజు రకం</th>
+                      <th>తెలంగాణ (Telangana SRO)</th>
+                      <th>ఆంధ్రప్రదేశ్ (AP SRO)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>స్టాంప్ డ్యూటీ</strong></td>
+                      <td>₹0 (పూర్తి మినహాయింపు)</td>
+                      <td>₹0 (పూర్తి మినహాయింపు)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>రిజిస్ట్రేషన్ ఫీజు</strong></td>
+                      <td>₹100 - ₹200</td>
+                      <td>₹100 - ₹200</td>
+                    </tr>
+                    <tr>
+                      <td><strong>యూజర్ ఛార్జీలు / స్కానింగ్</strong></td>
+                      <td>₹100 - ₹300</td>
+                      <td>₹100 - ₹250</td>
+                    </tr>
+                    <tr>
+                      <td><strong>మొత్తం అధికారిక ప్రభుత్వ ఖర్చు</strong></td>
+                      <td><strong>₹300 - ₹500 లోపు</strong></td>
+                      <td><strong>₹300 - ₹500 లోపు</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>చూశారుగా? ప్రభుత్వ రిజిస్ట్రేషన్ ఖర్చు కేవలం ₹500 లోపే ఉంటుంది. దళారులు అడిగే వేల రూపాయల ఫీజులకు ఎటువంటి ప్రభుత్వ మద్దతు లేదు.</p>
+
+              <h2>సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు వెళ్ళేటప్పుడు తీసుకెళ్ళాల్సిన పత్రాలు</h2>
+              <ol>
+                <li><strong>వీలునామా ఒరిజినల్ ప్రింట్:</strong> SmartWill నుండి డౌన్‌లోడ్ చేసుకున్న స్పష్టమైన 2 ఒరిజినల్ ప్రింటౌట్లు (సాదా తెల్ల A4 పేపర్ సరిపోతుంది).</li>
+                <li><strong>టెస్టేటర్ ఫోటో గుర్తింపు:</strong> ఒరిజినల్ ఆధార్ కార్డు, పాన్ కార్డు మరియు 2 పాస్‌పోర్ట్ సైజు ఫోటోలు.</li>
+                <li><strong>ఇద్దరు స్వతంత్ర సాక్షులు:</strong> ఇద్దరు సాక్షులు తప్పనిసరిగా సబ్ రిజిస్ట్రార్ ముందు హాజరుకావాలి. వారి వద్ద ఒరిజినల్ ఆధార్ కార్డులు ఉండాలి.</li>
+                <li><strong>డాక్టర్ ఫిట్‌నెస్ సర్టిఫికెట్ (ఐచ్ఛికం కానీ ఉత్తమం):</strong> టెస్టేటర్ వయస్సు 65 పైబడి ఉంటే, వారు ఆరోగ్యవంతమైన మనస్సుతో ఉన్నారని ధ్రువీకరిస్తూ ఒక రిజిస్టర్డ్ మెడికల్ ప్రాక్టీషనర్ (MBBS డాక్టర్) సర్టిఫికెట్ జతచేయడం మంచిది.</li>
+              </ol>
+
+              <div class="callout">
+                <p><strong>గుర్తుంచుకోండి:</strong> వీలునామాలోని లబ్ధిదారులు (ఆస్తి పొందే పిల్లలు లేదా ఇతరులు) సాక్షులుగా సంతకం చేయరాదు. మీ స్నేహితులు, బంధువులు లేదా కుటుంబ వైద్యుడిని సాక్షులుగా ఎంచుకోవాలి.</p>
+              </div>
+
+              <h2>ధరణి (Telangana) &amp; వెబ్‌ల్యాండ్ (AP) లో వీలునామా ప్రాముఖ్యత</h2>
+              <p>తెలంగాణలోని వ్యవసాయ భూములకు <strong>ధరణి (Dharani Portal)</strong> ద్వారా మరియు ఆంధ్రప్రదేశ్‌లో <strong>వెబ్‌ల్యాండ్ (Webland)</strong> ద్వారా పట్టాదార్ పాస్‌బుక్‌ల మ్యుటేషన్ జరుగుతుంది. సరైన వీలునామా ఉన్నప్పుడు వారసుల మధ్య తగాదాలు లేకుండా సులభంగా మ్యుటేషన్ దరఖాస్తు చేసుకోవచ్చు.</p>
+
+              <h2>తరచుగా అడిగే ప్రశ్నలు (FAQ)</h2>
+              <div class="faq-card">
+                <h3>1. రిజిస్టర్డ్ వీలునామాను కోర్టులో ఎవరైనా ఛాలెంజ్ చేయవచ్చా?</h3>
+                <p>రిజిస్ట్రేషన్ జరిగినంత మాత్రాన వీలునామాను ఛాలెంజ్ చేయలేరని అనుకోవడం పొరపాటు. బలవంతంగా రాయించారని గానీ, లేదా టెస్టేటర్ మానసిక స్థితి సరిగా లేదని గానీ నిరూపిస్తే కోర్టు రద్దు చేయవచ్చు. అందుకే సరైన సాక్షులు మరియు స్పష్టమైన నిబంధనలు ఉండటం ముఖ్యం.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>2. ఒకసారి రిజిస్టర్ చేసిన తర్వాత మళ్ళీ కొత్త వీలునామా రాయవచ్చా?</h3>
+                <p>ఖచ్చితంగా రాయవచ్చు. పాత రిజిస్టర్డ్ వీలునామాను రద్దు చేస్తూ మరొక కొత్త వీలునామా రాసి మళ్లీ రిజిస్టర్ చేసుకోవచ్చు.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>3. ఏ సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో రిజిస్టర్ చేయాలి?</h3>
+                <p>ఆస్తులు ఉన్న ప్రాంతానికి సంబంధించిన సబ్ రిజిస్ట్రార్ వద్ద లేదా టెస్టేటర్ నివసిస్తున్న ప్రాంత పరిధిలోని SRO కార్యాలయంలో రిజిస్ట్రేషన్ చేయవచ్చు.</p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar Column (4 cols) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Primary CTA Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:2rem; margin-bottom:0.75rem;">&#x270d;&#xfe0f;</div>
+                <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-main);">వీలునామా సృష్టించండి</h4>
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  భారతీయ వారసత్వ చట్టం 1925 ప్రకారం సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు సరిపోయే చట్టబద్ధమైన వీలునామాను 10 నిమిషాల్లో రూపొందించుకోండి.
+                </p>
+                <a href="/app" class="btn btn-gold w-100" style="display:block; text-align:center;">
+                  ప్రారంభించండి &mdash; &#x20B9;299 &rarr;
+                </a>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+                  &check; 100% చట్టబద్ధం &bull; సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు సిద్ధం &bull; తక్షణ PDF
+                </div>
+              </div>
+
+              <!-- SRO Checklist Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="check-circle-2" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> SRO రిజిస్ట్రేషన్ ముఖ్యాంశాలు</h4>
+                <ul>
+                  <li>&bull; <strong>స్టాంప్ డ్యూటీ:</strong> పూర్తిగా ₹0 (మినహాయింపు)</li>
+                  <li>&bull; <strong>ప్రభుత్వ ఫీజు:</strong> కేవలం ₹300 నుండి ₹500 లోపు</li>
+                  <li>&bull; <strong>సాక్షులు:</strong> ఇద్దరు హాజరు తప్పనిసరి (ఆధార్ కార్డుతో)</li>
+                  <li>&bull; <strong>పత్రాలు:</strong> 2 సెట్ల ఒరిజినల్ వీలునామా ప్రింట్లు</li>
+                  <li>&bull; <strong>రిజిస్ట్రేషన్:</strong> ఐచ్ఛికం, చట్టబద్ధతకు తప్పనిసరి కాదు</li>
+                </ul>
+              </div>
+
+              <!-- Related Guides Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="book-open" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> సంబంధిత తెలుగు గైడ్స్</h4>
+                <ul>
+                  <li><a href="/te/blog/veelunaama-ela-rayali">&rarr; వీలునామా ఎలా రాయాలి? పూర్తి గైడ్</a></li>
+                  <li><a href="/te/blog/stamp-paper-avasarama-veelunaamaku">&rarr; స్టాంప్ పేపర్ అవసరమా?</a></li>
+                  <li><a href="/te/blog/nominee-vs-legal-heir-telugu">&rarr; నామినీ వర్సెస్ లీగల్ హెయిర్</a></li>
+                  <li><a href="/te/blog/tandri-aasti-veelunaama-nibandhanalu">&rarr; తండ్రి ఆస్తిపై వీలునామా నిబంధనలు</a></li>
+                  <li><a href="/te/blog/registered-veelunaama-court-chellubaatu">&rarr; రిజిస్టర్డ్ వీలునామా కోర్టులో చెల్లుబాటు అవుతుందా?</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
         </div>
-
-        <h2>మరి రిజిస్ట్రేషన్ ఎందుకు చేయించుకోవాలి?</h2>
-        <p>రిజిస్ట్రేషన్ తప్పనిసరి కాకపోయినా, సబ్ రిజిస్ట్రార్ వద్ద రిజిస్టర్ చేయడం వలన కొన్ని స్పష్టమైన ప్రయోజనాలు ఉంటాయి:</p>
-        <ul>
-          <li><strong>నకిలీ ఆరోపణలకు చెక్:</strong> టెస్టేటర్ స్వయంగా సబ్ రిజిస్ట్రార్ ఎదుట హాజరై సంతకం చేస్తారు కాబట్టి, భవిష్యత్తులో ఎవరైనా ఇది నకిలీ వీలునామా అని ఆరోపిస్తే కోర్టులలో సులభంగా వీగిపోతుంది.</li>
-          <li><strong>సురక్షిత రికార్డు:</strong> సబ్ రిజిస్ట్రార్ కార్యాలయంలో వీలునామా కాపీ శాశ్వతంగా 'బుక్ 3' (Book 3 - Register of Wills) లో భద్రపరచబడుతుంది. అసలు కాపీ పోయినా సర్టిఫైడ్ కాపీ తీసుకోవచ్చు.</li>
-          <li><strong>రహస్య డిపాజిట్:</strong> సెక్షన్ 42 ప్రకారం వీలునామాను సీల్డ్ కవర్‌లో సబ్ రిజిస్ట్రార్ వద్ద డిపాజిట్ చేసే సదుపాయం కూడా ఉంటుంది.</li>
-        </ul>
-
-        <h2>AP &amp; తెలంగాణలలో రిజిస్ట్రేషన్ ఫీజుల వివరాలు</h2>
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>ఫీజు రకం</th>
-              <th>తెలంగాణ (Telangana SRO)</th>
-              <th>ఆంధ్రప్రదేశ్ (AP SRO)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>స్టాంప్ డ్యూటీ</strong></td>
-              <td>₹0 (పూర్తి మినహాయింపు)</td>
-              <td>₹0 (పూర్తి మినహాయింపు)</td>
-            </tr>
-            <tr>
-              <td><strong>రిజిస్ట్రేషన్ ఫీజు</strong></td>
-              <td>₹100 - ₹200</td>
-              <td>₹100 - ₹200</td>
-            </tr>
-            <tr>
-              <td><strong>యూజర్ ఛార్జీలు / స్కానింగ్</strong></td>
-              <td>₹100 - ₹300</td>
-              <td>₹100 - ₹250</td>
-            </tr>
-            <tr>
-              <td><strong>మొత్తం అధికారిక ప్రభుత్వ ఖర్చు</strong></td>
-              <td><strong>₹300 - ₹500 లోపు</strong></td>
-              <td><strong>₹300 - ₹500 లోపు</strong></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>చూశారుగా? ప్రభుత్వ రిజిస్ట్రేషన్ ఖర్చు కేవలం ₹500 లోపే ఉంటుంది. దళారులు అడిగే వేల రూపాయల ఫీజులకు ఎటువంటి ప్రభుత్వ మద్దతు లేదు.</p>
-
-        <h2>సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు వెళ్ళేటప్పుడు తీసుకెళ్ళాల్సిన పత్రాలు</h2>
-        <ol>
-          <li><strong>వీలునామా ఒరిజినల్ ప్రింట్:</strong> SmartWill నుండి డౌన్‌లోడ్ చేసుకున్న స్పష్టమైన 2 ఒరిజినల్ ప్రింటౌట్లు (సాదా తెల్ల A4 పేపర్ సరిపోతుంది).</li>
-          <li><strong>టెస్టేటర్ ఫోటో గుర్తింపు:</strong> ఒరిజినల్ ఆధార్ కార్డు, పాన్ కార్డు మరియు 2 పాస్‌పోర్ట్ సైజు ఫోటోలు.</li>
-          <li><strong>ఇద్దరు స్వతంత్ర సాక్షులు:</strong> ఇద్దరు సాక్షులు తప్పనిసరిగా సబ్ రిజిస్ట్రార్ ముందు హాజరుకావాలి. వారి వద్ద ఒరిజినల్ ఆధార్ కార్డులు ఉండాలి.</li>
-          <li><strong>డాక్టర్ ఫిట్‌నెస్ సర్టిఫికెట్ (ఐచ్ఛికం కానీ ఉత్తమం):</strong> టెస్టేటర్ వయస్సు 65 పైబడి ఉంటే, వారు ఆరోగ్యవంతమైన మనస్సుతో ఉన్నారని ధ్రువీకరిస్తూ ఒక రిజిస్టర్డ్ మెడికల్ ప్రాక్టీషనర్ (MBBS డాక్టర్) సర్టిఫికెట్ జతచేయడం మంచిది.</li>
-        </ol>
-
-        <div class="callout">
-          <p><strong>గుర్తుంచుకోండి:</strong> వీలునామాలోని లబ్ధిదారులు (ఆస్తి పొందే పిల్లలు లేదా ఇతరులు) సాక్షులుగా సంతకం చేయరాదు. మీ స్నేహితులు, బంధువులు లేదా కుటుంబ వైద్యుడిని సాక్షులుగా ఎంచుకోవాలి.</p>
-        </div>
-
-        <h2>ధరణి (Telangana) &amp; వెబ్‌ల్యాండ్ (AP) లో వీలునామా ప్రాముఖ్యత</h2>
-        <p>తెలంగాణలోని వ్యవసాయ భూములకు <strong>ధరణి (Dharani Portal)</strong> ద్వారా మరియు ఆంధ్రప్రదేశ్‌లో <strong>వెబ్‌ల్యాండ్ (Webland)</strong> ద్వారా పట్టాదార్ పాస్‌బుక్‌ల మ్యుటేషన్ జరుగుతుంది. సరైన వీలునామా ఉన్నప్పుడు వారసుల మధ్య తగాదాలు లేకుండా సులభంగా మ్యుటేషన్ దరఖాస్తు చేసుకోవచ్చు.</p>
-
-        <div class="blog-cta-box">
-          <h3>సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు సరిపోయే పక్కా వీలునామా తయారు చేసుకోండి</h3>
-          <p>SmartWill అందించే వీలునామా డ్రాఫ్ట్ భారతీయ వారసత్వ చట్టం 1925 కు 100% అనుగుణంగా ఉంటుంది. దీన్ని నేరుగా సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో రిజిస్టర్ చేసుకోవచ్చు.</p>
-          <a href="/app" class="btn btn-gold btn-lg shadow-gold">కేవలం ₹299కే వీలునామా రూపొందించండి</a>
-        </div>
-
-        <h2>తరచుగా అడిగే ప్రశ్నలు (FAQ)</h2>
-        <h3>1. రిజిస్టర్డ్ వీలునామాను కోర్టులో ఎవరైనా ఛాలెంజ్ చేయవచ్చా?</h3>
-        <p>రిజిస్ట్రేషన్ జరిగినంత మాత్రాన వీలునామాను ఛాలెంజ్ చేయలేరని అనుకోవడం పొరపాటు. బలవంతంగా రాయించారని గానీ, లేదా టెస్టేటర్ మానసిక స్థితి సరిగా లేదని గానీ నిరూపిస్తే కోర్టు రద్దు చేయవచ్చు. అందుకే సరైన సాక్షులు మరియు స్పష్టమైన నిబంధనలు ఉండటం ముఖ్యం.</p>
-
-        <h3>2. ఒకసారి రిజిస్టర్ చేసిన తర్వాత మళ్ళీ కొత్త వీలునామా రాయవచ్చా?</h3>
-        <p>ఖచ్చితంగా రాయవచ్చు. పాత రిజిస్టర్డ్ వీలునామాను రద్దు చేస్తూ మరొక కొత్త వీలునామా రాసి మళ్లీ రిజిస్టర్ చేసుకోవచ్చు.</p>
-
-        <h3>3. ఏ సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో రిజిస్టర్ చేయాలి?</h3>
-        <p>ఆస్తులు ఉన్న ప్రాంతానికి సంబంధించిన సబ్ రిజిస్ట్రార్ వద్ద లేదా టెస్టేటర్ నివసిస్తున్న ప్రాంత పరిధిలోని SRO కార్యాలయంలో రిజిస్ట్రేషన్ చేయవచ్చు.</p>
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="background:linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); border-top:1px solid rgba(223, 183, 108, 0.25); border-bottom:1px solid rgba(223, 183, 108, 0.25); padding:4rem 0; text-align:center;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); font-weight:700; margin-bottom:1rem; color:var(--text-main);">
+          సబ్ రిజిస్ట్రార్ ఆఫీస్‌కు సరిపోయే పక్కా వీలునామా తయారు చేసుకోండి
+        </h2>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:650px; margin:0 auto 2rem; line-height:1.65;">
+          SmartWill అందించే వీలునామా డ్రాఫ్ట్ భారతీయ వారసత్వ చట్టం 1925 కు 100% అనుగుణంగా ఉంటుంది. దీన్ని నేరుగా సబ్ రిజిస్ట్రార్ ఆఫీస్‌లో రిజిస్టర్ చేసుకోవచ్చు.
+        </p>
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" style="padding:0.9rem 2.5rem; font-weight:700; font-size:1.1rem;">
+          ఇప్పుడే వీలునామా ప్రారంభించండి — &#x20B9;299 &rarr;
+        </a>
+      </div>
+    </section>
   </main>
 
   <!-- Telugu Footer -->
@@ -377,6 +629,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 నిమిషాలు &bull; చట్టబద్ధం</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      వీలునామా రాయండి &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
 </body>
 </html>

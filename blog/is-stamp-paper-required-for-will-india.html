@@ -91,50 +91,114 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); 
+      text-transform: none !important;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-subtitle { 
+      font-size: 1.12rem; 
+      line-height: 1.68; 
+      color: var(--text-muted); 
+      max-width: 820px; 
+      margin-bottom: 1.75rem; 
+      text-wrap: pretty;
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -142,34 +206,54 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
+
+    /* ── Stat Box ── */
     .stat-box { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
-      border-radius: var(--radius-md, 12px); 
-      padding: 1.5rem; 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
       margin: 2rem 0; 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
       gap: 1.5rem; 
       text-align: center; 
     }
-    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
     [data-theme="light"] .stat-number { color: #b45309; }
-    .stat-label { font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 580px;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── Telugu Guidance Box ── */
     .telugu-snippet-box {
       background: var(--bg-card);
       border: 1px dashed var(--accent-gold, #dfb76c);
@@ -182,20 +266,85 @@
       font-size: 1.15rem;
       margin-bottom: 0.5rem;
     }
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0 2rem;
-      font-size: 0.95rem;
+    [data-theme="light"] .telugu-snippet-box h4 {
+      color: #b45309;
     }
-    .table-custom th, .table-custom td {
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
-      text-align: left;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .table-custom th {
-      background: var(--bg-surface);
+    .faq-card h3 {
+      font-size: 1.15rem;
       font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -251,129 +400,263 @@
   </header>
 
   <main>
-    <article class="article-header">
+    <section class="article-header">
       <div class="container">
-        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.25rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
           <span style="color:var(--primary, #dfb76c);">Will Stamp Paper Rules India</span>
         </nav>
-        <div class="article-tag">Indian Stamp Act &amp; Estate Planning</div>
+        <div class="article-tag">
+          <i data-lucide="file-check-2" style="width:16px;height:16px;"></i> Indian Stamp Act 1899 &bull; Plain Paper Rule
+        </div>
         <h1 class="article-title">Is Stamp Paper Required for a Will in India? (The Plain A4 Paper Rule)</h1>
+        <p class="article-subtitle">
+          Does your Will need a &#x20B9;100 or &#x20B9;500 non-judicial stamp paper? Under the Indian Stamp Act, 1899, a Will is completely exempt from stamp duty. Here is why plain A4 paper is 100% legally enforceable across India.
+        </p>
         <div class="article-meta">
-          <span>By SmartWill India Legal Desk</span> &nbsp;&middot;&nbsp; 
-          <span>Updated September 2026</span> &nbsp;&middot;&nbsp; 
-          <span>6 min read</span>
+          <span><i data-lucide="scale" style="width:16px;height:16px;"></i> Indian Stamp Act, 1899</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 6 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
         </div>
       </div>
-    </article>
+    </section>
 
-    <div class="container">
-      <div class="article-body">
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <div class="callout-success">
-          <p><strong>The Short Legal Answer:</strong> <strong>NO.</strong> Under the Indian Stamp Act, 1899, a Will is completely exempt from stamp duty. There is absolutely no requirement to use &#x20B9;100, &#x20B9;500, or any other denomination of non-judicial stamp paper. A Will executed on a plain white A4 paper is 100% legally enforceable across India.</p>
-        </div>
+              <div class="callout-success">
+                <p><strong>The Short Legal Answer:</strong> <strong>NO.</strong> Under the Indian Stamp Act, 1899, a Will is completely exempt from stamp duty. There is absolutely no requirement to use &#x20B9;100, &#x20B9;500, or any other denomination of non-judicial stamp paper. A Will executed on a plain white A4 paper is 100% legally enforceable across India.</p>
+              </div>
 
-        <p>If you ask an average Indian whether stamp paper is required for a Will in India, chances are they will say yes. The myth that legal documents are only valid if printed on green non-judicial stamp paper is deeply ingrained in Indian society. This misconception is often perpetuated by touts and notary agents outside courts who profit from selling stamp papers at a premium.</p>
+              <p>If you ask an average Indian whether stamp paper is required for a Will in India, chances are they will say yes. The myth that legal documents are only valid if printed on green non-judicial stamp paper is deeply ingrained in Indian society. This misconception is often perpetuated by touts and notary agents outside courts who profit from selling stamp papers at a premium.</p>
 
-        <p>This misunderstanding prevents many families from securing their assets. They assume that creating a Will is a costly, bureaucratic hassle. The truth, however, is that Indian law makes executing a Will remarkably simple and entirely free from stamp duty.</p>
+              <p>This misunderstanding prevents many families from securing their assets. They assume that creating a Will is a costly, bureaucratic hassle. The truth, however, is that Indian law makes executing a Will remarkably simple and entirely free from stamp duty.</p>
 
-        <div class="stat-box">
-          <div>
-            <div class="stat-number">&#x20B9;0</div>
-            <div class="stat-label">Stamp Duty Required for a Will in India</div>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">&#x20B9;0</div>
+                  <div class="stat-label">Stamp Duty Required for a Will in India</div>
+                </div>
+                <div>
+                  <div class="stat-number">A4</div>
+                  <div class="stat-label">Plain White Paper is 100% Legally Valid</div>
+                </div>
+                <div>
+                  <div class="stat-number">1899</div>
+                  <div class="stat-label">Indian Stamp Act Explicitly Exempts Wills</div>
+                </div>
+              </div>
+
+              <h2>1. The #1 Myth: "Wills Need &#x20B9;100/&#x20B9;500 Stamp Paper"</h2>
+              <p>Many people confuse Wills with other property documents like Sale Deeds, Gift Deeds, or Lease Agreements. For those documents, the Indian Stamp Act mandates payment of ad valorem stamp duty based on the property's value. Without the correct stamp paper, a Sale Deed is invalid and inadmissible in court.</p>
+              <p>However, a Will is fundamentally different. A Will is a <em>testamentary document</em> that only takes effect after the death of the testator (the person making the Will). Because it can be revoked or changed at any time during the testator's life, the law does not treat it as an inter-vivos (living person to living person) transfer of property.</p>
+
+              <h2>2. Section 18 of the Indian Stamp Act, 1899: Exemption from Stamp Duty</h2>
+              <p>The <em>Indian Stamp Act, 1899</em> governs the stamp duty payable on various legal instruments in India. Schedule I of the Act lists all documents that require stamp paper and specifies the applicable duty.</p>
+              <p>If you examine Schedule I of the Indian Stamp Act (and the corresponding State Stamp Acts), you will find that <strong>Wills are conspicuously absent from the list of documents requiring stamp duty</strong>. Because a Will is not explicitly listed as an instrument chargeable with duty, it is exempt by default.</p>
+
+              <div class="callout">
+                <p><em>"Legal Precedent: The Supreme Court of India has repeatedly held that a Will, by its very nature as a revocable instrument taking effect post-mortem, does not attract stamp duty under the Indian Stamp Act. A plain paper Will is fully admissible and enforceable in courts."</em></p>
+              </div>
+
+              <h2>3. Section 63 of the Indian Succession Act, 1925: Valid Execution on Plain A4 Paper</h2>
+              <p>So, if stamp paper is not required, what does the law actually demand? The requirements for a valid Will are governed by <strong>Section 63 of the Indian Succession Act, 1925</strong>. The criteria are surprisingly straightforward:</p>
+              <ul>
+                <li><strong>Any Plain Paper:</strong> The Will can be written, typed, or printed on any clean paper. Most legal practitioners recommend standard A4 size plain white paper for clarity and durability.</li>
+                <li><strong>Testator's Signature:</strong> The person making the Will must sign or affix their thumb impression on the document, ideally on every page to prevent tampering.</li>
+                <li><strong>Two Independent Witnesses:</strong> The signature must be witnessed by at least two independent people who are present at the same time and who also sign the document. These witnesses must not be beneficiaries in the Will.</li>
+              </ul>
+              <p>Nowhere in Section 63 does it mention stamp paper, legal paper, green sheets, or any specific stationery.</p>
+
+              <h2>4. Why Predatory Touts and Notary Agents Push Unnecessary Stamp Papers</h2>
+              <p>If the law is so clear, why does the myth persist? The answer lies in the informal legal economy outside many Indian courts and Sub-Registrar offices.</p>
+              <p>Many notary agents and touts earn a living by selling stamp paper and providing drafting services. When an uninformed citizen approaches them to draft a Will, the agent will often insist on using a &#x20B9;100 or &#x20B9;500 stamp paper. This allows them to charge a markup on the stamp paper and inflate the perceived value of their drafting services. They convince the citizen that the green paper makes the document "more official."</p>
+
+              <h2>5. State-Wise Reality Check: No State Requires Stamp Paper</h2>
+              <p>Stamp duty is a concurrent subject in India, meaning states have their own Stamp Acts (e.g., the Maharashtra Stamp Act, Karnataka Stamp Act). However, the rule regarding Wills is uniform across the country:</p>
+              <ul>
+                <li><strong>Maharashtra:</strong> No stamp paper required for a Will.</li>
+                <li><strong>Karnataka:</strong> No stamp paper required for a Will.</li>
+                <li><strong>Delhi:</strong> No stamp paper required for a Will.</li>
+                <li><strong>Telangana &amp; Andhra Pradesh:</strong> No stamp paper required for a Will.</li>
+                <li><strong>Tamil Nadu:</strong> No stamp paper required for a Will.</li>
+              </ul>
+              <p>Across all 28 states and 8 Union Territories, the exemption of Wills from stamp duty holds true.</p>
+
+              <h2>Plain Paper vs Stamp Paper vs Registration: Legal Comparison</h2>
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>Document Type</th>
+                      <th>Stamp Duty Payable</th>
+                      <th>Legal Validity</th>
+                      <th>Admissible in Court?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Plain A4 Paper Will</strong></td>
+                      <td>&#x20B9;0 (Completely Exempt)</td>
+                      <td>100% Valid under ISA 1925</td>
+                      <td>Yes, fully admissible with 2 witnesses</td>
+                    </tr>
+                    <tr>
+                      <td><strong>&#x20B9;100 / &#x20B9;500 Stamp Paper Will</strong></td>
+                      <td>Unnecessary expenditure</td>
+                      <td>100% Valid (same as plain paper)</td>
+                      <td>Yes (stamp paper adds zero legal validity)</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Notarized Plain Paper Will</strong></td>
+                      <td>&#x20B9;0 stamp duty + notary fee</td>
+                      <td>100% Valid (optional attestation)</td>
+                      <td>Yes, provides additional witness verification</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Registered Will (SRO)</strong></td>
+                      <td>Nominal SRO fee (~&#x20B9;100-&#x20B9;500)</td>
+                      <td>Highest evidentiary presumption</td>
+                      <td>Yes, registered copy preserved permanently</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
+              <div class="telugu-snippet-box">
+                <h4>&#x1f1ee;&#x1f1f3; తెలుగు ప్రజల కోసం ముఖ్య సమాచారం (Stamp Paper Rules in Telugu)</h4>
+                <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
+                  <strong>వీలునామా రాయడానికి స్టాంప్ పేపర్ అవసరమా?</strong><br>
+                  లేదు. భారతదేశంలో వీలునామా (Will) రాయడానికి ఎలాంటి స్టాంప్ పేపర్ (&#x20B9;100 లేదా &#x20B9;500) అవసరం లేదు. ఇండియన్ స్టాంప్ యాక్ట్ ప్రకారం వీలునామాకు స్టాంప్ డ్యూటీ మినహాయింపు ఉంది. మీరు సాదా A4 తెల్ల కాగితం (Plain A4 Paper) పై వీలునామా రాసి, మీ సంతకం చేసి, ఇద్దరు సాక్షుల సంతకాలు తీసుకుంటే, అది చట్టపరంగా 100% చెల్లుబాటు అవుతుంది.
+                </p>
+              </div>
+
+              <h2>6. What About Notarization? (Optional, Not Required)</h2>
+              <p>Another common question is whether a plain paper Will needs to be notarized by a Notary Public. Similar to stamp paper and registration, <strong>notarization is entirely optional</strong>.</p>
+              <p>While having a Notary attest your signature provides an additional layer of witness verification, it does not magically increase the legal validity of the Will. A plain paper Will attested by two ordinary witnesses (like friends, neighbors, or a family doctor) is just as valid as a notarized one. If you later choose to register your document for archival protection, see our guide on <a href="/blog/how-to-register-a-will-at-sub-registrar-office" style="color:var(--accent-gold, #dfb76c); font-weight:600;">how to register a Will at the Sub-Registrar Office</a>.</p>
+
+              <h2>7. Step-by-Step: How to Execute a Valid Will on Plain A4 Paper</h2>
+              <p>To ensure your plain paper Will is bulletproof in court, follow these simple steps:</p>
+              <ol>
+                <li><strong>Draft Clearly:</strong> Use unambiguous language to describe your assets and beneficiaries. You can use platforms like SmartWill India to generate a legally sound draft online.</li>
+                <li><strong>Print on A4 Paper:</strong> Print the final draft on standard white A4 paper. Make sure the print is clear and legible.</li>
+                <li><strong>Gather Witnesses:</strong> Invite two reliable, independent adults who are not receiving any property under the Will to act as witnesses.</li>
+                <li><strong>Sign in Presence of Witnesses:</strong> Sign your name or affix your thumbprint at the bottom of every page and at the very end of the document. Both witnesses must physically watch you do this.</li>
+                <li><strong>Witness Signatures:</strong> Immediately after you sign, both witnesses must sign the last page in your presence, providing their names, addresses, and ID details (like Aadhaar numbers).</li>
+                <li><strong>Store Safely:</strong> Keep the original signed document in a secure location (like a bank locker) and inform your executor or trusted family members of its whereabouts.</li>
+              </ol>
+
+              <h2>Frequently Asked Questions</h2>
+              
+              <div class="faq-card">
+                <h3 class="faq-question">Is a Will valid on a plain white paper in India?</h3>
+                <div class="faq-answer">
+                  <p>Yes, absolutely. Under Section 63 of the Indian Succession Act, 1925, a Will typed or handwritten on plain A4 white paper is 100% legally valid as long as it is signed by the testator in the presence of two independent witnesses who also sign in each other's presence.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">Is stamp paper required for a Will in India?</h3>
+                <div class="faq-answer">
+                  <p>No. Under Schedule I of the Indian Stamp Act, 1899, testamentary instruments like Wills are completely exempt from stamp duty. There is zero legal requirement to execute a Will on a &#x20B9;100, &#x20B9;500, or any stamp paper.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">Does an unregistered plain paper Will hold value in court?</h3>
+                <div class="faq-answer">
+                  <p>Yes. Under Section 18 of the Indian Registration Act, 1908, Will registration is strictly optional. An unregistered plain paper Will holds full legal evidentiary weight in courts for obtaining probate, legal heir certificates, or transferring bank accounts and properties.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">Can an executor or beneficiary sign as a witness on plain paper?</h3>
+                <div class="faq-answer">
+                  <p>An executor can sign as a witness if they receive no personal bequest under the Will. However, under Section 67 of the Indian Succession Act, 1925, any bequest or legacy given to an attesting witness (or their spouse) becomes null and void. Therefore, beneficiaries must NEVER sign as witnesses.</p>
+                </div>
+              </div>
+
+            </article>
           </div>
-          <div>
-            <div class="stat-number">A4</div>
-            <div class="stat-label">Plain Paper is 100% Legally Valid</div>
+
+          <!-- Sticky Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Action Card -->
+              <div class="sidebar-card cta-card">
+                <h4>Create Your Will Online</h4>
+                <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1.25rem;">
+                  Draft a legally bulletproof plain-paper Will valid under the Indian Succession Act 1925 in just 10 minutes.
+                </p>
+                <div style="font-size:1.85rem; font-weight:800; color:var(--accent-gold, #dfb76c); margin-bottom:1rem;">
+                  &#x20B9;299
+                </div>
+                <a href="/app" class="btn btn-gold btn-block" style="display:block; text-align:center;">
+                  Create Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- Stamp Paper Rules Highlights -->
+              <div class="sidebar-card">
+                <h4>Stamp Duty Rules at a Glance</h4>
+                <ul style="padding-left:0; list-style:none; display:flex; flex-direction:column; gap:0.75rem;">
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Stamp Duty:</strong> &#x20B9;0 (Completely Exempt)</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Paper Format:</strong> Plain White A4 Paper</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Witness Requirement:</strong> Min 2 Independent Adults</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Registration:</strong> Optional (Section 18, Act 1908)</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Notarization:</strong> Optional</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Related Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/is-will-registration-mandatory-in-india">&rarr; Is Will Registration Mandatory?</a></li>
+                  <li><a href="/blog/what-happens-without-will-india">&rarr; Dying Without a Will in India</a></li>
+                  <li><a href="/blog/how-to-register-a-will-at-sub-registrar-office">&rarr; How to Register at Sub-Registrar Office</a></li>
+                  <li><a href="/blog/nominee-vs-legal-heir-india">&rarr; Nominee vs Legal Heir Rights</a></li>
+                  <li><a href="/blog/can-you-disinherit-a-child-in-india">&rarr; Can You Disinherit a Child in India?</a></li>
+                </ul>
+              </div>
+            </aside>
           </div>
-          <div>
-            <div class="stat-number">1899</div>
-            <div class="stat-label">Indian Stamp Act Explicitly Exempts Wills</div>
-          </div>
         </div>
-
-        <h2>1. The #1 Myth: "Wills Need &#x20B9;100/&#x20B9;500 Stamp Paper"</h2>
-        <p>Many people confuse Wills with other property documents like Sale Deeds, Gift Deeds, or Lease Agreements. For those documents, the Indian Stamp Act mandates payment of ad valorem stamp duty based on the property's value. Without the correct stamp paper, a Sale Deed is invalid and inadmissible in court.</p>
-        <p>However, a Will is fundamentally different. A Will is a <em>testamentary document</em> that only takes effect after the death of the testator (the person making the Will). Because it can be revoked or changed at any time during the testator's life, the law does not treat it as a current transfer of property.</p>
-
-        <h2>2. Section 18 of the Indian Stamp Act, 1899: Exemption from Stamp Duty</h2>
-        <p>The <em>Indian Stamp Act, 1899</em> governs the stamp duty payable on various legal instruments in India. Schedule I of the Act lists all documents that require stamp paper and specifies the applicable duty.</p>
-        <p>If you examine Schedule I of the Indian Stamp Act (and the corresponding State Stamp Acts), you will find that <strong>Wills are conspicuously absent from the list of documents requiring stamp duty</strong>. Because a Will is not explicitly listed as an instrument chargeable with duty, it is exempt by default.</p>
-
-        <div class="callout">
-          <p><em>"Legal Precedent: The Supreme Court of India has repeatedly upheld that a Will, by its very nature as a revocable instrument taking effect post-mortem, does not attract stamp duty under the Indian Stamp Act. A plain paper Will is perfectly legal."</em></p>
-        </div>
-
-        <h2>3. Section 63 of the Indian Succession Act, 1925: Valid Execution on Plain A4 Paper</h2>
-        <p>So, if stamp paper is not required, what does the law actually demand? The requirements for a valid Will are governed by <strong>Section 63 of the Indian Succession Act, 1925</strong>. The criteria are surprisingly straightforward:</p>
-        <ul>
-          <li><strong>Any Plain Paper:</strong> The Will can be written, typed, or printed on any clean paper. Most legal practitioners recommend standard A4 size plain white paper for clarity and durability.</li>
-          <li><strong>Testator's Signature:</strong> The person making the Will must sign or affix their thumb impression on the document, ideally on every page to prevent tampering.</li>
-          <li><strong>Two Independent Witnesses:</strong> The signature must be witnessed by at least two independent people who are present at the same time and who also sign the document. These witnesses must not be beneficiaries in the Will.</li>
-        </ul>
-        <p>Nowhere in Section 63 does it mention stamp paper, legal paper, green sheets, or any specific stationery.</p>
-
-        <h2>4. Why Predatory Touts and Notary Agents Push Unnecessary Stamp Papers</h2>
-        <p>If the law is so clear, why does the myth persist? The answer lies in the informal legal economy outside many Indian courts and Sub-Registrar offices.</p>
-        <p>Many notary agents and touts earn a living by selling stamp paper and providing drafting services. When an uninformed citizen approaches them to draft a Will, the agent will often insist on using a &#x20B9;100 or &#x20B9;500 stamp paper. This allows them to charge a markup on the stamp paper and inflate the perceived value of their drafting services. They convince the citizen that the green paper makes the document "more official."</p>
-
-        <h2>5. State-Wise Reality Check: No State Requires Stamp Paper</h2>
-        <p>Stamp duty is a concurrent subject in India, meaning states have their own Stamp Acts (e.g., the Maharashtra Stamp Act, Karnataka Stamp Act). However, the rule regarding Wills is uniform across the country:</p>
-        <ul>
-          <li><strong>Maharashtra:</strong> No stamp paper required for a Will.</li>
-          <li><strong>Karnataka:</strong> No stamp paper required for a Will.</li>
-          <li><strong>Delhi:</strong> No stamp paper required for a Will.</li>
-          <li><strong>Telangana &amp; Andhra Pradesh:</strong> No stamp paper required for a Will.</li>
-          <li><strong>Tamil Nadu:</strong> No stamp paper required for a Will.</li>
-        </ul>
-        <p>Across all 28 states and 8 Union Territories, the exemption of Wills from stamp duty holds true.</p>
-
-        <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
-        <div class="telugu-snippet-box">
-          <h4>&#x1f1ee;&#x1f1f3; తెలుగు ప్రజల కోసం ముఖ్య సమాచారం (Stamp Paper Rules in Telugu)</h4>
-          <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
-            <strong>వీలునామా రాయడానికి స్టాంప్ పేపర్ అవసరమా?</strong><br>
-            లేదు. భారతదేశంలో వీలునామా (Will) రాయడానికి ఎలాంటి స్టాంప్ పేపర్ (&#x20B9;100 లేదా &#x20B9;500) అవసరం లేదు. ఇండియన్ స్టాంప్ యాక్ట్ ప్రకారం వీలునామాకు స్టాంప్ డ్యూటీ మినహాయింపు ఉంది. మీరు సాదా A4 తెల్ల కాగితం (Plain A4 Paper) పై వీలునామా రాసి, మీ సంతకం చేసి, ఇద్దరు సాక్షుల సంతకాలు తీసుకుంటే, అది చట్టపరంగా 100% చెల్లుబాటు అవుతుంది.
-          </p>
-        </div>
-
-        <h2>6. What About Notarization? (Optional, Not Required)</h2>
-        <p>Another common question is whether a plain paper Will needs to be notarized by a Notary Public. Similar to stamp paper and registration, <strong>notarization is entirely optional</strong>.</p>
-        <p>While having a Notary attest your signature provides an additional layer of witness verification, it does not magically increase the legal validity of the Will. A plain paper Will attested by two ordinary witnesses (like friends, neighbors, or a doctor) is just as valid as a notarized one. If you later choose to register your document for archival protection, see our guide on <a href="/blog/how-to-register-a-will-at-sub-registrar-office" style="color:var(--accent-gold, #dfb76c); font-weight:600;">how to register a Will at the Sub-Registrar Office</a>.</p>
-
-        <h2>7. Step-by-Step: How to Execute a Valid Will on Plain A4 Paper</h2>
-        <p>To ensure your plain paper Will is bulletproof in court, follow these simple steps:</p>
-        <ol>
-          <li><strong>Draft Clearly:</strong> Use unambiguous language to describe your assets and beneficiaries. You can use platforms like SmartWill India to generate a legally sound draft online.</li>
-          <li><strong>Print on A4 Paper:</strong> Print the final draft on standard white A4 paper. Make sure the print is clear and legible.</li>
-          <li><strong>Gather Witnesses:</strong> Invite two reliable, independent adults who are not receiving any property under the Will to act as witnesses.</li>
-          <li><strong>Sign in Presence of Witnesses:</strong> Sign your name or affix your thumbprint at the bottom of every page and at the very end of the document. Both witnesses must physically watch you do this.</li>
-          <li><strong>Witness Signatures:</strong> Immediately after you sign, both witnesses must sign the last page in your presence, providing their names, addresses, and ID details (like Aadhar numbers).</li>
-          <li><strong>Store Safely:</strong> Keep the original signed document in a secure location (like a bank locker) and inform your executor or trusted family members of its whereabouts.</li>
-        </ol>
-
-        <!-- CTA Box -->
-        <div class="blog-cta-box">
-          <h3>Save &#x20B9;3,000 in Unnecessary Legal Fees. Create Your Will for &#x20B9;299.</h3>
-          <p>Don't fall for the stamp paper myth. Draft a legally bulletproof plain-paper Will valid under the Indian Succession Act 1925 in just 10 minutes.</p>
-          <a href="/app" class="btn btn-gold btn-lg">Create Your Will Online &mdash; &#x20B9;299 &rarr;</a>
-        </div>
-
-        <h2>Frequently Asked Questions</h2>
-        
-        <h3>Is a Will valid on a plain white paper in India?</h3>
-        <p>Yes, absolutely. Under Indian law, a Will typed or handwritten on a plain A4 white paper is 100% legally valid as long as it is signed by the testator and attested by two independent witnesses.</p>
-
-        <h3>Is stamp paper required for a Will in India?</h3>
-        <p>No. Under the Indian Stamp Act, 1899, testamentary documents like Wills are completely exempt from stamp duty. There is no legal requirement to execute a Will on a &#x20B9;100 or &#x20B9;500 non-judicial stamp paper.</p>
-
-        <h3>Does an unregistered plain paper Will hold value in court?</h3>
-        <p>Yes. Since both registration and stamp duty are optional/exempt for Wills in India, an unregistered plain paper Will holds full legal value in courts for obtaining probate or transferring assets.</p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Save &#x20B9;3,000 in Unnecessary Stamp Papers &amp; Legal Fees</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Draft your legally valid plain-paper Will in under 10 minutes from home. Backed by the Indian Succession Act, 1925.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will for &#x20B9;299 &rarr;</a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -417,6 +700,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Plain Paper Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
 </body>
 </html>

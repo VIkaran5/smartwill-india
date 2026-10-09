@@ -93,56 +93,112 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    h1, h2, h3, h4, .article-title, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
+    }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(1.8rem, 4vw, 2.8rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.4; 
-      margin-bottom: 1rem; 
+      line-height: 1.25; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-header .container,
-    .article-body { 
-      max-width: 860px; 
-      margin-left: auto; 
-      margin-right: auto; 
-      padding-bottom: 5rem; 
-    }
-    .article-header .container { padding-bottom: 0; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.75rem 0 1rem; 
-      padding-top: 1.25rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.85; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.9; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.9; padding-left: 1.5rem; margin-bottom: 1.5rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -150,34 +206,128 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
+
+    /* ── Stat Box ── */
+    .stat-box { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
+      margin: 2rem 0; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+      gap: 1.5rem; 
       text-align: center; 
-      margin: 3.5rem 0; 
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 540px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
+    [data-theme="light"] .stat-number { color: #b45309; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
+    }
     .table-custom {
       width: 100%;
       border-collapse: collapse;
-      margin: 1.5rem 0 2.25rem;
       font-size: 0.95rem;
+      min-width: 580px;
     }
     .table-custom th, .table-custom td {
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
+      padding: 14px 18px;
       text-align: left;
     }
     .table-custom th {
       background: var(--bg-surface);
       font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .faq-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -185,27 +335,30 @@
   <!-- Header Navbar -->
   <header class="navbar">
     <div class="container nav-container">
-      <a href="/te/" class="nav-logo" aria-label="SmartWill India Telugu">
+      <a href="/te/" class="nav-logo" aria-label="SmartWill India Home">
         <img src="/assets/logo-light.webp" alt="SmartWill India Logo" class="logo-img logo-light-theme" width="34" height="34">
         <img src="/assets/logo-dark.webp" alt="SmartWill India Logo" class="logo-img logo-dark-theme" width="34" height="34">
         <span class="logo-text">SmartWill India</span>
       </a>
 
       <nav class="nav-menu d-none d-md-flex">
-        <a href="/te/" class="nav-link">హోమ్</a>
-        <a href="/te/#features" class="nav-link">ఫీచర్లు</a>
-        <a href="/te/#how-it-works" class="nav-link">ఎలా పనిచేస్తుంది</a>
+        <a href="/te/#ila-pani-chestundi" class="nav-link">ఎలా పని చేస్తుంది</a>
         <a href="/te/#pricing" class="nav-link">ధర</a>
-        <a href="/te/blog" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">బ్లాగ్ గైడ్స్</a>
-        <a href="/" class="nav-link">English</a>
+        <a href="/te/#faq" class="nav-link">సందేహాలు</a>
+        <a href="/te/blog" class="nav-link active" style="color:var(--accent-gold, #dfb76c)">బ్లాగ్</a>
       </nav>
 
       <div class="nav-actions d-none d-md-flex">
+        <div class="lang-switcher">
+          <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+          <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+          <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+        </div>
         <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
           <span class="toggle-icon"><i data-lucide="moon"></i></span>
           <span class="toggle-text">Dark</span>
         </button>
-        <a href="/app" class="btn btn-gold btn-sm">వీలునామా రాయండి &mdash; &#x20B9;299</a>
+        <a href="/app" class="btn btn-gold btn-sm">వీలునామా రూపొందించండి — ₹299</a>
       </div>
 
       <!-- Hamburger (mobile only) -->
@@ -216,13 +369,16 @@
 
     <!-- Mobile slide-down menu -->
     <div class="nav-mobile-menu" id="navMobileMenu">
-      <a href="/te/" class="nav-link">హోమ్</a>
-      <a href="/te/#features" class="nav-link">ఫీచర్లు</a>
-      <a href="/te/#how-it-works" class="nav-link">ఎలా పనిచేస్తుంది</a>
-      <a href="/te/#pricing" class="nav-link">ధర</a>
-      <a href="/te/blog" class="nav-link active">బ్లాగ్ గైడ్స్</a>
-      <a href="/" class="nav-link">English</a>
-      <a href="/app" class="btn btn-gold" style="text-align:center">వీలునామా రాయండి &mdash; &#x20B9;299</a>
+      <div class="lang-switcher" style="justify-content:center; margin-bottom:1rem;">
+        <a href="/blog" class="lang-btn" style="text-decoration:none;">EN</a>
+        <a href="/te/blog" class="lang-btn active" style="text-decoration:none;">తెలుగు</a>
+        <span class="lang-btn" title="Coming Soon" style="opacity:0.5;cursor:not-allowed;">हिंदी</span>
+      </div>
+      <a href="/te/#ila-pani-chestundi" class="nav-link" style="font-size:1rem">ఎలా పని చేస్తుంది</a>
+      <a href="/te/#pricing" class="nav-link" style="font-size:1rem">ధర</a>
+      <a href="/te/#faq" class="nav-link" style="font-size:1rem">సందేహాలు</a>
+      <a href="/te/blog" class="nav-link active" style="font-size:1rem">బ్లాగ్</a>
+      <a href="/app" class="btn btn-gold" style="text-align:center">వీలునామా రూపొందించండి — ₹299</a>
     </div>
   </header>
 
@@ -230,122 +386,213 @@
     <article class="article-header">
       <div class="container">
         <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
-          <a href="/te/" style="color:var(--text-muted); text-decoration:none;">హోమ్</a> &nbsp;&gt;&nbsp; 
-          <a href="/te/blog" style="color:var(--text-muted); text-decoration:none;">తెలుగు బ్లాగ్</a> &nbsp;&gt;&nbsp; 
-          <span style="color:var(--primary, #dfb76c);">వీలునామాకు స్టాంప్ పేపర్ అవసరమా</span>
+          <a href="/te/" style="color:var(--text-muted); text-decoration:none;">ముఖ్య పేజీ</a> &nbsp;&gt;&nbsp; 
+          <a href="/te/blog" style="color:var(--text-muted); text-decoration:none;">బ్లాగ్</a> &nbsp;&gt;&nbsp; 
+          <span style="color:var(--accent-gold, #dfb76c);">వీలునామాకు స్టాంప్ పేపర్ అవసరమా</span>
         </nav>
-        <div class="article-tag">చట్టపరమైన వాస్తవాలు</div>
+        <div class="article-tag">
+          <i data-lucide="file-text" style="width:14px; height:14px;"></i>
+          <span>చట్టపరమైన వాస్తవాలు</span>
+        </div>
         <h1 class="article-title">వీలునామాకు స్టాంప్ పేపర్ అవసరమా? సాదా కాగితం నియమం (2026 నిజం)</h1>
-        <div class="article-meta">సెప్టెంబర్ 29, 2026 &nbsp;&middot;&nbsp; 6 నిమిషాల చదువు &nbsp;&middot;&nbsp; SmartWill India లీగల్ డెస్క్</div>
+        <p class="article-subtitle" style="font-size:1.12rem; line-height:1.68; color:var(--text-muted); max-width:820px; margin-bottom:1.75rem;">
+          వీలునామా రాయడానికి ₹100 బాండ్ పేపర్ అవసరమా? ఇండియన్ స్టాంప్ యాక్ట్ 1899 ప్రకారం తెల్ల కాగితం చెల్లుబాటు, సుప్రీం కోర్టు తీర్పులు మరియు నిబంధనలు.
+        </p>
+        <div class="article-meta">
+          <span><i data-lucide="shield-check" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c);"></i> SmartWill లీగల్ డెస్క్ పరిశీలన</span>
+          <span><i data-lucide="calendar" style="width:16px; height:16px;"></i> సెప్టెంబర్ 29, 2026</span>
+          <span><i data-lucide="clock" style="width:16px; height:16px;"></i> 6 నిమిషాల పఠనం</span>
+          <span><i data-lucide="book-open" style="width:16px; height:16px;"></i> ఇండియన్ స్టాంప్ యాక్ట్ 1899</span>
+        </div>
       </div>
     </article>
 
-    <div class="container">
-      <div class="article-body">
-        <p>
-          తెలుగు సమాజంలో అత్యంత బలంగా నాటుకుపోయిన అపోహలలో ఒకటి: <em>"వీలునామా రాయాలంటే ఖచ్చితంగా ₹100 బాండ్ పేపర్ లేదా స్టాంప్ పేపర్ ఉండాలి"</em> అని భావించడం. దీనివల్ల చాలా మంది ప్రజలు డాక్యుమెంట్ రైటర్లకు వేల రూపాయలు చెల్లించి మోసపోతుంటారు.
-        </p>
-        <p>
-          కానీ భారతీయ చట్టం అసలు ఏం చెబుతోంది? వీలునామాకు స్టాంప్ పేపర్ అవసరమా? ఈ గైడ్‌లో <strong>భారతీయ స్టాంప్ చట్టం 1899 (Indian Stamp Act, 1899)</strong> మరియు <strong>వారసత్వ చట్టం, 1925</strong> ప్రకారం అసలైన చట్టపరమైన వాస్తవాలను తెలుసుకుందాం.
-        </p>
+    <section class="article-body">
+      <div class="container">
+        <div class="row g-lg-5">
+          <!-- Main Content Column (8 cols) -->
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <h2>స్టాంప్ చట్టం ప్రకారం వీలునామాపై స్టాంప్ డ్యూటీ ఎంత?</h2>
-        <div class="callout-success">
-          <p>
-            <strong>చట్టపరమైన నిజం:</strong> భారతీయ స్టాంప్ చట్టం 1899 ప్రకారం వీలునామాలకు <strong>స్టాంప్ డ్యూటీ సున్నా (₹0)</strong>. వీలునామా అనేది ఆస్తి అమ్మకం లేదా బదిలీ ఒప్పందం కాదు; అది వ్యక్తి మరణానంతరం మాత్రమే అమల్లోకి వచ్చే ఇచ్చాపత్రం. అందువల్ల వీలునామాపై ₹100, ₹500 లేదా ఎలాంటి నాన్-జ్యుడీషియల్ స్టాంప్ పేపర్ ఉపయోగించాల్సిన అవసరం ఎంతమాత్రం లేదు!
-          </p>
+              <p>
+                తెలుగు సమాజంలో అత్యంత బలంగా నాటుకుపోయిన అపోహలలో ఒకటి: <em>"వీలునామా రాయాలంటే ఖచ్చితంగా ₹100 బాండ్ పేపర్ లేదా స్టాంప్ పేపర్ ఉండాలి"</em> అని భావించడం. దీనివల్ల చాలా మంది ప్రజలు డాక్యుమెంట్ రైటర్లకు వేల రూపాయలు చెల్లించి మోసపోతుంటారు.
+              </p>
+              <p>
+                కానీ భారతీయ చట్టం అసలు ఏం చెబుతోంది? వీలునామాకు స్టాంప్ పేపర్ అవసరమా? ఈ గైడ్‌లో <strong>భారతీయ స్టాంప్ చట్టం 1899 (Indian Stamp Act, 1899)</strong> మరియు <strong>వారసత్వ చట్టం, 1925</strong> ప్రకారం అసలైన చట్టపరమైన వాస్తవాలను తెలుసుకుందాం.
+              </p>
+
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">₹0</div>
+                  <div class="stat-label">స్టాంప్ డ్యూటీ చట్టప్రకారం మినహాయింపు</div>
+                </div>
+                <div>
+                  <div class="stat-number">A4 పేపర్</div>
+                  <div class="stat-label">సాదా తెల్ల కాగితంపై రాసినా 100% చెల్లుబాటు</div>
+                </div>
+                <div>
+                  <div class="stat-number">సెక్షన్ 63</div>
+                  <div class="stat-label">భారతీయ వారసత్వ చట్టం నిబంధనలు</div>
+                </div>
+              </div>
+
+              <h2>స్టాంప్ చట్టం ప్రకారం వీలునామాపై స్టాంప్ డ్యూటీ ఎంత?</h2>
+              <div class="callout-success">
+                <p>
+                  <strong>చట్టపరమైన నిజం:</strong> భారతీయ స్టాంప్ చట్టం 1899 ప్రకారం వీలునామాలకు <strong>స్టాంప్ డ్యూటీ సున్నా (₹0)</strong>. వీలునామా అనేది ఆస్తి అమ్మకం లేదా బదిలీ ఒప్పందం కాదు; అది వ్యక్తి మరణానంతరం మాత్రమే అమల్లోకి వచ్చే ఇచ్చాపత్రం. అందువల్ల వీలునామాపై ₹100, ₹500 లేదా ఎలాంటి నాన్-జ్యుడీషియల్ స్టాంప్ పేపర్ ఉపయోగించాల్సిన అవసరం ఎంతమాత్రం లేదు!
+                </p>
+              </div>
+
+              <h2>సాదా A4 తెల్ల కాగితం సరిపోతుందా?</h2>
+              <p>
+                <strong>అవును, 100% సరిపోతుంది.</strong>
+              </p>
+              <p>
+                భారతీయ వారసత్వ చట్టం, 1925 లోని <strong>సెక్షన్ 63</strong> ప్రకారం ఒక వీలునామా చెల్లుబాటు కావడానికి క్రింది మూడు నిబంధనలు మాత్రమే అవసరం:
+              </p>
+              <ol>
+                <li><strong>రాతపూర్వకంగా ఉండాలి:</strong> సాదా తెల్ల కాగితంపై చేతితో రాసినా లేదా కంప్యూటర్‌లో టైప్ చేసి ప్రింట్ తీసినా సరిపోతుంది.</li>
+                <li><strong>రాయించే వ్యక్తి సంతకం:</strong> స్వస్థచిత్తంతో ఉన్న వ్యక్తి తన పూర్తి ఇష్టంతో సంతకం లేదా బొటనవేలి ముద్ర వేయాలి.</li>
+                <li><strong>ఇద్దరు సాక్షుల సంతకాలు:</strong> వ్యక్తి సంతకం చేయడాన్ని ప్రత్యక్షంగా చూసిన ఇద్దరు వయోజన సాక్షులు దానిపై సంతకం చేయాలి.</li>
+              </ol>
+
+              <h2>స్టాంప్ పేపర్ vs సాదా కాగితం పోలిక</h2>
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>అంశం</th>
+                      <th>సాదా A4 పేపర్</th>
+                      <th>₹100 స్టాంప్ పేపర్</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>చట్టపరమైన చెల్లుబాటు</strong></td>
+                      <td><strong>100% కోర్టులో చెల్లుతుంది</strong></td>
+                      <td>100% కోర్టులో చెల్లుతుంది</td>
+                    </tr>
+                    <tr>
+                      <td><strong>ప్రభుత్వ స్టాంప్ డ్యూటీ</strong></td>
+                      <td>₹0 (ఉచితం)</td>
+                      <td>అనవసరమైన ₹100 నుండి ₹1,000 ఖర్చు</td>
+                    </tr>
+                    <tr>
+                      <td><strong>కోర్టులో అంగీకారం</strong></td>
+                      <td>సెక్షన్ 63 ప్రకారం సంపూర్ణ అంగీకారం</td>
+                      <td>అదనపు విలువ ఏమీ ఉండదు</td>
+                    </tr>
+                    <tr>
+                      <td><strong>సబ్ రిజిస్ట్రార్ రిజిస్ట్రేషన్</strong></td>
+                      <td>సాదా కాగితంపైనే రిజిస్టర్ చేస్తారు</td>
+                      <td>అవసరం లేకపోయినా కొందరు వాడుతుంటారు</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>నోటరీ సంతకం అవసరమా?</h2>
+              <p>
+                మరొక సాధారణ సందేహం ఏమిటంటే — వీలునామాపై నోటరీ అడ్వకేట్ సంతకం లేదా సీల్ ఉండాలా?
+              </p>
+              <p>
+                చట్టం ప్రకారం <strong>నోటరీ అవసరం లేదు</strong>. వీలునామా చెల్లుబాటుకు అత్యంత కీలకమైనది ఇద్దరు స్వతంత్ర సాక్షుల (Attesting Witnesses) సంతకాలు మాత్రమే.
+              </p>
+              <div class="callout">
+                <p>
+                  <strong>ముఖ్యమైన హెచ్చరిక (సెక్షన్ 67):</strong> వీలునామాలో ఆస్తిని పొందే లబ్ధిదారులు (పిల్లలు లేదా భార్య) ఎట్టి పరిస్థితుల్లోనూ సాక్షులుగా సంతకం చేయకూడదు. లబ్ధిదారు సాక్షిగా సంతకం చేస్తే, వారికి ఆస్తి చెందకుండా రద్దు అవుతుంది!
+                </p>
+              </div>
+
+              <h2>తరచూ అడిగే ప్రశ్నలు (FAQs)</h2>
+              <div class="faq-card">
+                <h3>1. బ్యాంకులు లేదా రిజిస్ట్రార్ ఆఫీస్ సాదా కాగితంపై ఉన్న వీలునామాను అంగీకరిస్తాయా?</h3>
+                <p>
+                  అవును. రిజర్వ్ బ్యాంక్ ఆఫ్ ఇండియా (RBI) మార్గదర్శకాల ప్రకారం మరియు భారతీయ వారసత్వ చట్టం ప్రకారం సాదా కాగితంపై సరైన సాక్షులతో ఉన్న వీలునామాను బ్యాంకులు మరియు ప్రభుత్వ కార్యాలయాలు తిరస్కరించలేవు.
+                </p>
+              </div>
+
+              <div class="faq-card">
+                <h3>2. చేతిరాతతో రాసిన వీలునామా చెల్లుతుందా లేదా ప్రింట్ చేయించాలా?</h3>
+                <p>
+                  చేతిరాతతో రాసినా (Holographic Will) లేదా కంప్యూటర్‌లో ప్రింట్ చేసినా రెండూ సమానంగా చెల్లుతాయి. అయితే చదవడానికి స్పష్టంగా ఉండటానికి కంప్యూటర్ ప్రింట్ ఎక్కువగా ప్రాధాన్యత ఇస్తారు.
+                </p>
+              </div>
+
+              <div class="faq-card">
+                <h3>3. వీలునామాను సబ్ రిజిస్ట్రార్ వద్ద రిజిస్ట్రేషన్ చేయించడం తప్పనిసరి కాదా?</h3>
+                <p>
+                  కాదు. రిజిస్ట్రేషన్ చట్టం 1908 సెక్షన్ 18(e) ప్రకారం వీలునామా రిజిస్ట్రేషన్ పూర్తిగా ఐచ్ఛికం (Optional).
+                </p>
+              </div>
+
+            </article>
+          </div>
+
+          <!-- Sticky Sidebar Column (4 cols) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Primary CTA Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:2rem; margin-bottom:0.75rem;">&#x270d;&#xfe0f;</div>
+                <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-main);">వీలునామా సృష్టించండి</h4>
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  అడ్వకేట్ల వద్దకు వెళ్లకుండా, బాండ్ పేపర్లు వెతకకుండా సాదా కాగితంపై చట్టబద్ధమైన వీలునామాను 10 నిమిషాల్లో రూపొందించుకోండి.
+                </p>
+                <a href="/app" class="btn btn-gold w-100" style="display:block; text-align:center;">
+                  ప్రారంభించండి &mdash; &#x20B9;299 &rarr;
+                </a>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+                  &check; 100% చట్టబద్ధం &bull; స్టాంప్ డ్యూటీ ₹0 &bull; తక్షణ PDF
+                </div>
+              </div>
+
+              <!-- Plain Paper Checklist Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="check-circle-2" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> సాదా కాగితం నియమాలు</h4>
+                <ul>
+                  <li>&bull; <strong>స్టాంప్ డ్యూటీ:</strong> పూర్తిగా ₹0 (స్టాంప్ చట్టం 1899)</li>
+                  <li>&bull; <strong>A4 పేపర్:</strong> ప్రింట్ లేదా చేతిరాత 100% చెల్లుబాటు</li>
+                  <li>&bull; <strong>నోటరీ:</strong> అడ్వకేట్ సంతకం లేదా సీల్ తప్పనిసరి కాదు</li>
+                  <li>&bull; <strong>సాక్షులు:</strong> ఇద్దరు స్వతంత్ర సాక్షుల సంతకాలు అవసరం</li>
+                  <li>&bull; <strong>సెక్షన్ 67:</strong> లబ్ధిదారులు సాక్షులుగా ఉండకూడదు</li>
+                </ul>
+              </div>
+
+              <!-- Related Guides Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="book-open" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> సంబంధిత తెలుగు గైడ్స్</h4>
+                <ul>
+                  <li><a href="/te/blog/veelunaama-ela-rayali">&rarr; వీలునామా ఎలా రాయాలి? పూర్తి గైడ్</a></li>
+                  <li><a href="/te/blog/sub-registrar-will-registration-ap-telangana">&rarr; సబ్ రిజిస్ట్రార్ రిజిస్ట్రేషన్ ఫీజు &amp; ప్రాసెస్</a></li>
+                  <li><a href="/te/blog/nominee-vs-legal-heir-telugu">&rarr; నామినీ వర్సెస్ లీగల్ హెయిర్</a></li>
+                  <li><a href="/te/blog/tandri-aasti-veelunaama-nibandhanalu">&rarr; తండ్రి ఆస్తిపై వీలునామా నిబంధనలు</a></li>
+                  <li><a href="/te/blog/bharya-peruna-veelunaama-rayadam">&rarr; భార్య పేరున వీలునామా రాయడం</a></li>
+                </ul>
+              </div>
+            </aside>
+          </div>
         </div>
-
-        <h2>సాదా A4 తెల్ల కాగితం సరిపోతుందా?</h2>
-        <p>
-          <strong>అవును, 100% సరిపోతుంది.</strong>
-        </p>
-        <p>
-          భారతీయ వారసత్వ చట్టం, 1925 లోని <strong>సెక్షన్ 63</strong> ప్రకారం ఒక వీలునామా చెల్లుబాటు కావడానికి క్రింది మూడు నిబంధనలు మాత్రమే అవసరం:
-        </p>
-        <ol>
-          <li><strong>రాతపూర్వకంగా ఉండాలి:</strong> సాదా తెల్ల కాగితంపై చేతితో రాసినా లేదా కంప్యూటర్‌లో టైప్ చేసి ప్రింట్ తీసినా సరిపోతుంది.</li>
-          <li><strong>రాయించే వ్యక్తి సంతకం:</strong> స్వస్థచిత్తంతో ఉన్న వ్యక్తి తన పూర్తి ఇష్టంతో సంతకం లేదా బొటనవేలి ముద్ర వేయాలి.</li>
-          <li><strong>ఇద్దరు సాక్షుల సంతకాలు:</strong> వ్యక్తి సంతకం చేయడాన్ని ప్రత్యక్షంగా చూసిన ఇద్దరు వయోజన సాక్షులు దానిపై సంతకం చేయాలి.</li>
-        </ol>
-
-        <h2>స్టాంప్ పేపర్ vs సాదా కాగితం పోలిక</h2>
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>అంశం</th>
-              <th>సాదా A4 పేపర్</th>
-              <th>₹100 స్టాంప్ పేపర్</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>చట్టపరమైన చెల్లుబాటు</strong></td>
-              <td><strong>100% కోర్టులో చెల్లుతుంది</strong></td>
-              <td>100% కోర్టులో చెల్లుతుంది</td>
-            </tr>
-            <tr>
-              <td><strong>ప్రభుత్వ స్టాంప్ డ్యూటీ</strong></td>
-              <td>₹0 (ఉచితం)</td>
-              <td>అనవసరమైన ₹100 నుండి ₹1,000 ఖర్చు</td>
-            </tr>
-            <tr>
-              <td><strong>కోర్టులో అంగీకారం</strong></td>
-              <td>సెక్షన్ 63 ప్రకారం సంపూర్ణ అంగీకారం</td>
-              <td>అదనపు విలువ ఏమీ ఉండదు</td>
-            </tr>
-            <tr>
-              <td><strong>సబ్ రిజిస్ట్రార్ రిజిస్ట్రేషన్</strong></td>
-              <td>సాదా కాగితంపైనే రిజిస్టర్ చేస్తారు</td>
-              <td>అవసరం లేకపోయినా కొందరు వాడుతుంటారు</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>నోటరీ సంతకం అవసరమా?</h2>
-        <p>
-          మరొక సాధారణ సందేహం ఏమిటంటే — వీలునామాపై నోటరీ అడ్వకేట్ సంతకం లేదా సీల్ ఉండాలా?
-        </p>
-        <p>
-          చట్టం ప్రకారం <strong>నోటరీ అవసరం లేదు</strong>. వీలునామా చెల్లుబాటుకు అత్యంత కీలకమైనది ఇద్దరు స్వతంత్ర సాక్షుల (Attesting Witnesses) సంతకాలు మాత్రమే.
-        </p>
-        <div class="callout">
-          <p>
-            <strong>ముఖ్యమైన హెచ్చరిక (సెక్షన్ 67):</strong> వీలునామాలో ఆస్తిని పొందే లబ్ధిదారులు (పిల్లలు లేదా భార్య) ఎట్టి పరిస్థితుల్లోనూ సాక్షులుగా సంతకం చేయకూడదు. లబ్ధిదారు సాక్షిగా సంతకం చేస్తే, వారికి ఆస్తి చెందకుండా రద్దు అవుతుంది!
-          </p>
-        </div>
-
-        <div class="blog-cta-box">
-          <h3>సాదా కాగితంపై చట్టబద్ధమైన వీలునామాను తయారు చేసుకోండి</h3>
-          <p>
-            అడ్వకేట్ల వద్దకు వెళ్లకుండా, బాండ్ పేపర్లు వెతకకుండా కేవలం 10 నిమిషాల్లో స్మార్ట్‌విల్ ద్వారా ప్రింట్ తీసుకొని సంతకం చేయండి.
-          </p>
-          <a href="/app" class="btn btn-gold btn-lg shadow-gold">
-            ఆన్‌లైన్‌లో వీలునామా రాయండి &mdash; &#x20B9;299
-          </a>
-        </div>
-
-        <h2>తరచూ అడిగే ప్రశ్నలు (FAQs)</h2>
-        <h3>1. బ్యాంకులు లేదా రిజిస్ట్రార్ ఆఫీస్ సాదా కాగితంపై ఉన్న వీలునామాను అంగీకరిస్తాయా?</h3>
-        <p>
-          అవును. రిజర్వ్ బ్యాంక్ ఆఫ్ ఇండియా (RBI) మార్గదర్శకాల ప్రకారం మరియు భారతీయ వారసత్వ చట్టం ప్రకారం సాదా కాగితంపై సరైన సాక్షులతో ఉన్న వీలునామాను బ్యాంకులు మరియు ప్రభుత్వ కార్యాలయాలు తిరస్కరించలేవు.
-        </p>
-
-        <h3>2. చేతిరాతతో రాసిన వీలునామా చెల్లుతుందా లేదా ప్రింట్ చేయించాలా?</h3>
-        <p>
-          చేతిరాతతో రాసినా (Holographic Will) లేదా కంప్యూటర్‌లో ప్రింట్ చేసినా రెండూ సమానంగా చెల్లుతాయి. అయితే చదవడానికి స్పష్టంగా ఉండటానికి కంప్యూటర్ ప్రింట్ ఎక్కువగా ప్రాధాన్యత ఇస్తారు.
-        </p>
-
-        <h3>3. వీలునామాను సబ్ రిజిస్ట్రార్ వద్ద రిజిస్ట్రేషన్ చేయించడం తప్పనిసరి కాదా?</h3>
-        <p>
-          కాదు. రిజిస్ట్రేషన్ చట్టం 1908 సెక్షన్ 18(e) ప్రకారం వీలునామా రిజిస్ట్రేషన్ పూర్తిగా ఐచ్ఛికం (Optional).
-        </p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="background:linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); border-top:1px solid rgba(223, 183, 108, 0.25); border-bottom:1px solid rgba(223, 183, 108, 0.25); padding:4rem 0; text-align:center;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); font-weight:700; margin-bottom:1rem; color:var(--text-main);">
+          సాదా కాగితంపై చట్టబద్ధమైన వీలునామాను తయారు చేసుకోండి
+        </h2>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:650px; margin:0 auto 2rem; line-height:1.65;">
+          అడ్వకేట్ల వద్దకు వెళ్లకుండా, బాండ్ పేపర్లు వెతకకుండా కేవలం 10 నిమిషాల్లో స్మార్ట్‌విల్ ద్వారా ప్రింట్ తీసుకొని సంతకం చేయండి.
+        </p>
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" style="padding:0.9rem 2.5rem; font-weight:700; font-size:1.1rem;">
+          ఆన్‌లైన్‌లో వీలునామా రాయండి &mdash; &#x20B9;299 &rarr;
+        </a>
+      </div>
+    </section>
   </main>
 
-  <!-- Modern Footer -->
+  <!-- Telugu Footer -->
   <footer class="footer">
     <div class="container footer-container">
       <div class="footer-col">
@@ -355,38 +602,48 @@
           <span class="logo-text">SmartWill India</span>
         </a>
         <p class="footer-desc">
-          భారతీయ వారసత్వ చట్టం 1925 ప్రకారం ఆన్‌లైన్‌లో చట్టబద్ధమైన వీలునామాను తయారుచేసే విశ్వసనీయ వేదిక.
+          భారతీయ వారసత్వ చట్టం 1925 ప్రకారం భారతదేశంలో అత్యంత సరసమైన డిజిటల్ వీలునామా సృష్టి ప్లాట్‌ఫారమ్.
         </p>
       </div>
 
       <div class="footer-col">
         <h4 class="footer-title">త్వరిత లింకులు</h4>
         <ul class="footer-links">
-          <li><a href="/te/#how-it-works">ఎలా పనిచేస్తుంది</a></li>
-          <li><a href="/te/#pricing">ధర (₹299)</a></li>
-          <li><a href="/te/blog">తెలుగు లీగల్ గైడ్స్</a></li>
-          <li><a href="/will-registration-hyderabad">హైదరాబాద్ రిజిస్ట్రేషన్</a></li>
-          <li><a href="/">English Version</a></li>
+          <li><a href="/te/">ముఖ్య పేజీ (Home)</a></li>
+          <li><a href="/app">వీలునామా సృష్టించండి</a></li>
+          <li><a href="/te/#ila-pani-chestundi">ఎలా పని చేస్తుంది</a></li>
+          <li><a href="/te/blog">తెలుగు లీగల్ బ్లాగ్</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h4 class="footer-title">చట్టపరమైనవి</h4>
+        <h4 class="footer-title">చట్టపరమైన సమాచారం</h4>
         <ul class="footer-links">
-          <li><a href="/privacy">గోప్యతా విధానం (DPDP)</a></li>
-          <li><a href="/terms">నిబంధనలు</a></li>
+          <li><a href="/privacy">గోప్యతా విధానం (Privacy Policy)</a></li>
+          <li><a href="/terms">నిబంధనలు &amp; షరతులు</a></li>
           <li><a href="/refunds">రీఫండ్ పాలసీ</a></li>
-          <li><a href="/contact">సంప్రదించండి</a></li>
+          <li><a href="/contact">సహాయ కేంద్రం (Contact)</a></li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
       <div class="container footer-bottom-container">
-        <p>&copy; 2026 SmartWill India. All rights reserved. Indian Succession Act 1925 Compliant.</p>
+        <p>&copy; 2026 SmartWill India. సర్వ హక్కులు ప్రత్యేకించబడ్డాయి. DPDP చట్టం, 2023 నిబంధనలకు కట్టుబడి ఉంది.</p>
       </div>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 నిమిషాలు &bull; చట్టబద్ధం</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      వీలునామా రాయండి &rarr;
+    </a>
+  </div>
 
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>
@@ -402,6 +659,7 @@
       initIcons();
     }
 
+    // ── Hamburger menu toggle ──
     const hamburger = document.getElementById('navHamburger');
     const mobileMenu = document.getElementById('navMobileMenu');
     if (hamburger && mobileMenu) {

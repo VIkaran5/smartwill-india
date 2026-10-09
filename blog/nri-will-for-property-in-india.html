@@ -91,50 +91,112 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: 'Plus Jakarta Sans', var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif); 
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    h1, h2, h3, h4, .article-title, .logo-text, .footer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+      text-transform: none !important;
+    }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -142,34 +204,62 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
+    .callout-alert, .callout-danger { 
+      background: rgba(239, 68, 68, 0.08); 
+      border-left: 4px solid #ef4444; 
+      border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
+      padding: 1.35rem 1.6rem; 
+      margin: 2rem 0; 
+    }
+    .callout-alert p, .callout-danger p { color: var(--text-main); margin-bottom: 0; }
+
+    /* ── Stat Box ── */
     .stat-box { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
-      border-radius: var(--radius-md, 12px); 
-      padding: 1.5rem; 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
       margin: 2rem 0; 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
       gap: 1.5rem; 
       text-align: center; 
     }
-    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
     [data-theme="light"] .stat-number { color: #b45309; }
-    .stat-label { font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 580px;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── Telugu Guidance Box ── */
     .telugu-snippet-box {
       background: var(--bg-card);
       border: 1px dashed var(--accent-gold, #dfb76c);
@@ -182,20 +272,85 @@
       font-size: 1.15rem;
       margin-bottom: 0.5rem;
     }
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0 2rem;
-      font-size: 0.95rem;
+    [data-theme="light"] .telugu-snippet-box h4 {
+      color: #b45309;
     }
-    .table-custom th, .table-custom td {
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
-      text-align: left;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .table-custom th {
-      background: var(--bg-surface);
+    .faq-card h3 {
+      font-size: 1.15rem;
       font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -256,230 +411,304 @@
         <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
-          <span style="color:var(--primary, #dfb76c);">NRI Will for Property in India</span>
+          <span style="color:var(--accent-gold, #dfb76c);">NRI Will for Property in India</span>
         </nav>
-        <div class="article-tag">Cross-Border Estate Planning &amp; FEMA Rules</div>
+        <div class="article-tag">
+          <i data-lucide="globe" style="width:14px; height:14px;"></i>
+          <span>Cross-Border Estate Planning &amp; FEMA Rules</span>
+        </div>
         <h1 class="article-title">NRI Will for Property in India: Complete Guide (2026)</h1>
+        <p class="article-subtitle" style="font-size:1.12rem; line-height:1.68; color:var(--text-muted); max-width:820px; margin-bottom:1.75rem;">
+          Protect your Indian real estate, NRE/NRO fixed deposits, and mutual funds. Learn why foreign Wills fail in India, how the Concurrent Will Doctrine works, and how to execute from the US, UK, UAE, or Canada without visiting India.
+        </p>
         <div class="article-meta">
-          <span>By SmartWill India Legal Desk</span> &nbsp;&middot;&nbsp; 
-          <span>Updated September 2026</span> &nbsp;&middot;&nbsp; 
-          <span>8 min read</span>
+          <span><i data-lucide="shield-check" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c);"></i> SmartWill India Legal Desk</span>
+          <span><i data-lucide="calendar" style="width:16px; height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="clock" style="width:16px; height:16px;"></i> 8 min read</span>
+          <span><i data-lucide="scale" style="width:16px; height:16px;"></i> FEMA &amp; Indian Succession Act</span>
         </div>
       </div>
     </article>
 
-    <div class="container">
-      <div class="article-body">
+    <section class="article-body">
+      <div class="container">
+        <div class="row g-lg-5">
+          <!-- Main Content Column (8 cols) -->
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <div class="callout-success">
-          <p><strong>The Core Legal Principle:</strong> If you are a Non-Resident Indian (NRI) or Overseas Citizen of India (OCI) holding real estate, bank deposits, or investments in India, your foreign Will executed abroad is <strong>not</strong> automatically recognized in India. Drafting an independent <strong>NRI Will for property in India</strong> under the Indian Succession Act, 1925 is the single most effective legal safeguard to protect your Indian estate from multi-year probate disputes and frozen assets.</p>
-        </div>
+              <div class="callout-success">
+                <p><strong>The Core Legal Principle:</strong> If you are a Non-Resident Indian (NRI) or Overseas Citizen of India (OCI) holding real estate, bank deposits, or investments in India, your foreign Will executed abroad is <strong>not</strong> automatically recognized in India. Drafting an independent <strong>NRI Will for property in India</strong> under the Indian Succession Act, 1925 is the single most effective legal safeguard to protect your Indian estate from multi-year probate disputes and frozen assets.</p>
+              </div>
 
-        <p>Today, more than <strong>3.2 crore Non-Resident Indians (NRIs) and Overseas Citizens of India (OCIs)</strong> live across the globe&mdash;with major populations in the United States, the United Kingdom, the United Arab Emirates, Canada, Singapore, and Australia. Together, they manage billions of dollars worth of Indian assets, spanning residential apartments in Bengaluru, Mumbai, and Hyderabad, ancestral agricultural acreage in Punjab or Andhra Pradesh, and substantial savings in Non-Resident External (NRE) and Non-Resident Ordinary (NRO) bank accounts.</p>
+              <p>Today, more than <strong>3.2 crore Non-Resident Indians (NRIs) and Overseas Citizens of India (OCIs)</strong> live across the globe&mdash;with major populations in the United States, the United Kingdom, the United Arab Emirates, Canada, Singapore, and Australia. Together, they manage billions of dollars worth of Indian assets, spanning residential apartments in Bengaluru, Mumbai, and Hyderabad, ancestral agricultural acreage in Punjab or Andhra Pradesh, and substantial savings in Non-Resident External (NRE) and Non-Resident Ordinary (NRO) bank accounts.</p>
 
-        <p>Yet, a staggering majority of NRIs make a fatal legal assumption: they believe that either a single global Will executed in their country of residence or a surviving family member holding a Power of Attorney (PoA) is sufficient to handle their Indian estate. In reality, cross-border inheritance in India without a dedicated, legally compliant Will triggers bureaucratic quagmires, complex court battles, and years of frozen bank accounts.</p>
+              <p>Yet, a staggering majority of NRIs make a fatal legal assumption: they believe that either a single global Will executed in their country of residence or a surviving family member holding a Power of Attorney (PoA) is sufficient to handle their Indian estate. In reality, cross-border inheritance in India without a dedicated, legally compliant Will triggers bureaucratic quagmires, complex court battles, and years of frozen bank accounts.</p>
 
-        <div class="stat-box">
-          <div>
-            <div class="stat-number">3.2 Cr+</div>
-            <div class="stat-label">NRIs &amp; OCIs Living Across the Globe</div>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">3.2 Cr+</div>
+                  <div class="stat-label">NRIs &amp; OCIs Living Across the Globe</div>
+                </div>
+                <div>
+                  <div class="stat-number">$1M USD</div>
+                  <div class="stat-label">Annual Repatriation Limit under FEMA</div>
+                </div>
+                <div>
+                  <div class="stat-number">0%</div>
+                  <div class="stat-label">Inheritance Tax / Estate Duty in India</div>
+                </div>
+              </div>
+
+              <h2>1. The Big Dilemma: One Global Will vs. Separate Indian Will (The Concurrent Will Doctrine)</h2>
+              <p>When an NRI decides to put their affairs in order, estate planners in North America, Europe, or the Gulf often suggest creating a single "worldwide Will" covering all assets internationally. While convenient in theory, this approach causes profound complications when applied to properties located within the Republic of India.</p>
+
+              <h3>The Lex Situs Doctrine: Law of the Land Governs Real Estate</h3>
+              <p>Under Private International Law and established Indian jurisprudence, succession to immovable property (such as flats, commercial plots, and agricultural land) is strictly governed by the law of the place where the property is situated&mdash;known legally as <em>lex loci rei sitae</em> (or simply <strong>lex situs</strong>). Regardless of where you reside, hold citizenship, or pass away, your real estate in India is subject exclusively to Indian succession laws, specifically the <strong>Indian Succession Act, 1925</strong>, alongside applicable personal laws (such as the Hindu Succession Act, 1956 or Indian Christian succession statutes).</p>
+
+              <h3>The Ancillary Probate Nightmare (Section 228 of the Indian Succession Act)</h3>
+              <p>If you leave behind only a foreign Will drafted and probated in an overseas court (for example, a Surrogate's Court in New York or the High Court of Justice in London), that foreign probate decree is <strong>not self-executing</strong> in India. Under Section 228 of the Indian Succession Act, 1925, your legal heirs or executor cannot directly approach Indian banks or municipal sub-registrars with a foreign probate order. Instead, they must undergo an arduous process:</p>
+              <ul>
+                <li>Obtain an authenticated, apostilled copy of the foreign Will and the grant of foreign probate from the overseas court.</li>
+                <li>Bring those documents to an Indian High Court or competent District Court having jurisdiction over the Indian assets.</li>
+                <li>File a petition for <strong>Ancillary Probate</strong> (Letters of Administration with the copy of the Will annexed).</li>
+                <li>Pay substantial ad valorem Indian court fees (which can reach several lakhs depending on the state), publish citations in Indian national newspapers, and endure 2 to 4 years of procedural delays before obtaining probate.</li>
+              </ul>
+
+              <h3>The Golden Solution: The Concurrent Will Doctrine</h3>
+              <p>To completely bypass ancillary probate bottlenecks, Indian private international law fully recognizes the <strong>Concurrent Will Doctrine</strong>. Under this legal framework, an NRI executes two entirely distinct and concurrent testamentary documents:</p>
+              <ol>
+                <li><strong>A Foreign Will:</strong> Governed by the local laws of their country of residence (e.g., US, UK, Canada, UAE), covering solely assets located in that jurisdiction (e.g., primary home, 401(k), IRA, local bank accounts).</li>
+                <li><strong>An Indian Will:</strong> Governed specifically by the <strong>Indian Succession Act, 1925</strong>, covering solely movable and immovable properties situated in India.</li>
+              </ol>
+
+              <div class="callout">
+                <p><em><strong>Crucial Drafting Caution:</strong> When executing an Indian Will as an NRI, your document must include an explicit geographical carve-out clause stating: "This Will shall operate solely and exclusively upon my estate, both movable and immovable, situated within the territorial borders of India. It shall not revoke, alter, or impact any testamentary instrument executed by me governing my properties outside India." Without this explicit clause, standard revocation boilerplate can unintentionally invalidate your foreign Will!</em></p>
+              </div>
+
+              <h2>2. What Indian Assets Can an NRI Include in Their Indian Will?</h2>
+              <p>When drafting an <strong>NRI Will for property in India</strong>, it is vital to comprehensively catalogue your Indian asset portfolio. NRIs are permitted to bequeath both immovable and movable properties, subject to specific regulatory guidelines under the Foreign Exchange Management Act (FEMA):</p>
+
+              <h3>Immovable Properties</h3>
+              <ul>
+                <li><strong>Residential Apartments and Villas:</strong> Freehold and leasehold apartments, builder floors, and residential houses across any Indian state.</li>
+                <li><strong>Commercial Real Estate:</strong> Retail shops, commercial office spaces, and industrial plots.</li>
+                <li><strong>Agricultural Land, Farm Houses, and Plantations (The FEMA Rule):</strong> 
+                  Under the Foreign Exchange Management (Non-debt Instruments) Rules, 2019, NRIs and OCIs are strictly <em>prohibited from purchasing</em> agricultural land, farmhouses, or plantation properties in India. 
+                  <strong>However, under Section 6(5) of FEMA and RBI Master Directions, an NRI is legally entitled to inherit agricultural land from a resident Indian.</strong> 
+                  Furthermore, an NRI holding inherited agricultural land can freely bequeath that land in their Will. Note: FEMA regulations require that if an NRI bequeaths agricultural land, it must be bequeathed to a citizen of India residing in India.
+                </li>
+              </ul>
+
+              <h3>Movable Properties</h3>
+              <ul>
+                <li><strong>NRE, NRO, and FCNR Fixed Deposits:</strong> Bank balances held with Indian scheduled commercial banks.</li>
+                <li><strong>Indian Stock Market &amp; Mutual Funds:</strong> Demat holdings, PMS portfolios, ETF units, and equity mutual funds registered with Indian asset management companies.</li>
+                <li><strong>Sovereign Gold Bonds (SGBs) &amp; Physical Gold:</strong> Government of India Sovereign Gold Bonds, gold jewellery, and locker contents maintained in Indian bank branches.</li>
+                <li><strong>Corporate Interests:</strong> Equity shares or debentures in Indian private limited companies or family partnership businesses.</li>
+              </ul>
+
+              <div class="callout">
+                <p><strong>Reminder on Bank Nominations:</strong> Many NRIs assume that adding a family member as a "Nominee" on their NRE or NRO account settles succession. Under settled Supreme Court of India precedents (including <em>Ram Chander Talwar v. Devender Kumar Talwar</em> and <em>Shakti Yezdani v. Jayanand Jayant Salgaonkar [2023]</em>), a nominee is merely a temporary custodian or trustee who receives funds to hold in trust. Legal ownership belongs strictly to the beneficiaries named in the Will!</p>
+              </div>
+
+              <h2>3. Execution Rules for NRIs: Plain Paper &amp; Signing Abroad</h2>
+              <p>One of the most widespread myths among the Indian diaspora is that executing a Will requires traveling to India or spending thousands of dollars on expensive non-judicial stamp paper. Indian law is remarkably flexible:</p>
+
+              <h3>The Plain A4 Paper Rule (No Stamp Paper Required)</h3>
+              <p>Under the Indian Stamp Act, 1899, testamentary instruments are <strong>100% exempt from stamp duty</strong> across every state in India. An NRI can execute a valid Will on standard white A4 paper. Stamp paper is never mandatory. For details on this statutory exemption, see our complete guide on <a href="/blog/is-stamp-paper-required-for-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">whether stamp paper is required for a Will in India</a>.</p>
+
+              <h3>Statutory Execution Requirements (Section 63)</h3>
+              <p>To be valid under Section 63 of the Indian Succession Act, 1925:</p>
+              <ol>
+                <li>The testator must sign or affix their thumb impression on every page of the Will.</li>
+                <li>The execution must be witnessed by <strong>at least two independent adult witnesses</strong> who physically see the testator sign, and who sign in the testator's presence.</li>
+                <li><strong>Witness Disqualification Rule:</strong> Under Section 67 of the Act, a beneficiary named in the Will (or the spouse of a beneficiary) must never act as an attesting witness. If a beneficiary signs as a witness, the bequest to that person becomes void. Learn more about <a href="/blog/who-can-be-a-witness-to-a-will-in-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">who can legally be a witness to a Will in India</a>.</li>
+              </ol>
+
+              <h3>How NRIs Can Sign Their Will: Two Practical Paths</h3>
+
+              <h4>Option A: Signing During a Visit to India</h4>
+              <p>If you are visiting your family in India, executing your Will is simple. You can draft your document online using SmartWill, print it out on A4 paper, and sign it before two independent witnesses (such as trusted friends, family physicians, or non-beneficiary relatives). Registering the Will at the local Sub-Registrar's Office is entirely optional under Section 18(e) of the Registration Act, 1908. If you have time and wish to register it, you may; if your visit is short, an unregistered plain-paper Will is completely valid.</p>
+
+              <h4>Option B: Executing While Residing Abroad (Without Traveling to India)</h4>
+              <p>If you cannot travel to India, you can legally execute your Indian Will in your country of residence using one of the following internationally recognized protocols:</p>
+              <ul>
+                <li><strong>Consular Attestation at the Indian Embassy / Consulate:</strong> You can book an appointment at the nearest Indian Embassy or Consulate General (in Washington D.C., San Francisco, London, Dubai, Toronto, Sydney, etc.). You sign the Will in the physical presence of the Consular Officer, who authenticates your signature under the Diplomatic and Consular Officers (Oaths and Fees) Act, 1948. This creates an unassailable evidentiary record.</li>
+                <li><strong>Notarization + Apostille (For Hague Apostille Convention Countries):</strong> In countries that are signatories to the Hague Apostille Convention (such as the US, UK, Canada, Australia, and European nations), you can sign before a local Notary Public with two witnesses. Subsequently, you obtain an <strong>Apostille Certificate</strong> from the designated state or federal authority (such as the Secretary of State in the US or the Foreign, Commonwealth &amp; Development Office in the UK). Under the Hague Convention, India recognizes apostilled documents without requiring further embassy legalization.</li>
+                <li><strong>Non-Hague Nations (e.g., UAE):</strong> In countries like the UAE that are not Hague Apostille signatories, the standard chain involves: (1) Signing before a local Notary, (2) Attestation by the local Ministry of Foreign Affairs (MOFA), and (3) Counter-attestation by the Indian Embassy or Consulate in Dubai or Abu Dhabi.</li>
+              </ul>
+
+              <h2>4. The Dangerous Trap: Power of Attorney (PoA) vs. Will</h2>
+              <p>A perilous mistake frequently committed by NRIs is relying on a Power of Attorney (PoA) given to an aging parent, sibling, or cousin in India to "take care of property after I am gone."</p>
+
+              <div class="callout">
+                <p><strong>Section 201 of the Indian Contract Act, 1872:</strong> Under Indian statutory law, <strong>an agency created by a Power of Attorney automatically and irrevocably terminates the exact moment the principal dies</strong>. A PoA is legally valid strictly during your lifetime.</p>
+              </div>
+
+              <p>If an NRI passes away, the holder of their PoA loses all legal authority immediately. Attempting to sell property, execute lease deeds, or withdraw bank funds using a PoA after the principal's death constitutes illegal impersonation and criminal fraud under the Bharatiya Nyaya Sanhita (formerly Indian Penal Code). A PoA cannot distribute assets upon death; only a legally drafted Will can effectuate title transfers post-mortem.</p>
+
+              <h2>5. Comparison: Single Foreign Will vs. Dedicated Indian Will for NRIs</h2>
+              <p>The following table illustrates why separating your estate planning into a dedicated Indian Will provides unparalleled legal security and administrative convenience for your family:</p>
+
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>Feature / Legal Parameter</th>
+                      <th>Single Foreign Will (Probated Abroad)</th>
+                      <th>Dedicated NRI Indian Will (SmartWill)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Governing Framework</strong></td>
+                      <td>Foreign jurisdiction probate code; subject to complex conflict of laws.</td>
+                      <td>Indian Succession Act, 1925 &amp; Indian lex situs property rules.</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Indian Probate Requirement</strong></td>
+                      <td>Mandatory Section 228 Ancillary Probate petition in Indian High Court.</td>
+                      <td>Probate only required if property is in Mumbai, Kolkata, or Chennai (Sec 57/213).</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Time to Transfer Assets</strong></td>
+                      <td>2 to 4 years due to multi-jurisdiction filings and consular legalizations.</td>
+                      <td>Weeks to a few months directly through Sub-Registrar / Banks.</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Estimated Legal Costs</strong></td>
+                      <td>&#x20B9;2,00,000 to &#x20B9;8,00,000+ in cross-border advocate fees, court duties &amp; apostilles.</td>
+                      <td>&#x20B9;299 online drafting; zero court duty or stamp duty required.</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Sub-Registrar &amp; Bank Acceptance</strong></td>
+                      <td>Frequently rejected or delayed by Indian officials unfamiliar with foreign court seals.</td>
+                      <td>Seamless recognition by municipal bodies, cooperative housing societies, and banks.</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Risk of Inadvertent Revocation</strong></td>
+                      <td>High; foreign Will updates might inadvertently revoke Indian rights.</td>
+                      <td>Zero; strict jurisdictional boundaries isolate Indian assets cleanly.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h2>6. Cross-Border Tax &amp; Repatriation Considerations (FEMA &amp; Form 15CA/CB)</h2>
+              <p>Estate planning for NRIs involves not just title transfers, but also international tax and foreign exchange compliance:</p>
+
+              <h3>Zero Inheritance Tax in India</h3>
+              <p>India abolished the Estate Duty Act in 1985. Consequently, <strong>there is currently 0% inheritance tax or estate duty in India</strong>. When your heirs inherit immovable real estate, fixed deposits, or mutual funds under your Will, no direct tax liability is incurred under the Indian Income-tax Act, 1961. (Note: Future capital gains taxes apply only if and when the heir subsequently sells the inherited asset).</p>
+
+              <h3>Repatriation of Inherited Funds under RBI Regulations</h3>
+              <p>Can an NRI or foreign heir remit the sale proceeds of an inherited Indian property back to the US, UK, or Canada? <strong>Yes, absolutely.</strong></p>
+              <p>Under the Foreign Exchange Management (Remittance of Assets) Regulations, the Reserve Bank of India permits NRIs and foreign citizens who have inherited funds or property to repatriate up to <strong>USD 1,000,000 (One Million US Dollars) per financial year</strong> from their Non-Resident Ordinary (NRO) account. To execute this remittance, your heirs must submit:</p>
+              <ul>
+                <li>A certified copy of the Will and mutation extract proving inheritance.</li>
+                <li><strong>Form 15CB:</strong> A certificate issued by an Indian Chartered Accountant verifying that applicable Indian taxes on income/capital gains have been paid.</li>
+                <li><strong>Form 15CA:</strong> An electronic self-declaration filed on the Indian Income Tax e-filing portal before transmitting funds abroad via authorized dealer (AD) bank branches.</li>
+              </ul>
+
+              <!-- Telugu Regional Guidance Snippet -->
+              <div class="telugu-snippet-box">
+                <h4>&#x1f1ee;&#x1f1f3; NRI తెలుగు వారి కోసం ప్రత్యేక సమాచారం (NRI Will in Telugu)</h4>
+                <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
+                  <strong>విదేశాలలో (USA, UK, Gulf, Australia) ఉంటున్న తెలుగు NRIలు భారతదేశంలోని ఆస్తుల కోసం విడిగా విల్ రాయవచ్చా?</strong><br>
+                  ఖచ్చితంగా రాయవచ్చు. హైదరాబాద్, వైజాగ్, విజయవాడ లేదా మీ స్వగ్రామంలోని స్థలాలు, ఫ్లాట్లు, వ్యవసాయ భూములు మరియు బ్యాంక్ డిపాజిట్ల కోసం ప్రత్యేకంగా <em>భారతీయ వారసత్వ చట్టం 1925</em> ప్రకారం విల్ (Will) రాయడం అత్యంత సురక్షితం. విదేశీ విల్‌ను భారతదేశంలో అమలు చేయడం చాలా కష్టమైన మరియు ఖర్చుతో కూడుకున్న పని. మీరు విదేశాల్లో ఉంటూనే తెల్ల కాగితంపై సంతకం చేసి, ఇద్దరు సాక్షుల సమక్షంలో భారతీయ రాయబార కార్యాలయం (Indian Embassy) లేదా నోటరీ అపోస్టిల్ (Apostille) ద్వారా ధృవీకరించుకోవచ్చు.
+                </p>
+              </div>
+
+              <h2>7. Summary Checklist for NRIs Planning Their Indian Estate</h2>
+              <p>Protecting your life's earnings in India requires four proactive, well-orchestrated steps:</p>
+              <ol>
+                <li><strong>Separate Your Jurisdictions:</strong> Maintain a distinct, concurrent Indian Will drafted under the Indian Succession Act 1925 that explicitly covers only assets located in India.</li>
+                <li><strong>Verify Asset Descriptions:</strong> Accurately document property survey numbers, flat numbers, sub-registrar registration numbers, bank account numbers, and demat DP IDs in your schedule of assets.</li>
+                <li><strong>Appoint a Reliable Indian Executor:</strong> Name an executor residing in India (or an NRI who visits regularly) who can coordinate smoothly with local banks, housing societies, and revenue authorities.</li>
+                <li><strong>Execute with Proper Attestation:</strong> Sign before two independent adult non-beneficiary witnesses on plain A4 paper, and affix consular or apostille attestation if executing abroad.</li>
+              </ol>
+
+              <h2>Frequently Asked Questions (FAQs)</h2>
+              
+              <div class="faq-card">
+                <h3>Can an NRI make a separate Will specifically for property in India?</h3>
+                <p>Yes. Under Indian private international law and the Indian Succession Act 1925, an NRI can execute a separate, concurrent Will dealing exclusively with immovable and movable assets situated in India. This avoids the extensive delays, costs, and ancillary probate proceedings associated with foreign Wills.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Can an NRI inherit agricultural land or farmhouses in India through a Will?</h3>
+                <p>Yes. While FEMA (Foreign Exchange Management Act) regulations prohibit NRIs and OCIs from purchasing agricultural land, plantation property, or farmhouses in India, RBI rules explicitly allow NRIs to inherit such agricultural land from a resident Indian through a valid Will.</p>
+              </div>
+
+              <div class="faq-card">
+                <h3>Does an NRI need to travel to India to execute or register a Will?</h3>
+                <p>No. An NRI can execute a Will outside India by signing it before two independent adult witnesses on plain paper. To add an extra evidentiary layer, the NRI can get the signature attested at the nearest Indian Embassy/Consulate or notarized with an Apostille certificate under the Hague Convention. Registration is completely optional under Section 18(e) of the Registration Act 1908.</p>
+              </div>
+
+            </article>
           </div>
-          <div>
-            <div class="stat-number">$1M USD</div>
-            <div class="stat-label">Annual Repatriation Limit under FEMA</div>
+
+          <!-- Sticky Sidebar Column (4 cols) -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Primary CTA Card -->
+              <div class="sidebar-card cta-card">
+                <div style="font-size:2rem; margin-bottom:0.75rem;">&#x1f30e;</div>
+                <h4 style="font-size:1.25rem; font-weight:700; margin-bottom:0.5rem; color:var(--text-main);">NRI Estate Protection</h4>
+                <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.25rem; line-height:1.55;">
+                  Safeguard your Indian properties and NRE/NRO accounts from abroad. Legally valid Indian Will compliant with FEMA and Succession Act 1925.
+                </p>
+                <a href="/app" class="btn btn-gold w-100" style="display:block; text-align:center;">
+                  Draft NRI Will &mdash; &#x20B9;299 &rarr;
+                </a>
+                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+                  &check; Concurrent Will &bull; FEMA Compliant &bull; Instant Download
+                </div>
+              </div>
+
+              <!-- NRI Checklist Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="check-circle-2" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> NRI Estate Checklist</h4>
+                <ul>
+                  <li>&bull; <strong>Concurrent Will:</strong> Separate Indian &amp; Foreign Wills</li>
+                  <li>&bull; <strong>Lex Situs Rule:</strong> Indian law governs Indian land</li>
+                  <li>&bull; <strong>FEMA Rule:</strong> Agricultural land can be inherited</li>
+                  <li>&bull; <strong>PoA Trap:</strong> PoA terminates on principal's death</li>
+                  <li>&bull; <strong>Attestation:</strong> Consular or Hague Apostille option</li>
+                </ul>
+              </div>
+
+              <!-- Related Guides Card -->
+              <div class="sidebar-card">
+                <h4><i data-lucide="book-open" style="width:16px; height:16px; color:var(--accent-gold, #dfb76c); vertical-align:middle; margin-right:4px;"></i> Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/how-to-include-bank-accounts-mutual-funds-in-will">&rarr; Bank Accounts &amp; Demat in Will</a></li>
+                  <li><a href="/blog/is-stamp-paper-required-for-will-india">&rarr; Is Stamp Paper Required for Will?</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/blog/how-to-register-a-will-at-sub-registrar-office">&rarr; How to Register a Will at SRO</a></li>
+                  <li><a href="/blog/what-happens-without-will-india">&rarr; What Happens Without a Will?</a></li>
+                </ul>
+              </div>
+            </aside>
           </div>
-          <div>
-            <div class="stat-number">0%</div>
-            <div class="stat-label">Inheritance Tax / Estate Duty in India</div>
-          </div>
         </div>
-
-        <h2>1. The Big Dilemma: One Global Will vs. Separate Indian Will (The Concurrent Will Doctrine)</h2>
-        <p>When an NRI decides to put their affairs in order, estate planners in North America, Europe, or the Gulf often suggest creating a single "worldwide Will" covering all assets internationally. While convenient in theory, this approach causes profound complications when applied to properties located within the Republic of India.</p>
-
-        <h3>The Lex Situs Doctrine: Law of the Land Governs Real Estate</h3>
-        <p>Under Private International Law and established Indian jurisprudence, succession to immovable property (such as flats, commercial plots, and agricultural land) is strictly governed by the law of the place where the property is situated&mdash;known legally as <em>lex loci rei sitae</em> (or simply <strong>lex situs</strong>). Regardless of where you reside, hold citizenship, or pass away, your real estate in India is subject exclusively to Indian succession laws, specifically the <strong>Indian Succession Act, 1925</strong>, alongside applicable personal laws (such as the Hindu Succession Act, 1956 or Indian Christian succession statutes).</p>
-
-        <h3>The Ancillary Probate Nightmare (Section 228 of the Indian Succession Act)</h3>
-        <p>If you leave behind only a foreign Will drafted and probated in an overseas court (for example, a Surrogate's Court in New York or the High Court of Justice in London), that foreign probate decree is <strong>not self-executing</strong> in India. Under Section 228 of the Indian Succession Act, 1925, your legal heirs or executor cannot directly approach Indian banks or municipal sub-registrars with a foreign probate order. Instead, they must undergo an arduous process:</p>
-        <ul>
-          <li>Obtain an authenticated, apostilled copy of the foreign Will and the grant of foreign probate from the overseas court.</li>
-          <li>Bring those documents to an Indian High Court or competent District Court having jurisdiction over the Indian assets.</li>
-          <li>File a petition for <strong>Ancillary Probate</strong> (Letters of Administration with the copy of the Will annexed).</li>
-          <li>Pay substantial ad valorem Indian court fees (which can reach several lakhs depending on the state), publish citations in Indian national newspapers, and endure 2 to 4 years of procedural delays before obtaining probate.</li>
-        </ul>
-
-        <h3>The Golden Solution: The Concurrent Will Doctrine</h3>
-        <p>To completely bypass ancillary probate bottlenecks, Indian private international law fully recognizes the <strong>Concurrent Will Doctrine</strong>. Under this legal framework, an NRI executes two entirely distinct and concurrent testamentary documents:</p>
-        <ol>
-          <li><strong>A Foreign Will:</strong> Governed by the local laws of their country of residence (e.g., US, UK, Canada, UAE), covering solely assets located in that jurisdiction (e.g., primary home, 401(k), IRA, local bank accounts).</li>
-          <li><strong>An Indian Will:</strong> Governed specifically by the <strong>Indian Succession Act, 1925</strong>, covering solely movable and immovable properties situated in India.</li>
-        </ol>
-
-        <div class="callout">
-          <p><em><strong>Crucial Drafting Caution:</strong> When executing an Indian Will as an NRI, your document must include an explicit geographical carve-out clause stating: "This Will shall operate solely and exclusively upon my estate, both movable and immovable, situated within the territorial borders of India. It shall not revoke, alter, or impact any testamentary instrument executed by me governing my properties outside India." Without this explicit clause, standard revocation boilerplate can unintentionally invalidate your foreign Will!</em></p>
-        </div>
-
-        <h2>2. What Indian Assets Can an NRI Include in Their Indian Will?</h2>
-        <p>When drafting an <strong>NRI Will for property in India</strong>, it is vital to comprehensively catalogue your Indian asset portfolio. NRIs are permitted to bequeath both immovable and movable properties, subject to specific regulatory guidelines under the Foreign Exchange Management Act (FEMA):</p>
-
-        <h3>Immovable Properties</h3>
-        <ul>
-          <li><strong>Residential Apartments and Villas:</strong> Freehold and leasehold apartments, builder floors, and residential houses across any Indian state.</li>
-          <li><strong>Commercial Real Estate:</strong> Retail shops, commercial office spaces, and industrial plots.</li>
-          <li><strong>Agricultural Land, Farm Houses, and Plantations (The FEMA Rule):</strong> 
-            Under the Foreign Exchange Management (Non-debt Instruments) Rules, 2019, NRIs and OCIs are strictly <em>prohibited from purchasing</em> agricultural land, farmhouses, or plantation properties in India. 
-            <strong>However, under Section 6(5) of FEMA and RBI Master Directions, an NRI is legally entitled to inherit agricultural land from a resident Indian.</strong> 
-            Furthermore, an NRI holding inherited agricultural land can freely bequeath that land in their Will. Note: FEMA regulations require that if an NRI bequeaths agricultural land, it must be bequeathed to a citizen of India residing in India.
-          </li>
-        </ul>
-
-        <h3>Movable Properties</h3>
-        <ul>
-          <li><strong>NRE, NRO, and FCNR Fixed Deposits:</strong> Bank balances held with Indian scheduled commercial banks.</li>
-          <li><strong>Indian Stock Market &amp; Mutual Funds:</strong> Demat holdings, PMS portfolios, ETF units, and equity mutual funds registered with Indian asset management companies.</li>
-          <li><strong>Sovereign Gold Bonds (SGBs) &amp; Physical Gold:</strong> Government of India Sovereign Gold Bonds, gold jewellery, and locker contents maintained in Indian bank branches.</li>
-          <li><strong>Corporate Interests:</strong> Equity shares or debentures in Indian private limited companies or family partnership businesses.</li>
-        </ul>
-
-        <div class="callout">
-          <p><strong>Reminder on Bank Nominations:</strong> Many NRIs assume that adding a family member as a "Nominee" on their NRE or NRO account settles succession. Under settled Supreme Court of India precedents (including <em>Ram Chander Talwar v. Devender Kumar Talwar</em> and <em>Shakti Yezdani v. Jayanand Jayant Salgaonkar [2023]</em>), a nominee is merely a temporary custodian or trustee who receives funds to hold in trust. Legal ownership belongs strictly to the beneficiaries named in the Will!</p>
-        </div>
-
-        <h2>3. Execution Rules for NRIs: Plain Paper &amp; Signing Abroad</h2>
-        <p>One of the most widespread myths among the Indian diaspora is that executing a Will requires traveling to India or spending thousands of dollars on expensive non-judicial stamp paper. Indian law is remarkably flexible:</p>
-
-        <h3>The Plain A4 Paper Rule (No Stamp Paper Required)</h3>
-        <p>Under the Indian Stamp Act, 1899, testamentary instruments are <strong>100% exempt from stamp duty</strong> across every state in India. An NRI can execute a valid Will on standard white A4 paper. Stamp paper is never mandatory. For details on this statutory exemption, see our complete guide on <a href="/blog/is-stamp-paper-required-for-will-india" style="color:var(--accent-gold, #dfb76c); font-weight:600;">whether stamp paper is required for a Will in India</a>.</p>
-
-        <h3>Statutory Execution Requirements (Section 63)</h3>
-        <p>To be valid under Section 63 of the Indian Succession Act, 1925:</p>
-        <ol>
-          <li>The testator must sign or affix their thumb impression on every page of the Will.</li>
-          <li>The execution must be witnessed by <strong>at least two independent adult witnesses</strong> who physically see the testator sign, and who sign in the testator's presence.</li>
-          <li><strong>Witness Disqualification Rule:</strong> Under Section 67 of the Act, a beneficiary named in the Will (or the spouse of a beneficiary) must never act as an attesting witness. If a beneficiary signs as a witness, the bequest to that person becomes void.</li>
-        </ol>
-
-        <h3>How NRIs Can Sign Their Will: Two Practical Paths</h3>
-
-        <h4>Option A: Signing During a Visit to India</h4>
-        <p>If you are visiting your family in India, executing your Will is simple. You can draft your document online using SmartWill, print it out on A4 paper, and sign it before two independent witnesses (such as trusted friends, family physicians, or non-beneficiary relatives). Registering the Will at the local Sub-Registrar's Office is entirely optional under Section 18(e) of the Registration Act, 1908. If you have time and wish to register it, you may; if your visit is short, an unregistered plain-paper Will is completely valid.</p>
-
-        <h4>Option B: Executing While Residing Abroad (Without Traveling to India)</h4>
-        <p>If you cannot travel to India, you can legally execute your Indian Will in your country of residence using one of the following internationally recognized protocols:</p>
-        <ul>
-          <li><strong>Consular Attestation at the Indian Embassy / Consulate:</strong> You can book an appointment at the nearest Indian Embassy or Consulate General (in Washington D.C., San Francisco, London, Dubai, Toronto, Sydney, etc.). You sign the Will in the physical presence of the Consular Officer, who authenticates your signature under the Diplomatic and Consular Officers (Oaths and Fees) Act, 1948. This creates an unassailable evidentiary record.</li>
-          <li><strong>Notarization + Apostille (For Hague Apostille Convention Countries):</strong> In countries that are signatories to the Hague Apostille Convention (such as the US, UK, Canada, Australia, and European nations), you can sign before a local Notary Public with two witnesses. Subsequently, you obtain an <strong>Apostille Certificate</strong> from the designated state or federal authority (such as the Secretary of State in the US or the Foreign, Commonwealth &amp; Development Office in the UK). Under the Hague Convention, India recognizes apostilled documents without requiring further embassy legalization.</li>
-          <li><strong>Non-Hague Nations (e.g., UAE):</strong> In countries like the UAE that are not Hague Apostille signatories, the standard chain involves: (1) Signing before a local Notary, (2) Attestation by the local Ministry of Foreign Affairs (MOFA), and (3) Counter-attestation by the Indian Embassy or Consulate in Dubai or Abu Dhabi.</li>
-        </ul>
-
-        <h2>4. The Dangerous Trap: Power of Attorney (PoA) vs. Will</h2>
-        <p>A perilous mistake frequently committed by NRIs is relying on a Power of Attorney (PoA) given to an aging parent, sibling, or cousin in India to "take care of property after I am gone."</p>
-
-        <div class="callout">
-          <p><strong>Section 201 of the Indian Contract Act, 1872:</strong> Under Indian statutory law, <strong>an agency created by a Power of Attorney automatically and irrevocably terminates the exact moment the principal dies</strong>. A PoA is legally valid strictly during your lifetime.</p>
-        </div>
-
-        <p>If an NRI passes away, the holder of their PoA loses all legal authority immediately. Attempting to sell property, execute lease deeds, or withdraw bank funds using a PoA after the principal's death constitutes illegal impersonation and criminal fraud under the Bharatiya Nyaya Sanhita (formerly Indian Penal Code). A PoA cannot distribute assets upon death; only a legally drafted Will can effectuate title transfers post-mortem.</p>
-
-        <h2>5. Comparison: Single Foreign Will vs. Dedicated Indian Will for NRIs</h2>
-        <p>The following table illustrates why separating your estate planning into a dedicated Indian Will provides unparalleled legal security and administrative convenience for your family:</p>
-
-        <table class="table-custom">
-          <thead>
-            <tr>
-              <th>Feature / Legal Parameter</th>
-              <th>Single Foreign Will (Probated Abroad)</th>
-              <th>Dedicated NRI Indian Will (SmartWill)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Governing Framework</strong></td>
-              <td>Foreign jurisdiction probate code; subject to complex conflict of laws.</td>
-              <td>Indian Succession Act, 1925 &amp; Indian lex situs property rules.</td>
-            </tr>
-            <tr>
-              <td><strong>Indian Probate Requirement</strong></td>
-              <td>Mandatory Section 228 Ancillary Probate petition in Indian High Court.</td>
-              <td>Probate only required if property is in Mumbai, Kolkata, or Chennai (Sec 57/213).</td>
-            </tr>
-            <tr>
-              <td><strong>Time to Transfer Assets</strong></td>
-              <td>2 to 4 years due to multi-jurisdiction filings and consular legalizations.</td>
-              <td>Weeks to a few months directly through Sub-Registrar / Banks.</td>
-            </tr>
-            <tr>
-              <td><strong>Estimated Legal Costs</strong></td>
-              <td>&#x20B9;2,00,000 to &#x20B9;8,00,000+ in cross-border advocate fees, court duties &amp; apostilles.</td>
-              <td>&#x20B9;299 online drafting; zero court duty or stamp duty required.</td>
-            </tr>
-            <tr>
-              <td><strong>Sub-Registrar &amp; Bank Acceptance</strong></td>
-              <td>Frequently rejected or delayed by Indian officials unfamiliar with foreign court seals.</td>
-              <td>Seamless recognition by municipal bodies, cooperative housing societies, and banks.</td>
-            </tr>
-            <tr>
-              <td><strong>Risk of Inadvertent Revocation</strong></td>
-              <td>High; foreign Will updates might inadvertently revoke Indian rights.</td>
-              <td>Zero; strict jurisdictional boundaries isolate Indian assets cleanly.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2>6. Cross-Border Tax &amp; Repatriation Considerations (FEMA &amp; Form 15CA/CB)</h2>
-        <p>Estate planning for NRIs involves not just title transfers, but also international tax and foreign exchange compliance:</p>
-
-        <h3>Zero Inheritance Tax in India</h3>
-        <p>India abolished the Estate Duty Act in 1985. Consequently, <strong>there is currently 0% inheritance tax or estate duty in India</strong>. When your heirs inherit immovable real estate, fixed deposits, or mutual funds under your Will, no direct tax liability is incurred under the Indian Income-tax Act, 1961. (Note: Future capital gains taxes apply only if and when the heir subsequently sells the inherited asset).</p>
-
-        <h3>Repatriation of Inherited Funds under RBI Regulations</h3>
-        <p>Can an NRI or foreign heir remit the sale proceeds of an inherited Indian property back to the US, UK, or Canada? <strong>Yes, absolutely.</strong></p>
-        <p>Under the Foreign Exchange Management (Remittance of Assets) Regulations, the Reserve Bank of India permits NRIs and foreign citizens who have inherited funds or property to repatriate up to <strong>USD 1,000,000 (One Million US Dollars) per financial year</strong> from their Non-Resident Ordinary (NRO) account. To execute this remittance, your heirs must submit:</p>
-        <ul>
-          <li>A certified copy of the Will and mutation extract proving inheritance.</li>
-          <li><strong>Form 15CB:</strong> A certificate issued by an Indian Chartered Accountant verifying that applicable Indian taxes on income/capital gains have been paid.</li>
-          <li><strong>Form 15CA:</strong> An electronic self-declaration filed on the Indian Income Tax e-filing portal before transmitting funds abroad via authorized dealer (AD) bank branches.</li>
-        </ul>
-
-        <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
-        <div class="telugu-snippet-box">
-          <h4>&#x1f1ee;&#x1f1f3; NRI తెలుగు వారి కోసం ప్రత్యేక సమాచారం (NRI Will in Telugu)</h4>
-          <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
-            <strong>విదేశాలలో (USA, UK, Gulf, Australia) ఉంటున్న తెలుగు NRIలు భారతదేశంలోని ఆస్తుల కోసం విడిగా విల్ రాయవచ్చా?</strong><br>
-            ఖచ్చితంగా రాయవచ్చు. హైదరాబాద్, వైజాగ్, విజయవాడ లేదా మీ స్వగ్రామంలోని స్థలాలు, ఫ్లాట్లు, వ్యవసాయ భూములు మరియు బ్యాంక్ డిపాజిట్ల కోసం ప్రత్యేకంగా <em>భారతీయ వారసత్వ చట్టం 1925</em> ప్రకారం విల్ (Will) రాయడం అత్యంత సురక్షితం. విదేశీ విల్‌ను భారతదేశంలో అమలు చేయడం చాలా కష్టమైన మరియు ఖర్చుతో కూడుకున్న పని. మీరు విదేశాల్లో ఉంటూనే తెల్ల కాగితంపై సంతకం చేసి, ఇద్దరు సాక్షుల సమక్షంలో భారతీయ రాయబార కార్యాలయం (Indian Embassy) లేదా నోటరీ అపోస్టిల్ (Apostille) ద్వారా ధృవీకరించుకోవచ్చు.
-          </p>
-        </div>
-
-        <h2>7. Summary Checklist for NRIs Planning Their Indian Estate</h2>
-        <p>Protecting your life's earnings in India requires four proactive, well-orchestrated steps:</p>
-        <ol>
-          <li><strong>Separate Your Jurisdictions:</strong> Maintain a distinct, concurrent Indian Will drafted under the Indian Succession Act 1925 that explicitly covers only assets located in India.</li>
-          <li><strong>Verify Asset Descriptions:</strong> Accurately document property survey numbers, flat numbers, sub-registrar registration numbers, bank account numbers, and demat DP IDs in your schedule of assets.</li>
-          <li><strong>Appoint a Reliable Indian Executor:</strong> Name an executor residing in India (or an NRI who visits regularly) who can coordinate smoothly with local banks, housing societies, and revenue authorities.</li>
-          <li><strong>Execute with Proper Attestation:</strong> Sign before two independent adult non-beneficiary witnesses on plain A4 paper, and affix consular or apostille attestation if executing abroad.</li>
-        </ol>
-
-        <!-- CTA Box -->
-        <div class="blog-cta-box">
-          <h3>Secure Your Indian Properties &amp; Investments in 10 Minutes &mdash; &#x20B9;299</h3>
-          <p>Draft a legally bulletproof, cross-border compliant Indian Will designed specifically for NRIs and OCIs under the Indian Succession Act, 1925.</p>
-          <a href="/app" class="btn btn-gold btn-lg">Create Your NRI Will Online &mdash; &#x20B9;299 &rarr;</a>
-        </div>
-
-        <h2>Frequently Asked Questions</h2>
-        
-        <h3>Can an NRI make a separate Will specifically for property in India?</h3>
-        <p>Yes. Under Indian private international law and the Indian Succession Act 1925, an NRI can execute a separate, concurrent Will dealing exclusively with immovable and movable assets situated in India. This avoids the extensive delays, costs, and ancillary probate proceedings associated with foreign Wills.</p>
-
-        <h3>Can an NRI inherit agricultural land or farmhouses in India through a Will?</h3>
-        <p>Yes. While FEMA (Foreign Exchange Management Act) regulations prohibit NRIs and OCIs from purchasing agricultural land, plantation property, or farmhouses in India, RBI rules explicitly allow NRIs to inherit such agricultural land from a resident Indian through a valid Will.</p>
-
-        <h3>Does an NRI need to travel to India to execute or register a Will?</h3>
-        <p>No. An NRI can execute a Will outside India by signing it before two independent adult witnesses on plain paper. To add an extra evidentiary layer, the NRI can get the signature attested at the nearest Indian Embassy/Consulate or notarized with an Apostille certificate under the Hague Convention. Registration is completely optional under Section 18(e) of the Registration Act 1908.</p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="background:linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); border-top:1px solid rgba(223, 183, 108, 0.25); border-bottom:1px solid rgba(223, 183, 108, 0.25); padding:4rem 0; text-align:center;">
+      <div class="container">
+        <h2 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); font-weight:700; margin-bottom:1rem; color:var(--text-main);">
+          Draft Your Indian Will from Anywhere in the World
+        </h2>
+        <p style="font-size:1.1rem; color:var(--text-muted); max-width:650px; margin:0 auto 2rem; line-height:1.65;">
+          Trusted by thousands of NRIs across the US, UK, Canada, UAE, and Singapore. Create a legally binding Indian Will in 10 minutes for just &#x20B9;299.
+        </p>
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" style="padding:0.9rem 2.5rem; font-weight:700; font-size:1.1rem;">
+          Create NRI Will Online &mdash; &#x20B9;299 &rarr;
+        </a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -523,6 +752,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; Legally Valid</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script>
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
+  </script>
 </body>
 </html>

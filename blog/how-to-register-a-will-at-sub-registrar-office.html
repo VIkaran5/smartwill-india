@@ -91,50 +91,114 @@
     body { 
       background-color: var(--bg-dark); 
       color: var(--text-main); 
-      font-family: var(--font-body, sans-serif); 
+      font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); 
+      text-transform: none !important;
     }
-    .article-header { padding: 7.5rem 0 2.5rem; }
+    .article-header { 
+      padding: 7.5rem 0 2.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      background: linear-gradient(180deg, rgba(223, 183, 108, 0.04) 0%, transparent 100%);
+    }
     .article-tag { 
-      font-size: .75rem; 
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem; 
       font-weight: 700; 
-      letter-spacing: .1em; 
+      letter-spacing: 0.05em; 
       text-transform: uppercase; 
-      color: var(--primary, #dfb76c); 
+      color: var(--accent-gold, #dfb76c); 
       margin-bottom: 1rem; 
+      background: rgba(223, 183, 108, 0.1);
+      border: 1px solid rgba(223, 183, 108, 0.25);
+      border-radius: 9999px;
+      padding: 0.35rem 0.95rem;
     }
-    [data-theme="light"] .article-tag { color: #b45309; }
+    [data-theme="light"] .article-tag { 
+      color: #b45309; 
+      background: rgba(180, 83, 9, 0.08);
+      border-color: rgba(180, 83, 9, 0.25);
+    }
     .article-title { 
-      font-size: clamp(2rem, 4.5vw, 3.2rem); 
+      font-size: clamp(2rem, 4.5vw, 2.9rem); 
       font-weight: 700; 
-      line-height: 1.2; 
-      margin-bottom: 1rem; 
-      max-width: 780px; 
+      line-height: 1.22; 
+      margin-bottom: 1.15rem; 
       color: var(--text-main); 
+      text-wrap: balance;
     }
-    .article-meta { font-size: .9rem; color: var(--text-muted); margin-bottom: 2rem; }
-    .article-body { max-width: 780px; padding-bottom: 5rem; }
-    .article-body h2 { 
-      font-size: 1.5rem; 
-      font-weight: 700; 
-      margin: 2.5rem 0 1rem; 
-      padding-top: 1rem; 
+    .article-subtitle { 
+      font-size: 1.12rem; 
+      line-height: 1.68; 
+      color: var(--text-muted); 
+      max-width: 820px; 
+      margin-bottom: 1.75rem; 
+      text-wrap: pretty;
+    }
+    .article-meta { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 1.5rem; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
       border-top: 1px solid var(--border-light); 
+      padding-top: 1.25rem; 
+    }
+    .article-meta span { 
+      display: flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+    }
+
+    /* ── Main Editorial 2-Column Grid Layout ── */
+    .article-body { 
+      padding: 3.5rem 0 5rem; 
+    }
+    .article-content { 
+      font-size: 1.05rem; 
+      line-height: 1.78; 
       color: var(--text-main); 
     }
-    .article-body h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 1.5rem 0 0.75rem;
-      color: var(--text-main);
+    .article-content h2 { 
+      font-size: 1.55rem; 
+      font-weight: 700; 
+      margin: 2.75rem 0 1.15rem; 
+      color: var(--text-main); 
+      padding-bottom: 0.5rem; 
+      border-bottom: 1px solid var(--border-light); 
+      text-wrap: balance; 
     }
-    .article-body p { line-height: 1.85; color: var(--text-main); margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body ul, .article-body ol { color: var(--text-main); line-height: 1.85; padding-left: 1.5rem; margin-bottom: 1.25rem; font-size: 1.05rem; }
-    .article-body li { margin-bottom: .5rem; }
+    .article-content h3 { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      margin: 1.75rem 0 0.75rem; 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    [data-theme="light"] .article-content h3 { 
+      color: #92400e; 
+    }
+    .article-content p { 
+      margin-bottom: 1.35rem; 
+      text-wrap: pretty;
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content ul, .article-content ol { 
+      margin-bottom: 1.5rem; 
+      padding-left: 1.5rem; 
+      line-height: 1.85; 
+      color: var(--text-main); 
+    }
+    .article-content li { 
+      margin-bottom: 0.6rem; 
+    }
+
+    /* ── Alerts & Callouts ── */
     .callout { 
       background: var(--bg-surface); 
       border-left: 4px solid var(--primary, #dfb76c); 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout p { color: var(--text-main); margin-bottom: 0; }
@@ -142,34 +206,54 @@
       background: rgba(16, 185, 129, 0.08); 
       border-left: 4px solid #10b981; 
       border-radius: 0 var(--radius-sm, 8px) var(--radius-sm, 8px) 0; 
-      padding: 1.25rem 1.5rem; 
+      padding: 1.35rem 1.6rem; 
       margin: 2rem 0; 
     }
     .callout-success p { color: var(--text-main); margin-bottom: 0; }
+
+    /* ── Stat Box ── */
     .stat-box { 
       background: var(--bg-card); 
       border: 1px solid var(--border-light); 
-      border-radius: var(--radius-md, 12px); 
-      padding: 1.5rem; 
+      border-radius: var(--radius-md, 14px); 
+      padding: 1.75rem; 
       margin: 2rem 0; 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
       gap: 1.5rem; 
       text-align: center; 
     }
-    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); }
+    .stat-number { font-size: 2.2rem; font-weight: 800; color: var(--primary, #dfb76c); line-height: 1.1; margin-bottom: 0.4rem; }
     [data-theme="light"] .stat-number { color: #b45309; }
-    .stat-label { font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
-    .blog-cta-box { 
-      background: linear-gradient(135deg, rgba(223, 183, 108, 0.12) 0%, rgba(223, 183, 108, 0.04) 100%); 
-      border: 1px solid rgba(223, 183, 108, 0.3); 
-      border-radius: var(--radius-md, 16px); 
-      padding: 2.5rem; 
-      text-align: center; 
-      margin: 3.5rem 0; 
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── Responsive Comparison Table ── */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 2rem 0;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      background: var(--bg-card);
     }
-    .blog-cta-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: .75rem; color: var(--text-main); }
-    .blog-cta-box p { color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; }
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 580px;
+    }
+    .table-custom th, .table-custom td {
+      border: 1px solid var(--border-light);
+      padding: 14px 18px;
+      text-align: left;
+    }
+    .table-custom th {
+      background: var(--bg-surface);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* ── Telugu Guidance Box ── */
     .telugu-snippet-box {
       background: var(--bg-card);
       border: 1px dashed var(--accent-gold, #dfb76c);
@@ -182,25 +266,85 @@
       font-size: 1.15rem;
       margin-bottom: 0.5rem;
     }
-    .table-container {
-      overflow-x: auto;
-      margin: 1.5rem 0 2rem;
-      -webkit-overflow-scrolling: touch;
+    [data-theme="light"] .telugu-snippet-box h4 {
+      color: #b45309;
     }
-    .table-custom {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-      min-width: 580px;
-    }
-    .table-custom th, .table-custom td {
+
+    /* ── FAQ Cards ── */
+    .faq-card {
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
-      padding: 12px 16px;
-      text-align: left;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .table-custom th {
-      background: var(--bg-surface);
+    .faq-card h3 {
+      font-size: 1.15rem;
       font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .faq-card p {
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
+    /* ── Sticky Sidebar Styles ── */
+    .article-sidebar { 
+      position: sticky; 
+      top: 6.5rem; 
+    }
+    .sidebar-card { 
+      background: var(--bg-card); 
+      border: 1px solid var(--border-light); 
+      border-radius: var(--radius-md, 16px); 
+      padding: 1.75rem; 
+      margin-bottom: 1.75rem; 
+    }
+    .sidebar-card h4 { 
+      font-size: 1.15rem; 
+      font-weight: 700; 
+      margin-bottom: 1rem; 
+      color: var(--text-main); 
+    }
+    .sidebar-card ul { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0; 
+    }
+    .sidebar-card li { 
+      margin-bottom: 0.75rem; 
+    }
+    .sidebar-card ul a, .sidebar-card li a { 
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-size: 0.95rem; 
+      transition: color 0.2s ease; 
+    }
+    .sidebar-card ul a:hover, .sidebar-card li a:hover { 
+      color: var(--accent-gold, #dfb76c); 
+    }
+    .cta-card { 
+      background: linear-gradient(135deg, rgba(223, 183, 108, 0.15), rgba(223, 183, 108, 0.05)); 
+      border: 1.5px solid var(--accent-gold, #dfb76c); 
+      text-align: center; 
+      border-radius: var(--radius-md, 16px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+    .cta-card .btn, .cta-card .btn-gold { 
+      font-weight: 700 !important;
+      padding: 0.75rem 1.5rem !important;
+      border-radius: var(--radius-sm, 10px) !important;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .cta-card .btn:hover, .cta-card .btn-gold:hover {
+      transform: translateY(-2px) !important;
+    }
+
+    @media (max-width: 991px) {
+      .article-header { padding: 6.5rem 0 2.5rem; }
+      .article-sidebar { margin-top: 3rem; position: static; }
     }
   </style>
 </head>
@@ -256,296 +400,392 @@
   </header>
 
   <main>
-    <article class="article-header">
+    <section class="article-header">
       <div class="container">
-        <nav aria-label="breadcrumb" style="margin-bottom:1.5rem; font-size:0.88rem;">
+        <nav aria-label="breadcrumb" style="margin-bottom:1.25rem; font-size:0.88rem;">
           <a href="/" style="color:var(--text-muted); text-decoration:none;">Home</a> &nbsp;&gt;&nbsp; 
           <a href="/blog" style="color:var(--text-muted); text-decoration:none;">Blog</a> &nbsp;&gt;&nbsp; 
           <span style="color:var(--primary, #dfb76c);">How to Register a Will at Sub-Registrar</span>
         </nav>
-        <div class="article-tag">Registration Act 1908 &amp; Estate Planning</div>
-        <h1 class="article-title">How to Register Will at Sub-Registrar Office (2026)</h1>
+        <div class="article-tag">
+          <i data-lucide="building-2" style="width:16px;height:16px;"></i> Registration Act 1908 &bull; Sub-Registrar Office
+        </div>
+        <h1 class="article-title">How to Register Will at Sub-Registrar Office (2026 Process &amp; Fees)</h1>
+        <p class="article-subtitle">
+          A step-by-step statutory walkthrough for registering your Will at the Sub-Registrar Office in India. Covers required documents, online slot booking, Book 3 confidentiality, state-wise fees, and sealed cover deposits.
+        </p>
         <div class="article-meta">
-          <span>By SmartWill India Legal Desk</span> &nbsp;&middot;&nbsp; 
-          <span>Updated September 2026</span> &nbsp;&middot;&nbsp; 
-          <span>8 min read</span>
+          <span><i data-lucide="file-text" style="width:16px;height:16px;"></i> Registration Act, 1908</span>
+          <span><i data-lucide="clock" style="width:16px;height:16px;"></i> 8 min read</span>
+          <span><i data-lucide="calendar" style="width:16px;height:16px;"></i> Updated September 2026</span>
+          <span><i data-lucide="award" style="width:16px;height:16px;"></i> SmartWill Legal Desk</span>
         </div>
       </div>
-    </article>
+    </section>
 
-    <div class="container">
-      <div class="article-body">
+    <section class="article-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8">
+            <article class="article-content">
 
-        <div class="callout-success">
-          <p><strong>Key Legal Takeaway:</strong> Under <strong>Section 18(e) of the Indian Registration Act, 1908</strong>, registering a Will at the Sub-Registrar Office (SRO) is completely optional. A Will executed on plain A4 paper with two witnesses is 100% legally enforceable in Indian courts. However, registering your Will creates an official government record in <em>Book 3</em>, preventing malicious destruction, tampering, and frivolous disputes among legal heirs.</p>
-        </div>
+              <div class="callout-success">
+                <p><strong>Key Legal Takeaway:</strong> Under <strong>Section 18(e) of the Indian Registration Act, 1908</strong>, registering a Will at the Sub-Registrar Office (SRO) is completely optional. A Will executed on plain A4 paper with two witnesses is 100% legally enforceable in Indian courts. However, registering your Will creates an official government record in <em>Book 3</em>, preventing malicious destruction, tampering, and frivolous disputes among legal heirs.</p>
+              </div>
 
-        <p>Planning for your family's financial security often leads to a crucial question: <em>How do I register my Will at the Sub-Registrar Office in India?</em> While legal folklore suggests that only registered documents hold weight, the statutory reality is more nuanced.</p>
+              <p>Planning for your family's financial security often leads to a crucial question: <em>How do I register my Will at the Sub-Registrar Office in India?</em> While legal folklore suggests that only registered documents hold weight, the statutory reality is more nuanced.</p>
 
-        <p>Under Indian estate succession jurisprudence, an unregistered Will carries the same baseline legal validity as a registered one. Yet, for families holding substantial ancestral land, commercial real estate, multi-city apartments, or high-value equities, registration serves as an impenetrable shield. It establishes credible government proof that the testator executed the document voluntarily, in a sound state of mind, and without coercion.</p>
+              <p>Under Indian estate succession jurisprudence, an unregistered Will carries the same baseline legal validity as a registered one. Yet, for families holding substantial ancestral land, commercial real estate, multi-city apartments, or high-value equities, registration serves as an impenetrable shield. It establishes credible government proof that the testator executed the document voluntarily, in a sound state of mind, and without coercion.</p>
 
-        <div class="stat-box">
-          <div>
-            <div class="stat-number">&#x20B9;0</div>
-            <div class="stat-label">Stamp Duty Required Under Indian Stamp Act 1899</div>
+              <div class="stat-box">
+                <div>
+                  <div class="stat-number">&#x20B9;0</div>
+                  <div class="stat-label">Stamp Duty Under Indian Stamp Act 1899</div>
+                </div>
+                <div>
+                  <div class="stat-number">Book 3</div>
+                  <div class="stat-label">Confidential Official SRO Register of Wills</div>
+                </div>
+                <div>
+                  <div class="stat-number">&lt; &#x20B9;500</div>
+                  <div class="stat-label">Average Total Government Registration Cost</div>
+                </div>
+              </div>
+
+              <h2>1. The Legal Framework: Section 18(e) vs Section 17</h2>
+              <p>To understand the registration procedure, one must first examine the governing statutory framework:</p>
+              <ul>
+                <li><strong>Section 17 of the Registration Act, 1908:</strong> This section lists documents whose registration is compulsory. It includes Sale Deeds, Gift Deeds, and non-testamentary leases exceeding 11 months. Wills are deliberately omitted from Section 17.</li>
+                <li><strong>Section 18(e) of the Registration Act, 1908:</strong> This section explicitly categorizes <em>testamentary instruments (Wills)</em> under documents whose registration is strictly optional.</li>
+                <li><strong>Section 63 of the Indian Succession Act, 1925:</strong> Dictates the substantive conditions for a valid Will: a testator of sound mind signing the document in the contemporaneous presence of at least two independent witnesses.</li>
+              </ul>
+
+              <h3>Why Do Legal Experts Still Recommend Registration for High-Value Estates?</h3>
+              <p>If registration is optional, why do thousands of testators visit the Sub-Registrar Office every year? The answer lies in evidentiary strength:</p>
+              <ol>
+                <li><strong>Presumption of Due Execution (Section 114, Indian Evidence Act 1872):</strong> Indian courts recognize that official acts performed by public officers in their regular discharge of duties carry an evidentiary presumption of regularity. When a Sub-Registrar verifies the testator's identity, collects biometrics, and records signatures, challenging the Will on grounds of impersonation or forgery becomes virtually impossible.</li>
+                <li><strong>Protection Against Physical Destruction or Theft:</strong> A domestic Will kept in a home drawer or bank locker can be stolen, torn, or hidden by a disgruntled relative who stands to gain more under intestate succession rules. When registered, an archival digital copy and entry reside safely in the Sub-Registrar's permanent records.</li>
+                <li><strong>Preemption of Mental Capacity Challenges:</strong> The Sub-Registrar conducts a brief verbal assessment before accepting the document. This administrative interaction provides strong corroborating evidence against downstream allegations that the testator lacked testamentary capacity.</li>
+                <li><strong>Availability of Certified Copies:</strong> If the original registered Will is ever misplaced or destroyed in a flood or fire, the executor or legal heirs can legally petition the SRO for an official certified copy.</li>
+              </ol>
+
+              <div class="callout">
+                <p><em>"Judicial Ruling: In Ishwardeo Narain Singh v. Kamta Devi (AIR 1954 SC 280), the Hon'ble Supreme Court of India observed that registration is a solemn act performed before an official officer, which lends substantial prima facie credibility to the genuineness and voluntary execution of the testamentary document."</em></p>
+              </div>
+
+              <h2>2. Complete Document Checklist Before Visiting the SRO</h2>
+              <p>Arriving at the Sub-Registrar Office without the mandatory paperwork can lead to delayed appointments and frustrating rejections. Here is the verified pre-registration checklist:</p>
+
+              <h3>A. The Will Instrument</h3>
+              <ul>
+                <li><strong>2 Original Hard Copies:</strong> Printed clearly on plain white A4 paper (80 GSM or higher recommended for long-term archival durability). Both copies should feature identical pagination, margins, and schedules of assets.</li>
+                <li><strong>Zero Stamp Paper Required:</strong> Do not purchase non-judicial stamp paper. Wills attract zero stamp duty across all Indian states.</li>
+              </ul>
+
+              <h3>B. Testator's Identification &amp; Credentials</h3>
+              <ul>
+                <li><strong>Original Aadhaar Card:</strong> Mandatory for digital biometric verification across all modern state property portals.</li>
+                <li><strong>PAN Card / Passport / Voter ID:</strong> Secondary photo identification proof.</li>
+                <li><strong>Passport-Size Photographs:</strong> At least 2 recent color photographs (with white background).</li>
+                <li><strong>Proof of Address:</strong> Electricity bill, telephone bill, or municipal tax receipt matching the Aadhaar address.</li>
+              </ul>
+
+              <h3>C. Two Attesting Witnesses (Crucial Legal Safeguard)</h3>
+              <ul>
+                <li><strong>Original Government Photo ID:</strong> Aadhaar Card plus Voter ID, Driving Licence, or Passport for each witness.</li>
+                <li><strong>Passport-Size Photographs:</strong> 2 photographs of each attesting witness.</li>
+                <li><strong>The Non-Beneficiary Rule (Section 67, Indian Succession Act):</strong> Ensure that neither witness is a beneficiary, heir, legatee, or spouse of a beneficiary under the Will. If a beneficiary signs as an attesting witness, the Will remains valid, but the bequest to that witness becomes legally void.</li>
+              </ul>
+
+              <h3>D. Optional But Highly Recommended: Doctor's Fitness Certificate</h3>
+              <ul>
+                <li>If the testator is aged 65 or above, hospitalized, frail, or managing chronic illnesses, obtain a <strong>Medical Certificate of Testamentary Capacity</strong> from a registered medical practitioner (MBBS/MD).</li>
+                <li>The doctor should examine the testator on the day of or shortly before execution and certify: <em>"The testator is in a sound disposing state of mind, fully oriented to time, place, and person, and capable of understanding the nature and consequence of disposing of their estate."</em></li>
+              </ul>
+
+              <h3>E. Supporting Schedules &amp; Appointment Receipts</h3>
+              <ul>
+                <li><strong>Asset Schedules:</strong> Photocopies of property Title Deeds, Khata certificates, mutual fund account statements, share certificates, and vehicle registration certificates attached as Annexures.</li>
+                <li><strong>Slot Booking Acknowledgment:</strong> Printout of the appointment slip and online government fee payment receipt.</li>
+              </ul>
+
+              <h2>3. Step-by-Step Registration Procedure at the SRO</h2>
+              <p>The registration process at the Sub-Registrar Office follows a standardized statutory sequence under the Registration Act, 1908:</p>
+
+              <h3>Step 1: Jurisdiction &amp; Online Appointment Booking</h3>
+              <p>Unlike sale deeds—which must strictly be registered in the specific sub-district where the immovable property is situated—a Will can be registered at the Sub-Registrar Office in whose jurisdiction the testator ordinarily resides, or at any SRO where part of the estate property is situated (Sections 31 and 32).</p>
+              <p>Most Indian states now operate mandatory digital appointment slots through centralized land registration portals:</p>
+              <ul>
+                <li><strong>Maharashtra:</strong> IGRMS Maharashtra (igrmaharashtra.gov.in)</li>
+                <li><strong>Karnataka:</strong> Kaveri 2.0 Online Services (kaveri.karnataka.gov.in)</li>
+                <li><strong>Telangana:</strong> Dharani / IGRS Portal (registration.telangana.gov.in)</li>
+                <li><strong>Andhra Pradesh:</strong> Webland / IGRS Portal (registration.ap.gov.in)</li>
+                <li><strong>Tamil Nadu:</strong> TNREGINET Portal (tnreginet.gov.in)</li>
+                <li><strong>Delhi NCT:</strong> Delhi Online Registration Information System (DORIS / revenue.delhi.gov.in)</li>
+                <li><strong>Uttar Pradesh:</strong> IGRSUP Portal (igrsup.gov.in)</li>
+              </ul>
+              <p>Log in, select "Will Registration" (testamentary document), upload the draft PDF, enter witness identification numbers, pay the nominal government fee online, and schedule an appointment window.</p>
+
+              <h3>Step 2: Physical Presentation &amp; Capacity Check by the Sub-Registrar</h3>
+              <p>On the scheduled appointment date, the testator and both attesting witnesses must physically present themselves before the Sub-Registrar. The officer inspects original identity cards and examines the draft document.</p>
+              <p>The Sub-Registrar will engage the testator in a brief, direct conversation:</p>
+              <ul>
+                <li><em>"Did you prepare this document of your own free will?"</em></li>
+                <li><em>"Do you understand who your beneficiaries are and what assets you are bequeathing?"</em></li>
+                <li><em>"Has anyone forced or threatened you into signing this document?"</em></li>
+              </ul>
+              <p>If the officer is satisfied that the testator is acting voluntarily and is of sound disposing mind, the file is approved for biometric recording.</p>
+
+              <h3>Step 3: Biometric Capture &amp; Web Camera Photography</h3>
+              <p>Both the testator and the two witnesses are called to the administrative terminal. The computer operator captures:</p>
+              <ol>
+                <li>High-resolution digital web camera photographs of all three individuals.</li>
+                <li>Optical fingerprint scans (biometric thumb impressions).</li>
+              </ol>
+              <p>These biometric markers are digitally embedded into the official state land registry database, creating an unassailable digital trail of physical presence.</p>
+
+              <h3>Step 4: Formal Signing and Statutory Endorsements</h3>
+              <p>In the presence of the Sub-Registrar, the testator signs or affixes their thumbprint on each page of the Will and at the execution clause on the final page. Both attesting witnesses immediately sign beneath the attestation clause, endorsing their names, father's/spouse's names, residential addresses, and Aadhaar numbers.</p>
+              <p>The Sub-Registrar then inscribes the formal statutory endorsements under <strong>Sections 58 and 59 of the Registration Act, 1908</strong>, certifying that the testator appeared, acknowledged the contents, and was identified by the two witnesses.</p>
+
+              <h3>Step 5: Numbering, Official Seal, and Entry into Book 3</h3>
+              <p>Every registered document is assigned a unique Document Registration Number, Volume Number, and Page Number. The Sub-Registrar affixes the official governmental seal and signature.</p>
+              <p>Crucially, unlike property sale deeds (which are entered into Book 1 and made searchable to any member of the public), <strong>Wills are entered into Book 3: 'Register of Wills and Authorities to Adopt'</strong>.</p>
+              <p>Under <strong>Section 57(2) of the Registration Act</strong>, Book 3 is maintained in strict confidentiality. No third party, inquisitive relative, or stranger can inspect Book 3 or obtain a copy of your Will during your lifetime. Only the testator (or an agent holding an express power of attorney) can access the registered record prior to death.</p>
+
+              <div class="callout">
+                <p><strong>Timeline:</strong> In most digitized Sub-Registrar Offices across Bangalore, Hyderabad, Mumbai, Delhi, and Chennai, the entire physical process takes approximately 45 to 90 minutes. The original stamped and endorsed document is either returned on the same afternoon or within 2 to 3 working days.</p>
+              </div>
+
+              <h2>4. State-Wise SRO Fee Comparison Table</h2>
+              <p>One of the most persistent misconceptions in Indian legal circles is that Will registration costs thousands of rupees. In reality, state governments intentionally levy minimal administrative fees to encourage voluntary registration.</p>
+              <p>Because testamentary transfers carry zero stamp duty under the <em>Indian Stamp Act, 1899</em>, the only charges payable are standard clerical and scanning fees:</p>
+
+              <div class="comparison-table-wrapper">
+                <table class="table-custom">
+                  <thead>
+                    <tr>
+                      <th>State / Union Territory</th>
+                      <th>Government Registration Fee</th>
+                      <th>Scanning / User Charges</th>
+                      <th>Stamp Duty</th>
+                      <th>Estimated Total Govt Outlay</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Maharashtra</strong></td>
+                      <td>&#x20B9;100 fixed</td>
+                      <td>&#x20B9;20 per page scanning</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;160 &ndash; &#x20B9;220</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Delhi NCT</strong></td>
+                      <td>&#x20B9;200 fixed</td>
+                      <td>&#x20B9;100 pasting / processing</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;300</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Karnataka</strong></td>
+                      <td>&#x20B9;200 fixed</td>
+                      <td>&#x20B9;50 &ndash; &#x20B9;100 Kaveri fee</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;250 &ndash; &#x20B9;300</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Telangana</strong></td>
+                      <td>&#x20B9;100 &ndash; &#x20B9;200</td>
+                      <td>&#x20B9;100 user charges</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;200 &ndash; &#x20B9;300</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Andhra Pradesh</strong></td>
+                      <td>&#x20B9;100 &ndash; &#x20B9;200</td>
+                      <td>&#x20B9;100 computer fees</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;200 &ndash; &#x20B9;300</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Tamil Nadu</strong></td>
+                      <td>&#x20B9;100 fixed</td>
+                      <td>&#x20B9;50 computerization fee</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;150 &ndash; &#x20B9;200</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Uttar Pradesh</strong></td>
+                      <td>&#x20B9;100 fixed</td>
+                      <td>&#x20B9;50 scanning fee</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;150</td>
+                    </tr>
+                    <tr>
+                      <td><strong>West Bengal</strong></td>
+                      <td>&#x20B9;200 fixed</td>
+                      <td>&#x20B9;60 &ndash; &#x20B9;120 service fees</td>
+                      <td>&#x20B9;0 (Exempt)</td>
+                      <td>&#x20B9;260 &ndash; &#x20B9;320</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="callout-success">
+                <p><strong>Cost Comparison:</strong> While transferring real estate during your lifetime through a Gift Deed or Sale Deed incurs 5% to 8% in municipal stamp duty and 1% in registration charges (often amounting to &#x20B9;3,00,000 to &#x20B9;8,00,000 on a prime home), registering a Will transferring the exact same property costs <strong>under &#x20B9;500 in total official fees</strong> across every state in India!</p>
+              </div>
+
+              <h2>5. The Alternative: Sealed Cover Deposit under Section 42</h2>
+              <p>What if you want the absolute security of government custody, but don't want anyone—not even the local Sub-Registrar—to read the sensitive clauses of your Will while you are alive? The Indian Registration Act, 1908 offers an elegant, little-known statutory solution: <strong>Deposit of Wills in a Sealed Cover</strong>.</p>
+
+              <h3>How Sealed Cover Deposit Operates (Sections 42 to 46):</h3>
+              <ol>
+                <li><strong>Execution on Plain Paper:</strong> The testator drafts and signs their Will on plain A4 paper in the presence of two witnesses as mandated by Section 63 of the Indian Succession Act.</li>
+                <li><strong>Sealing the Packet (Section 42):</strong> The testator places the executed original Will inside a thick legal envelope, seals the seams with molten red sealing wax, and superscribes on the exterior: <em>"The Will of [Testator's Full Name], son/daughter of [Parent's Name], residing at [Address]"</em>.</li>
+                <li><strong>Personal Delivery to the Registrar:</strong> Under Section 42, the testator personally delivers the sealed envelope to the <strong>District Registrar</strong> (or an authorized Sub-Registrar).</li>
+                <li><strong>Entry into Book 5 (Section 43):</strong> The Registrar records the date, time, and superscription into <em>Book 5: 'Register of Deposits of Wills'</em>, verifies the identity of the testator, places the sealed packet into a fireproof safe, and hands a signed deposit receipt to the testator.</li>
+                <li><strong>Opening Post-Death (Section 45):</strong> During the testator's life, the envelope remains untouched. Upon the testator's demise, any interested person or executor presents the official Death Certificate to the Registrar. The Registrar opens the sealed cover in their presence, copies the document into Book 3, and delivers the original to the legal petitioner or probate court.</li>
+              </ol>
+              <p>This mechanism guarantees 100% secrecy during your lifetime while ensuring that no family member can alter, hide, or destroy the document.</p>
+
+              <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
+              <div class="telugu-snippet-box">
+                <h4>&#x1f1ee;&#x1f1f3; సబ్-రిజిస్ట్రార్ కార్యాలయంలో వీలునామా రిజిస్ట్రేషన్ విధానం (Will Registration in Telugu)</h4>
+                <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
+                  <strong>తెలంగాణ మరియు ఆంధ్రప్రదేశ్‌లో వీలునామా ఎలా రిజిస్టర్ చేయాలి?</strong><br>
+                  ఇండియన్ రిజిస్ట్రేషన్ చట్టం సెక్షన్ 18(e) ప్రకారం వీలునామా (Will) రిజిస్ట్రేషన్ తప్పనిసరి కాదు (ఐచ్ఛికం). అయితే, భవిష్యత్తులో ఆస్తి వివాదాలు రాకుండా ఉండేందుకు రిజిస్టర్ చేసుకోవడం శ్రేయస్కరం. సాదా A4 పేపర్‌పై వీలునామా సిద్ధం చేసుకొని, ఒరిజినల్ ఆధార్ కార్డు, పాన్ కార్డు మరియు <strong>ఇద్దరు స్వతంత్ర సాక్షులతో</strong> (లబ్ధిదారులు కానివారు) కలిసి మీ స్థానిక సబ్-రిజిస్ట్రార్ ఆఫీస్‌కు వెళ్లాలి. ధరణి (Dharani) లేదా IGRS పోర్టల్ ద్వారా ఆన్‌లైన్ స్లాట్ బుక్ చేసుకోవచ్చు. స్టాంప్ డ్యూటీ సున్నా (&#x20B9;0). రిజిస్ట్రేషన్ రుసుము మొత్తం దాదాపు &#x20B9;200 నుండి &#x20B9;300 మాత్రమే అవుతుంది.
+                </p>
+              </div>
+
+              <h2>6. Home Visit &amp; Hospital Registration (Sections 31 &amp; 38)</h2>
+              <p>A frequent challenge arises when a senior citizen or bedridden individual wishes to register their Will but cannot physically visit the SRO premises due to paralysis, advanced age, or terminal illness.</p>
+              <p>The law explicitly accounts for such contingencies under <strong>Section 31 of the Registration Act, 1908</strong> (Registration at Private Residence):</p>
+              <ul>
+                <li><strong>Formal Application:</strong> The testator or their authorized representative submits an application to the jurisdictional Sub-Registrar requesting a home or hospital visit.</li>
+                <li><strong>Medical Certificate:</strong> Attach a fitness certificate from the treating doctor certifying that the individual is mentally lucid but physically unable to travel.</li>
+                <li><strong>Payment of Special Commission Fee:</strong> State rules prescribe a nominal commission/conveyance fee (typically &#x20B9;1,000 to &#x20B9;2,500 plus travel charges).</li>
+                <li><strong>SRO Visit:</strong> The Sub-Registrar (or an appointed commission officer) visits the testator's home or hospital bed with portable fingerprint biometric sensors and a camera, completing the registration in the room in the presence of the two witnesses.</li>
+              </ul>
+
+              <h2>7. Five Costly Mistakes to Avoid When Registering a Will</h2>
+              <p>Ensure your Will passes through the Sub-Registrar's scrutiny without procedural or legal snags by avoiding these common blunders:</p>
+              <ol>
+                <li><strong>Appointing Beneficiaries as Attesting Witnesses:</strong> Never allow your son, daughter, spouse, or any other beneficiary named in the Will to sign as a witness. Under Section 67 of the Indian Succession Act, doing so invalidates their inheritance. Use trusted family friends, doctors, chartered accountants, or neighbors instead.</li>
+                <li><strong>Purchasing Expensive Stamp Papers:</strong> Unscrupulous agents frequently advise buying ₹500 or ₹1,000 stamp papers to charge inflated commission fees. Insist on printing on clean white A4 sheets.</li>
+                <li><strong>Skipping Pagination or Page Signatures:</strong> Ensure the testator signs on every single page of the Will, not just the final endorsement page. This removes any legal suspicion that middle pages were substituted later.</li>
+                <li><strong>Omitting an Explicit Revocation Clause:</strong> If you wrote a previous Will (registered or unregistered), your new draft must contain a clear clause: <em>"I hereby revoke all my prior Wills, codicils, and testamentary dispositions made by me at any time heretofore."</em></li>
+                <li><strong>Believing Registration Eliminates the Need for Clear Drafting:</strong> Registration merely proves execution; it does not cure illegal clauses, ambiguous bequeathals, or attempts to distribute properties you do not legally own (such as an undivided share in ancestral coparcenary property).</li>
+              </ol>
+
+              <h2>Frequently Asked Questions</h2>
+              
+              <div class="faq-card">
+                <h3 class="faq-question">Is it compulsory to register a Will at the Sub-Registrar Office in India?</h3>
+                <div class="faq-answer">
+                  <p>No. Under Section 18(e) of the Indian Registration Act 1908, registering a Will is completely optional. A Will executed on plain A4 paper and properly signed in the presence of two independent witnesses is 100% legally enforceable in all Indian courts without registration.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">Can a registered Will be cancelled, amended, or superseded by an unregistered Will?</h3>
+                <div class="faq-answer">
+                  <p>Yes. Under Section 62 of the Indian Succession Act 1925, a testator retains the absolute right to revoke or amend their Will at any time during their life. A subsequent validly executed unregistered Will or codicil supersedes an earlier registered Will, though registering the cancellation or the new Will helps avoid unnecessary probate friction.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">What happens if a testator cannot travel to the Sub-Registrar Office due to illness or old age?</h3>
+                <div class="faq-answer">
+                  <p>Under Section 31 of the Registration Act 1908, the Sub-Registrar has statutory discretion to visit the testator's residence or hospital to complete the registration. You can file a formal request along with a medical fitness certificate and pay the prescribed state home-visit commission fee.</p>
+                </div>
+              </div>
+
+              <div class="faq-card">
+                <h3 class="faq-question">Can someone view my Will in Book 3 while I am alive?</h3>
+                <div class="faq-answer">
+                  <p>No. Under Section 57(2) of the Registration Act, 1908, Book 3 is maintained under strict statutory confidentiality. Neither relatives nor the general public can inspect or obtain copies of your registered Will during your lifetime.</p>
+                </div>
+              </div>
+
+            </article>
           </div>
-          <div>
-            <div class="stat-number">Book 3</div>
-            <div class="stat-label">Confidential Official SRO Register of Wills</div>
+
+          <!-- Sticky Sidebar -->
+          <div class="col-lg-4">
+            <aside class="article-sidebar">
+              <!-- Action Card -->
+              <div class="sidebar-card cta-card">
+                <h4>Draft SRO-Ready Will Online</h4>
+                <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1.25rem;">
+                  SmartWill India drafts legally structured Wills on standard A4 format with all statutory clauses, ready for immediate execution or SRO registration.
+                </p>
+                <div style="font-size:1.85rem; font-weight:800; color:var(--accent-gold, #dfb76c); margin-bottom:1rem;">
+                  &#x20B9;299
+                </div>
+                <a href="/app" class="btn btn-gold btn-block" style="display:block; text-align:center;">
+                  Create Will Now &rarr;
+                </a>
+              </div>
+
+              <!-- SRO Checklist Summary -->
+              <div class="sidebar-card">
+                <h4>SRO Checklist at a Glance</h4>
+                <ul style="padding-left:0; list-style:none; display:flex; flex-direction:column; gap:0.75rem;">
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Format:</strong> 2 Hard Copies on Plain White A4</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Stamp Duty:</strong> &#x20B9;0 (Completely Exempt)</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Witnesses:</strong> 2 Independent Adults (No Beneficiaries)</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Confidentiality:</strong> Book 3 (Strictly Private)</span>
+                  </li>
+                  <li style="display:flex; align-items:flex-start; gap:0.5rem; font-size:0.92rem;">
+                    <i data-lucide="check-circle" style="width:16px; height:16px; color:#10b981; flex-shrink:0; margin-top:3px;"></i>
+                    <span><strong>Govt Fee:</strong> Under &#x20B9;500 across all States</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Related Guides -->
+              <div class="sidebar-card">
+                <h4>Related Legal Guides</h4>
+                <ul>
+                  <li><a href="/blog/is-will-registration-mandatory-in-india">&rarr; Is Will Registration Mandatory?</a></li>
+                  <li><a href="/blog/can-a-registered-will-be-challenged-in-india">&rarr; Can a Registered Will Be Challenged?</a></li>
+                  <li><a href="/blog/is-stamp-paper-required-for-will-india">&rarr; Is Stamp Paper Required for a Will?</a></li>
+                  <li><a href="/blog/doctor-certificate-for-will-india">&rarr; Doctor Certificate for Will in India</a></li>
+                  <li><a href="/blog/who-can-be-a-witness-to-a-will-in-india">&rarr; Who Can Be a Witness to a Will?</a></li>
+                  <li><a href="/will-registration-hyderabad">&rarr; Will Registration in Hyderabad</a></li>
+                  <li><a href="/will-registration-bangalore">&rarr; Will Registration in Bangalore</a></li>
+                  <li><a href="/will-registration-mumbai">&rarr; Will Registration in Mumbai</a></li>
+                </ul>
+              </div>
+            </aside>
           </div>
-          <div>
-            <div class="stat-number">&lt; &#x20B9;500</div>
-            <div class="stat-label">Average Total Government Registration Cost</div>
-          </div>
         </div>
-
-        <h2>1. The Legal Framework: Section 18(e) vs Section 17</h2>
-        <p>To understand the registration procedure, one must first examine the governing statutory framework:</p>
-        <ul>
-          <li><strong>Section 17 of the Registration Act, 1908:</strong> This section lists documents whose registration is compulsory. It includes Sale Deeds, Gift Deeds, and non-testamentary leases exceeding 11 months. Wills are deliberately omitted from Section 17.</li>
-          <li><strong>Section 18(e) of the Registration Act, 1908:</strong> This section explicitly categorizes <em>testamentary instruments (Wills)</em> under documents whose registration is strictly optional.</li>
-          <li><strong>Section 63 of the Indian Succession Act, 1925:</strong> Dictates the substantive conditions for a valid Will: a testator of sound mind signing the document in the contemporaneous presence of at least two independent witnesses.</li>
-        </ul>
-
-        <h3>Why Do Legal Experts Still Recommend Registration for High-Value Estates?</h3>
-        <p>If registration is optional, why do thousands of testators visit the Sub-Registrar Office every year? The answer lies in evidentiary strength:</p>
-        <ol>
-          <li><strong>Presumption of Due Execution (Section 114, Indian Evidence Act 1872):</strong> Indian courts recognize that official acts performed by public officers in their regular discharge of duties carry an evidentiary presumption of regularity. When a Sub-Registrar verifies the testator's identity, collects biometrics, and records signatures, challenging the Will on grounds of impersonation or forgery becomes virtually impossible.</li>
-          <li><strong>Protection Against Physical Destruction or Theft:</strong> A domestic Will kept in a home drawer or bank locker can be stolen, torn, or hidden by a disgruntled relative who stands to gain more under intestate succession rules. When registered, an archival digital copy and entry reside safely in the Sub-Registrar's permanent records.</li>
-          <li><strong>Preemption of Mental Capacity Challenges:</strong> The Sub-Registrar conducts a brief verbal assessment before accepting the document. This administrative interaction provides strong corroborating evidence against downstream allegations that the testator lacked testamentary capacity.</li>
-          <li><strong>Availability of Certified Copies:</strong> If the original registered Will is ever misplaced or destroyed in a flood or fire, the executor or legal heirs can legally petition the SRO for an official certified copy.</li>
-        </ol>
-
-        <div class="callout">
-          <p><em>"Judicial Ruling: In Ishwardeo Narain Singh v. Kamta Devi (AIR 1954 SC 280), the Hon'ble Supreme Court of India observed that registration is a solemn act performed before an official officer, which lends substantial prima facie credibility to the genuineness and voluntary execution of the testamentary document."</em></p>
-        </div>
-
-        <h2>2. Complete Document Checklist Before Visiting the SRO</h2>
-        <p>Arriving at the Sub-Registrar Office without the mandatory paperwork can lead to delayed appointments and frustrating rejections. Here is the verified pre-registration checklist:</p>
-
-        <h3>A. The Will Instrument</h3>
-        <ul>
-          <li><strong>2 Original Hard Copies:</strong> Printed clearly on plain white A4 paper (80 GSM or higher recommended for long-term archival durability). Both copies should feature identical pagination, margins, and schedules of assets.</li>
-          <li><strong>Zero Stamp Paper Required:</strong> Do not purchase non-judicial stamp paper. Wills attract zero stamp duty across all Indian states.</li>
-        </ul>
-
-        <h3>B. Testator's Identification &amp; Credentials</h3>
-        <ul>
-          <li><strong>Original Aadhaar Card:</strong> Mandatory for digital biometric verification across all modern state property portals.</li>
-          <li><strong>PAN Card / Passport / Voter ID:</strong> Secondary photo identification proof.</li>
-          <li><strong>Passport-Size Photographs:</strong> At least 2 recent color photographs (with white background).</li>
-          <li><strong>Proof of Address:</strong> Electricity bill, telephone bill, or municipal tax receipt matching the Aadhaar address.</li>
-        </ul>
-
-        <h3>C. Two Attesting Witnesses (Crucial Legal Safeguard)</h3>
-        <ul>
-          <li><strong>Original Government Photo ID:</strong> Aadhaar Card plus Voter ID, Driving Licence, or Passport for each witness.</li>
-          <li><strong>Passport-Size Photographs:</strong> 2 photographs of each attesting witness.</li>
-          <li><strong>The Non-Beneficiary Rule (Section 67, Indian Succession Act):</strong> Ensure that neither witness is a beneficiary, heir, legatee, or spouse of a beneficiary under the Will. If a beneficiary signs as an attesting witness, the Will remains valid, but the bequest to that witness becomes legally void.</li>
-        </ul>
-
-        <h3>D. Optional But Highly Recommended: Doctor's Fitness Certificate</h3>
-        <ul>
-          <li>If the testator is aged 65 or above, hospitalized, frail, or managing chronic illnesses, obtain a <strong>Medical Certificate of Testamentary Capacity</strong> from a registered medical practitioner (MBBS/MD).</li>
-          <li>The doctor should examine the testator on the day of or shortly before execution and certify: <em>"The testator is in a sound disposing state of mind, fully oriented to time, place, and person, and capable of understanding the nature and consequence of disposing of their estate."</em></li>
-        </ul>
-
-        <h3>E. Supporting Schedules &amp; Appointment Receipts</h3>
-        <ul>
-          <li><strong>Asset Schedules:</strong> Photocopies of property Title Deeds, Khata certificates, mutual fund account statements, share certificates, and vehicle registration certificates attached as Annexures.</li>
-          <li><strong>Slot Booking Acknowledgment:</strong> Printout of the appointment slip and online government fee payment receipt.</li>
-        </ul>
-
-        <h2>3. Step-by-Step Registration Procedure at the SRO</h2>
-        <p>The registration process at the Sub-Registrar Office follows a standardized statutory sequence under the Registration Act, 1908:</p>
-
-        <h3>Step 1: Jurisdiction &amp; Online Appointment Booking</h3>
-        <p>Unlike sale deeds—which must strictly be registered in the specific sub-district where the immovable property is situated—a Will can be registered at the Sub-Registrar Office in whose jurisdiction the testator ordinarily resides, or at any SRO where part of the estate property is situated (Sections 31 and 32).</p>
-        <p>Most Indian states now operate mandatory digital appointment slots through centralized land registration portals:</p>
-        <ul>
-          <li><strong>Maharashtra:</strong> IGRMS Maharashtra (igrmaharashtra.gov.in)</li>
-          <li><strong>Karnataka:</strong> Kaveri 2.0 Online Services (kaveri.karnataka.gov.in)</li>
-          <li><strong>Telangana:</strong> Dharani / IGRS Portal (registration.telangana.gov.in)</li>
-          <li><strong>Andhra Pradesh:</strong> Webland / IGRS Portal (registration.ap.gov.in)</li>
-          <li><strong>Tamil Nadu:</strong> TNREGINET Portal (tnreginet.gov.in)</li>
-          <li><strong>Delhi NCT:</strong> Delhi Online Registration Information System (DORIS / revenue.delhi.gov.in)</li>
-          <li><strong>Uttar Pradesh:</strong> IGRSUP Portal (igrsup.gov.in)</li>
-        </ul>
-        <p>Log in, select "Will Registration" (testamentary document), upload the draft PDF, enter witness identification numbers, pay the nominal government fee online, and schedule an appointment window.</p>
-
-        <h3>Step 2: Physical Presentation &amp; Capacity Check by the Sub-Registrar</h3>
-        <p>On the scheduled appointment date, the testator and both attesting witnesses must physically present themselves before the Sub-Registrar. The officer inspects original identity cards and examines the draft document.</p>
-        <p>The Sub-Registrar will engage the testator in a brief, direct conversation:</p>
-        <ul>
-          <li><em>"Did you prepare this document of your own free will?"</em></li>
-          <li><em>"Do you understand who your beneficiaries are and what assets you are bequeathing?"</em></li>
-          <li><em>"Has anyone forced or threatened you into signing this document?"</em></li>
-        </ul>
-        <p>If the officer is satisfied that the testator is acting voluntarily and is of sound disposing mind, the file is approved for biometric recording.</p>
-
-        <h3>Step 3: Biometric Capture &amp; Web Camera Photography</h3>
-        <p>Both the testator and the two witnesses are called to the administrative terminal. The computer operator captures:</p>
-        <ol>
-          <li>High-resolution digital web camera photographs of all three individuals.</li>
-          <li>Optical fingerprint scans (biometric thumb impressions).</li>
-        </ol>
-        <p>These biometric markers are digitally embedded into the official state land registry database, creating an unassailable digital trail of physical presence.</p>
-
-        <h3>Step 4: Formal Signing and Statutory Endorsements</h3>
-        <p>In the presence of the Sub-Registrar, the testator signs or affixes their thumbprint on each page of the Will and at the execution clause on the final page. Both attesting witnesses immediately sign beneath the attestation clause, endorsing their names, father's/spouse's names, residential addresses, and Aadhaar numbers.</p>
-        <p>The Sub-Registrar then inscribes the formal statutory endorsements under <strong>Sections 58 and 59 of the Registration Act, 1908</strong>, certifying that the testator appeared, acknowledged the contents, and was identified by the two witnesses.</p>
-
-        <h3>Step 5: Numbering, Official Seal, and Entry into Book 3</h3>
-        <p>Every registered document is assigned a unique Document Registration Number, Volume Number, and Page Number. The Sub-Registrar affixes the official governmental seal and signature.</p>
-        <p>Crucially, unlike property sale deeds (which are entered into Book 1 and made searchable to any member of the public), <strong>Wills are entered into Book 3: 'Register of Wills and Authorities to Adopt'</strong>.</p>
-        <p>Under <strong>Section 57(2) of the Registration Act</strong>, Book 3 is maintained in strict confidentiality. No third party, inquisitive relative, or stranger can inspect Book 3 or obtain a copy of your Will during your lifetime. Only the testator (or an agent holding an express power of attorney) can access the registered record prior to death.</p>
-
-        <div class="callout">
-          <p><strong>Timeline:</strong> In most digitized Sub-Registrar Offices across Bangalore, Hyderabad, Mumbai, Delhi, and Chennai, the entire physical process takes approximately 45 to 90 minutes. The original stamped and endorsed document is either returned on the same afternoon or within 2 to 3 working days.</p>
-        </div>
-
-        <h2>4. State-Wise SRO Fee Comparison Table</h2>
-        <p>One of the most persistent misconceptions in Indian legal circles is that Will registration costs thousands of rupees. In reality, state governments intentionally levy minimal administrative fees to encourage voluntary registration.</p>
-        <p>Because testamentary transfers carry zero stamp duty under the <em>Indian Stamp Act, 1899</em>, the only charges payable are standard clerical and scanning fees:</p>
-
-        <div class="table-container">
-          <table class="table-custom">
-            <thead>
-              <tr>
-                <th>State / Union Territory</th>
-                <th>Government Registration Fee</th>
-                <th>Scanning / User Charges</th>
-                <th>Stamp Duty</th>
-                <th>Estimated Total Govt Outlay</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Maharashtra</strong></td>
-                <td>&#x20B9;100 fixed</td>
-                <td>&#x20B9;20 per page scanning</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;160 &ndash; &#x20B9;220</td>
-              </tr>
-              <tr>
-                <td><strong>Delhi NCT</strong></td>
-                <td>&#x20B9;200 fixed</td>
-                <td>&#x20B9;100 pasting / processing</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;300</td>
-              </tr>
-              <tr>
-                <td><strong>Karnataka</strong></td>
-                <td>&#x20B9;200 fixed</td>
-                <td>&#x20B9;50 &ndash; &#x20B9;100 Kaveri fee</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;250 &ndash; &#x20B9;300</td>
-              </tr>
-              <tr>
-                <td><strong>Telangana</strong></td>
-                <td>&#x20B9;100 &ndash; &#x20B9;200</td>
-                <td>&#x20B9;100 user charges</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;200 &ndash; &#x20B9;300</td>
-              </tr>
-              <tr>
-                <td><strong>Andhra Pradesh</strong></td>
-                <td>&#x20B9;100 &ndash; &#x20B9;200</td>
-                <td>&#x20B9;100 computer fees</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;200 &ndash; &#x20B9;300</td>
-              </tr>
-              <tr>
-                <td><strong>Tamil Nadu</strong></td>
-                <td>&#x20B9;100 fixed</td>
-                <td>&#x20B9;50 computerization fee</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;150 &ndash; &#x20B9;200</td>
-              </tr>
-              <tr>
-                <td><strong>Uttar Pradesh</strong></td>
-                <td>&#x20B9;100 fixed</td>
-                <td>&#x20B9;50 scanning fee</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;150</td>
-              </tr>
-              <tr>
-                <td><strong>West Bengal</strong></td>
-                <td>&#x20B9;200 fixed</td>
-                <td>&#x20B9;60 &ndash; &#x20B9;120 service fees</td>
-                <td>&#x20B9;0 (Exempt)</td>
-                <td>&#x20B9;260 &ndash; &#x20B9;320</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="callout-success">
-          <p><strong>Cost Comparison:</strong> While transferring real estate during your lifetime through a Gift Deed or Sale Deed incurs 5% to 8% in municipal stamp duty and 1% in registration charges (often amounting to &#x20B9;3,00,000 to &#x20B9;8,00,000 on a prime home), registering a Will transferring the exact same property costs <strong>under &#x20B9;500 in total official fees</strong> across every state in India!</p>
-        </div>
-
-        <h2>5. The Alternative: Sealed Cover Deposit under Section 42</h2>
-        <p>What if you want the absolute security of government custody, but don't want anyone—not even the local Sub-Registrar—to read the sensitive clauses of your Will while you are alive? The Indian Registration Act, 1908 offers an elegant, little-known statutory solution: <strong>Deposit of Wills in a Sealed Cover</strong>.</p>
-
-        <h3>How Sealed Cover Deposit Operates (Sections 42 to 46):</h3>
-        <ol>
-          <li><strong>Execution on Plain Paper:</strong> The testator drafts and signs their Will on plain A4 paper in the presence of two witnesses as mandated by Section 63 of the Indian Succession Act.</li>
-          <li><strong>Sealing the Packet (Section 42):</strong> The testator places the executed original Will inside a thick legal envelope, seals the seams with molten red sealing wax, and superscribes on the exterior: <em>"The Will of [Testator's Full Name], son/daughter of [Parent's Name], residing at [Address]"</em>.</li>
-          <li><strong>Personal Delivery to the Registrar:</strong> Under Section 42, the testator personally delivers the sealed envelope to the <strong>District Registrar</strong> (or an authorized Sub-Registrar).</li>
-          <li><strong>Entry into Book 5 (Section 43):</strong> The Registrar records the date, time, and superscription into <em>Book 5: 'Register of Deposits of Wills'</em>, verifies the identity of the testator, places the sealed packet into a fireproof safe, and hands a signed deposit receipt to the testator.</li>
-          <li><strong>Opening Post-Death (Section 45):</strong> During the testator's life, the envelope remains untouched. Upon the testator's demise, any interested person or executor presents the official Death Certificate to the Registrar. The Registrar opens the sealed cover in their presence, copies the document into Book 3, and delivers the original to the legal petitioner or probate court.</li>
-        </ol>
-        <p>This mechanism guarantees 100% secrecy during your lifetime while ensuring that no family member can alter, hide, or destroy the document.</p>
-
-        <!-- Telugu Regional Guidance Snippet for Google Search Impressions -->
-        <div class="telugu-snippet-box">
-          <h4>&#x1f1ee;&#x1f1f3; సబ్-రిజిస్ట్రార్ కార్యాలయంలో వీలునామా రిజిస్ట్రేషన్ విధానం (Will Registration in Telugu)</h4>
-          <p style="margin-bottom:0.5rem; font-size:0.98rem; line-height:1.7;">
-            <strong>తెలంగాణ మరియు ఆంధ్రప్రదేశ్‌లో వీలునామా ఎలా రిజిస్టర్ చేయాలి?</strong><br>
-            ఇండియన్ రిజిస్ట్రేషన్ చట్టం సెక్షన్ 18(e) ప్రకారం వీలునామా (Will) రిజిస్ట్రేషన్ తప్పనిసరి కాదు (ఐచ్ఛికం). అయితే, భవిష్యత్తులో ఆస్తి వివాదాలు రాకుండా ఉండేందుకు రిజిస్టర్ చేసుకోవడం శ్రేయస్కరం. సాదా A4 పేపర్‌పై వీలునామా సిద్ధం చేసుకొని, ఒరిజినల్ ఆధార్ కార్డు, పాన్ కార్డు మరియు <strong>ఇద్దరు స్వతంత్ర సాక్షులతో</strong> (లబ్ధిదారులు కానివారు) కలిసి మీ స్థానిక సబ్-రిజిస్ట్రార్ ఆఫీస్‌కు వెళ్లాలి. ధరణి (Dharani) లేదా IGRS పోర్టల్ ద్వారా ఆన్‌లైన్ స్లాట్ బుక్ చేసుకోవచ్చు. స్టాంప్ డ్యూటీ సున్నా (&#x20B9;0). రిజిస్ట్రేషన్ రుసుము మొత్తం దాదాపు &#x20B9;200 నుండి &#x20B9;300 మాత్రమే అవుతుంది.
-          </p>
-        </div>
-
-        <h2>6. Home Visit &amp; Hospital Registration (Sections 31 &amp; 38)</h2>
-        <p>A frequent challenge arises when a senior citizen or bedridden individual wishes to register their Will but cannot physically visit the SRO premises due to paralysis, advanced age, or terminal illness.</p>
-        <p>The law explicitly accounts for such contingencies under <strong>Section 31 of the Registration Act, 1908</strong> (Registration at Private Residence):</p>
-        <ul>
-          <li><strong>Formal Application:</strong> The testator or their authorized representative submits an application to the jurisdictional Sub-Registrar requesting a home or hospital visit.</li>
-          <li><strong>Medical Certificate:</strong> Attach a fitness certificate from the treating doctor certifying that the individual is mentally lucid but physically unable to travel.</li>
-          <li><strong>Payment of Special Commission Fee:</strong> State rules prescribe a nominal commission/conveyance fee (typically &#x20B9;1,000 to &#x20B9;2,500 plus travel charges).</li>
-          <li><strong>SRO Visit:</strong> The Sub-Registrar (or an appointed commission officer) visits the testator's home or hospital bed with portable fingerprint biometric sensors and a camera, completing the registration in the room in the presence of the two witnesses.</li>
-        </ul>
-
-        <h2>7. Five Costly Mistakes to Avoid When Registering a Will</h2>
-        <p>Ensure your Will passes through the Sub-Registrar's scrutiny without procedural or legal snags by avoiding these common blunders:</p>
-        <ol>
-          <li><strong>Appointing Beneficiaries as Attesting Witnesses:</strong> Never allow your son, daughter, spouse, or any other beneficiary named in the Will to sign as a witness. Under Section 67 of the Indian Succession Act, doing so invalidates their inheritance. Use trusted family friends, doctors, chartered accountants, or neighbors instead.</li>
-          <li><strong>Purchasing Expensive Stamp Papers:</strong> Unscrupulous agents frequently advise buying ₹500 or ₹1,000 stamp papers to charge inflated commission fees. Insist on printing on clean white A4 sheets.</li>
-          <li><strong>Skipping Pagination or Page Signatures:</strong> Ensure the testator signs on every single page of the Will, not just the final endorsement page. This removes any legal suspicion that middle pages were substituted later.</li>
-          <li><strong>Omitting an Explicit Revocation Clause:</strong> If you wrote a previous Will (registered or unregistered), your new draft must contain a clear clause: <em>"I hereby revoke all my prior Wills, codicils, and testamentary dispositions made by me at any time heretofore."</em></li>
-          <li><strong>Believing Registration Eliminates the Need for Clear Drafting:</strong> Registration merely proves execution; it does not cure illegal clauses, ambiguous bequeathals, or attempts to distribute properties you do not legally own (such as an undivided share in ancestral coparcenary property).</li>
-        </ol>
-
-        <!-- CTA Box -->
-        <div class="blog-cta-box">
-          <h3>Save &#x20B9;5,000 on Lawyer Fees. Draft Your Legally Bulletproof Will Online.</h3>
-          <p>Create an ironclad, legally compliant plain-paper Will valid under the Indian Succession Act 1925 in just 10 minutes. Ready to sign at home or take to your local Sub-Registrar Office.</p>
-          <a href="/app" class="btn btn-gold btn-lg">Create Your Will Online &mdash; &#x20B9;299 &rarr;</a>
-        </div>
-
-        <h2>Frequently Asked Questions</h2>
-        
-        <h3>Is it compulsory to register a Will at the Sub-Registrar Office in India?</h3>
-        <p>No. Under Section 18(e) of the Indian Registration Act 1908, registering a Will is completely optional. A Will executed on plain A4 paper and properly signed in the presence of two independent witnesses is 100% legally enforceable in all Indian courts without registration.</p>
-
-        <h3>Can a registered Will be cancelled, amended, or superseded by an unregistered Will?</h3>
-        <p>Yes. Under Section 62 of the Indian Succession Act 1925, a testator retains the absolute right to revoke or amend their Will at any time during their life. A subsequent validly executed unregistered Will or codicil supersedes an earlier registered Will, though registering the cancellation or the new Will helps avoid unnecessary probate friction.</p>
-
-        <h3>What happens if a testator cannot travel to the Sub-Registrar Office due to illness or old age?</h3>
-        <p>Under Section 31 of the Registration Act 1908, the Sub-Registrar has statutory discretion to visit the testator's residence or hospital to complete the registration. You can file a formal request along with a medical fitness certificate and pay the prescribed state home-visit commission fee.</p>
-
       </div>
-    </div>
+    </section>
+
+    <!-- Bottom Full-Width CTA Banner -->
+    <section class="blog-cta-section" style="padding: 4rem 0; background: var(--bg-card); border-top: 1px solid var(--border-light); text-align: center;">
+      <div class="container">
+        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem;">Save &#x20B9;5,000 on Legal Drafting Fees</h2>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          Draft your legally valid plain-paper Will in under 10 minutes from home. Ready to sign or take to your local Sub-Registrar Office.
+        </p>
+        <a href="/app" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">Start Your Will for &#x20B9;299 &rarr;</a>
+      </div>
+    </section>
   </main>
 
   <!-- Modern Footer -->
@@ -589,26 +829,53 @@
     </div>
   </footer>
 
-  <script src="/js/theme-switcher.js"></script>
+  <!-- Mobile Sticky Conversion Bar -->
+  <div class="mobile-sticky-bar" id="mobileStickyBar">
+    <div class="mobile-sticky-info">
+      <span class="mobile-sticky-price">&#x20B9;299</span>
+      <span class="mobile-sticky-sub">10 Mins &bull; SRO Ready</span>
+    </div>
+    <a href="/app" class="btn btn-gold btn-sm shadow-gold" style="padding: 0.6rem 1.25rem; font-weight:700;">
+      Create Your Will &rarr;
+    </a>
+  </div>
+
+  <script src="/js/theme-switcher.js" defer></script>
+  <script type="module" src="/js/ui/legalBot.js"></script>
   <script>
-    // Mobile navigation toggle
-    (function() {
-      const hamburger = document.getElementById('navHamburger');
-      const mobileMenu = document.getElementById('navMobileMenu');
-      if (hamburger && mobileMenu) {
-        hamburger.addEventListener('click', function(e) {
-          e.stopPropagation();
-          mobileMenu.classList.toggle('open');
-          hamburger.classList.toggle('active');
-        });
-        document.addEventListener('click', function(e) {
-          if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
-            mobileMenu.classList.remove('open');
-            hamburger.classList.remove('active');
-          }
-        });
+    function initIcons() {
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
       }
-    })();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+
+    // ── Hamburger menu toggle ──
+    const hamburger = document.getElementById('navHamburger');
+    const mobileMenu = document.getElementById('navMobileMenu');
+    if (hamburger && mobileMenu) {
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('active');
+      });
+      mobileMenu.querySelectorAll('a').forEach(el => {
+        el.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        });
+      });
+      document.addEventListener('click', (e) => {
+        if (mobileMenu.classList.contains('open') && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          mobileMenu.classList.remove('open');
+          hamburger.classList.remove('active');
+        }
+      });
+    }
   </script>
 </body>
 </html>
