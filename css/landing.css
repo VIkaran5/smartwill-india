@@ -18,17 +18,18 @@
   pointer-events: auto;
   max-width: 1280px;
   width: calc(100% - 2rem);
+  max-width: 1240px;
   margin: 0 auto;
   background: var(--navbar-bg);
   border-radius: var(--radius-pill);
   border: 1px solid var(--navbar-border);
   box-shadow: var(--navbar-shadow);
   backdrop-filter: var(--backdrop-blur);
-  padding: 0.42rem 1.15rem;
+  padding: 0.42rem 1.35rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.65rem;
+  gap: 1rem;
   box-sizing: border-box;
 }
 
@@ -90,8 +91,12 @@
 
 .nav-actions .btn-sm,
 .nav-actions .btn-gold {
+  border-radius: 9999px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
+  padding: 0.42rem 1.15rem !important;
+  font-size: 0.84rem !important;
+  line-height: 1.25 !important;
 }
 
 .auth-nav-box {
@@ -101,10 +106,10 @@
 }
 
 .auth-btn-signin {
-  padding: 0.35rem 0.7rem !important;
+  padding: 0.38rem 0.85rem !important;
   font-size: 0.82rem !important;
   font-weight: 500 !important;
-  border-radius: var(--radius-sm) !important;
+  border-radius: 9999px !important;
   line-height: 1.3 !important;
 }
 

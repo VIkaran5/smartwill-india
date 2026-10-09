@@ -2488,6 +2488,24 @@ h1, h2, h3, h4, section, article {
   gap: 0.5rem !important;
 }
 
+/* Navbar Header Button Inset & Pill Fit (Prevents Popping Out) */
+.navbar .nav-actions .btn,
+.navbar .nav-actions .btn-gold,
+.navbar .nav-actions .btn-sm,
+.nav-container .btn-gold,
+.nav-container .nav-cta,
+.nav-actions .btn-gold {
+  border-radius: 9999px !important;
+  padding: 0.42rem 1.15rem !important;
+  font-size: 0.84rem !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+}
+
+.nav-container {
+  padding: 0.45rem 1.35rem !important;
+}
+
 /* ── Global Theme-Responsive CTA Button (.btn-gold) ── */
 [data-theme="light"] .btn-gold {
   background: #000000 !important;
