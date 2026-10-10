@@ -520,8 +520,15 @@
 /* ── Mobile Responsiveness & Sticky Bar Clearance ── */
 @media (max-width: 768px) {
   .smartwill-bot-container {
-    bottom: 84px; /* Sits cleanly above mobile sticky bars and wizard buttons */
+    bottom: 20px;
     right: 14px;
+    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Elevate bot cleanly above the mobile sticky conversion bar whenever it is active */
+  body.sticky-bar-active .smartwill-bot-container,
+  body:has(.mobile-sticky-bar.visible) .smartwill-bot-container {
+    bottom: 82px;
   }
 
   .smartwill-bot-launcher {

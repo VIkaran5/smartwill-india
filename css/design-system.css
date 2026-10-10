@@ -2587,6 +2587,20 @@ h1, h2, h3, h4, section, article {
     font-weight: 700 !important;
     white-space: nowrap !important;
   }
+
+  /* Ensure page footer content and copyright clear the mobile sticky bar and bot launcher */
+  body.sticky-bar-active,
+  body:has(.mobile-sticky-bar.visible) {
+    padding-bottom: 74px !important;
+  }
+  footer,
+  .site-footer,
+  .footer {
+    padding-bottom: 5.5rem !important;
+  }
+  .footer-bottom {
+    padding-bottom: 2rem !important;
+  }
 }
 
 

@@ -591,6 +591,14 @@ export class SmartWillLegalBot {
   init() {
     if (document.getElementById('smartwillBotContainer')) return;
 
+    // Ensure legal-bot.css stylesheet is loaded
+    if (typeof document !== 'undefined' && !document.querySelector('link[href*="legal-bot.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/css/legal-bot.css';
+      document.head.appendChild(link);
+    }
+
     this.currentLang = this.detectLanguage();
     this.isTelugu = (this.currentLang === 'te');
 

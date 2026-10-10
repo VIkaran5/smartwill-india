@@ -84,6 +84,10 @@
         box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65), 0 0 24px rgba(245, 158, 11, 0.12);
         padding: 1rem 1.25rem;
         animation: swBannerSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      body.sticky-bar-active #swConsentBanner {
+        bottom: 78px;
       }
       @keyframes swBannerSlideUp {
         from { opacity: 0; transform: translate(-50%, 20px); }

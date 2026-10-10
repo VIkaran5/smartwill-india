@@ -122,8 +122,10 @@
         window.requestAnimationFrame(function() {
           if (window.scrollY > 380) {
             bar.classList.add('visible');
+            document.body.classList.add('sticky-bar-active');
           } else {
             bar.classList.remove('visible');
+            document.body.classList.remove('sticky-bar-active');
           }
           ticking = false;
         });
