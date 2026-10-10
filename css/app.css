@@ -978,6 +978,304 @@ body, input, button, select, textarea {
   color: var(--text-muted);
 }
 
+/* ==========================================================================
+   Zero-Friction In-App Review Widget (Post-Payment Step 6)
+   ========================================================================== */
+.review-widget-card {
+  margin-top: 1.75rem;
+  padding: 1.5rem 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 16px);
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.review-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .review-badge-pill {
+  background: rgba(223, 183, 108, 0.15);
+  color: #dfb76c;
+  border-color: rgba(223, 183, 108, 0.3);
+}
+
+.review-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 0.5rem;
+}
+
+.review-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   5 Vibrant Emotional Reactions (The Delight Meter)
+   ========================================================================== */
+.review-moods-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 1.25rem 0 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mood-reaction-btn {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: 16px;
+  cursor: pointer;
+  padding: 10px 8px;
+  min-width: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.mood-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+
+.mood-caption {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+/* Hover Squish & Rise */
+.mood-reaction-btn:hover {
+  transform: translateY(-4px);
+  border-color: var(--text-muted);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.mood-reaction-btn:hover .mood-icon-wrapper {
+  transform: scale(1.18);
+}
+
+.mood-reaction-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+/* Mood 1: Difficult (Warm Crimson) */
+.mood-1 .mood-icon-wrapper { background: rgba(239, 68, 68, 0.1); }
+.mood-1:hover, .mood-1.active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+}
+.mood-1.active .mood-caption { color: #dc2626; }
+.mood-1.active { box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3); }
+
+/* Mood 2: Confusing (Tangerine Orange) */
+.mood-2 .mood-icon-wrapper { background: rgba(249, 115, 22, 0.1); }
+.mood-2:hover, .mood-2.active {
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.06);
+}
+.mood-2.active .mood-caption { color: #ea580c; }
+.mood-2.active { box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.3); }
+
+/* Mood 3: Okay (Warm Amber) */
+.mood-3 .mood-icon-wrapper { background: rgba(234, 179, 8, 0.12); }
+.mood-3:hover, .mood-3.active {
+  border-color: #eab308;
+  background: rgba(234, 179, 8, 0.06);
+}
+.mood-3.active .mood-caption { color: #ca8a04; }
+.mood-3.active { box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3); }
+
+/* Mood 4: Smooth (Fresh Emerald Mint) */
+.mood-4 .mood-icon-wrapper { background: rgba(16, 185, 129, 0.12); }
+.mood-4:hover, .mood-4.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+.mood-4.active .mood-caption { color: #059669; }
+.mood-4.active { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35); }
+
+/* Mood 5: Effortless! (Royal Gold & Champagne) */
+.mood-5 .mood-icon-wrapper {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.18));
+}
+.mood-5:hover, .mood-5.active {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(251, 191, 36, 0.06));
+}
+.mood-5.active .mood-caption { color: #d97706; }
+.mood-5.active {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4), 0 8px 24px rgba(245, 158, 11, 0.2);
+}
+
+.review-status-text {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-main);
+  min-height: 20px;
+  margin-top: 4px;
+}
+
+.review-details-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm, 12px);
+  padding: 1.25rem 1rem;
+  margin-top: 1rem;
+  text-align: left;
+  animation: reviewSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes reviewSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.review-prompt-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.review-tag-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0.85rem;
+}
+
+.review-tag-chip {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.review-tag-chip:hover {
+  background: var(--bg-card-hover, #ffffff);
+  color: var(--text-main);
+  border-color: var(--text-muted);
+}
+
+.review-tag-chip.active {
+  background: var(--text-main);
+  color: var(--bg-dark);
+  border-color: var(--text-main);
+  font-weight: 700;
+}
+
+.review-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-input, var(--bg-card));
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.review-input:focus {
+  outline: none;
+  border-color: var(--border-focus, #000000);
+}
+
+.review-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.google-review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a73e8;
+  border-color: rgba(26, 115, 232, 0.35);
+  background: rgba(26, 115, 232, 0.05);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.google-review-btn:hover {
+  background: rgba(26, 115, 232, 0.12);
+  color: #1557b0;
+  border-color: #1a73e8;
+}
+
+.review-success-state {
+  animation: reviewFadeIn 0.3s ease;
+  padding: 0.75rem 0.5rem;
+}
+
+.review-success-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--accent-emerald, #059669);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+@keyframes reviewFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Footer Nav */
 .wizard-footer {
   display: flex;

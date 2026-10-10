@@ -10,6 +10,7 @@ import { bindEvents, populatePersonalFields } from './events/bindings.js';
 import { logger } from './services/logger.js';
 import { generateWillPDF } from './services/pdf.js';
 import { showToast } from './ui/toast.js';
+import { initReviewWidget } from './ui/reviewWidget.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initApp();
@@ -43,6 +44,12 @@ async function initApp() {
           downloadPdfBtn.disabled = true;
           downloadPdfBtn.textContent = '⏳ Generating PDF...';
           await generateWillPDF(getState());
+          const reviewWidget = document.getElementById('willReviewWidget');
+          if (reviewWidget && !localStorage.getItem('sw_user_rating')) {
+            setTimeout(() => {
+              reviewWidget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 600);
+          }
         } catch (err) {
           logger.error('PDF generation failed', err);
           showToast('error', 'PDF Generation Error', err.message || 'Unable to generate PDF document. Please try again.');
@@ -53,6 +60,9 @@ async function initApp() {
         }
       });
     }
+
+    // Initialize In-App Review & Rating Widget
+    initReviewWidget();
   } catch (error) {
     logger.error('Failed to initialize application', error);
   }
