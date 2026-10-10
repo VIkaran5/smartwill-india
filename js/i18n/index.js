@@ -1,16 +1,33 @@
 /* i18n Translations Engine for SmartWill India (EN, TE, HI) */
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from '../config/constants.js';
 import { en } from './dictionaries/en.js';
-import { te } from './dictionaries/te.js';
-import { hi } from './dictionaries/hi.js';
 
-export const dictionaries = { en, te, hi };
+export const dictionaries = { en, te: null, hi: null };
+
+export async function loadDictionary(lang) {
+  if (dictionaries[lang]) return dictionaries[lang];
+  try {
+    if (lang === 'te') {
+      const mod = await import('./dictionaries/te.js');
+      dictionaries.te = mod.te;
+      return mod.te;
+    }
+    if (lang === 'hi') {
+      const mod = await import('./dictionaries/hi.js');
+      dictionaries.hi = mod.hi;
+      return mod.hi;
+    }
+  } catch (e) {
+    console.warn(`[i18n] Failed to load dictionary for ${lang}`, e);
+  }
+  return dictionaries.en;
+}
 
 // Determine initial language (localStorage -> Cloud/Browser Auto-Detect -> Default)
 export function detectInitialLanguage() {
   if (typeof localStorage !== 'undefined') {
     const savedLang = localStorage.getItem('smartwill_lang');
-    if (savedLang && dictionaries[savedLang]) {
+    if (savedLang && ['en', 'te', 'hi'].includes(savedLang)) {
       return savedLang;
     }
   }
@@ -31,8 +48,8 @@ export function detectInitialLanguage() {
 
 export let currentLang = detectInitialLanguage();
 
-export function setLanguage(lang, isManualClick = false) {
-  if (!dictionaries[lang]) lang = DEFAULT_LANGUAGE;
+export async function setLanguage(lang, isManualClick = false) {
+  if (!['en', 'te', 'hi'].includes(lang)) lang = DEFAULT_LANGUAGE;
   currentLang = lang;
 
   localStorage.setItem('smartwill_lang', lang);
@@ -60,7 +77,10 @@ export function setLanguage(lang, isManualClick = false) {
     btn.classList.toggle('active', btn.dataset.lang === lang);
   });
 
-  // Apply translations with non-blocking transition
+  // Ensure dictionary is loaded then apply translations
+  if (lang !== 'en' && !dictionaries[lang]) {
+    await loadDictionary(lang);
+  }
   applyTranslations(lang);
 
   // Dispatch languageChanged event with current language for dynamic modules
@@ -113,7 +133,11 @@ export function t(key, fallback = null) {
 }
 
 export function initI18n() {
-  setLanguage(currentLang);
+  if (currentLang !== 'en') {
+    loadDictionary(currentLang).then(() => applyTranslations(currentLang));
+  } else {
+    applyTranslations('en');
+  }
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const targetLang = e.currentTarget.dataset.lang || e.target.dataset.lang;

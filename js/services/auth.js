@@ -3,9 +3,29 @@ import { escapeHTML } from '../utils/sanitizer.js';
 import { getState, updateState, resetState } from '../state/store.js';
 import { logger } from './logger.js';
 import { t } from '../i18n/index.js';
-import { initCloudSync, initUserSync } from './cloudSync.js';
-import { syncReferralAttribution, getReferralShareUrl, fetchUserReferralData } from './referral.js';
-import { startSessionGuardian, stopSessionGuardian } from './sessionTimeout.js';
+let cloudSyncModule = null;
+async function getCloudSync() {
+  if (!cloudSyncModule) {
+    cloudSyncModule = await import('./cloudSync.js');
+  }
+  return cloudSyncModule;
+}
+
+let referralModule = null;
+async function getReferral() {
+  if (!referralModule) {
+    referralModule = await import('./referral.js');
+  }
+  return referralModule;
+}
+
+let sessionGuardianModule = null;
+async function getSessionGuardian() {
+  if (!sessionGuardianModule) {
+    sessionGuardianModule = await import('./sessionTimeout.js');
+  }
+  return sessionGuardianModule;
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyAFUIL7CyBs85Wq52-3Ax87qdzi2prGbV4",
@@ -101,7 +121,7 @@ export function initAuthService() {
       }
 
       if (firebaseDb) {
-        initCloudSync(firebaseDb);
+        getCloudSync().then(m => m.initCloudSync(firebaseDb)).catch(() => {});
       }
 
       if (!authListenerAttached) {
@@ -110,14 +130,16 @@ export function initAuthService() {
           currentUser = user;
           window.currentUser = user;
           updateAuthUI(user);
-          initUserSync(user);
           if (user) {
+            getCloudSync().then(m => m.initUserSync(user)).catch(() => {});
             closeAuthModal();
             syncUserWillData(user);
-            syncReferralAttribution(user);
-            startSessionGuardian(user);
+            getReferral().then(m => m.syncReferralAttribution(user)).catch(() => {});
+            getSessionGuardian().then(m => m.startSessionGuardian(user)).catch(() => {});
           } else {
-            stopSessionGuardian();
+            if (sessionGuardianModule) {
+              sessionGuardianModule.stopSessionGuardian();
+            }
           }
         });
       }
@@ -294,8 +316,19 @@ export async function openDashboardModal() {
     const state = getState();
     const p = state.personal || {};
     const user = currentUser || (firebaseAuth && firebaseAuth.currentUser);
-    const shareUrl = user ? getReferralShareUrl(user) : window.location.origin;
-    const refData = user && firebaseDb ? await fetchUserReferralData(user, firebaseDb) : { balance: 0, totalEarned: 0, totalReferred: 0 };
+    let shareUrl = window.location.origin;
+    let refData = { balance: 0, totalEarned: 0, totalReferred: 0 };
+    if (user) {
+      try {
+        const refMod = await getReferral();
+        shareUrl = refMod.getReferralShareUrl(user);
+        if (firebaseDb) {
+          refData = await refMod.fetchUserReferralData(user, firebaseDb);
+        }
+      } catch (err) {
+        logger.warn('Failed to load referral data:', err);
+      }
+    }
     const waText = encodeURIComponent(`Hi! I created my legally valid Will online in 10 minutes with SmartWill India. Protect your family's assets here: ${shareUrl}`);
 
     const displayName = user ? (user.displayName || p.fullName || 'Registered User') : (p.fullName || 'Guest User');
@@ -585,7 +618,9 @@ export function closeDashboardModal() {
 }
 
 export async function handleSignOut() {
-  stopSessionGuardian();
+  if (sessionGuardianModule) {
+    sessionGuardianModule.stopSessionGuardian();
+  }
   try {
     if (firebaseAuth) {
       await firebaseAuth.signOut();

@@ -1299,7 +1299,13 @@
   <script type="module" src="js/i18n/index.js"></script>
   <script type="module" src="js/services/auth.js"></script>
   <script type="module" src="js/pages/landing.js"></script>
-  <script type="module" src="js/ui/legalBot.js"></script>
+  <script type="module">
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(() => import('./js/ui/legalBot.js'), { timeout: 3500 });
+    } else {
+      setTimeout(() => import('./js/ui/legalBot.js'), 2000);
+    }
+  </script>
   <!-- nomineeCheck is already initialized by landing.js -->
   <script src="js/animations.js" defer></script>
   <script src="js/theme-switcher.js" defer></script>

@@ -461,6 +461,8 @@ export async function executeSessionLock(isSilent = false) {
         await window.handleSignOut();
       } else if (typeof firebase !== 'undefined' && firebase.auth) {
         await firebase.auth().signOut();
+      } else if (window.firebaseAuth && typeof window.firebaseAuth.signOut === 'function') {
+        await window.firebaseAuth.signOut();
       }
     }
   } catch (e) {

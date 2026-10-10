@@ -696,6 +696,12 @@
       });
     }
   </script>
-  <script type="module" src="/js/ui/legalBot.js"></script>
+  <script type="module">
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(() => import('/js/ui/legalBot.js'), { timeout: 3500 });
+    } else {
+      setTimeout(() => import('/js/ui/legalBot.js'), 2000);
+    }
+  </script>
 </body>
 </html>
