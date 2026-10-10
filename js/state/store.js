@@ -28,7 +28,7 @@ const defaultState = {
   beneficiaries: [
     { id: 1, name: '', relation: 'Spouse', phone: '', idType: '', idDigits: '' }
   ],
-  executor: { name: '', relation: '' }
+  executor: { name: '', relation: '', alternateName: '', alternateRelation: '' }
 };
 
 export function deepClone(value) {

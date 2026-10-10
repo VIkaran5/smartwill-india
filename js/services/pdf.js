@@ -252,7 +252,12 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "normal");
   const execName = (willData.executor && willData.executor.name) || "My Legal Representative";
   const execRel = (willData.executor && willData.executor.relation) || "Nominated Executor";
-  const c3Text = `I hereby nominate and appoint ${execName} (${execRel}) as the Executor of this my Last Will and Testament. My Executor shall pay all my just debts, funeral expenses, legal charges, and testamentary costs prior to distributing assets to beneficiaries.`;
+  const altExecName = (willData.executor && willData.executor.alternateName) || "";
+  const altExecRel = (willData.executor && willData.executor.alternateRelation) || "";
+  let c3Text = `I hereby nominate and appoint ${execName} (${execRel}) as the Executor of this my Last Will and Testament. My Executor shall pay all my just debts, funeral expenses, legal charges, and testamentary costs prior to distributing assets to beneficiaries.`;
+  if (altExecName) {
+    c3Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecName}${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with the same powers and duties.`;
+  }
   const splitC3 = doc.splitTextToSize(c3Text, pageWidth - (margin * 2));
   doc.text(splitC3, margin, y);
   y += (splitC3.length * 4.5) + 4;
@@ -291,7 +296,16 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("5. RESIDUARY ESTATE", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c5Text = "Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries.";
+  const bens = (willData.beneficiaries || []).filter(b => b && b.name);
+  let c5Text;
+  if (bens.length === 1) {
+    c5Text = `Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${bens[0].name} (${bens[0].relation}).`;
+  } else if (bens.length > 1) {
+    const benList = bens.map(b => `${b.name} (${b.relation})`).join(', ');
+    c5Text = `Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries: ${benList}.`;
+  } else {
+    c5Text = "Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries.";
+  }
   const splitC5 = doc.splitTextToSize(c5Text, pageWidth - (margin * 2));
   doc.text(splitC5, margin, y);
   y += (splitC5.length * 4.5) + 6;
@@ -365,6 +379,8 @@ export async function generateRegionalWillPDF(willData, lang) {
   const idStr = (p.govtIdType && p.govtIdDigits) ? `${escapeHTML(p.govtIdType)} (XXXX-${escapeHTML(p.govtIdDigits)})` : '';
   const executorName = escapeHTML((willData.executor && willData.executor.name) || '');
   const executorRel = escapeHTML((willData.executor && willData.executor.relation) || '');
+  const altExecName = escapeHTML((willData.executor && willData.executor.alternateName) || '');
+  const altExecRel = escapeHTML((willData.executor && willData.executor.alternateRelation) || '');
 
   const isTe = lang === 'te';
   const title = isTe ? "కడపటి ఇష్టపూర్వక మరణ శాసన పత్రము (WILL)" : "अंतिम इच्छा पत्र / वसीयतनामा (LAST WILL)";
@@ -400,8 +416,8 @@ export async function generateRegionalWillPDF(willData, lang) {
       </h3>
       <p style="margin-bottom: 12px;">
         ${isTe ? 
-          `నా తరువాత నా ఆస్తులను విల్ ప్రకారం పంచడానికి <strong>${executorName || 'ఎగ్జిక్యూటర్'}</strong> (${executorRel || 'బంధువు'}) ని ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను.` :
-          `मेरे पश्चात मेरी संपत्तियों का वितरण करने हेतु <strong>${executorName || 'निष्पादक'}</strong> (${executorRel || 'संबंध'}) को नियुक्त करता/करती हूँ।`}
+          `నా తరువాత నా ఆస్తులను విల్ ప్రకారం పంచడానికి <strong>${executorName || 'ఎగ్జిక్యూటర్'}</strong> (${executorRel || 'బంధువు'}) ని ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను.${altExecName ? ` ఒకవేళ సదరు ఎగ్జిక్యూటర్ ఈ బాధ్యతను నిర్వర్తించలేని పక్షంలో, <strong>${altExecName}</strong> (${altExecRel || 'బంధువు'}) ప్రత్యామ్నాయ ఎగ్జిక్యూటర్ (Alternate Executor) గా వ్యవహరిస్తారు.` : ''}` :
+          `मेरे पश्चात मेरी संपत्तियों का वितरण करने हेतु <strong>${executorName || 'निष्पादक'}</strong> (${executorRel || 'संबंध'}) को नियुक्त करता/करती हूँ।${altExecName ? ` यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecName}</strong> (${altExecRel || 'संबंध'}) वैकल्पिक निष्पादक (Alternate Executor) के रूप में कार्य करेंगे।` : ''}`}
       </p>
       <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
         ${isTe ? '4. ఆస్తుల కేటాయింపు పట్టిక (Bequest of Assets Schedule)' : '4. संपत्ति आवंटन विवरण (Asset Allocation Schedule)'}
@@ -431,9 +447,26 @@ export async function generateRegionalWillPDF(willData, lang) {
         ${isTe ? '5. మిగిలిన ఆస్తుల నిబంధన (Residuary Estate)' : '5. शेष संपत्ति नियम (Residuary Estate)'}
       </h3>
       <p style="margin-bottom: 20px;">
-        ${isTe ? 
-          'ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనని ఇతర ఆస్తులు లేదా హక్కులు ఏవైనా ఉంటే, అవి నా లబ్ధిదారులందరికీ సమానంగా చెందుతాయి.' :
-          'इस वसीयत में विशेष रूप से उल्लेख न की गई अन्य संपत्तियां मेरे सभी उत्तराधिकारियों में समान रूप से बांटी जाएंगी।'}
+        ${(() => {
+          const bens = (willData.beneficiaries || []).filter(b => b && b.name);
+          if (isTe) {
+            if (bens.length === 1) {
+              return `ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనని ఇతర ఆస్తులు, హక్కులు లేదా ధనము ఏవైనా ఉంటే, అవి పూర్తిగా నా ఏకైక లబ్ధిదారుడు/రాలు అయిన <strong>${escapeHTML(bens[0].name)}</strong> (${escapeHTML(bens[0].relation || 'లబ్ధిదారుడు')}) గారికి మాత్రమే సంపూర్ణంగా చెందుతాయి.`;
+            } else if (bens.length > 1) {
+              const benList = bens.map(b => `${escapeHTML(b.name)} (${escapeHTML(b.relation || '')})`).join(', ');
+              return `ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనని ఇతర ఆస్తులు లేదా హక్కులు ఏవైనా ఉంటే, అవి నా లబ్ధిదారులైన <strong>${benList}</strong> అందరికీ సమాన నిష్పత్తిలో చెందుతాయి.`;
+            }
+            return 'ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనని ఇతర ఆస్తులు లేదా హక్కులు ఏవైనా ఉంటే, అవి నా లబ్ధిదారులందరికీ సమానంగా చెందుతాయి.';
+          } else {
+            if (bens.length === 1) {
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई अन्य समस्त चल एवं अचल संपत्ति पूर्ण रूप से मेरे एकमात्र उत्तराधिकारी <strong>${escapeHTML(bens[0].name)}</strong> (${escapeHTML(bens[0].relation || '')}) को प्राप्त होगी।`;
+            } else if (bens.length > 1) {
+              const benList = bens.map(b => `${escapeHTML(b.name)} (${escapeHTML(b.relation || '')})`).join(', ');
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई अन्य समस्त संपत्ति मेरे नामित उत्तराधिकारियों: <strong>${benList}</strong> में समान रूप से विभाजित की जाएगी।`;
+            }
+            return 'इस वसीयत में विशेष रूप से उल्लेख न की गई अन्य संपत्तियां मेरे सभी उत्तराधिकारियों में समान रूप से बांटी जाएंगी।';
+          }
+        })()}
       </p>
       <div style="margin-top: 20px; border-top: 1px dashed #666; padding-top: 10px;">
         <p style="margin-bottom: 8px; font-size: 11.5px;">

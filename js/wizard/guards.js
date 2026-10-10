@@ -129,6 +129,14 @@ export const STEP_GUARDS = {
     if (relation && !name) {
       return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: 'executorName' };
     }
+    const altName = (e.alternateName || '').trim();
+    const altRelation = (e.alternateRelation || '').trim();
+    if (altName && !altRelation) {
+      return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: 'alternateExecutorRelation' };
+    }
+    if (altRelation && !altName) {
+      return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: 'alternateExecutorName' };
+    }
     return { ok: true };
   },
 

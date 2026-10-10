@@ -20,24 +20,26 @@ export function renderDraftContent(willData, lang = 'en') {
   const idStr = (p.govtIdType && p.govtIdDigits) ? `${escapeHTML(p.govtIdType)} Ending in XXXX-${escapeHTML(p.govtIdDigits)}` : '';
   const execName = escapeHTML((willData.executor && willData.executor.name) || '').trim();
   const execRel = escapeHTML((willData.executor && willData.executor.relation) || '').trim();
+  const altExecName = escapeHTML((willData.executor && willData.executor.alternateName) || '').trim();
+  const altExecRel = escapeHTML((willData.executor && willData.executor.alternateRelation) || '').trim();
   const assets = Array.isArray(willData.assets) ? willData.assets : [];
   const beneficiaries = Array.isArray(willData.beneficiaries) ? willData.beneficiaries : [];
   const now = new Date();
   const currentDate = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
   if (lang === 'te') {
-    return renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate);
+    return renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
   }
   if (lang === 'hi') {
-    return renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate);
+    return renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
   }
-  return renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate);
+  return renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
 }
 
 /**
  * 🇬🇧 English Legal Draft Template (Indian Succession Act, 1925)
  */
-function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate) {
+function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">SAMPLE DRAFT • SMARTWILL INDIA</div>
@@ -83,6 +85,11 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
           I hereby nominate, constitute, and appoint <strong>${execName}</strong> (${execRel || 'Legal Representative'}) as the sole Executor and Trustee of this my Last Will and Testament.
           I direct my said Executor to first settle all my legitimate debts, testamentary charges, medical expenses, and funeral costs out of my estate prior to distributing any bequests or shares to my beneficiaries.
     `;
+    if (altExecName) {
+      html += `
+          In the event that <strong>${execName}</strong> is unable, unwilling, or predeceases me, I hereby nominate and appoint <strong>${altExecName}</strong>${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with the same powers and duties.
+      `;
+    }
   } else {
     html += `
           Under the provisions of the Indian Succession Act, 1925, I have not nominated a private Executor. My estate shall be administered jointly by my designated beneficiaries or by an administrator appointed by a court of competent jurisdiction under Letters of Administration.
@@ -141,7 +148,17 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       <div class="clause-block">
         <h4 class="clause-title">5. RESIDUARY ESTATE CLAUSE</h4>
         <p>
-          Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries surviving me.
+          ${(() => {
+            const bens = beneficiaries.filter(b => b && b.name);
+            if (bens.length === 1) {
+              const b = bens[0];
+              return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall devolve entirely and absolutely upon my sole designated beneficiary, <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'Beneficiary')}).`;
+            } else if (bens.length > 1) {
+              const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
+              return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries: ${benList}.`;
+            }
+            return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries surviving me.`;
+          })()}
         </p>
       </div>
 
@@ -193,7 +210,7 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
 /**
  * 🇮🇳 Telugu Legal Draft Template (భారతీయ వారసత్వ చట్టం 1925)
  */
-function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate) {
+function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">నమూనా ముసాయిదా • SMARTWILL INDIA</div>
@@ -236,6 +253,11 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
     html += `
           నా తదనంతరం నా ఈ విల్ ప్రకారం నా ఆస్తులను కేటాయించడానికి మరియు పంపిణీ చేయడానికి <strong>${execName}</strong> (${execRel || 'బంధువు / ప్రతినిధి'}) గారిని నా విల్ ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను. నా ఎగ్జిక్యూటర్ నా ఋణాలు, అంత్యక్రియల ఖర్చులు మరియు చట్టపరమైన బాధ్యతలను ముందుగా చెల్లించి, ఆపై మిగిలిన ఆస్తులను లబ్ధిదారులకు పంచవలెను.
     `;
+    if (altExecName) {
+      html += `
+          ఒకవేళ సదరు ఎగ్జిక్యూటర్ ఈ బాధ్యతను నిర్వర్తించలేని పక్షంలో, <strong>${altExecName}</strong> (${altExecRel || 'బంధువు / ప్రతినిధి'}) ప్రత్యామ్నాయ ఎగ్జిక్యూటర్ (Alternate Executor) గా వ్యవహరిస్తారు.
+      `;
+    }
   } else {
     html += `
           భారతీయ వారసత్వ చట్టం 1925 ప్రకారం, ప్రస్తుతం ప్రత్యేక ఎగ్జిక్యూటర్‌ను నియమించలేదు. నా విల్ అమలును నా లబ్ధిదారులు సంయుక్తంగా లేదా సంబంధిత న్యాయస్థానం నియమించే అడ్మినిస్ట్రేటర్ ద్వారా జరుపవలెను.
@@ -292,7 +314,17 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
       <div class="clause-block">
         <h4 class="clause-title">5. మిగిలిన ఆస్తుల నిబంధన (RESIDUARY ESTATE)</h4>
         <p>
-          ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనబడని నా ఇతర బ్యాంక్ నిల్వలు, స్థిర, చర ఆస్తులు లేదా హక్కులు ఏవైనా నా మరణానంతరం మిగిలి ఉంటే, అవి నా లబ్ధిదారులందరికీ సమాన వాటాలుగా చెందవలెను.
+          ${(() => {
+            const bens = beneficiaries.filter(b => b && b.name);
+            if (bens.length === 1) {
+              const b = bens[0];
+              return `ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనబడని నా ఇతర బ్యాంక్ నిల్వలు, స్థిర, చర ఆస్తులు లేదా హక్కులు ఏవైనా నా మరణానంతరం మిగిలి ఉంటే, అవి పూర్తిగా నా ఏకైక లబ్ధిదారుడు/రాలు అయిన <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'లబ్ధిదారుడు')}) గారికి మాత్రమే సంపూర్ణంగా చెందుతాయి.`;
+            } else if (bens.length > 1) {
+              const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
+              return `ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనబడని నా ఇతర బ్యాంక్ నిల్వలు, స్థిర, చర ఆస్తులు లేదా హక్కులు ఏవైనా నా మరణానంతరం మిగిలి ఉంటే, అవి నా లబ్ధిదారులైన ${benList} అందరికీ సమాన నిష్పత్తిలో చెందుతాయి.`;
+            }
+            return `ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనబడని నా ఇతర బ్యాంక్ నిల్వలు, స్థిర, చర ఆస్తులు లేదా హక్కులు ఏవైనా నా మరణానంతరం మిగిలి ఉంటే, అవి నా లబ్ధిదారులందరికీ సమాన వాటాలుగా చెందవలెను.`;
+          })()}
         </p>
       </div>
 
@@ -344,7 +376,7 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
 /**
  * 🇮🇳 Hindi Legal Draft Template (भारतीय उत्तराधिकार अधिनियम 1925)
  */
-function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, assets, beneficiaries, currentDate) {
+function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">नमूना ड्राफ्ट • SMARTWILL INDIA</div>
@@ -387,6 +419,11 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
     html += `
           मेरे उपरांत मेरी संपत्तियों का वितरण इस वसीयत के अनुसार कराने हेतु मैं <strong>${execName}</strong> (${execRel || 'कानूनी प्रतिनिधि'}) को अपना निष्पादक (Executor) नियुक्त करता/करती हूँ। निष्पादक सबसे पहले मेरे वैध ऋण, अंतिम संस्कार और प्रशासनिक व्यय चुकाएंगे, तत्पश्चात शेष संपत्ति का वितरण करेंगे।
     `;
+    if (altExecName) {
+      html += `
+          यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecName}</strong> (${altExecRel || 'कानूनी प्रतिनिधि'}) वैकल्पिक निष्पादक (Alternate Executor) के रूप में कार्य करेंगे।
+      `;
+    }
   } else {
     html += `
           भारतीय उत्तराधिकार अधिनियम 1925 के प्रावधानों के तहत, मैंने कोई निजी निष्पादक नियुक्त नहीं किया है। मेरी संपत्ति का प्रबंधन मेरे उत्तराधिकारियों या न्यायालय द्वारा नियुक्त प्रशासक के माध्यम से किया जाएगा।
@@ -443,7 +480,17 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
       <div class="clause-block">
         <h4 class="clause-title">5. शेष संपत्ति नियम (RESIDUARY ESTATE)</h4>
         <p>
-          मेरी अन्य कोई भी चल या अचल संपत्ति, बैंक खाते या अधिकार जिनका उल्लेख इस वसीयत में नहीं हुआ है, वे मेरे सभी जीवित उत्तराधिकारियों में समान रूप से वितरित की जाएंगी।
+          ${(() => {
+            const bens = beneficiaries.filter(b => b && b.name);
+            if (bens.length === 1) {
+              const b = bens[0];
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य कोई भी चल या अचल संपत्ति, बैंक खाते या अधिकार पूर्ण रूप से मेरे एकमात्र उत्तराधिकारी <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'उत्तराधिकारी')}) को प्राप्त होंगे।`;
+            } else if (bens.length > 1) {
+              const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य समस्त संपत्ति मेरे नामित उत्तराधिकारियों: ${benList} में समान रूप से विभाजित की जाएगी।`;
+            }
+            return `मेरी अन्य कोई भी चल या अचल संपत्ति, बैंक खाते या अधिकार जिनका उल्लेख इस वसीयत में नहीं हुआ है, वे मेरे सभी जीवित उत्तराधिकारियों में समान रूप से बांटी जाएंगी।`;
+          })()}
         </p>
       </div>
 

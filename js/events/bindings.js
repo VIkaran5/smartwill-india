@@ -87,6 +87,21 @@ export function bindEvents() {
     });
   }
 
+  const altExecName = document.getElementById('alternateExecutorName');
+  const altExecRel = document.getElementById('alternateExecutorRelation');
+  if (altExecName) {
+    altExecName.addEventListener('input', () => {
+      saveCurrentStepInputs();
+      renderSummary();
+    });
+  }
+  if (altExecRel) {
+    altExecRel.addEventListener('change', () => {
+      saveCurrentStepInputs();
+      renderSummary();
+    });
+  }
+
   const confirmCheckbox = document.getElementById('confirmCheckbox');
   if (confirmCheckbox) {
     confirmCheckbox.addEventListener('change', () => {
@@ -310,7 +325,9 @@ export function saveCurrentStepInputs() {
     const updateObj = {
       executor: {
         name: document.getElementById('executorName')?.value?.trim() || '',
-        relation: document.getElementById('executorRelation')?.value?.trim() || ''
+        relation: document.getElementById('executorRelation')?.value?.trim() || '',
+        alternateName: document.getElementById('alternateExecutorName')?.value?.trim() || '',
+        alternateRelation: document.getElementById('alternateExecutorRelation')?.value?.trim() || ''
       }
     };
     if (confirmEl) {
@@ -351,7 +368,12 @@ export function populatePersonalFields(state) {
   }
 
   const e = state.executor || {};
-  const executorFields = { executorName: 'name', executorRelation: 'relation' };
+  const executorFields = { 
+    executorName: 'name', 
+    executorRelation: 'relation',
+    alternateExecutorName: 'alternateName',
+    alternateExecutorRelation: 'alternateRelation'
+  };
   Object.entries(executorFields).forEach(([elId, key]) => {
     const el = document.getElementById(elId);
     if (el) el.value = e[key] || '';

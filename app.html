@@ -301,6 +301,7 @@
             <div>
               <strong class="notice-title" data-i18n="notice.witnessRuleTitle">Indian Succession Act Rule:</strong>
               <span class="notice-desc" data-i18n="notice.witnessRuleDesc">Beneficiaries can inherit any percentage, but under Section 67 of the Indian Succession Act 1925, a Beneficiary CANNOT act as one of your 2 Witnesses when signing the Will.</span>
+              <div class="text-xs mt-1" style="color:var(--text-muted); font-size: 0.8rem;" data-i18n="tip.fullLegalName">💡 Tip: Enter full legal names exactly as per Aadhaar / PAN to prevent bank verification delays.</div>
             </div>
           </div>
 
@@ -363,6 +364,33 @@
                   <option value="Lawyer / Advocate" data-i18n="form.relationLawyer">Lawyer / Advocate</option>
                   <option value="Other" data-i18n="form.relationOther">Other Relative / Friend</option>
                 </select>
+              </div>
+            </div>
+            <!-- Optional Alternate Executor -->
+            <div class="mt-3 pt-3" style="border-top: 1px dashed var(--border-light);">
+              <label class="form-label mb-2" style="font-weight: 600; font-size: 0.88rem;">
+                <span data-i18n="form.alternateExecutorTitle">Alternate Executor</span> 
+                <span class="text-muted text-xs" style="font-weight: normal;" data-i18n="form.alternateExecutorHelp">(Optional — acts if primary executor is unable or unwilling)</span>
+              </label>
+              <div class="grid grid-2">
+                <div class="form-group">
+                  <label class="form-label text-xs" data-i18n="form.alternateExecutorName">Alternate Executor Full Legal Name</label>
+                  <input type="text" id="alternateExecutorName" class="form-control" placeholder="e.g. Ramesh Verma" data-i18n-placeholder="form.alternateExecutorNamePlaceholder">
+                </div>
+                <div class="form-group">
+                  <label class="form-label text-xs" data-i18n="form.alternateExecutorRelation">Relationship to Testator</label>
+                  <select id="alternateExecutorRelation" class="form-select">
+                    <option value="" selected data-i18n="form.selectRelationship">Select Relationship (Optional)</option>
+                    <option value="Brother" data-i18n="form.relationBrother">Brother</option>
+                    <option value="Sister" data-i18n="form.relationSister">Sister</option>
+                    <option value="Spouse" data-i18n="form.relationSpouse">Spouse</option>
+                    <option value="Son" data-i18n="form.relationSon">Son</option>
+                    <option value="Daughter" data-i18n="form.relationDaughter">Daughter</option>
+                    <option value="Trusted Friend" data-i18n="form.relationTrustedFriend">Trusted Friend</option>
+                    <option value="Lawyer / Advocate" data-i18n="form.relationLawyer">Lawyer / Advocate</option>
+                    <option value="Other" data-i18n="form.relationOther">Other Relative / Friend</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>

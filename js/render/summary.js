@@ -123,6 +123,11 @@ export function renderSummary() {
     html += `
       <p><strong>${t('summary.name') || 'Name:'}</strong> ${escapeHTML(execName)} | <strong>${t('summary.relation') || 'Relationship:'}</strong> ${escapeHTML(execRelation || notProvidedStr)}</p>
     `;
+    if (executor.alternateName) {
+      html += `
+        <p class="text-xs text-muted" style="margin-top:4px;"><strong>Alternate:</strong> ${escapeHTML(executor.alternateName)} (${escapeHTML(executor.alternateRelation || notProvidedStr)})</p>
+      `;
+    }
   } else {
     html += `
       <p style="color: var(--text-muted); font-style: italic; font-size: 0.9rem;">${t('summary.executorNone') || 'No Executor appointed (Under Indian Succession Act, court will appoint administrator if unassigned).'}</p>

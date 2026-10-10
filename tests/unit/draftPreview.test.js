@@ -146,4 +146,71 @@ describe('Draft Will Document Preview Service', () => {
     expect(modal.classList.contains('hidden')).toBe(true);
     expect(document.body.style.overflow).toBe('');
   });
+
+  it('renders alternate executor in EN, TE, and HI drafts when provided', () => {
+    const dataWithAltExec = {
+      ...mockWillData,
+      executor: {
+        name: 'Haritha Dasari',
+        relation: 'Sister',
+        alternateName: 'Kavitha Dasari',
+        alternateRelation: 'Cousin'
+      }
+    };
+
+    const htmlEn = renderDraftContent(dataWithAltExec, 'en');
+    expect(htmlEn).toContain('Haritha Dasari');
+    expect(htmlEn).toContain('Alternate Executor');
+    expect(htmlEn).toContain('Kavitha Dasari');
+    expect(htmlEn).toContain('(Cousin)');
+
+    const htmlTe = renderDraftContent(dataWithAltExec, 'te');
+    expect(htmlTe).toContain('Haritha Dasari');
+    expect(htmlTe).toContain('ప్రత్యామ్నాయ ఎగ్జిక్యూటర్ (Alternate Executor)');
+    expect(htmlTe).toContain('Kavitha Dasari');
+
+    const htmlHi = renderDraftContent(dataWithAltExec, 'hi');
+    expect(htmlHi).toContain('Haritha Dasari');
+    expect(htmlHi).toContain('वैकल्पिक निष्पादक (Alternate Executor)');
+    expect(htmlHi).toContain('Kavitha Dasari');
+  });
+
+  it('renders dynamic residuary clause for sole beneficiary across EN, TE, and HI', () => {
+    const singleBenData = {
+      ...mockWillData,
+      beneficiaries: [
+        { id: 1, name: 'Ganesh Dasari', relation: 'Brother' }
+      ]
+    };
+
+    const htmlEn = renderDraftContent(singleBenData, 'en');
+    expect(htmlEn).toContain('sole designated beneficiary');
+    expect(htmlEn).toContain('Ganesh Dasari (Brother)');
+
+    const htmlTe = renderDraftContent(singleBenData, 'te');
+    expect(htmlTe).toContain('ఏకైక లబ్ధిదారుడు/రాలు అయిన');
+    expect(htmlTe).toContain('Ganesh Dasari');
+
+    const htmlHi = renderDraftContent(singleBenData, 'hi');
+    expect(htmlHi).toContain('एकमात्र उत्तराधिकारी');
+    expect(htmlHi).toContain('Ganesh Dasari');
+  });
+
+  it('renders dynamic residuary clause for multiple beneficiaries across EN, TE, and HI', () => {
+    const htmlEn = renderDraftContent(mockWillData, 'en');
+    expect(htmlEn).toContain('divided equally among my designated beneficiaries:');
+    expect(htmlEn).toContain('Haritha Dasari (Sister)');
+    expect(htmlEn).toContain('Jayamma Dasari (Mother)');
+
+    const htmlTe = renderDraftContent(mockWillData, 'te');
+    expect(htmlTe).toContain('లబ్ధిదారులైన');
+    expect(htmlTe).toContain('Haritha Dasari');
+    expect(htmlTe).toContain('సమాన నిష్పత్తిలో');
+
+    const htmlHi = renderDraftContent(mockWillData, 'hi');
+    expect(htmlHi).toContain('नामित उत्तराधिकारियों:');
+    expect(htmlHi).toContain('Haritha Dasari');
+    expect(htmlHi).toContain('समान रूप से विभाजित');
+  });
 });
+
