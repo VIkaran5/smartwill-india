@@ -61,6 +61,19 @@ async function initApp() {
       });
     }
 
+    // Wire up WhatsApp Family Share button
+    const whatsappShareBtn = document.getElementById('whatsappShareBtn');
+    if (whatsappShareBtn) {
+      whatsappShareBtn.addEventListener('click', () => {
+        try {
+          const currentUser = window.currentUser || (typeof firebase !== 'undefined' && firebase.auth ? firebase.auth().currentUser : null);
+          const refLink = currentUser && currentUser.uid ? `https://www.smartwillindia.in/?ref=${currentUser.uid}` : 'https://www.smartwillindia.in';
+          const shareText = encodeURIComponent(`I just created my official legal Will in 10 minutes on SmartWill India for ₹299! It was fast, clear, and valid in Indian civil courts. Make sure your family's future is protected too: ${refLink}`);
+          whatsappShareBtn.href = `https://wa.me/?text=${shareText}`;
+        } catch (err) {}
+      });
+    }
+
     // Initialize In-App Review & Rating Widget
     initReviewWidget();
   } catch (error) {

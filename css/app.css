@@ -978,6 +978,29 @@ body, input, button, select, textarea {
   color: var(--text-muted);
 }
 
+.btn-whatsapp {
+  background: #25D366;
+  color: #ffffff !important;
+  border: 1px solid #20ba5a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-whatsapp:hover {
+  background: #20ba5a;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
+}
+
 /* ==========================================================================
    Zero-Friction In-App Review Widget (Post-Payment Step 6)
    ========================================================================== */
