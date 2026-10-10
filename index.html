@@ -56,6 +56,10 @@
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link rel="dns-prefetch" href="https://unpkg.com">
 
+  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
+  <link rel="preload" href="css/design-system.css" as="style">
+  <link rel="preload" href="css/landing.css" as="style">
+
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">

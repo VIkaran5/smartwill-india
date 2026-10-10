@@ -1624,28 +1624,32 @@ section[id],
 
 .demo-dot {
   position: relative;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 2px;
+}
+
+.demo-dot::after {
+  content: '';
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 0;
   background: var(--border-light);
-  cursor: pointer;
   transition: all 0.25s ease;
-  padding: 0;
-}
-
-/* Accessible touch target padding for Lighthouse / WCAG target size */
-.demo-dot::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  min-width: 36px;
-  min-height: 36px;
 }
 
 .demo-dot.active {
+  width: 32px;
+}
+
+.demo-dot.active::after {
   width: 26px;
   border-radius: 12px;
   background: var(--primary);

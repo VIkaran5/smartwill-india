@@ -64,6 +64,20 @@ for (const f of staticFiles) {
   }
 }
 
+// 3c. Safe CSS cleanup in dist/ (strips comments and reduces transfer size by ~18 KB)
+const distCssDir = path.join(dist, 'css');
+if (fs.existsSync(distCssDir)) {
+  for (const f of fs.readdirSync(distCssDir)) {
+    if (f.endsWith('.css')) {
+      const filePath = path.join(distCssDir, f);
+      const raw = fs.readFileSync(filePath, 'utf8');
+      const optimized = raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^[ \t]+/gm, '').replace(/\n\s*\n/g, '\n').trim();
+      fs.writeFileSync(filePath, optimized, 'utf8');
+      console.log('    Optimized CSS:', f, `(-${raw.length - optimized.length} bytes)`);
+    }
+  }
+}
+
 // 4. Safety check — never copy server/config files into dist
 const forbidden = ['node_modules', '.git', 'android', 'ios', 'api', 'scripts', '.vercel',
   'capacitor.config.json', 'package.json', 'package-lock.json', 'vercel.json', 'firestore.rules'];
