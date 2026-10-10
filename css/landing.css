@@ -843,7 +843,8 @@
   line-height: 1.6;
 }
 
-.footer-col h4 {
+.footer-col h4,
+.footer-col h3 {
   font-family: var(--font-heading);
   font-size: 1.15rem;
   font-weight: 700;
@@ -860,14 +861,22 @@
   gap: 0.65rem;
 }
 
-.footer-links a {
+.footer-links a,
+.footer-links .footer-link-btn {
   font-size: 0.92rem;
   color: #e2e8f0;
   text-decoration: none;
   transition: all 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
-.footer-links a:hover {
+.footer-links a:hover,
+.footer-links .footer-link-btn:hover {
   color: #dfb76c;
   transform: translateX(3px);
 }
@@ -1588,7 +1597,8 @@ section[id],
   text-align: center;
 }
 
-.demo-slide-info h4 {
+.demo-slide-info h4,
+.demo-slide-info h3 {
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 2px;
@@ -1609,10 +1619,11 @@ section[id],
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .demo-dot {
+  position: relative;
   width: 10px;
   height: 10px;
   border-radius: 50%;
@@ -1621,6 +1632,17 @@ section[id],
   cursor: pointer;
   transition: all 0.25s ease;
   padding: 0;
+}
+
+/* Accessible touch target padding for Lighthouse / WCAG target size */
+.demo-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .demo-dot.active {

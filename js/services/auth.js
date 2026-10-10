@@ -25,6 +25,18 @@ let authListenerAttached = false;
 let isSubmitting = false;
 let firebaseLoadPromise = null;
 
+function hasExistingAuthSession() {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('firebase:authUser')) {
+        return true;
+      }
+    }
+  } catch (e) {}
+  return false;
+}
+
 /**
  * Dynamically load Firebase SDK scripts on demand.
  * Returns a Promise that resolves when both firebase-app and firebase-auth are loaded.
@@ -116,15 +128,18 @@ export function initAuthService() {
     // 1. Render default signed-out UI buttons immediately
     updateAuthUI(currentUser);
 
-    // 2. Background idle load Firebase to check if user has an active session without affecting initial page speed
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => {
-        loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
-      }, { timeout: 3500 });
-    } else {
-      setTimeout(() => {
-        loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
-      }, 1500);
+    // 2. Only background idle load Firebase if user has an existing session in localStorage.
+    // Guest visitors (and Lighthouse bots) avoid loading 84+ KiB of unused JS on the landing page.
+    if (hasExistingAuthSession()) {
+      if (typeof requestIdleCallback === 'function') {
+        requestIdleCallback(() => {
+          loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
+        }, { timeout: 3500 });
+      } else {
+        setTimeout(() => {
+          loadFirebaseSDK().then(() => initAuthService()).catch(() => {});
+        }, 1500);
+      }
     }
   }
 }
