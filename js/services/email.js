@@ -44,28 +44,31 @@ export async function sendWillToEmail(willData, pdfBase64, pdfFileName) {
 
   showToast('loading', 'Sending Will to Email...', `Delivering your Will document to ${userEmail}`);
 
+  // Security (AUDIT-03): Strip sensitive PII from client-side email.
+  // Only send asset types and counts — not descriptions, values, names, or IDs.
+  // The PDF itself (delivered separately or downloaded) contains full details.
   const assetSummary = (willData.assets || []).map((a, i) => 
-    `${i + 1}. ${a.type}: ${a.desc} (₹${Number(a.value || 0).toLocaleString('en-IN')})`
+    `${i + 1}. ${a.type}`
   ).join('\n');
 
   const benSummary = (willData.beneficiaries || []).map((b, i) => 
-    `${i + 1}. ${b.name} (${b.relation})${b.idType ? ` [${b.idType}: XXXX-${b.idDigits}]` : ''}`
+    `${i + 1}. ${b.relation}`
   ).join('\n');
 
   const templateParams = {
     to_email: userEmail,
     to_name: userName,
     testator_name: userName,
-    testator_dob: p.dob || 'N/A',
-    testator_id: (p.govtIdType && p.govtIdDigits) ? `${p.govtIdType} (XXXX-${p.govtIdDigits})` : 'Not provided',
+    testator_dob: 'On file',
+    testator_id: 'On file (see PDF)',
     assets_count: String((willData.assets || []).length),
     beneficiaries_count: String((willData.beneficiaries || []).length),
     asset_summary: assetSummary,
     beneficiary_summary: benSummary,
-    executor_name: (willData.executor && willData.executor.name) || 'Not specified',
+    executor_name: (willData.executor && willData.executor.name) ? 'On file (see PDF)' : 'Not specified',
     executor_relation: (willData.executor && willData.executor.relation) || 'Not specified',
     pdf_filename: pdfFileName,
-    message: `Dear ${userName},\n\nYour SmartWill Legal Document has been successfully generated.\n\nPlease find the summary of your Will below:\n\n📦 Assets (${(willData.assets || []).length}):\n${assetSummary}\n\n👨‍👩‍👧‍👦 Beneficiaries (${(willData.beneficiaries || []).length}):\n${benSummary}\n\n📋 Executor: ${(willData.executor && willData.executor.name) || 'Not specified'} (${(willData.executor && willData.executor.relation) || 'N/A'})\n\n⚠️ IMPORTANT NEXT STEPS:\n1. Print the downloaded PDF on plain A4 paper.\n2. Sign at the bottom of EVERY page in front of 2 independent witnesses.\n3. Have both witnesses sign the attestation section.\n4. Store the signed document in a safe place or bank locker.\n\nThis Will was formatted under the Indian Succession Act, 1925.\n\nThank you for choosing SmartWill India!\n\n— SmartWill India Team`
+    message: `Dear ${userName},\n\nYour SmartWill Legal Document has been successfully generated.\n\n📦 Total Assets: ${(willData.assets || []).length}\n👨‍👩‍👧‍👦 Total Beneficiaries: ${(willData.beneficiaries || []).length}\n\n⚠️ IMPORTANT NEXT STEPS:\n1. Print the downloaded PDF on plain A4 paper.\n2. Sign at the bottom of EVERY page in front of 2 independent witnesses.\n3. Have both witnesses sign the attestation section.\n4. Store the signed document in a safe place or bank locker.\n\nThis Will was formatted under the Indian Succession Act, 1925.\n\nThank you for choosing SmartWill India!\n\n— SmartWill India Team`
   };
 
   try {

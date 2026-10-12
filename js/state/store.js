@@ -106,8 +106,12 @@ export async function initStore() {
       }
     }
   }
-  if (typeof window !== 'undefined') {
-    window.getWillState = getState;
+  // Security (AUDIT-02): Removed window.getWillState global.
+  // Full PII state must NOT be exposed to arbitrary scripts in production.
+  // Dev-only access via console: import { getState } from './store.js'
+  if (typeof window !== 'undefined' && typeof window.location !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    window.getWillState = getState; // Dev-only debug helper
   }
 }
 
@@ -129,8 +133,9 @@ export function updateState(patch, isRemoteUpdate = false) {
   }
 
   if (typeof window !== 'undefined') {
+    // Security (SW-07): Clone state for events — never expose the live mutable reference
     window.dispatchEvent(new CustomEvent('smartwill_state_change', {
-      detail: { state, isRemoteUpdate }
+      detail: { state: deepClone(state), isRemoteUpdate }
     }));
   }
   return getState();
@@ -141,7 +146,7 @@ export function resetState(isRemoteUpdate = false) {
   clearDraft();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('smartwill_state_change', {
-      detail: { state, isRemoteUpdate }
+      detail: { state: deepClone(state), isRemoteUpdate }
     }));
   }
   return getState();
