@@ -95,5 +95,5 @@ export async function sendWillToEmail(willData, pdfBase64, pdfFileName) {
   }
 }
 
-// Temporary compatibility fallback bindings
-window.sendWillToEmail = sendWillToEmail;
+// Security (SW-08): Removed window.sendWillToEmail global.
+// Use: import { sendWillToEmail } from './email.js' instead.
