@@ -1914,6 +1914,20 @@ html[lang="hi"] .price-display .amount {
   border-top: 1px solid var(--border-light);
 }
 
+.legal-awareness-section .section-header {
+  max-width: 980px;
+  margin: 0 auto 3.5rem auto;
+}
+
+.legal-awareness-section .section-title {
+  font-size: clamp(1.85rem, 2.5vw, 2.55rem);
+  line-height: 1.26;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: wrap !important;
+}
+
 .awareness-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -2841,6 +2855,448 @@ html[lang="hi"] .price-display .amount {
   }
 }
 
+/* ============================================================
+   Big Photo + Verified Will Social Proof Showcase
+   ============================================================ */
+/* ============================================================
+   Option 2: Clean Modern Editorial Split Showcase (Apple / CRED Style)
+   ============================================================ */
+.persona-story-section {
+  padding: 3.5rem 0;
+  position: relative;
+  background: transparent;
+}
 
+.persona-story-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 24px;
+  padding: 2.25rem 2.5rem;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
 
+.persona-story-card:hover {
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+}
+
+/* Header Strip: Meta + Pull Quote */
+.persona-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.5rem;
+}
+
+.persona-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.persona-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.persona-badge-pill .pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.persona-stars-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.persona-headline-quote {
+  font-size: 1.12rem;
+  font-weight: 550;
+  line-height: 1.6;
+  color: var(--text-main);
+  margin: 0;
+  font-style: normal;
+  letter-spacing: -0.01em;
+}
+
+/* Main Two-Column Split: Photo (Left) vs. Will Document (Right) */
+.persona-split-body {
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  gap: 2.25rem;
+  align-items: stretch;
+}
+
+/* Left: Natural Editorial Photo Card */
+.persona-photo-pane {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.persona-img-frame {
+  width: 100%;
+  height: 380px;
+  position: relative;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.persona-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.persona-photo-pane:hover .persona-img-frame img {
+  transform: scale(1.03);
+}
+
+.persona-info-footer {
+  padding: 1.15rem 1.35rem;
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.persona-identity-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.persona-identity-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.persona-identity-location {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.persona-chips-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.persona-chip-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+}
+
+.persona-chip-tag.highlight {
+  background: rgba(16, 185, 129, 0.08);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.25);
+  font-weight: 700;
+}
+
+/* Right: Crisp, Realistic Printed Legal Paper Will */
+.persona-document-pane {
+  display: flex;
+  flex-direction: column;
+}
+
+.editorial-paper-sheet {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  padding: 1.75rem 1.85rem;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-family: 'Times New Roman', 'Baskerville', 'Georgia', serif;
+}
+
+.editorial-stamp-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  background: #f1f5f9;
+  color: #64748b;
+  border-radius: 4px;
+  text-transform: uppercase;
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.editorial-paper-header {
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.85rem;
+  padding-right: 130px; /* Room for stamp */
+}
+
+.editorial-paper-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #0f172a;
+  margin: 0;
+  text-transform: uppercase;
+  line-height: 1.25;
+}
+
+.editorial-paper-subcite {
+  font-size: 0.72rem;
+  color: #475569;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.editorial-legal-para {
+  margin: 0.5rem 0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: #334155;
+  user-select: none;
+  pointer-events: none;
+}
+
+.editorial-legal-para.blurred {
+  filter: blur(2.8px);
+  opacity: 0.85;
+}
+
+.editorial-clause-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 3.5px solid #10b981;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #0f172a;
+  border-radius: 6px;
+  margin: 0.45rem 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.editorial-clause-strip.highlight {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  border-left: 3.5px solid #10b981;
+  color: #065f46;
+}
+
+.editorial-clause-strip .clause-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editorial-clause-strip i {
+  color: #10b981;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.editorial-paper-footer {
+  margin-top: 1.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.editorial-sig-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.editorial-sig-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.editorial-sig-name {
+  font-family: 'Brush Script MT', 'Caveat', cursive, serif;
+  font-size: 1.35rem;
+  color: #1e3a8a;
+  line-height: 1.15;
+}
+
+.editorial-witness-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #047857;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 3px 9px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editorial-seal-stamp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px dashed #059669;
+  background: rgba(16, 185, 129, 0.06);
+  padding: 6px 11px;
+  border-radius: 6px;
+  color: #047857;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.editorial-seal-stamp i {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Card Bottom Action Bar */
+.persona-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.persona-trust-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.persona-trust-points span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.persona-sample-btn {
+  font-size: 0.88rem;
+  color: var(--primary-gold);
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.persona-sample-btn:hover {
+  text-decoration: underline;
+}
+
+/* Mobile & Tablet Responsiveness */
+@media (max-width: 980px) {
+  .persona-story-card {
+    padding: 1.5rem;
+    gap: 1.25rem;
+  }
+  .persona-split-body {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .persona-img-frame {
+    height: 320px;
+  }
+  .editorial-paper-sheet {
+    padding: 1.25rem;
+  }
+  .editorial-paper-header {
+    padding-right: 0;
+  }
+  .editorial-stamp-badge {
+    position: static;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .persona-story-card {
+    padding: 1.25rem 1rem;
+    border-radius: 18px;
+  }
+  .persona-img-frame {
+    height: 260px;
+  }
+  .persona-headline-quote {
+    font-size: 1rem;
+  }
+  .persona-trust-points {
+    gap: 0.75rem;
+    font-size: 0.78rem;
+  }
+}
 
