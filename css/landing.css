@@ -2967,6 +2967,12 @@ html[lang="hi"] .price-display .amount {
   background: #0f172a;
 }
 
+.persona-img-frame picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .persona-img-frame img {
   width: 100%;
   height: 100%;

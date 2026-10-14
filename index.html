@@ -57,8 +57,8 @@
   <link rel="dns-prefetch" href="https://unpkg.com">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="css/design-system.css?v=20261014_v4" as="style">
-  <link rel="preload" href="css/landing.css?v=20261014_v4" as="style">
+  <link rel="preload" href="css/design-system.css?v=20261014_v5" as="style">
+  <link rel="preload" href="css/landing.css?v=20261014_v5" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -69,8 +69,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/design-system.css?v=20261014_v4">
-  <link rel="stylesheet" href="css/landing.css?v=20261014_v4">
+  <link rel="stylesheet" href="css/design-system.css?v=20261014_v5">
+  <link rel="stylesheet" href="css/landing.css?v=20261014_v5">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -319,7 +319,10 @@
           <!-- Left: Natural Photo & Identity -->
           <div class="persona-photo-pane">
             <div class="persona-img-frame">
-              <img src="/assets/personas/gautam-techie.jpg" alt="Gautam K. — 26, Senior Systems Engineer in Bengaluru" loading="eager" decoding="async">
+              <picture>
+                <source srcset="/assets/personas/gautam-techie.webp" type="image/webp">
+                <img src="/assets/personas/gautam-techie.jpg" alt="Gautam K. — 26, Senior Systems Engineer in Bengaluru" width="720" height="732" loading="lazy" decoding="async">
+              </picture>
             </div>
             <div class="persona-info-footer">
               <div class="persona-identity-row">
@@ -637,7 +640,10 @@
           <!-- Left: Natural Photo & Identity -->
           <div class="persona-photo-pane">
             <div class="persona-img-frame">
-              <img src="/assets/personas/ramesh-parent.jpg" alt="Ramesh V. — 50, Father and Retail Trader in Guntur, Andhra Pradesh" loading="eager" decoding="async">
+              <picture>
+                <source srcset="/assets/personas/ramesh-parent.webp" type="image/webp">
+                <img src="/assets/personas/ramesh-parent.jpg" alt="Ramesh V. — 50, Father and Retail Trader in Guntur, Andhra Pradesh" width="720" height="732" loading="lazy" decoding="async">
+              </picture>
             </div>
             <div class="persona-info-footer">
               <div class="persona-identity-row">
@@ -992,7 +998,10 @@
           <!-- Left: Natural Photo & Identity -->
           <div class="persona-photo-pane">
             <div class="persona-img-frame">
-              <img src="/assets/personas/dr-rao-senior.jpg" alt="Dr. K. N. Rao — 64, Retired Central Govt Officer in Hyderabad" loading="eager" decoding="async">
+              <picture>
+                <source srcset="/assets/personas/dr-rao-senior.webp" type="image/webp">
+                <img src="/assets/personas/dr-rao-senior.jpg" alt="Dr. K. N. Rao — 64, Retired Central Govt Officer in Hyderabad" width="720" height="732" loading="lazy" decoding="async">
+              </picture>
             </div>
             <div class="persona-info-footer">
               <div class="persona-identity-row">
@@ -1622,7 +1631,11 @@
           document.documentElement.style.setProperty('--banner-height', '0px');
           return;
         }
-        document.documentElement.style.setProperty('--banner-height', banner.offsetHeight + 'px');
+        requestAnimationFrame(() => {
+          if (banner) {
+            document.documentElement.style.setProperty('--banner-height', banner.offsetHeight + 'px');
+          }
+        });
       }
 
       // If user dismissed this session, hide immediately
