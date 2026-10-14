@@ -15,8 +15,13 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
-  <script src="/js/consent-banner.js" defer></script>
+  <!-- Critical Mobile LCP Preload (Prioritized before HTML metadata) -->
+  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
+  <!-- Preload Primary Latin Display & Body Fonts -->
+  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
+
   <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
   <title>SmartWill India — Online Will Creation Platform at ₹299</title>
   <meta name="description" content="Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Protect your bank accounts, FD, gold, and property for just ₹299. Available in English, Telugu, & Hindi.">
@@ -52,22 +57,10 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
-
-  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="/css/design-system.css?v=20261014_v8" as="style">
-  <link rel="preload" href="/css/landing.css?v=20261014_v8" as="style">
-
-  <!-- Preload Hero LCP Mockup (Responsive WebP) -->
-  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
-  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
-  <!-- Preload Primary Latin Display & Body Fonts -->
-  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
-
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v8">
-  <link rel="stylesheet" href="/css/landing.css?v=20261014_v8">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v9">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v9">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -259,7 +252,7 @@
             height="533"
             loading="eager"
             fetchpriority="high"
-            decoding="async"
+            decoding="sync"
           >
         </picture>
       </div>
@@ -1586,20 +1579,33 @@
     </a>
   </div>
 
+  <!-- Consent Banner (Deferred to bottom) -->
+  <script src="/js/consent-banner.js" defer></script>
   <script type="module" src="js/i18n/index.js"></script>
   <script type="module" src="js/services/auth.js"></script>
   <script type="module" src="js/pages/landing.js"></script>
   <script type="module">
+    function loadLegalBot() {
+      if (window._legalBotLoaded) return;
+      window._legalBotLoaded = true;
+      import('./js/ui/legalBot.js');
+      window.removeEventListener('scroll', loadLegalBot);
+      window.removeEventListener('touchstart', loadLegalBot);
+      window.removeEventListener('mousemove', loadLegalBot);
+    }
+    window.addEventListener('scroll', loadLegalBot, { passive: true, once: true });
+    window.addEventListener('touchstart', loadLegalBot, { passive: true, once: true });
+    window.addEventListener('mousemove', loadLegalBot, { passive: true, once: true });
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => import('./js/ui/legalBot.js'), { timeout: 3500 });
+      requestIdleCallback(loadLegalBot, { timeout: 7000 });
     } else {
-      setTimeout(() => import('./js/ui/legalBot.js'), 2000);
+      setTimeout(loadLegalBot, 6000);
     }
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261014_v8" defer></script>
-  <script src="js/animations.js?v=20261014_v8" defer></script>
-  <script src="js/theme-switcher.js?v=20261014_v8" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v9" defer></script>
+  <script src="js/animations.js?v=20261014_v9" defer></script>
+  <script src="js/theme-switcher.js?v=20261014_v9" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {

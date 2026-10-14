@@ -64,21 +64,26 @@ for (const f of staticFiles) {
   }
 }
 
-// 3c. Safe CSS cleanup in dist/ (strips comments and reduces transfer size by ~18 KB)
+// 3c. Safe CSS minification in dist/ (strips comments, spaces, and delimiters)
 const distCssDir = path.join(dist, 'css');
 if (fs.existsSync(distCssDir)) {
   for (const f of fs.readdirSync(distCssDir)) {
     if (f.endsWith('.css')) {
       const filePath = path.join(distCssDir, f);
       const raw = fs.readFileSync(filePath, 'utf8');
-      const optimized = raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^[ \t]+/gm, '').replace(/\n\s*\n/g, '\n').trim();
+      const optimized = raw
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\s+/g, ' ')
+        .replace(/\s*([\{\}\:\;\,])\s*/g, '$1')
+        .replace(/\;(?=\})/g, '')
+        .trim();
       fs.writeFileSync(filePath, optimized, 'utf8');
       console.log('    Optimized CSS:', f, `(-${raw.length - optimized.length} bytes)`);
     }
   }
 }
 
-// 3d. Safe JS cleanup in dist/ (strips comments)
+// 3d. Safe JS cleanup and minification in dist/
 const distJsDir = path.join(dist, 'js');
 function optimizeJs(dir) {
   if (!fs.existsSync(dir)) return;
@@ -88,8 +93,14 @@ function optimizeJs(dir) {
       optimizeJs(full);
     } else if (f.endsWith('.js') && !f.endsWith('.min.js')) {
       const raw = fs.readFileSync(full, 'utf8');
-      const opt = raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').trim();
+      const opt = raw
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/^[ \t]*\/\/.*$/gm, '')
+        .replace(/^[ \t]+/gm, '')
+        .replace(/\n\s*\n/g, '\n')
+        .trim();
       fs.writeFileSync(full, opt, 'utf8');
+      console.log('    Optimized JS:', path.relative(dist, full), `(-${raw.length - opt.length} bytes)`);
     }
   }
 }

@@ -15,8 +15,13 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Global DPDP Act 2023 Consent & GA4 Gate -->
-  <script src="/js/consent-banner.js" defer></script>
+  <!-- Critical Mobile LCP Preload (Prioritized before HTML metadata) -->
+  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
+  <!-- Preload Primary Latin Display & Body Fonts -->
+  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
+
   <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
   <meta name="robots" content="index, follow" />
   <title>వీలునామా ఆన్‌లైన్‌లో రూపొందించుకోండి — SmartWill India | కేవలం ₹299</title>
@@ -44,25 +49,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link rel="dns-prefetch" href="https://unpkg.com">
-
-  <!-- Preload Hero LCP Mockup (Responsive WebP) -->
-  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
-  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
-  <!-- Preload Primary Latin Display & Body Fonts -->
-  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css">
-  <link rel="stylesheet" href="/css/landing.css">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v9">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v9">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
-
-  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" defer></script>
 
   <!-- Telugu FAQ Structured Data -->
   <script type="application/ld+json">
@@ -658,21 +652,24 @@
     </a>
   </div>
 
+  <!-- Consent Banner (Deferred to bottom) -->
+  <script src="/js/consent-banner.js" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v9" defer></script>
+  <script src="/js/animations.js?v=20261014_v9" defer></script>
+  <script src="/js/theme-switcher.js?v=20261014_v9" defer></script>
+  <script src="/js/demo-tour.js?v=20261014_v9" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
       }
     }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initIcons);
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(initIcons, { timeout: 3500 });
     } else {
-      initIcons();
+      setTimeout(initIcons, 1500);
     }
   </script>
-  <script src="/js/animations.js" defer></script>
-  <script src="/js/theme-switcher.js" defer></script>
-  <script src="/js/demo-tour.js" defer></script>
   <script>
     const hamburger = document.getElementById('navHamburger');
     const mobileMenu = document.getElementById('navMobileMenu');
@@ -697,10 +694,21 @@
     }
   </script>
   <script type="module">
+    function loadLegalBot() {
+      if (window._legalBotLoaded) return;
+      window._legalBotLoaded = true;
+      import('/js/ui/legalBot.js');
+      window.removeEventListener('scroll', loadLegalBot);
+      window.removeEventListener('touchstart', loadLegalBot);
+      window.removeEventListener('mousemove', loadLegalBot);
+    }
+    window.addEventListener('scroll', loadLegalBot, { passive: true, once: true });
+    window.addEventListener('touchstart', loadLegalBot, { passive: true, once: true });
+    window.addEventListener('mousemove', loadLegalBot, { passive: true, once: true });
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => import('/js/ui/legalBot.js'), { timeout: 3500 });
+      requestIdleCallback(loadLegalBot, { timeout: 7000 });
     } else {
-      setTimeout(() => import('/js/ui/legalBot.js'), 2000);
+      setTimeout(loadLegalBot, 6000);
     }
   </script>
 </body>
