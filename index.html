@@ -15,13 +15,6 @@
     })();
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <!-- Critical Mobile LCP Preload (Prioritized before HTML metadata) -->
-  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
-  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
-  <!-- Preload Primary Latin Display & Body Fonts -->
-  <link rel="preload" href="/assets/fonts/HTxwL3I-JCGChYJ8VI-L6OO_au7B46r2z3bWuQ.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2" as="font" type="font/woff2" crossorigin>
-
   <meta name="google-site-verification" content="wXnC1jjbSebWRdBlVEG7MN8RTUqwD9LmZ-Q_Z0sCKHc" />
   <title>SmartWill India — Online Will Creation Platform at ₹299</title>
   <meta name="description" content="Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Protect your bank accounts, FD, gold, and property for just ₹299. Available in English, Telugu, & Hindi.">
@@ -57,11 +50,19 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
-  <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
+  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
+  <link rel="preload" href="/css/design-system.css?v=20261014_v10" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261014_v10" as="style">
+
+  <!-- Preload Hero LCP Mockup (Responsive WebP) -->
+  <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
+
+  <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v9">
-  <link rel="stylesheet" href="/css/landing.css?v=20261014_v9">
-  <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v10">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v10">
+  <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
 
@@ -246,13 +247,13 @@
           <source media="(max-width: 640px)" srcset="/assets/hero-will-mockup-mobile.webp" type="image/webp">
           <source srcset="/assets/hero-will-mockup.webp" type="image/webp">
           <img
-            src="/assets/hero-will-mockup-mobile.webp"
+            src="/assets/hero-will-mockup.webp"
             alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
             width="400"
             height="533"
             loading="eager"
             fetchpriority="high"
-            decoding="sync"
+            decoding="async"
           >
         </picture>
       </div>
@@ -1603,9 +1604,9 @@
     }
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261014_v9" defer></script>
-  <script src="js/animations.js?v=20261014_v9" defer></script>
-  <script src="js/theme-switcher.js?v=20261014_v9" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v10" defer></script>
+  <script src="js/animations.js?v=20261014_v10" defer></script>
+  <script src="js/theme-switcher.js?v=20261014_v10" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
