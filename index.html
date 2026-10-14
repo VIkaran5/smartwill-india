@@ -54,8 +54,8 @@
 
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="css/design-system.css?v=20261014_v7" as="style">
-  <link rel="preload" href="css/landing.css?v=20261014_v7" as="style">
+  <link rel="preload" href="/css/design-system.css?v=20261014_v8" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261014_v8" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -66,8 +66,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/design-system.css?v=20261014_v7">
-  <link rel="stylesheet" href="css/landing.css?v=20261014_v7">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v8">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v8">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -253,7 +253,7 @@
           <source media="(max-width: 640px)" srcset="/assets/hero-will-mockup-mobile.webp" type="image/webp">
           <source srcset="/assets/hero-will-mockup.webp" type="image/webp">
           <img
-            src="/assets/hero-will-mockup.webp"
+            src="/assets/hero-will-mockup-mobile.webp"
             alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
             width="400"
             height="533"
@@ -1597,9 +1597,9 @@
     }
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261014_v7" defer></script>
-  <script src="js/animations.js?v=20261014_v7" defer></script>
-  <script src="js/theme-switcher.js?v=20261014_v7" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v8" defer></script>
+  <script src="js/animations.js?v=20261014_v8" defer></script>
+  <script src="js/theme-switcher.js?v=20261014_v8" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
