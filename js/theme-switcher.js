@@ -110,7 +110,11 @@
     }
   }
   window.addEventListener('scroll', handleNavbarScroll, { passive: true });
-  handleNavbarScroll();
+  if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(handleNavbarScroll);
+  } else {
+    setTimeout(handleNavbarScroll, 50);
+  }
 
   // Universal Mobile Sticky Conversion Bar Scroll Reveal
   function initMobileStickyBar() {

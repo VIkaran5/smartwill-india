@@ -57,8 +57,8 @@
   <link rel="dns-prefetch" href="https://unpkg.com">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="css/design-system.css?v=20261014_v5" as="style">
-  <link rel="preload" href="css/landing.css?v=20261014_v5" as="style">
+  <link rel="preload" href="css/design-system.css?v=20261014_v6" as="style">
+  <link rel="preload" href="css/landing.css?v=20261014_v6" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -69,8 +69,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/design-system.css?v=20261014_v5">
-  <link rel="stylesheet" href="css/landing.css?v=20261014_v5">
+  <link rel="stylesheet" href="css/design-system.css?v=20261014_v6">
+  <link rel="stylesheet" href="css/landing.css?v=20261014_v6">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -1602,8 +1602,8 @@
     }
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="js/animations.js" defer></script>
-  <script src="js/theme-switcher.js" defer></script>
+  <script src="js/animations.js?v=20261014_v6" defer></script>
+  <script src="js/theme-switcher.js?v=20261014_v6" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -1620,42 +1620,22 @@
       initIcons();
     }
 
-    // ── Announcement Banner ──
+    // ── Announcement Banner Dismissal (Pure CSS variable driven, zero forced reflow) ──
     (function () {
       const banner = document.getElementById('announceBanner');
       const dismiss = document.getElementById('announceDismiss');
-      if (!banner) return;
+      if (!banner || !dismiss) return;
 
-      function updateBannerOffset() {
-        if (!banner || banner.classList.contains('hidden') || !document.documentElement.classList.contains('banner-visible')) {
-          document.documentElement.style.setProperty('--banner-height', '0px');
-          return;
-        }
-        requestAnimationFrame(() => {
-          if (banner) {
-            document.documentElement.style.setProperty('--banner-height', banner.offsetHeight + 'px');
-          }
-        });
-      }
-
-      // If user dismissed this session, hide immediately
       if (sessionStorage.getItem('sw_banner_dismissed') === '1') {
         banner.classList.add('hidden');
         document.documentElement.classList.remove('banner-visible');
-        document.documentElement.style.setProperty('--banner-height', '0px');
-      } else {
-        updateBannerOffset();
-        window.addEventListener('resize', updateBannerOffset, { passive: true });
       }
 
-      if (dismiss) {
-        dismiss.addEventListener('click', () => {
-          banner.classList.add('hidden');
-          document.documentElement.classList.remove('banner-visible');
-          document.documentElement.style.setProperty('--banner-height', '0px');
-          sessionStorage.setItem('sw_banner_dismissed', '1');
-        });
-      }
+      dismiss.addEventListener('click', function () {
+        banner.classList.add('hidden');
+        document.documentElement.classList.remove('banner-visible');
+        sessionStorage.setItem('sw_banner_dismissed', '1');
+      });
     })();
 
     // ── Hamburger menu toggle ──

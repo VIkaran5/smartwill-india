@@ -167,7 +167,7 @@
 
   // Init
   function init() {
-    initHeroEntrance();
+    // initHeroEntrance removed to ensure instantaneous Hero LCP painting
     initScrollReveal();
     initStatCountUp();
     initCardHover();
