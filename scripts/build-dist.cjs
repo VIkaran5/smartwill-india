@@ -78,6 +78,23 @@ if (fs.existsSync(distCssDir)) {
   }
 }
 
+// 3d. Safe JS cleanup in dist/ (strips comments)
+const distJsDir = path.join(dist, 'js');
+function optimizeJs(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const f of fs.readdirSync(dir)) {
+    const full = path.join(dir, f);
+    if (fs.statSync(full).isDirectory()) {
+      optimizeJs(full);
+    } else if (f.endsWith('.js') && !f.endsWith('.min.js')) {
+      const raw = fs.readFileSync(full, 'utf8');
+      const opt = raw.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').trim();
+      fs.writeFileSync(full, opt, 'utf8');
+    }
+  }
+}
+optimizeJs(distJsDir);
+
 // 4. Safety check — never copy server/config files into dist
 const forbidden = ['node_modules', '.git', 'android', 'ios', 'api', 'scripts', '.vercel',
   'capacitor.config.json', 'package.json', 'package-lock.json', 'vercel.json', 'firestore.rules'];

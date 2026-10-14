@@ -52,13 +52,10 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
-  <!-- Resource Hints for CDNs & Performance -->
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link rel="dns-prefetch" href="https://unpkg.com">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="css/design-system.css?v=20261014_v6" as="style">
-  <link rel="preload" href="css/landing.css?v=20261014_v6" as="style">
+  <link rel="preload" href="css/design-system.css?v=20261014_v7" as="style">
+  <link rel="preload" href="css/landing.css?v=20261014_v7" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -69,14 +66,12 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/design-system.css?v=20261014_v6">
-  <link rel="stylesheet" href="css/landing.css?v=20261014_v6">
+  <link rel="stylesheet" href="css/design-system.css?v=20261014_v7">
+  <link rel="stylesheet" href="css/landing.css?v=20261014_v7">
   <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
 
-  <!-- Deferred non-critical scripts to eliminate render-blocking with SRI -->
-  <script src="https://unpkg.com/lucide@1.47.0/dist/umd/lucide.min.js" integrity="sha384-v15JX+vZHMR3T6LQR9N6e6wIKrKOdNTbdj8j+e5irqq3L9gCauJz2vGlUzomWyUp" crossorigin="anonymous" defer></script>
 
   <!-- FAQ Structured Data -->
   <script type="application/ld+json">
@@ -241,10 +236,10 @@
         </p>
         <div class="hero-cta-group">
           <a href="/app" class="btn btn-gold btn-lg shadow-gold" data-i18n="hero.ctaPrimary">
-            Create Will Now — ₹299 <i data-lucide="arrow-right"></i>
+            Create Will Now — ₹299 <svg class="lucide lucide-arrow-right" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;margin-left:4px;"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
           </a>
           <button type="button" class="btn btn-secondary btn-lg" onclick="openSampleWillModal()">
-            <i data-lucide="file-text"></i> View Sample Will (Free)
+            <svg class="lucide lucide-file-text" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:middle;margin-right:6px;"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>View Sample Will (Free)
           </button>
         </div>
         <div class="hero-guarantee" data-i18n="hero.guarantee">
@@ -1602,22 +1597,19 @@
     }
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="js/animations.js?v=20261014_v6" defer></script>
-  <script src="js/theme-switcher.js?v=20261014_v6" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v7" defer></script>
+  <script src="js/animations.js?v=20261014_v7" defer></script>
+  <script src="js/theme-switcher.js?v=20261014_v7" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        if (typeof requestIdleCallback === 'function') {
-          requestIdleCallback(function() { window.lucide.createIcons(); }, { timeout: 2500 });
-        } else {
-          setTimeout(function() { window.lucide.createIcons(); }, 500);
-        }
+        window.lucide.createIcons();
       }
     }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initIcons);
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(initIcons, { timeout: 3500 });
     } else {
-      initIcons();
+      setTimeout(initIcons, 1500);
     }
 
     // ── Announcement Banner Dismissal (Pure CSS variable driven, zero forced reflow) ──
