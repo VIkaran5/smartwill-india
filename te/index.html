@@ -43,8 +43,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Preload Critical Combined Stylesheet for Faster Mobile Paint -->
-  <link rel="preload" href="/css/landing-bundle.css?v=20261014_v11" as="style">
+  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
+  <link rel="preload" href="/css/design-system.css?v=20261014_v10" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261014_v10" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -52,7 +53,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/landing-bundle.css?v=20261014_v11">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v10">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v10">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -653,26 +655,20 @@
 
   <!-- Consent Banner (Deferred to bottom) -->
   <script src="/js/consent-banner.js" defer></script>
-  <script src="/js/lucide.min.js?v=20261014_v11" defer></script>
-  <script src="/js/animations.js?v=20261014_v11" defer></script>
-  <script src="/js/theme-switcher.js?v=20261014_v11" defer></script>
-  <script src="/js/demo-tour.js?v=20261014_v11" defer></script>
+  <script src="/js/lucide.min.js?v=20261014_v10" defer></script>
+  <script src="/js/animations.js?v=20261014_v10" defer></script>
+  <script src="/js/theme-switcher.js?v=20261014_v10" defer></script>
+  <script src="/js/demo-tour.js?v=20261014_v10" defer></script>
   <script>
     function initIcons() {
-      if (window._iconsLoaded) return;
-      window._iconsLoaded = true;
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
         window.lucide.createIcons();
       }
-      window.removeEventListener('scroll', initIcons);
-      window.removeEventListener('touchstart', initIcons);
     }
-    window.addEventListener('scroll', initIcons, { passive: true, once: true });
-    window.addEventListener('touchstart', initIcons, { passive: true, once: true });
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(initIcons, { timeout: 6000 });
+      requestIdleCallback(initIcons, { timeout: 3500 });
     } else {
-      setTimeout(initIcons, 5000);
+      setTimeout(initIcons, 1500);
     }
   </script>
   <script>
