@@ -57,8 +57,8 @@
   <link rel="dns-prefetch" href="https://unpkg.com">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="css/design-system.css" as="style">
-  <link rel="preload" href="css/landing.css" as="style">
+  <link rel="preload" href="/css/design-system.css?v=20261014_v3" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261014_v3" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -69,9 +69,9 @@
 
   <!-- Stylesheets — fonts loaded non-blocking (primary fonts are preloaded above) -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/design-system.css">
-  <link rel="stylesheet" href="css/landing.css">
-  <link rel="stylesheet" href="css/legal-bot.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v3">
+  <link rel="stylesheet" href="/css/landing.css?v=20261014_v3">
+  <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
 
@@ -291,128 +291,6 @@
 
   </section>
 
-  <!-- Social Proof Story 1: The Young Professional (Gautam K., 26, Bengaluru) -->
-  <section class="persona-story-section" id="story-young-professional" aria-label="Verified Customer Story - Gautam K.">
-    <div class="container">
-      <div class="persona-story-card">
-        
-        <!-- Header Strip: Meta Badge + Pull Quote -->
-        <div class="persona-card-header">
-          <div class="persona-meta-row">
-            <div class="persona-badge-pill">
-              <span class="pill-dot"></span>
-              <span>Verified Testator Story • Oct 2026</span>
-            </div>
-            <div class="persona-stars-rating">
-              <span>★★★★★</span>
-              <span style="color:var(--text-subtle);font-weight:600;">5.0 · Plain Paper Executed</span>
-            </div>
-          </div>
-          <blockquote class="persona-headline-quote">
-            "At 26, my friends thought I was crazy for making a Will. But I hold ₹18 Lakhs across mutual funds and Demat accounts. If something happened to me, a bank nominee is only a temporary trustee, not the legal owner. SmartWill drafted my complete Will in 7 minutes for ₹299. I named my younger brother as sole beneficiary, printed it on plain paper, and had two colleagues witness it. Zero court visits, complete peace of mind."
-          </blockquote>
-        </div>
-
-        <!-- Main Split: Natural Editorial Photo vs. Verified Legal Will Document -->
-        <div class="persona-split-body">
-          
-          <!-- Left: Natural Photo & Identity -->
-          <div class="persona-photo-pane">
-            <div class="persona-img-frame">
-              <img src="/assets/personas/gautam-techie.jpg" alt="Gautam K. — 26, Senior Systems Engineer in Bengaluru" loading="lazy">
-            </div>
-            <div class="persona-info-footer">
-              <div class="persona-identity-row">
-                <h3 class="persona-identity-name">Gautam K., 26</h3>
-                <span class="persona-identity-location">Senior Systems Engineer • Bengaluru, KA</span>
-              </div>
-              <div class="persona-chips-bar">
-                <span class="persona-chip-tag"><i data-lucide="wallet" style="width:12px;height:12px;"></i> ₹18L Liquid &amp; Demat Portfolio</span>
-                <span class="persona-chip-tag"><i data-lucide="user-check" style="width:12px;height:12px;"></i> Sole Beneficiary: Younger Brother</span>
-                <span class="persona-chip-tag highlight"><i data-lucide="shield-check" style="width:12px;height:12px;"></i> ₹299 vs ₹8,000 Lawyer Fee</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Verified Printed Legal Will Document -->
-          <div class="persona-document-pane">
-            <div class="editorial-paper-sheet">
-              <span class="editorial-stamp-badge">REDACTED • CONFIDENTIAL</span>
-              
-              <div>
-                <div class="editorial-paper-header">
-                  <h4 class="editorial-paper-title">LAST WILL AND TESTAMENT</h4>
-                  <div class="editorial-paper-subcite">Statutory Form under Section 63, Indian Succession Act, 1925 • Bengaluru Registry</div>
-                </div>
-                
-                <p class="editorial-legal-para blurred">
-                  I, Gautam K., aged 26 years, son of Shri ..., residing at Indiranagar, Bengaluru, Karnataka, by occupation Software Professional, do hereby revoke all former Wills and testamentary dispositions previously made by me and declare this to be my true Last Will and Testament...
-                </p>
-
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 1: Declaration of Sound Mind &amp; Revocation of Prior Wills</span>
-                  </div>
-                </div>
-
-                <p class="editorial-legal-para blurred">
-                  I declare that I possess absolute title over my movable assets, savings accounts with HDFC Bank, Zerodha Demat trading holdings, mutual fund folios, and provident fund accumulations without any encumbrance or lien...
-                </p>
-
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 2: Schedule of Bank Accounts, Mutual Funds &amp; Demat Securities</span>
-                  </div>
-                </div>
-
-                <div class="editorial-clause-strip highlight">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 3: 100% Absolute Bequest to Younger Brother (Sole Beneficiary)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="editorial-paper-footer">
-                <div class="editorial-sig-group">
-                  <span class="editorial-sig-label">Testator Execution:</span>
-                  <span class="editorial-sig-name">Gautam K.</span>
-                </div>
-
-                <div>
-                  <span class="editorial-sig-label">Attestation (Sec 68 Evidence Act):</span>
-                  <span class="editorial-witness-pill">✓ 2 Independent Witnesses Attested</span>
-                </div>
-
-                <div class="editorial-seal-stamp">
-                  <i data-lucide="badge-check"></i>
-                  <span>✓ SEC. 63 COMPLIANT</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Footer Strip -->
-        <div class="persona-card-footer">
-          <div class="persona-trust-points">
-            <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Plain Paper Executed</span>
-            <span><i data-lucide="lock" style="width:14px;height:14px;color:#10b981;"></i> Zero Court Visits</span>
-            <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Drafted in 7 Minutes</span>
-          </div>
-          <button type="button" class="persona-sample-btn" onclick="openSampleWillModal()">
-            <i data-lucide="eye" style="width:15px;height:15px;"></i> View Sample Legal Will (Free) →
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
   <!-- Problem Section — asymmetric: 1 featured card + 2 stacked -->
   <section class="section problem-section">
     <div class="container">
@@ -609,122 +487,379 @@
     </div>
   </section>
 
-  <!-- Social Proof Story 2: Family Protection & Equal Inheritance (Ramesh V., 50, Guntur AP) -->
-  <section class="persona-story-section" id="story-family-parent" aria-label="Verified Customer Story - Ramesh V.">
+  <!-- Interactive Product Demo (Arcade) -->
+  <section id="demo" class="section demo-section">
     <div class="container">
-      <div class="persona-story-card">
-        
-        <!-- Header Strip: Meta Badge + Pull Quote -->
-        <div class="persona-card-header">
-          <div class="persona-meta-row">
-            <div class="persona-badge-pill">
-              <span class="pill-dot"></span>
-              <span>Verified Testator Story • Oct 2026</span>
-            </div>
-            <div class="persona-stars-rating">
-              <span>★★★★★</span>
-              <span style="color:var(--text-subtle);font-weight:600;">5.0 · Plain Paper Executed</span>
-            </div>
-          </div>
-          <blockquote class="persona-headline-quote">
-            "With an ancestral house in Guntur and our retail shop, my biggest fear was future property disputes between my son and daughter. A local advocate quoted ₹10,000 and two weeks of delay. SmartWill generated a court-compliant bilingual Will in Telugu and English for ₹299. It split all immovable and movable assets equally 50-50 and let me appoint an Alternate Executor. Printed at home, witnessed in 15 minutes."
-          </blockquote>
+      <div class="section-header text-center">
+        <div class="hero-badge badge badge-gold mb-2" data-i18n="demo.badge">Interactive Product Tour</div>
+        <h2 class="section-title" data-i18n="demo.title">See How Easy It Is in 60 Seconds</h2>
+        <p class="section-subtitle" data-i18n="demo.subtitle">Watch our 1-minute walkthrough showing how quickly you can create a legally valid Will.</p>
+      </div>
+
+      <div class="demo-player-wrapper glass-card">
+        <!-- Dual Mode Tabs -->
+        <div class="demo-tabs-bar">
+          <button type="button" class="demo-tab-btn active" data-tab="slides">
+            <i data-lucide="layers"></i> <span data-i18n="demo.tabSlides">Step-by-Step Slides (Instant)</span>
+          </button>
+          <button type="button" class="demo-tab-btn" data-tab="video">
+            <i data-lucide="play-circle"></i> <span data-i18n="demo.tabVideo">Video Tour</span>
+          </button>
         </div>
 
-        <!-- Main Split: Natural Editorial Photo vs. Verified Legal Will Document -->
-        <div class="persona-split-body">
-          
-          <!-- Left: Natural Photo & Identity -->
-          <div class="persona-photo-pane">
-            <div class="persona-img-frame">
-              <img src="/assets/personas/ramesh-parent.jpg" alt="Ramesh V. — 50, Father and Retail Trader in Guntur, Andhra Pradesh" loading="lazy">
-            </div>
-            <div class="persona-info-footer">
-              <div class="persona-identity-row">
-                <h3 class="persona-identity-name">Ramesh V., 50</h3>
-                <span class="persona-identity-location">Father of Two &amp; Retail Trader • Guntur, AP</span>
-              </div>
-              <div class="persona-chips-bar">
-                <span class="persona-chip-tag"><i data-lucide="home" style="width:12px;height:12px;"></i> Ancestral Home &amp; Business Assets</span>
-                <span class="persona-chip-tag"><i data-lucide="split" style="width:12px;height:12px;"></i> 50-50 Equal Division to Children</span>
-                <span class="persona-chip-tag highlight"><i data-lucide="shield-check" style="width:12px;height:12px;"></i> Saved ₹9,700 vs Local Advocate</span>
+        <div class="demo-content-area">
+          <!-- 1. Arcade Video View (Loads on demand when tab selected) -->
+          <div class="demo-view demo-view-video">
+            <div class="demo-iframe-container">
+              <iframe 
+                id="demoArcadeIframe"
+                data-src="https://demo.arcade.software/video/fIDCyagb6m2mXHCnjysd?embed&amp;embed_mobile=tab&amp;embed_desktop=inline&amp;show_copy_link=true&amp;autoplay=true" 
+                title="SmartWill India Product Explainer" 
+                frameborder="0" 
+                loading="lazy" 
+                webkitallowfullscreen 
+                mozallowfullscreen 
+                allowfullscreen 
+                allow="clipboard-write; autoplay"
+              ></iframe>
+              <!-- DNS / Slow Network Fallback Prompt -->
+              <div class="demo-slow-hint" id="demoSlowHint" style="display:none;">
+                <span>Slow connection? Video taking time?</span>
+                <button type="button" class="demo-slow-hint-btn" onclick="switchToDemoSlides()">View Instant Slides ⚡</button>
               </div>
             </div>
           </div>
 
-          <!-- Right: Verified Printed Legal Will Document -->
-          <div class="persona-document-pane">
-            <div class="editorial-paper-sheet">
-              <span class="editorial-stamp-badge">REDACTED • CONFIDENTIAL</span>
-              
-              <div>
-                <div class="editorial-paper-header">
-                  <h4 class="editorial-paper-title">చివరి వీలునామా / LAST WILL &amp; TESTAMENT</h4>
-                  <div class="editorial-paper-subcite">Under Section 63, Indian Succession Act, 1925 • Guntur Jurisdiction, AP</div>
-                </div>
+          <!-- 2. Zero-Fail Local Slide Carousel (100% locally hosted, instant load) -->
+          <div class="demo-view demo-view-slides active">
+            <div class="demo-slides-container">
+              <div class="demo-slide-viewer">
+                <img id="demoCurrentSlideImg" src="/assets/arcade-slides/01_smartwill_hero_hook.webp" alt="SmartWill Step 1" width="824" height="464" loading="lazy">
                 
-                <p class="editorial-legal-para blurred">
-                  నేను, రమేష్ వి., వయస్సు 50 సంవత్సరాలు, గుంటూరు నివాసిని, సంపూర్ణ మానసిక ఆరోగ్యము మరియు స్పృహతో నా స్వచ్ఛంద నిర్ణయముతో ఈ చివరి వీలునామాను రచిస్తున్నాను... / I, Ramesh V., aged 50 years, residing at Guntur, Andhra Pradesh, being of sound disposing mind and memory, do hereby make this my Last Will and Testament...
-                </p>
+                <button type="button" class="demo-nav-btn prev" id="demoPrevBtn" aria-label="Previous step">
+                  <i data-lucide="chevron-left"></i>
+                </button>
+                <button type="button" class="demo-nav-btn next" id="demoNextBtn" aria-label="Next step">
+                  <i data-lucide="chevron-right"></i>
+                </button>
+                
+                <div class="demo-slide-badge" id="demoSlideBadge">Step 1 of 7</div>
+              </div>
 
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
+              <div class="demo-slide-info">
+                <h3 id="demoSlideTitle">1. Fast 10-Minute Questionnaire</h3>
+                <p id="demoSlideDesc">Start with guided, plain-language questions. No legal jargon, confusing clauses, or intimidating paperwork.</p>
+                <div class="demo-slide-dots" id="demoSlideDots"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-cta-wrap text-center" style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <a href="/app" class="btn btn-gold btn-lg shadow-gold" data-i18n="demo.cta">
+          Start Creating Your Will — ₹299 <i data-lucide="arrow-right"></i>
+        </a>
+        <button type="button" class="btn btn-outline btn-lg" onclick="openSampleWillModal()">
+          <i data-lucide="eye"></i> View Sample Legal Will (Free)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real Customer Stories & Verified Testators Section -->
+  <section id="stories" class="section stories-section" aria-label="Real Indian Customer Stories">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="hero-badge badge badge-gold mb-2" data-i18n="stories.badge">
+          🛡️ Real Testators • Legally Witnessed &amp; Executed
+        </div>
+        <h2 class="section-title" data-i18n="stories.title">
+          Real Indians. Real Families.<br>Protected with SmartWill.
+        </h2>
+        <p class="section-subtitle max-w-700" data-i18n="stories.subtitle">
+          Over 10,000+ Wills created across India — from young tech professionals protecting Demat accounts to senior citizens securing their spouse.
+        </p>
+
+        <!-- Interactive Persona Tab Switcher -->
+        <div class="stories-tabs-bar" role="tablist" aria-label="Customer Persona Switcher">
+          <button type="button" class="story-tab-btn active" data-story="gautam" role="tab" aria-selected="true" onclick="switchStoryTab('gautam')">
+            <span class="story-tab-icon">👨‍💻</span>
+            <span class="story-tab-info">
+              <strong>Gautam K., 26</strong>
+              <small>Tech Engineer • Bengaluru</small>
+            </span>
+          </button>
+          <button type="button" class="story-tab-btn" data-story="ramesh" role="tab" aria-selected="false" onclick="switchStoryTab('ramesh')">
+            <span class="story-tab-icon">👨‍💼</span>
+            <span class="story-tab-info">
+              <strong>Ramesh V., 50</strong>
+              <small>Retail Trader • Guntur</small>
+            </span>
+          </button>
+          <button type="button" class="story-tab-btn" data-story="drrao" role="tab" aria-selected="false" onclick="switchStoryTab('drrao')">
+            <span class="story-tab-icon">👨‍⚕️</span>
+            <span class="story-tab-info">
+              <strong>Dr. K. N. Rao, 64</strong>
+              <small>Retired Officer • Hyderabad</small>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Story Container (Displays 1 active story card with smooth transition) -->
+      <div class="stories-cards-wrapper">
+        
+        <!-- Story 1: Gautam K. (Tech Professional, Bengaluru) -->
+        <div class="story-card active" id="story-gautam">
+          <div class="story-desktop-grid">
+            
+            <!-- Left: Profile, Quote & Benefits -->
+            <div class="story-profile-col">
+              <div class="story-meta-header">
+                <span class="story-badge-pill">
+                  <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Verified Testator • Bengaluru, KA
+                </span>
+                <span class="story-stars">★★★★★ 5.0</span>
+              </div>
+
+              <blockquote class="story-quote-block">
+                "At 26, my colleagues thought I was crazy for making a Will. But I hold ₹18 Lakhs across mutual funds and Zerodha Demat accounts. A bank nominee is only a temporary trustee, not the legal owner. SmartWill drafted my complete Will in 7 minutes for ₹299. I named my younger brother as sole beneficiary, printed it on plain A4 paper, and had two teammates witness it. Zero court visits, complete peace of mind."
+              </blockquote>
+
+              <div class="story-photo-box">
+                <img src="/assets/personas/gautam-techie.jpg" alt="Gautam K. — 26, Senior Systems Engineer in Bengaluru" class="story-big-photo" loading="eager">
+                <div class="story-photo-caption">
+                  <div class="story-photo-name-row">
+                    <h3 class="story-person-name">Gautam K., 26</h3>
+                    <span class="story-person-role">Senior Systems Engineer • Bengaluru, KA</span>
+                  </div>
+                  <div class="story-chips-row">
+                    <span class="story-chip"><i data-lucide="wallet" style="width:11px;height:11px;"></i> ₹18L Demat &amp; Mutual Funds</span>
+                    <span class="story-chip"><i data-lucide="user-check" style="width:11px;height:11px;"></i> Sole Beneficiary: Younger Brother</span>
+                    <span class="story-chip highlight"><i data-lucide="shield-check" style="width:11px;height:11px;"></i> Saved ₹8,000 Lawyer Fee</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Statutory Document Summary Sheet -->
+            <div class="story-document-sheet">
+              <div>
+                <div class="story-doc-header">
+                  <div class="story-doc-titles">
+                    <h4 class="story-doc-title">STATUTORY WILL SUMMARY</h4>
+                    <span class="story-doc-subtitle">Section 63, Indian Succession Act, 1925 • Bengaluru Registry</span>
+                  </div>
+                  <span class="story-doc-stamp">REDACTED • CONFIDENTIAL</span>
+                </div>
+
+                <div class="story-doc-clauses">
+                  <div class="story-doc-clause-item">
+                    <i data-lucide="check"></i>
+                    <span>Clause 1: Declaration of Sound Mind &amp; Revocation of Prior Wills</span>
+                  </div>
+                  <div class="story-doc-clause-item">
+                    <i data-lucide="check"></i>
+                    <span>Clause 2: Schedule of HDFC Bank, Zerodha Demat &amp; Mutual Funds</span>
+                  </div>
+                  <div class="story-doc-clause-item highlight">
+                    <i data-lucide="check"></i>
+                    <span>Clause 3: 100% Absolute Bequest to Younger Brother (Sole Beneficiary)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="story-doc-footer">
+                <div class="story-doc-sig-group">
+                  <span class="story-doc-sig-label">Testator Execution:</span>
+                  <span class="story-doc-sig-name">Gautam K.</span>
+                </div>
+                <span class="story-doc-witness-pill">✓ 2 Witnesses Attested</span>
+                <span class="story-doc-seal">✓ SEC. 63 COMPLIANT</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="story-card-footer">
+            <div class="story-trust-points">
+              <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Plain A4 Paper Valid</span>
+              <span><i data-lucide="lock" style="width:14px;height:14px;color:#10b981;"></i> Zero Court Visits</span>
+              <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Completed in 7 Minutes</span>
+            </div>
+            <button type="button" class="story-sample-link" onclick="openSampleWillModal()">
+              <i data-lucide="eye" style="width:14px;height:14px;"></i> View Sample Legal Will (Free) →
+            </button>
+          </div>
+        </div>
+
+        <!-- Story 2: Ramesh V. (Retail Trader & Father, Guntur AP) -->
+        <div class="story-card" id="story-ramesh">
+          <div class="story-desktop-grid">
+            
+            <!-- Left: Profile, Quote & Benefits -->
+            <div class="story-profile-col">
+              <div class="story-meta-header">
+                <span class="story-badge-pill">
+                  <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Verified Testator • Guntur, AP
+                </span>
+                <span class="story-stars">★★★★★ 5.0</span>
+              </div>
+
+              <blockquote class="story-quote-block">
+                "With an ancestral house in Guntur and our retail shop, my biggest fear was future property disputes between my son and daughter. A local advocate quoted ₹10,000 and two weeks of delay. SmartWill generated a court-compliant bilingual Will in Telugu and English for ₹299. It split all immovable and movable assets equally 50-50 and let me appoint an Alternate Executor. Printed at home, witnessed in 15 minutes."
+              </blockquote>
+
+              <div class="story-photo-box">
+                <img src="/assets/personas/ramesh-parent.jpg" alt="Ramesh V. — 50, Father of Two in Guntur, Andhra Pradesh" class="story-big-photo" loading="eager">
+                <div class="story-photo-caption">
+                  <div class="story-photo-name-row">
+                    <h3 class="story-person-name">Ramesh V., 50</h3>
+                    <span class="story-person-role">Father of Two &amp; Retail Trader • Guntur, AP</span>
+                  </div>
+                  <div class="story-chips-row">
+                    <span class="story-chip"><i data-lucide="home" style="width:11px;height:11px;"></i> Ancestral Home &amp; Shop Assets</span>
+                    <span class="story-chip"><i data-lucide="split" style="width:11px;height:11px;"></i> 50-50 Equal Division to Children</span>
+                    <span class="story-chip highlight"><i data-lucide="shield-check" style="width:11px;height:11px;"></i> Saved ₹9,700 vs Local Advocate</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Statutory Document Summary Sheet -->
+            <div class="story-document-sheet">
+              <div>
+                <div class="story-doc-header">
+                  <div class="story-doc-titles">
+                    <h4 class="story-doc-title">చివరి వీలునామా / STATUTORY WILL</h4>
+                    <span class="story-doc-subtitle">Section 63, Indian Succession Act, 1925 • Guntur Jurisdiction</span>
+                  </div>
+                  <span class="story-doc-stamp">REDACTED • CONFIDENTIAL</span>
+                </div>
+
+                <div class="story-doc-clauses">
+                  <div class="story-doc-clause-item">
                     <i data-lucide="check"></i>
                     <span>Clause 1: Revocation of Prior Wills &amp; Sound Mind Declaration</span>
                   </div>
-                </div>
-
-                <p class="editorial-legal-para blurred">
-                  I devise my self-acquired residential property situated at Brodipet, Guntur, and commercial shop tenancy rights and bank balances to be divided equally between my surviving children...
-                </p>
-
-                <div class="editorial-clause-strip highlight">
-                  <div class="clause-inner">
+                  <div class="story-doc-clause-item highlight">
                     <i data-lucide="check"></i>
                     <span>Clause 2: Equal 50% - 50% Absolute Share to Son &amp; Daughter</span>
                   </div>
-                </div>
-
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
+                  <div class="story-doc-clause-item">
                     <i data-lucide="check"></i>
-                    <span>Clause 3: Appointment of Alternate Family Executor (Zero Dispute)</span>
+                    <span>Clause 3: Alternate Family Executor Appointed (Zero Dispute)</span>
                   </div>
                 </div>
               </div>
 
-              <div class="editorial-paper-footer">
-                <div class="editorial-sig-group">
-                  <span class="editorial-sig-label">Testator Execution:</span>
-                  <span class="editorial-sig-name">Ramesh V.</span>
+              <div class="story-doc-footer">
+                <div class="story-doc-sig-group">
+                  <span class="story-doc-sig-label">Testator Execution:</span>
+                  <span class="story-doc-sig-name">Ramesh V.</span>
+                </div>
+                <span class="story-doc-witness-pill">✓ 2 Witnesses Attested</span>
+                <span class="story-doc-seal">✓ AP &amp; TG VALID</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="story-card-footer">
+            <div class="story-trust-points">
+              <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Bilingual Legal Format (TE/EN)</span>
+              <span><i data-lucide="shield" style="width:14px;height:14px;color:#10b981;"></i> Equal Sibling Division</span>
+              <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Completed in 15 Minutes</span>
+            </div>
+            <button type="button" class="story-sample-link" onclick="openSampleWillModal()">
+              <i data-lucide="eye" style="width:14px;height:14px;"></i> View Sample Legal Will (Free) →
+            </button>
+          </div>
+        </div>
+
+        <!-- Story 3: Dr. K. N. Rao (Retired Central Govt Officer, Hyderabad) -->
+        <div class="story-card" id="story-drrao">
+          <div class="story-desktop-grid">
+            
+            <!-- Left: Profile, Quote & Benefits -->
+            <div class="story-profile-col">
+              <div class="story-meta-header">
+                <span class="story-badge-pill">
+                  <i data-lucide="shield-check" style="width:13px;height:13px;"></i> Verified Testator • Hyderabad, TS
+                </span>
+                <span class="story-stars">★★★★★ 5.0</span>
+              </div>
+
+              <blockquote class="story-quote-block">
+                "Advocates told me I had to buy ₹500 stamp papers and queue up at the Sub-Registrar's office paying ₹20,000+. At my age, standing in crowded court lines was exhausting. SmartWill made the legal truth clear: under Section 18 of the Registration Act, Will registration is 100% optional, and plain A4 paper is fully valid in any Indian civil court. I created my Will in 8 minutes for ₹299. My physician and neighbor signed as witnesses."
+              </blockquote>
+
+              <div class="story-photo-box">
+                <img src="/assets/personas/dr-rao-senior.jpg" alt="Dr. K. N. Rao — 64, Retired Central Govt Officer in Hyderabad" class="story-big-photo" loading="eager">
+                <div class="story-photo-caption">
+                  <div class="story-photo-name-row">
+                    <h3 class="story-person-name">Dr. K. N. Rao, 64</h3>
+                    <span class="story-person-role">Retired Central Govt Officer • Somajiguda, Hyderabad</span>
+                  </div>
+                  <div class="story-chips-row">
+                    <span class="story-chip"><i data-lucide="building-2" style="width:11px;height:11px;"></i> Pension, Flat &amp; Fixed Deposits</span>
+                    <span class="story-chip"><i data-lucide="file-check" style="width:11px;height:11px;"></i> 100% Plain Paper Valid (Sec 18)</span>
+                    <span class="story-chip highlight"><i data-lucide="check-circle-2" style="width:11px;height:11px;"></i> Zero Court Fees • ₹299 Complete</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Statutory Document Summary Sheet -->
+            <div class="story-document-sheet">
+              <div>
+                <div class="story-doc-header">
+                  <div class="story-doc-titles">
+                    <h4 class="story-doc-title">STATUTORY WILL SUMMARY</h4>
+                    <span class="story-doc-subtitle">Sec 63 Succession Act &amp; Sec 18 Registration Act, 1908 • Hyderabad</span>
+                  </div>
+                  <span class="story-doc-stamp">REDACTED • CONFIDENTIAL</span>
                 </div>
 
-                <div>
-                  <span class="editorial-sig-label">Attestation (Sec 68 Evidence Act):</span>
-                  <span class="editorial-witness-pill">✓ 2 Independent Witnesses Attested</span>
-                </div>
-
-                <div class="editorial-seal-stamp">
-                  <i data-lucide="badge-check"></i>
-                  <span>✓ AP &amp; TG VALID</span>
+                <div class="story-doc-clauses">
+                  <div class="story-doc-clause-item">
+                    <i data-lucide="check"></i>
+                    <span>Clause 1: Testamentary Capacity &amp; Sound Mind Declaration</span>
+                  </div>
+                  <div class="story-doc-clause-item highlight">
+                    <i data-lucide="check"></i>
+                    <span>Clause 2: Life Interest Protection for Spouse &amp; Residuary to Daughter</span>
+                  </div>
+                  <div class="story-doc-clause-item">
+                    <i data-lucide="check"></i>
+                    <span>Clause 3: Schedule of Pension Arrears, Bank FDs &amp; SGBs</span>
+                  </div>
                 </div>
               </div>
 
+              <div class="story-doc-footer">
+                <div class="story-doc-sig-group">
+                  <span class="story-doc-sig-label">Testator Execution:</span>
+                  <span class="story-doc-sig-name">Dr. K. N. Rao</span>
+                </div>
+                <span class="story-doc-witness-pill">✓ Physician &amp; Neighbor Attested</span>
+                <span class="story-doc-seal">✓ SEC. 18 COURT VALID</span>
+              </div>
             </div>
+
           </div>
 
-        </div>
-
-        <!-- Footer Strip -->
-        <div class="persona-card-footer">
-          <div class="persona-trust-points">
-            <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Bilingual Legal Format (TE/EN)</span>
-            <span><i data-lucide="shield" style="width:14px;height:14px;color:#10b981;"></i> Equal Asset Division</span>
-            <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Completed in 15 Minutes</span>
+          <div class="story-card-footer">
+            <div class="story-trust-points">
+              <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Plain Paper Executed</span>
+              <span><i data-lucide="shield" style="width:14px;height:14px;color:#10b981;"></i> Lifetime Spouse Protection</span>
+              <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Completed in 8 Minutes</span>
+            </div>
+            <button type="button" class="story-sample-link" onclick="openSampleWillModal()">
+              <i data-lucide="eye" style="width:14px;height:14px;"></i> View Sample Legal Will (Free) →
+            </button>
           </div>
-          <button type="button" class="persona-sample-btn" onclick="openSampleWillModal()">
-            <i data-lucide="eye" style="width:15px;height:15px;"></i> View Sample Legal Will (Free) →
-          </button>
         </div>
 
       </div>
@@ -960,128 +1095,6 @@
             </a>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Social Proof Story 3: Senior Citizen & Court Validity (Dr. K. N. Rao, 64, Hyderabad) -->
-  <section class="persona-story-section" id="story-senior-citizen" aria-label="Verified Customer Story - Dr. K. N. Rao">
-    <div class="container">
-      <div class="persona-story-card">
-        
-        <!-- Header Strip: Meta Badge + Pull Quote -->
-        <div class="persona-card-header">
-          <div class="persona-meta-row">
-            <div class="persona-badge-pill">
-              <span class="pill-dot"></span>
-              <span>Verified Testator Story • Oct 2026</span>
-            </div>
-            <div class="persona-stars-rating">
-              <span>★★★★★</span>
-              <span style="color:var(--text-subtle);font-weight:600;">5.0 · Plain Paper Executed</span>
-            </div>
-          </div>
-          <blockquote class="persona-headline-quote">
-            "Advocates told me I had to buy ₹500 stamp papers and queue up at the Sub-Registrar's office paying ₹20,000+. At my age, standing in crowded court lines was exhausting. SmartWill made the legal truth clear: under Section 18 of the Registration Act, Will registration is 100% optional, and plain A4 paper is fully valid in any Indian civil court. I created my Will in 8 minutes for ₹299. My physician and neighbor signed as witnesses."
-          </blockquote>
-        </div>
-
-        <!-- Main Split: Natural Editorial Photo vs. Verified Legal Will Document -->
-        <div class="persona-split-body">
-          
-          <!-- Left: Natural Photo & Identity -->
-          <div class="persona-photo-pane">
-            <div class="persona-img-frame">
-              <img src="/assets/personas/dr-rao-senior.jpg" alt="Dr. K. N. Rao — 64, Retired Central Govt Officer in Hyderabad" loading="lazy">
-            </div>
-            <div class="persona-info-footer">
-              <div class="persona-identity-row">
-                <h3 class="persona-identity-name">Dr. K. N. Rao, 64</h3>
-                <span class="persona-identity-location">Retired Central Govt Officer • Hyderabad, TS</span>
-              </div>
-              <div class="persona-chips-bar">
-                <span class="persona-chip-tag"><i data-lucide="building-2" style="width:12px;height:12px;"></i> Pension, Flat &amp; Fixed Deposits</span>
-                <span class="persona-chip-tag"><i data-lucide="file-check" style="width:12px;height:12px;"></i> 100% Plain Paper Valid (Sec 18)</span>
-                <span class="persona-chip-tag highlight"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Zero Court Fees • ₹299 Complete</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Verified Printed Legal Will Document -->
-          <div class="persona-document-pane">
-            <div class="editorial-paper-sheet">
-              <span class="editorial-stamp-badge">REDACTED • CONFIDENTIAL</span>
-              
-              <div>
-                <div class="editorial-paper-header">
-                  <h4 class="editorial-paper-title">LAST WILL AND TESTAMENT</h4>
-                  <div class="editorial-paper-subcite">Section 63 Succession Act &amp; Section 18 Registration Act, 1908 • Hyderabad</div>
-                </div>
-                
-                <p class="editorial-legal-para blurred">
-                  I, Dr. K. N. Rao, aged 64 years, retired Central Government Officer, resident of Somajiguda, Hyderabad, Telangana, do hereby make, publish, and declare this to be my Last Will and Testament, in sound mental health and testamentary capacity...
-                </p>
-
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 1: Testamentary Capacity &amp; Sound Mind Declaration</span>
-                  </div>
-                </div>
-
-                <p class="editorial-legal-para blurred">
-                  I bequeath a life-interest to reside in and enjoy the usufruct of my residential apartment at Somajiguda to my beloved wife Smt. ..., and upon her demise, the absolute ownership to devolve onto my daughter...
-                </p>
-
-                <div class="editorial-clause-strip highlight">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 2: Life Interest Protection for Spouse &amp; Residuary to Daughter</span>
-                  </div>
-                </div>
-
-                <div class="editorial-clause-strip">
-                  <div class="clause-inner">
-                    <i data-lucide="check"></i>
-                    <span>Clause 3: Schedule of Pension Arrears, Bank FDs &amp; SGBs</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="editorial-paper-footer">
-                <div class="editorial-sig-group">
-                  <span class="editorial-sig-label">Testator Execution:</span>
-                  <span class="editorial-sig-name">Dr. K. N. Rao</span>
-                </div>
-
-                <div>
-                  <span class="editorial-sig-label">Attestation (Physician &amp; Neighbor):</span>
-                  <span class="editorial-witness-pill">✓ 2 Independent Witnesses Attested</span>
-                </div>
-
-                <div class="editorial-seal-stamp">
-                  <i data-lucide="badge-check"></i>
-                  <span>✓ SEC. 18 COURT VALID</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Footer Strip -->
-        <div class="persona-card-footer">
-          <div class="persona-trust-points">
-            <span><i data-lucide="check-circle-2" style="width:14px;height:14px;color:#10b981;"></i> Plain Paper Executed</span>
-            <span><i data-lucide="shield" style="width:14px;height:14px;color:#10b981;"></i> Lifetime Spouse Protection</span>
-            <span><i data-lucide="clock" style="width:14px;height:14px;color:#10b981;"></i> Drafted in 8 Minutes</span>
-          </div>
-          <button type="button" class="persona-sample-btn" onclick="openSampleWillModal()">
-            <i data-lucide="eye" style="width:15px;height:15px;"></i> View Sample Legal Will (Free) →
-          </button>
-        </div>
-
       </div>
     </div>
   </section>
@@ -1592,9 +1605,31 @@
       setTimeout(() => import('./js/ui/legalBot.js'), 2000);
     }
   </script>
-  <!-- nomineeCheck is already initialized by landing.js -->
   <script src="js/animations.js" defer></script>
   <script src="js/theme-switcher.js" defer></script>
+  <script src="js/demo-tour.js" defer></script>
+  <script>
+    // ── Customer Stories Tab Switcher ──
+    window.switchStoryTab = function(storyId) {
+      document.querySelectorAll('.story-tab-btn').forEach(btn => {
+        const isTarget = btn.getAttribute('data-story') === storyId;
+        btn.classList.toggle('active', isTarget);
+        btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+      });
+      document.querySelectorAll('.story-card').forEach(card => {
+        card.classList.remove('active');
+        card.style.display = 'none';
+      });
+      const targetCard = document.getElementById('story-' + storyId);
+      if (targetCard) {
+        targetCard.classList.add('active');
+        targetCard.style.display = 'block';
+      }
+      if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons();
+      }
+    };
+  </script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
