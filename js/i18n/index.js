@@ -92,6 +92,7 @@ export async function setLanguage(lang, isManualClick = false) {
 export function applyTranslations(lang) {
   const dict = dictionaries[lang] || dictionaries[DEFAULT_LANGUAGE];
   const fallbackDict = dictionaries[DEFAULT_LANGUAGE] || {};
+  var changed = false;
 
   // Query all data-i18n elements
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -99,13 +100,20 @@ export function applyTranslations(lang) {
     const text = (dict && dict[key]) !== undefined ? dict[key] : fallbackDict[key];
     if (text !== undefined) {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-        if (el.hasAttribute('placeholder')) {
+        if (el.hasAttribute('placeholder') && el.getAttribute('placeholder') !== text) {
           el.setAttribute('placeholder', text);
+          changed = true;
         }
       } else if (el.tagName === 'OPTION') {
-        el.textContent = text;
+        if (el.textContent !== text) {
+          el.textContent = text;
+          changed = true;
+        }
       } else {
-        el.textContent = text;
+        if (el.textContent !== text) {
+          el.textContent = text;
+          changed = true;
+        }
       }
     }
   });
@@ -114,13 +122,14 @@ export function applyTranslations(lang) {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     const key = el.getAttribute('data-i18n-placeholder');
     const ph = (dict && dict[key]) !== undefined ? dict[key] : fallbackDict[key];
-    if (ph !== undefined) {
+    if (ph !== undefined && el.getAttribute('placeholder') !== ph) {
       el.setAttribute('placeholder', ph);
+      changed = true;
     }
   });
 
-  // Re-render lucide icons if any were affected
-  if (typeof window !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
+  // Re-render lucide icons only if translations actually mutated DOM
+  if (changed && typeof window !== 'undefined' && window.lucide && typeof window.lucide.createIcons === 'function') {
     window.lucide.createIcons();
   }
 }
@@ -135,8 +144,6 @@ export function t(key, fallback = null) {
 export function initI18n() {
   if (currentLang !== 'en') {
     loadDictionary(currentLang).then(() => applyTranslations(currentLang));
-  } else {
-    applyTranslations('en');
   }
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {

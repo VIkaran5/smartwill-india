@@ -44,8 +44,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="/css/design-system.css?v=20261014_v12" as="style">
-  <link rel="preload" href="/css/landing.css?v=20261014_v12" as="style">
+  <link rel="preload" href="/css/design-system.css?v=20261015_v13" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261015_v13" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -53,8 +53,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261014_v12">
-  <link rel="stylesheet" href="/css/landing.css?v=20261014_v12">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v13">
+  <link rel="stylesheet" href="/css/landing.css?v=20261015_v13">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -655,10 +655,10 @@
 
   <!-- Consent Banner (Deferred to bottom) -->
   <script src="/js/consent-banner.js" defer></script>
-  <script src="/js/lucide.min.js?v=20261014_v12" defer></script>
-  <script src="/js/animations.js?v=20261014_v12" defer></script>
-  <script src="/js/theme-switcher.js?v=20261014_v12" defer></script>
-  <script src="/js/demo-tour.js?v=20261014_v12" defer></script>
+  <script src="/js/lucide.min.js?v=20261015_v13" defer></script>
+  <script src="/js/animations.js?v=20261015_v13" defer></script>
+  <script src="/js/theme-switcher.js?v=20261015_v13" defer></script>
+  <script src="/js/demo-tour.js?v=20261015_v13" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -699,17 +699,17 @@
       if (window._legalBotLoaded) return;
       window._legalBotLoaded = true;
       import('/js/ui/legalBot.js');
-      window.removeEventListener('scroll', loadLegalBot);
-      window.removeEventListener('touchstart', loadLegalBot);
-      window.removeEventListener('mousemove', loadLegalBot);
+      ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
+        window.removeEventListener(e, loadLegalBot);
+      });
     }
-    window.addEventListener('scroll', loadLegalBot, { passive: true, once: true });
-    window.addEventListener('touchstart', loadLegalBot, { passive: true, once: true });
-    window.addEventListener('mousemove', loadLegalBot, { passive: true, once: true });
+    ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
+      window.addEventListener(e, loadLegalBot, { passive: true, once: true });
+    });
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(loadLegalBot, { timeout: 7000 });
+      requestIdleCallback(loadLegalBot, { timeout: 18000 });
     } else {
-      setTimeout(loadLegalBot, 6000);
+      setTimeout(loadLegalBot, 18000);
     }
   </script>
 </body>

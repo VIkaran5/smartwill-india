@@ -51,13 +51,20 @@
     var labelText = nextTheme === 'dark' ? 'Dark' : 'Light';
     var ariaLabel = 'Switch to ' + labelText + ' Mode';
 
+    var changed = false;
     buttons.forEach(function(btn) {
+      var textEl = btn.querySelector('.toggle-text');
+      // If label text already matches, avoid dirtying the DOM needlessly
+      if (textEl && textEl.textContent.trim() === labelText) {
+        return;
+      }
       btn.setAttribute('aria-label', ariaLabel);
       btn.setAttribute('title', ariaLabel);
       btn.innerHTML = '<span class="toggle-icon"><i data-lucide="' + iconName + '"></i></span><span class="toggle-text">' + labelText + '</span>';
+      changed = true;
     });
 
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+    if (changed && window.lucide && typeof window.lucide.createIcons === 'function') {
       window.lucide.createIcons();
     }
   }
@@ -99,27 +106,30 @@
     }
   });
 
-  // Universal Navbar Scroll Guardian
+  // Universal Navbar Scroll Guardian (rAF debounced, zero forced reflow on initial load)
+  var navTicking = false;
   function handleNavbarScroll() {
-    var nav = document.querySelector('.navbar');
-    if (!nav) return;
-    if (window.scrollY > 20) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
+    if (navTicking) return;
+    navTicking = true;
+    window.requestAnimationFrame(function() {
+      var nav = document.querySelector('.navbar');
+      if (nav) {
+        if (window.scrollY > 20) {
+          nav.classList.add('scrolled');
+        } else {
+          nav.classList.remove('scrolled');
+        }
+      }
+      navTicking = false;
+    });
   }
   window.addEventListener('scroll', handleNavbarScroll, { passive: true });
-  if (typeof requestAnimationFrame === 'function') {
-    requestAnimationFrame(handleNavbarScroll);
-  } else {
-    setTimeout(handleNavbarScroll, 50);
-  }
 
   // Universal Mobile Sticky Conversion Bar Scroll Reveal
   function initMobileStickyBar() {
     var bar = document.getElementById('mobileStickyBar');
-    if (!bar) return;
+    if (!bar || bar.dataset.stickyBound === 'true') return;
+    bar.dataset.stickyBound = 'true';
     var ticking = false;
     window.addEventListener('scroll', function() {
       if (!ticking) {
@@ -171,27 +181,26 @@
     });
   }
 
-  // Initialize button state and features as soon as DOM is interactive
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
-      updateToggleButtons(current);
-      handleNavbarScroll();
-      initMobileStickyBar();
-      initMobileMenu();
-    });
-  } else {
+  // Initialize button state and features during idle time to eliminate forced reflow during paint
+  function initThemeUI() {
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     updateToggleButtons(current);
-    handleNavbarScroll();
     initMobileStickyBar();
     initMobileMenu();
   }
 
-  window.addEventListener('load', function() {
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
-      window.lucide.createIcons();
+  function scheduleThemeInit() {
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(initThemeUI, { timeout: 2500 });
+    } else {
+      setTimeout(initThemeUI, 300);
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleThemeInit);
+  } else {
+    scheduleThemeInit();
+  }
 })();
 
