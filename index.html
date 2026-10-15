@@ -50,79 +50,18 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
-  <!-- Preload full stylesheets (download starts immediately, non-blocking) -->
-  <link rel="preload" href="/css/design-system.css?v=20261015_v14" as="style">
-  <link rel="preload" href="/css/landing.css?v=20261015_v14" as="style">
+  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
+  <link rel="preload" href="/css/design-system.css?v=20261015_v16" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261015_v16" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
 
-  <!-- Critical CSS: inlined for instant hero paint (eliminates render-blocking chain) -->
-  <style>
-    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--bg-surface:#f3f3f3;--primary:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--btn-gold-border:#000;--btn-gold-hover:#222;--accent-mint:#d1ffca;--text-main:#000;--text-muted:#444;--text-subtle:#767676;--border-light:#d8d8d8;--border-focus:#000;--font-heading:'Barlow Condensed','Bebas Neue','Nirmala UI',sans-serif;--font-body:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;--font-mono:'JetBrains Mono','Geist Mono',ui-monospace,monospace;--headline-transform:uppercase;--headline-line-height:0.92;--navbar-bg:#fff;--navbar-border:#d8d8d8;--navbar-shadow:0 4px 20px rgba(0,0,0,.04);--radius-sm:8px;--radius-md:16px;--radius-lg:32px;--radius-pill:48px;--radius-tag:64px;--transition:all .25s cubic-bezier(.16,1,.3,1);--backdrop-blur:none}
-    [data-theme="dark"]{color-scheme:dark;--bg-dark:#080C1A;--bg-card:rgba(13,19,43,.75);--bg-surface:#0D132B;--primary:#DFB76C;--btn-gold-bg:#DFB76C;--btn-gold-text:#080C1A;--btn-gold-border:#DFB76C;--btn-gold-hover:#ECD093;--accent-mint:#10B981;--text-main:#F8FAFC;--text-muted:#A6B4C9;--text-subtle:#8393A8;--border-light:rgba(223,183,108,.16);--border-focus:rgba(223,183,108,.55);--font-heading:'Newsreader','Nirmala UI','Gautami','Mandali',Georgia,serif;--headline-transform:none;--headline-line-height:1.2;--navbar-bg:rgba(8,12,26,.85);--navbar-border:rgba(223,183,108,.16);--navbar-shadow:0 8px 32px rgba(0,0,0,.5);--backdrop-blur:blur(16px)}
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{overflow-x:clip;max-width:100vw}
-    body{font-family:var(--font-body);background:var(--bg-dark);color:var(--text-main);line-height:1.6;overflow-x:clip;min-height:100vh;width:100%;max-width:100vw}
-    h1,h2,h3{font-family:var(--font-heading);font-weight:700;line-height:var(--headline-line-height);letter-spacing:-.025em;text-transform:var(--headline-transform);color:var(--text-main)}
-    img{max-width:100%;height:auto}
-    a{text-decoration:none;color:inherit}
-    .container{width:100%;max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    .navbar{position:fixed;top:1rem;left:0;width:100%;z-index:100;background:transparent;pointer-events:none;padding:0 1rem}
-    .nav-container{pointer-events:auto;max-width:1240px;width:calc(100% - 2rem);margin:0 auto;background:var(--navbar-bg);border-radius:var(--radius-pill);border:1px solid var(--navbar-border);box-shadow:var(--navbar-shadow);backdrop-filter:var(--backdrop-blur);padding:.42rem 1.35rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;box-sizing:border-box}
-    .nav-logo{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
-    .logo-img{width:34px;height:34px;border-radius:8px;object-fit:cover;display:block;flex-shrink:0}
-    .logo-text{font-family:var(--font-heading);font-size:1.3rem;font-weight:700;color:var(--text-main);letter-spacing:-.02em;text-transform:var(--headline-transform);white-space:nowrap}
-    .nav-menu{display:flex;align-items:center;gap:clamp(.9rem,1.6vw,1.65rem)}
-    .nav-link{font-family:var(--font-body);font-size:.9rem;font-weight:500;color:var(--text-muted);white-space:nowrap;padding:.25rem .45rem}
-    .nav-actions{display:flex;align-items:center;gap:.75rem;flex-shrink:0;margin-left:auto}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;padding:.85rem 1.85rem;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.95rem;font-weight:600;cursor:pointer;border:none;outline:none;position:relative;overflow:hidden}
-    .btn-gold,.btn-primary{background:var(--btn-gold-bg);color:var(--btn-gold-text);border:1px solid var(--btn-gold-border)}
-    .btn-secondary{background:var(--bg-surface);color:var(--text-main);border:1px solid var(--border-light);border-radius:var(--radius-sm)}
-    .btn-outline{background:transparent;color:var(--text-main);border:1px solid var(--border-light)}
-    .btn-sm{padding:.4rem .9rem;font-size:.875rem;border-radius:var(--radius-sm)}
-    .btn-lg{padding:1rem 2.25rem;font-size:1.125rem}
-    .nav-actions .btn-sm,.nav-actions .btn-gold{border-radius:9999px!important;white-space:nowrap!important;flex-shrink:0!important;padding:.42rem 1.15rem!important;font-size:.84rem!important;line-height:1.25!important}
-    .badge{display:inline-flex;align-items:center;gap:.45rem;padding:.35rem .85rem;border-radius:var(--radius-tag);font-family:var(--font-mono);font-size:.75rem;font-weight:500;letter-spacing:-.02em;text-transform:uppercase}
-    .badge-gold{background:var(--accent-mint);color:#000;border:1px solid rgba(0,0,0,.08)}
-    .hero-section{padding-top:5.6rem;padding-bottom:2.5rem;position:relative}
-    .hero-container{max-width:1100px;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:3.5rem}
-    .hero-content{display:flex;flex-direction:column;align-items:flex-start}
-    .hero-visual{display:flex;justify-content:center;align-items:center;position:relative;min-height:360px;aspect-ratio:3/4;contain:layout style}
-    [data-theme="light"] .hero-visual{background:#fff;border-radius:calc(var(--radius-lg) + 8px);padding:1.25rem;border:1px solid var(--border-light);box-shadow:0 16px 36px rgba(0,0,0,.05)}
-    [data-theme="light"] .hero-visual img{width:100%;max-width:390px;height:auto;aspect-ratio:3/4;border-radius:var(--radius-md);border:1px solid rgba(0,0,0,.08);box-shadow:0 8px 24px rgba(0,0,0,.12);display:block}
-    [data-theme="dark"] .hero-visual img{width:100%;max-width:420px;height:auto;aspect-ratio:3/4;border-radius:var(--radius-lg);border:1px solid var(--border-light);box-shadow:0 20px 50px rgba(0,0,0,.5);display:block}
-    .hero-badge{margin-bottom:.9rem}
-    .hero-title{font-family:var(--font-heading);font-size:clamp(2.4rem,4.6vw,4.2rem);font-weight:800;color:var(--text-main);text-transform:var(--headline-transform);letter-spacing:-.03em;line-height:var(--headline-line-height);margin-bottom:.85rem}
-    .hero-subtitle{font-size:1.05rem;color:var(--text-muted);max-width:500px;margin-bottom:1.35rem;line-height:1.5}
-    .hero-cta-group{display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;flex-wrap:wrap}
-    .hero-guarantee{font-size:.82rem;color:var(--text-subtle);margin-top:.5rem}
-    .shadow-gold{box-shadow:0 6px 24px rgba(0,0,0,.25)}
-    [data-theme="light"] .logo-dark-theme{display:none!important}
-    [data-theme="light"] .logo-light-theme{display:block!important}
-    [data-theme="dark"] .logo-light-theme{display:none!important}
-    [data-theme="dark"] .logo-dark-theme{display:block!important}
-    .theme-toggle-btn{width:34px!important;height:34px!important;min-width:34px!important;padding:0!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0!important;background:var(--bg-surface);color:var(--text-main);border:1px solid var(--border-light);cursor:pointer}
-    .theme-toggle-btn .toggle-text{display:none!important}
-    .nav-hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:6px}
-    .nav-hamburger span{display:block;width:22px;height:2px;background:var(--text-main);border-radius:2px}
-    .auth-btn-signin{padding:.38rem .85rem!important;font-size:.82rem!important;font-weight:500!important;border-radius:9999px!important}
-    .lang-switcher{display:flex;gap:4px}
-    .lang-btn{padding:3px 8px;font-size:.78rem;font-weight:500;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);cursor:pointer}
-    .lang-btn.active{background:var(--primary);color:var(--primary-contrast,#fff);border-color:var(--primary)}
-    .banner-visible .navbar{top:calc(1rem + 42px)}
-    @media(max-width:991px){.nav-menu{display:none!important}.nav-actions .lang-switcher,.nav-actions .auth-nav-box{display:none!important}.nav-hamburger{display:flex!important}}
-    @media(max-width:900px){.hero-container{grid-template-columns:1fr;gap:3rem}.hero-content{align-items:center;text-align:center}.hero-visual{order:-1;min-height:280px;aspect-ratio:3/4}.hero-visual img{max-width:280px}}
-    @media(max-width:768px){.nav-actions .btn-gold{display:none!important}}
-    @media(max-width:640px){.navbar{top:.5rem;padding:0 .5rem}.nav-container{padding:.4rem .8rem}.logo-text{font-size:1.05rem}.theme-toggle-btn{width:30px!important;height:30px!important;min-width:30px!important}}
-  </style>
-
-  <!-- Full stylesheets load async (already preloaded above, arrives fast) -->
+  <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v14" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/landing.css?v=20261015_v14" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="/css/design-system.css?v=20261015_v14"><link rel="stylesheet" href="/css/landing.css?v=20261015_v14"></noscript>
+  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v16">
+  <link rel="stylesheet" href="/css/landing.css?v=20261015_v16">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -1660,9 +1599,9 @@
     setTimeout(loadLegalBot, 20000);
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261015_v14" defer></script>
-  <script src="js/animations.js?v=20261015_v14" defer></script>
-  <script src="js/theme-switcher.js?v=20261015_v14" defer></script>
+  <script src="/js/lucide.min.js?v=20261015_v16" defer></script>
+  <script src="js/animations.js?v=20261015_v16" defer></script>
+  <script src="js/theme-switcher.js?v=20261015_v16" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {

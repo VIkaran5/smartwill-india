@@ -174,16 +174,8 @@
     initCTAPress();
   }
 
-  function scheduleInit() {
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(init, { timeout: 2000 });
-    } else {
-      setTimeout(init, 800);
-    }
-  }
-
   document.readyState === 'loading'
-    ? document.addEventListener('DOMContentLoaded', scheduleInit)
-    : scheduleInit();
+    ? document.addEventListener('DOMContentLoaded', init)
+    : init();
 
 })();

@@ -181,7 +181,7 @@
     });
   }
 
-  // Initialize button state and features during idle time to eliminate forced reflow during paint
+  // Initialize button state and features on DOMContentLoaded (fast, no forced reflow)
   function initThemeUI() {
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     updateToggleButtons(current);
@@ -189,18 +189,16 @@
     initMobileMenu();
   }
 
-  function scheduleThemeInit() {
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(initThemeUI, { timeout: 2500 });
-    } else {
-      setTimeout(initThemeUI, 300);
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeUI);
+  } else {
+    initThemeUI();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', scheduleThemeInit);
-  } else {
-    scheduleThemeInit();
-  }
+  window.addEventListener('load', function() {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  });
 })();
 
