@@ -51,8 +51,8 @@
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
   <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="/css/design-system.css?v=20261015_v13" as="style">
-  <link rel="preload" href="/css/landing.css?v=20261015_v13" as="style">
+  <link rel="preload" href="/css/design-system.css?v=20261015_v14" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261015_v14" as="style">
 
   <!-- Preload Hero LCP Mockup (Responsive WebP) -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
@@ -60,8 +60,8 @@
 
   <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v13">
-  <link rel="stylesheet" href="/css/landing.css?v=20261015_v13">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v14">
+  <link rel="stylesheet" href="/css/landing.css?v=20261015_v14">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -1586,27 +1586,22 @@
   <script type="module" src="js/services/auth.js"></script>
   <script type="module" src="js/pages/landing.js"></script>
   <script type="module">
+    var _lbReady = false;
+    setTimeout(function() { _lbReady = true; }, 10000);
     function loadLegalBot() {
-      if (window._legalBotLoaded) return;
+      if (window._legalBotLoaded || !_lbReady) return;
       window._legalBotLoaded = true;
       import('./js/ui/legalBot.js');
-      ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
-        window.removeEventListener(e, loadLegalBot);
-      });
     }
     ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(e) {
-      window.addEventListener(e, loadLegalBot, { passive: true, once: true });
+      window.addEventListener(e, loadLegalBot, { passive: true });
     });
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(loadLegalBot, { timeout: 18000 });
-    } else {
-      setTimeout(loadLegalBot, 18000);
-    }
+    setTimeout(loadLegalBot, 20000);
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261015_v13" defer></script>
-  <script src="js/animations.js?v=20261015_v13" defer></script>
-  <script src="js/theme-switcher.js?v=20261015_v13" defer></script>
+  <script src="/js/lucide.min.js?v=20261015_v14" defer></script>
+  <script src="js/animations.js?v=20261015_v14" defer></script>
+  <script src="js/theme-switcher.js?v=20261015_v14" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {

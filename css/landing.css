@@ -290,6 +290,9 @@
   justify-content: center;
   align-items: center;
   position: relative;
+  min-height: 360px;
+  aspect-ratio: 3 / 4;
+  contain: layout style;
 }
 
 [data-theme="light"] .hero-visual {
@@ -557,7 +560,7 @@
   }
   .hero-content { align-items: center; text-align: center; }
   .hero-subtitle { max-width: 100%; }
-  .hero-visual { order: -1; }
+  .hero-visual { order: -1; min-height: 280px; aspect-ratio: 3 / 4; }
   .hero-visual img { max-width: 280px; }
 }
 
