@@ -181,7 +181,7 @@
     });
   }
 
-  // Initialize button state and features on DOMContentLoaded (fast, no forced reflow)
+  // Initialize button state and features during idle time to eliminate forced reflow and TBT
   function initThemeUI() {
     var current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
     updateToggleButtons(current);
@@ -189,16 +189,18 @@
     initMobileMenu();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initThemeUI);
-  } else {
-    initThemeUI();
+  function scheduleThemeInit() {
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(initThemeUI, { timeout: 2500 });
+    } else {
+      setTimeout(initThemeUI, 300);
+    }
   }
 
-  window.addEventListener('load', function() {
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
-      window.lucide.createIcons();
-    }
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleThemeInit);
+  } else {
+    scheduleThemeInit();
+  }
 })();
 

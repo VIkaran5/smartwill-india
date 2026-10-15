@@ -50,18 +50,18 @@
   <meta name="twitter:description" content="India's most affordable online Will. Legally valid under Indian Succession Act 1925. Instant PDF download.">
   <meta name="twitter:image" content="https://www.smartwillindia.in/og-image.jpg">
 
-  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
-  <link rel="preload" href="/css/design-system.css?v=20261015_v16" as="style">
-  <link rel="preload" href="/css/landing.css?v=20261015_v16" as="style">
-
-  <!-- Preload Hero LCP Mockup (Responsive WebP) -->
+  <!-- Preload Hero LCP Mockup (Responsive WebP) — Prioritized for Fastest LCP Paint -->
   <link rel="preload" as="image" href="/assets/hero-will-mockup-mobile.webp" media="(max-width: 640px)" type="image/webp" fetchpriority="high">
   <link rel="preload" as="image" href="/assets/hero-will-mockup.webp" media="(min-width: 641px)" type="image/webp" fetchpriority="high">
 
+  <!-- Preload Critical Stylesheets for Faster Mobile Paint -->
+  <link rel="preload" href="/css/design-system.css?v=20261015_v17" as="style">
+  <link rel="preload" href="/css/landing.css?v=20261015_v17" as="style">
+
   <!-- Stylesheets — fonts loaded non-blocking -->
   <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v16">
-  <link rel="stylesheet" href="/css/landing.css?v=20261015_v16">
+  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v17">
+  <link rel="stylesheet" href="/css/landing.css?v=20261015_v17">
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
   <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
@@ -247,7 +247,7 @@
           <source media="(max-width: 640px)" srcset="/assets/hero-will-mockup-mobile.webp" type="image/webp">
           <source srcset="/assets/hero-will-mockup.webp" type="image/webp">
           <img
-            src="/assets/hero-will-mockup.webp"
+            src="/assets/hero-will-mockup-mobile.webp"
             alt="SmartWill India — Will Document Preview showing a legally structured document with signature lines"
             width="400"
             height="533"
@@ -1599,9 +1599,9 @@
     setTimeout(loadLegalBot, 20000);
   </script>
   <!-- nomineeCheck is already initialized by landing.js -->
-  <script src="/js/lucide.min.js?v=20261015_v16" defer></script>
-  <script src="js/animations.js?v=20261015_v16" defer></script>
-  <script src="js/theme-switcher.js?v=20261015_v16" defer></script>
+  <script src="/js/lucide.min.js?v=20261015_v17" defer></script>
+  <script src="js/animations.js?v=20261015_v17" defer></script>
+  <script src="js/theme-switcher.js?v=20261015_v17" defer></script>
   <script>
     function initIcons() {
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
