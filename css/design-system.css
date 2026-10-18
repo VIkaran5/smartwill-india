@@ -2953,29 +2953,53 @@ p, .article-content p, .article-subtitle {
 [data-theme="light"] .blog-mid-cta-text p {
   color: #475569 !important;
 }
+.article-content ul.blog-mid-cta-checks,
+ul.blog-mid-cta-checks,
 .blog-mid-cta-checks {
   list-style: none !important;
+  list-style-type: none !important;
   padding: 0 !important;
-  margin: 0 !important;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-main);
+  padding-left: 0 !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.65rem 1.15rem !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: var(--text-main) !important;
 }
+[data-theme="light"] .article-content ul.blog-mid-cta-checks,
+[data-theme="light"] ul.blog-mid-cta-checks,
 [data-theme="light"] .blog-mid-cta-checks {
-  color: #1e293b;
+  color: #1e293b !important;
 }
+.article-content ul.blog-mid-cta-checks li,
+ul.blog-mid-cta-checks li,
 .blog-mid-cta-checks li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  list-style: none !important;
+  list-style-type: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
   margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+}
+.article-content ul.blog-mid-cta-checks li::marker,
+ul.blog-mid-cta-checks li::marker,
+.blog-mid-cta-checks li::marker,
+.article-content ul.blog-mid-cta-checks li::before,
+ul.blog-mid-cta-checks li::before,
+.blog-mid-cta-checks li::before {
+  display: none !important;
+  content: none !important;
 }
 .blog-mid-cta-checks .check-icon {
-  color: #10b981;
-  font-weight: 800;
+  color: #10b981 !important;
+  font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .blog-mid-cta-action {
   display: flex;
@@ -3212,5 +3236,64 @@ p, .article-content p, .article-subtitle {
     padding: 2.25rem 1.25rem !important;
     margin: 2.5rem 0 1.5rem !important;
   }
+
+  /* Mobile In-Article Midway CTA Banner */
+  .blog-mid-cta {
+    padding: 1.35rem 1.15rem !important;
+    margin: 2rem 0 !important;
+    border-radius: 16px !important;
+  }
+  .blog-mid-cta-badge {
+    font-size: 0.72rem !important;
+    padding: 3px 10px !important;
+    margin-bottom: 0.65rem !important;
+  }
+  .blog-mid-cta-text h3 {
+    font-size: 1.15rem !important;
+    line-height: 1.32 !important;
+    margin-bottom: 0.45rem !important;
+  }
+  .blog-mid-cta-text p {
+    font-size: 0.88rem !important;
+    line-height: 1.55 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .article-content ul.blog-mid-cta-checks,
+  ul.blog-mid-cta-checks {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.45rem !important;
+    font-size: 0.82rem !important;
+    margin-bottom: 0.95rem !important;
+  }
+  .blog-mid-cta-action {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.55rem !important;
+    margin-top: 0.25rem !important;
+  }
+  .blog-mid-cta-action .btn {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 0.85rem 1rem !important;
+    font-size: 0.98rem !important;
+    white-space: normal !important;
+    border-radius: 12px !important;
+    letter-spacing: -0.01em !important;
+  }
+  .blog-mid-cta-guarantee {
+    display: block !important;
+    text-align: center !important;
+    width: 100% !important;
+    font-size: 0.74rem !important;
+    line-height: 1.4 !important;
+    color: var(--text-muted) !important;
+  }
 }
+
 

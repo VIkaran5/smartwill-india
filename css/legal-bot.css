@@ -551,3 +551,55 @@
     right: 0;
   }
 }
+
+@media (max-width: 640px) {
+  .smartwill-bot-container {
+    bottom: 16px;
+    right: 14px;
+    z-index: 840;
+  }
+
+  body.sticky-bar-active .smartwill-bot-container,
+  body:has(.mobile-sticky-bar.visible) .smartwill-bot-container {
+    bottom: 74px;
+  }
+
+  .smartwill-bot-launcher {
+    width: 48px;
+    height: 48px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 0 1.5px rgba(223, 183, 108, 0.45) !important;
+  }
+
+  .smartwill-bot-label {
+    display: none !important;
+  }
+
+  .smartwill-bot-badge-tag {
+    display: none !important;
+  }
+
+  .smartwill-bot-avatar {
+    width: 26px;
+    height: 26px;
+  }
+
+  .smartwill-bot-avatar svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .smartwill-bot-panel {
+    width: calc(100vw - 20px) !important;
+    right: -4px !important;
+    bottom: calc(100% + 12px) !important;
+    height: 520px !important;
+    max-height: 75vh !important;
+    border-radius: 20px !important;
+  }
+}
+
