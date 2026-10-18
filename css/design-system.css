@@ -2877,6 +2877,126 @@ p, .article-content p, .article-subtitle {
   border: 1px solid #fde047 !important;
 }
 
+/* 6b. High-Converting In-Article Midway CTA Banner */
+.blog-mid-cta {
+  background: linear-gradient(135deg, rgba(223, 183, 108, 0.14) 0%, rgba(223, 183, 108, 0.04) 100%) !important;
+  border: 1.5px solid rgba(223, 183, 108, 0.4) !important;
+  border-radius: 18px !important;
+  padding: 1.75rem 2rem !important;
+  margin: 3rem 0 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+  position: relative !important;
+}
+[data-theme="light"] .blog-mid-cta {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 1.5px solid #f59e0b !important;
+  box-shadow: 0 10px 28px rgba(217, 119, 6, 0.14) !important;
+}
+.blog-mid-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #dfb76c;
+  background: rgba(223, 183, 108, 0.18);
+  border: 1px solid rgba(223, 183, 108, 0.35);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 1rem;
+}
+[data-theme="light"] .blog-mid-cta-badge {
+  color: #92400e;
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.blog-mid-cta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+@media (min-width: 720px) {
+  .blog-mid-cta-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .blog-mid-cta-text {
+    flex: 1;
+    padding-right: 1.75rem;
+  }
+  .blog-mid-cta-action {
+    flex-shrink: 0;
+    text-align: center;
+  }
+}
+.blog-mid-cta-text h3 {
+  font-family: var(--font-body, 'Plus Jakarta Sans', system-ui, sans-serif) !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  color: var(--text-main) !important;
+  margin: 0 0 0.5rem 0 !important;
+  letter-spacing: -0.015em;
+  line-height: 1.3 !important;
+}
+[data-theme="light"] .blog-mid-cta-text h3 {
+  color: #0f172a !important;
+}
+.blog-mid-cta-text p {
+  font-size: 0.96rem !important;
+  line-height: 1.6 !important;
+  color: var(--text-muted) !important;
+  margin: 0 0 0.85rem 0 !important;
+}
+[data-theme="light"] .blog-mid-cta-text p {
+  color: #475569 !important;
+}
+.blog-mid-cta-checks {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+[data-theme="light"] .blog-mid-cta-checks {
+  color: #1e293b;
+}
+.blog-mid-cta-checks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 !important;
+}
+.blog-mid-cta-checks .check-icon {
+  color: #10b981;
+  font-weight: 800;
+}
+.blog-mid-cta-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.blog-mid-cta-action .btn {
+  font-weight: 700 !important;
+  padding: 0.85rem 1.6rem !important;
+  font-size: 1rem !important;
+  white-space: nowrap !important;
+}
+.blog-mid-cta-guarantee {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+[data-theme="light"] .blog-mid-cta-guarantee {
+  color: #64748b;
+}
+
 /* 7. FAQ Cards: Apple-Smooth Q&A */
 .faq-card {
   background: var(--bg-card) !important;

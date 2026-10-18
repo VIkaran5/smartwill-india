@@ -338,67 +338,6 @@
       }
     }
 
-    /* ── Mobile Sticky Floating CTA Bar ── */
-    .mobile-floating-cta {
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .mobile-floating-cta {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 850;
-        background: var(--bg-card);
-        border-top: 1px solid var(--border-light);
-        box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.16);
-        padding: 0.75rem 1rem;
-        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        transform: translateY(115%);
-        transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-        box-sizing: border-box;
-      }
-      .mobile-floating-cta.visible {
-        transform: translateY(0);
-      }
-      .mobile-cta-info {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-      .mobile-cta-price {
-        font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
-        font-size: 1.15rem;
-        font-weight: 800;
-        color: var(--accent-gold, #dfb76c);
-        line-height: 1.15;
-      }
-      [data-theme="light"] .mobile-cta-price {
-        color: #000000;
-      }
-      .mobile-cta-sub {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .mobile-cta-btn {
-        white-space: nowrap;
-        flex-shrink: 0;
-        padding: 0.55rem 1.15rem;
-        font-size: 0.85rem;
-        font-weight: 700;
-        border-radius: var(--radius-sm, 8px);
-        background: linear-gradient(135deg, #dfb76c 0%, #c99e4c 100%) !important;
-        color: #000000 !important;
-        border: 1px solid #c99e4c !important;
-      }
-    }
   </style>
 </head>
 <body>
@@ -595,6 +534,30 @@
                 To avoid this, SmartWill India's drafting engine automatically includes a designated <strong>Alternate Executor Clause</strong>, ensuring uninterrupted succession management.
               </p>
 
+              <!-- Mid-Article High-Conversion Banner -->
+              <div class="blog-mid-cta" role="complementary" aria-label="Create Your Will Online">
+                <div class="blog-mid-cta-badge">
+                  <span>⚡</span> 100% Legally Valid under Indian Succession Act, 1925
+                </div>
+                <div class="blog-mid-cta-content">
+                  <div class="blog-mid-cta-text">
+                    <h3>Appoint Primary &amp; Alternate Executors with Zero Confusion</h3>
+                    <p>Draft your legally airtight Will in 10 minutes. Automatically includes statutory executor powers, asset transmission mandates, and alternate appointments for just <strong>₹299</strong>.</p>
+                    <ul class="blog-mid-cta-checks">
+                      <li><span class="check-icon">✓</span> Built-in Alternate Executor safeguards</li>
+                      <li><span class="check-icon">✓</span> Specific asset &amp; bank account schedules</li>
+                      <li><span class="check-icon">✓</span> Instant PDF ready for signature &amp; two witnesses</li>
+                    </ul>
+                  </div>
+                  <div class="blog-mid-cta-action">
+                    <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+                      Create Your Will for ₹299 &rarr;
+                    </a>
+                    <span class="blog-mid-cta-guarantee">🔒 10 Mins &bull; 100% Private &amp; Secure</span>
+                  </div>
+                </div>
+              </div>
+
               <h2>Frequently Asked Questions</h2>
               <div class="faq-card">
                 <h3>Can an executor charge a fee for administering the estate in India?</h3>
@@ -729,26 +692,6 @@
     } else {
       initIcons();
     }
-
-    // ── Mobile Floating CTA Scroll Trigger ──
-    (function() {
-      const cta = document.getElementById('mobileFloatingCta');
-      if (!cta) return;
-      let ticking = false;
-      window.addEventListener('scroll', function() {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            if (window.scrollY > 320) {
-              cta.classList.add('visible');
-            } else {
-              cta.classList.remove('visible');
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, { passive: true });
-    })();
 
     // ── Hamburger menu toggle ──
     const hamburger = document.getElementById('navHamburger');

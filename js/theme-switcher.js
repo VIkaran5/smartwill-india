@@ -131,21 +131,23 @@
     if (!bar || bar.dataset.stickyBound === 'true') return;
     bar.dataset.stickyBound = 'true';
     var ticking = false;
+    function checkScroll() {
+      if (window.scrollY > 300) {
+        bar.classList.add('visible');
+        document.body.classList.add('sticky-bar-active');
+      } else {
+        bar.classList.remove('visible');
+        document.body.classList.remove('sticky-bar-active');
+      }
+      ticking = false;
+    }
     window.addEventListener('scroll', function() {
       if (!ticking) {
-        window.requestAnimationFrame(function() {
-          if (window.scrollY > 380) {
-            bar.classList.add('visible');
-            document.body.classList.add('sticky-bar-active');
-          } else {
-            bar.classList.remove('visible');
-            document.body.classList.remove('sticky-bar-active');
-          }
-          ticking = false;
-        });
+        window.requestAnimationFrame(checkScroll);
         ticking = true;
       }
     }, { passive: true });
+    checkScroll();
   }
 
   // Universal Mobile Hamburger Menu Guardian
@@ -190,6 +192,8 @@
   }
 
   function scheduleThemeInit() {
+    initMobileStickyBar();
+    initMobileMenu();
     if (typeof requestIdleCallback === 'function') {
       requestIdleCallback(initThemeUI, { timeout: 2500 });
     } else {

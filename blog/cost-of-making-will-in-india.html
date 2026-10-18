@@ -458,64 +458,6 @@
       }
     }
 
-    /* ── Mobile Sticky Floating CTA Bar ── */
-    .mobile-floating-cta {
-      display: none;
-    }
-    @media (max-width: 768px) {
-      .mobile-floating-cta {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 850;
-        background: var(--bg-card);
-        border-top: 1px solid var(--border-light);
-        box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.16);
-        padding: 0.75rem 1rem;
-        padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        transform: translateY(115%);
-        transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-        box-sizing: border-box;
-      }
-      .mobile-floating-cta.visible {
-        transform: translateY(0);
-      }
-      .mobile-cta-info {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-      .mobile-cta-price {
-        font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
-        font-size: 1.15rem;
-        font-weight: 800;
-        color: var(--accent-gold, #dfb76c);
-        line-height: 1.15;
-      }
-      [data-theme="light"] .mobile-cta-price {
-        color: #000000;
-      }
-      .mobile-cta-sub {
-        font-size: 0.72rem;
-        color: var(--text-muted);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .mobile-cta-btn {
-        white-space: nowrap;
-        flex-shrink: 0;
-        padding: 0.55rem 1.15rem;
-        font-size: 0.85rem;
-        font-weight: 700;
-        border-radius: var(--radius-sm, 8px);
-      }
-    }
   </style>
 </head>
 <body>
@@ -671,14 +613,28 @@
           </table>
         </div>
 
-        <!-- High-Impact Mid-Article Conversion Box -->
-        <div style="background: linear-gradient(135deg, rgba(223, 183, 108, 0.16) 0%, rgba(223, 183, 108, 0.05) 100%); border: 1.5px solid var(--accent-gold, #dfb76c); border-radius: 14px; padding: 1.75rem 2rem; margin: 2.5rem 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;">
-          <div>
-            <div style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold, #dfb76c); font-weight: 700; margin-bottom: 4px;">⚡ Instant &amp; Legally Binding</div>
-            <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Save ₹10,000+ on Lawyer Fees Today</div>
-            <p style="margin: 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;">Get an Indian Succession Act 1925 compliant Will tailored for your assets and family in under 10 minutes. 100% legal, no advocate visit needed.</p>
+        <!-- Mid-Article High-Conversion Banner -->
+        <div class="blog-mid-cta" role="complementary" aria-label="Create Your Will Online">
+          <div class="blog-mid-cta-badge">
+            <span>⚡</span> 100% Legally Valid under Indian Succession Act, 1925
           </div>
-          <a href="/app" class="btn btn-gold" style="padding: 12px 28px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 14px rgba(223,183,108,0.25);">Create Your Will for ₹299 &rarr;</a>
+          <div class="blog-mid-cta-content">
+            <div class="blog-mid-cta-text">
+              <h3>Save ₹15,000+ on Traditional Lawyer Fees</h3>
+              <p>Get a comprehensive, airtight Will customized for your assets and family in under 10 minutes. 100% legally binding, no advocate visit required.</p>
+              <ul class="blog-mid-cta-checks">
+                <li><span class="check-icon">✓</span> Free unlimited updates anytime</li>
+                <li><span class="check-icon">✓</span> Instant PDF download for print &amp; sign</li>
+                <li><span class="check-icon">✓</span> Available in English, Telugu &amp; Hindi</li>
+              </ul>
+            </div>
+            <div class="blog-mid-cta-action">
+              <a href="/app" class="btn btn-gold btn-lg shadow-gold">
+                Create Your Will for ₹299 &rarr;
+              </a>
+              <span class="blog-mid-cta-guarantee">🔒 No hidden charges &bull; 100% Private</span>
+            </div>
+          </div>
         </div>
 
         <p>As you can see, the pricing landscape varies enormously. If you have extremely complex assets, international properties, or require a sophisticated family trust, paying ₹50,000 for a High Court advocate might be justifiable. But for 95% of Indians who simply want to pass their house, bank accounts, mutual funds, and jewelry to their spouse and children, paying anything more than a few hundred rupees is an unnecessary expense.</p>
@@ -795,26 +751,6 @@
   <script src="/js/theme-switcher.js" defer></script>
   <script type="module" src="/js/ui/legalBot.js"></script>
   <script>
-    // ── Mobile Floating CTA Scroll Trigger ──
-    (function() {
-      const cta = document.getElementById('mobileFloatingCta');
-      if (!cta) return;
-      let ticking = false;
-      window.addEventListener('scroll', function() {
-        if (!ticking) {
-          window.requestAnimationFrame(function() {
-            if (window.scrollY > 320) {
-              cta.classList.add('visible');
-            } else {
-              cta.classList.remove('visible');
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, { passive: true });
-    })();
-
     // ── Hamburger Menu Toggle ──
     const hamburger = document.getElementById('navHamburger');
     const mobileMenu = document.getElementById('navMobileMenu');
