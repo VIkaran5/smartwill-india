@@ -1,8 +1,16 @@
 /* Landing Page Interactivity Module */
-import { initNomineeCheck } from '../ui/nomineeCheck.js';
 
 export function initLandingPage() {
-  initNomineeCheck();
+  // Defer nomineeCheck — not needed for first paint, was causing 434ms critical chain
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(function() {
+      import('../ui/nomineeCheck.js').then(function(m) { m.initNomineeCheck(); });
+    }, { timeout: 3000 });
+  } else {
+    setTimeout(function() {
+      import('../ui/nomineeCheck.js').then(function(m) { m.initNomineeCheck(); });
+    }, 600);
+  }
 
   const faqItems = document.querySelectorAll('.faq-item');
   
