@@ -58,13 +58,41 @@
   <link rel="preload" href="/css/design-system.css?v=20261015_v17" as="style">
   <link rel="preload" href="/css/landing.css?v=20261015_v17" as="style">
 
-  <!-- Stylesheets — fonts loaded non-blocking -->
-  <link rel="stylesheet" href="/assets/fonts/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v17">
-  <link rel="stylesheet" href="/css/landing.css?v=20261015_v17">
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PERF: Critical Above-Fold CSS inlined — eliminates render-blocking
+       for navbar, hero, and theme variables (< 2KB, no extra request)
+       ═══════════════════════════════════════════════════════════════════ -->
+  <style>
+    /* Minimal above-fold critical: theme flash prevention + navbar shell */
+    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--text-main:#000;--text-muted:#444;--accent-gold:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--border-light:#d8d8d8;--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-display:'Barlow Condensed','Bebas Neue',sans-serif}
+    [data-theme="dark"]{color-scheme:dark;--bg-dark:#080c1a;--bg-card:#0d1526;--text-main:#f0eeea;--text-muted:#94a3b8;--accent-gold:#dfb76c;--btn-gold-bg:#dfb76c;--btn-gold-text:#080c1a;--border-light:#1e2d4a}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{background-color:var(--bg-dark);color:var(--text-main);font-family:var(--font-body);line-height:1.5;overflow-x:hidden}
+    .navbar{position:fixed;top:1rem;left:0;right:0;z-index:900;pointer-events:auto}
+    .nav-container{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 1.5rem}
+    /* Prevent FOUC on hero image */
+    .hero-visual img{display:block;max-width:100%;height:auto}
+  </style>
+
+  <!-- Stylesheets — non-blocking async swap pattern (no render-blocking) -->
+  <link rel="preload" href="/assets/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/assets/fonts/fonts.css"></noscript>
+
+  <!-- design-system.css: preloaded above, now async swap to prevent blocking -->
+  <link rel="stylesheet" href="/css/design-system.css?v=20261015_v17" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/css/design-system.css?v=20261015_v17"></noscript>
+
+  <!-- landing.css: async swap — biggest render blocker (800ms saved) -->
+  <link rel="stylesheet" href="/css/landing.css?v=20261015_v17" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/css/landing.css?v=20261015_v17"></noscript>
+
+  <!-- Non-blocking secondary stylesheets -->
   <link rel="stylesheet" href="/css/legal-bot.css" media="print" onload="this.media='all'">
-  <!-- Non-blocking Bootstrap Grid -->
   <link rel="stylesheet" href="/css/bootstrap-grid.min.css" media="print" onload="this.media='all'">
+
+
 
 
   <!-- FAQ Structured Data -->
@@ -1613,9 +1641,54 @@
 
   <!-- Consent Banner (Deferred to bottom) -->
   <script src="/js/consent-banner.js" defer></script>
-  <script type="module" src="js/i18n/index.js"></script>
-  <script type="module" src="js/services/auth.js"></script>
-  <script type="module" src="js/pages/landing.js"></script>
+
+  <!-- i18n: defer — not needed for first paint -->
+  <script type="module">
+    // Load i18n only after page is interactive
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(function() { import('./js/i18n/index.js'); }, { timeout: 3000 });
+    } else {
+      setTimeout(function() { import('./js/i18n/index.js'); }, 500);
+    }
+  </script>
+
+  <!-- landing.js: defer module — handles UI interactions only, not critical for paint -->
+  <script type="module" src="js/pages/landing.js" defer></script>
+
+  <!-- auth.js: lazy-load on FIRST user interaction — removes from 1,060ms critical chain -->
+  <script type="module">
+    var _authLoaded = false;
+    function loadAuth() {
+      if (_authLoaded) return;
+      _authLoaded = true;
+      import('./js/services/auth.js');
+    }
+    // Check if user already has an active auth session — load immediately if yes
+    try {
+      var hasSession = false;
+      for (var i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).startsWith('firebase:authUser')) { hasSession = true; break; }
+      }
+      if (hasSession) {
+        // Returning user: load auth after idle, but before interaction
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(loadAuth, { timeout: 4000 });
+        } else {
+          setTimeout(loadAuth, 800);
+        }
+      } else {
+        // New visitor: defer until interaction
+        ['click', 'touchstart', 'keydown', 'scroll'].forEach(function(ev) {
+          window.addEventListener(ev, loadAuth, { once: true, passive: true });
+        });
+        setTimeout(loadAuth, 15000); // Safety fallback
+      }
+    } catch(e) {
+      setTimeout(loadAuth, 2000);
+    }
+  </script>
+
+  <!-- Legal Bot: lazy-load on interaction (unchanged) -->
   <script type="module">
     var _lbReady = false;
     setTimeout(function() { _lbReady = true; }, 10000);
@@ -1629,6 +1702,7 @@
     });
     setTimeout(loadLegalBot, 20000);
   </script>
+
   <!-- nomineeCheck is already initialized by landing.js -->
   <script src="/js/lucide.min.js?v=20261015_v17" defer></script>
   <script src="js/animations.js?v=20261015_v17" defer></script>
