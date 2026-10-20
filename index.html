@@ -64,9 +64,9 @@
        for navbar, hero, and theme variables (< 2KB, no extra request)
        ═══════════════════════════════════════════════════════════════════ -->
   <style>
-    /* Minimal above-fold critical: theme flash prevention + navbar shell + banner CLS anchor */
-    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--text-main:#000;--text-muted:#444;--accent-gold:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--border-light:#d8d8d8;--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-display:'Barlow Condensed','Bebas Neue',sans-serif;--banner-height:0px}
-    [data-theme="dark"]{color-scheme:dark;--bg-dark:#080c1a;--bg-card:#0d1526;--text-main:#f0eeea;--text-muted:#94a3b8;--accent-gold:#dfb76c;--btn-gold-bg:#dfb76c;--btn-gold-text:#080c1a;--border-light:#1e2d4a}
+    /* Minimal above-fold critical: theme flash prevention + navbar shell + banner + hero CLS anchor */
+    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--text-main:#000;--text-muted:#444;--accent-gold:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--border-light:#d8d8d8;--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-display:'Barlow Condensed','Bebas Neue',sans-serif;--banner-height:0px;--navbar-bg:rgba(255,255,255,0.92);--navbar-border:#d8d8d8}
+    [data-theme="dark"]{color-scheme:dark;--bg-dark:#080c1a;--bg-card:#0d1526;--text-main:#f0eeea;--text-muted:#94a3b8;--accent-gold:#dfb76c;--btn-gold-bg:#dfb76c;--btn-gold-text:#080c1a;--border-light:#1e2d4a;--navbar-bg:rgba(13,21,38,0.92);--navbar-border:#1e2d4a}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:100%}
     body{background-color:var(--bg-dark);color:var(--text-main);font-family:var(--font-body);line-height:1.5;overflow-x:hidden}
@@ -75,14 +75,27 @@
     @media(max-width:640px){html.banner-visible{--banner-height:72px}}
     .announce-bar{position:fixed;top:0;left:0;width:100%;z-index:200;background:#000;border-bottom:1px solid var(--border-light);padding:0.55rem 1rem;display:flex;align-items:center;justify-content:center;gap:0.75rem;font-size:0.88rem;font-weight:500;color:#fff;text-align:center;box-sizing:border-box}
     .announce-bar.hidden{display:none}
-    .navbar{position:fixed;top:1rem;left:0;right:0;z-index:900;pointer-events:auto}
+    .navbar{position:fixed;top:1rem;left:0;right:0;width:100%;z-index:900;padding:0 1rem;pointer-events:none}
     html.banner-visible .navbar{top:calc(var(--banner-height) + 0.65rem)}
     @media(max-width:768px){html.banner-visible .navbar{top:calc(var(--banner-height) + 0.4rem)}.announce-bar{font-size:0.78rem;padding:0.55rem 2.5rem}}
+    .nav-container{pointer-events:auto;max-width:1240px;width:calc(100% - 2rem);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.42rem 1.35rem;border-radius:9999px;background:var(--navbar-bg);border:1px solid var(--navbar-border);box-sizing:border-box}
+    .nav-logo{display:flex;align-items:center;gap:0.6rem}
+    .nav-menu{display:flex;align-items:center;gap:1.25rem}
+    .nav-actions{display:flex;align-items:center;gap:0.75rem;margin-left:auto}
+    .hero-section{padding-top:5.6rem;padding-bottom:2.5rem;position:relative}
     html.banner-visible .hero-section{padding-top:calc(var(--banner-height) + 6.5rem)}
     @media(max-width:768px){html.banner-visible .hero-section{padding-top:calc(var(--banner-height) + 5.5rem)}}
-    .nav-container{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 1.5rem}
-    /* Prevent FOUC on hero image */
+    .hero-container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.15fr 0.85fr;align-items:center;gap:3.5rem}
+    .hero-content{display:flex;flex-direction:column;align-items:flex-start}
+    .hero-visual{display:flex;justify-content:center;align-items:center;position:relative;min-height:360px;aspect-ratio:3/4}
     .hero-visual img{display:block;max-width:100%;height:auto}
+    @media(max-width:900px){
+      .nav-menu{display:none}
+      .hero-container{grid-template-columns:1fr;gap:3rem}
+      .hero-content{align-items:center;text-align:center}
+      .hero-visual{order:-1;min-height:280px}
+      .hero-visual img{max-width:280px}
+    }
   </style>
 
   <!-- Stylesheets — non-blocking async swap pattern (no render-blocking) -->
