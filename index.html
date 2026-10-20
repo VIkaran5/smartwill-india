@@ -64,13 +64,22 @@
        for navbar, hero, and theme variables (< 2KB, no extra request)
        ═══════════════════════════════════════════════════════════════════ -->
   <style>
-    /* Minimal above-fold critical: theme flash prevention + navbar shell */
-    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--text-main:#000;--text-muted:#444;--accent-gold:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--border-light:#d8d8d8;--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-display:'Barlow Condensed','Bebas Neue',sans-serif}
+    /* Minimal above-fold critical: theme flash prevention + navbar shell + banner CLS anchor */
+    :root,[data-theme="light"]{color-scheme:light;--bg-dark:#e5e5e5;--bg-card:#fff;--text-main:#000;--text-muted:#444;--accent-gold:#000;--btn-gold-bg:#000;--btn-gold-text:#fff;--border-light:#d8d8d8;--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-display:'Barlow Condensed','Bebas Neue',sans-serif;--banner-height:0px}
     [data-theme="dark"]{color-scheme:dark;--bg-dark:#080c1a;--bg-card:#0d1526;--text-main:#f0eeea;--text-muted:#94a3b8;--accent-gold:#dfb76c;--btn-gold-bg:#dfb76c;--btn-gold-text:#080c1a;--border-light:#1e2d4a}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{-webkit-text-size-adjust:100%}
     body{background-color:var(--bg-dark);color:var(--text-main);font-family:var(--font-body);line-height:1.5;overflow-x:hidden}
+    html.banner-visible{--banner-height:38px}
+    @media(max-width:991px){html.banner-visible{--banner-height:52px}}
+    @media(max-width:640px){html.banner-visible{--banner-height:72px}}
+    .announce-bar{position:fixed;top:0;left:0;width:100%;z-index:200;background:#000;border-bottom:1px solid var(--border-light);padding:0.55rem 1rem;display:flex;align-items:center;justify-content:center;gap:0.75rem;font-size:0.88rem;font-weight:500;color:#fff;text-align:center;box-sizing:border-box}
+    .announce-bar.hidden{display:none}
     .navbar{position:fixed;top:1rem;left:0;right:0;z-index:900;pointer-events:auto}
+    html.banner-visible .navbar{top:calc(var(--banner-height) + 0.65rem)}
+    @media(max-width:768px){html.banner-visible .navbar{top:calc(var(--banner-height) + 0.4rem)}.announce-bar{font-size:0.78rem;padding:0.55rem 2.5rem}}
+    html.banner-visible .hero-section{padding-top:calc(var(--banner-height) + 6.5rem)}
+    @media(max-width:768px){html.banner-visible .hero-section{padding-top:calc(var(--banner-height) + 5.5rem)}}
     .nav-container{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:0 1.5rem}
     /* Prevent FOUC on hero image */
     .hero-visual img{display:block;max-width:100%;height:auto}
@@ -1643,13 +1652,30 @@
   <!-- Consent Banner (Deferred to bottom) -->
   <script src="/js/consent-banner.js" defer></script>
 
-  <!-- i18n: defer — not needed for first paint -->
+  <!-- i18n: defer — not needed for first paint (English is default) -->
   <script type="module">
-    // Load i18n only after page is interactive
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(function() { import('./js/i18n/index.js'); }, { timeout: 3000 });
-    } else {
-      setTimeout(function() { import('./js/i18n/index.js'); }, 500);
+    var _i18nLoaded = false;
+    function loadI18n() {
+      if (_i18nLoaded) return;
+      _i18nLoaded = true;
+      import('./js/i18n/index.js');
+    }
+    try {
+      var savedLang = localStorage.getItem('smartwill_lang');
+      if (savedLang && savedLang !== 'en') {
+        loadI18n();
+      } else {
+        document.querySelectorAll('.lang-btn').forEach(function(b) {
+          b.addEventListener('click', loadI18n, { once: true });
+        });
+        if (typeof requestIdleCallback === 'function') {
+          requestIdleCallback(loadI18n, { timeout: 6000 });
+        } else {
+          setTimeout(loadI18n, 4000);
+        }
+      }
+    } catch(e) {
+      setTimeout(loadI18n, 4000);
     }
   </script>
 
@@ -1710,14 +1736,22 @@
   <script src="js/theme-switcher.js?v=20261015_v17" defer></script>
   <script>
     function initIcons() {
-      if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
-      }
+      if (!window.lucide || typeof window.lucide.createIcons !== 'function') return;
+      window.lucide.createIcons();
     }
+    var _iconsInit = false;
+    function triggerIcons() {
+      if (_iconsInit) return;
+      _iconsInit = true;
+      initIcons();
+    }
+    ['scroll', 'touchstart', 'mousemove', 'click', 'keydown'].forEach(function(ev) {
+      window.addEventListener(ev, triggerIcons, { once: true, passive: true });
+    });
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(initIcons, { timeout: 3500 });
+      requestIdleCallback(triggerIcons, { timeout: 5000 });
     } else {
-      setTimeout(initIcons, 1500);
+      setTimeout(triggerIcons, 3000);
     }
 
     // ── Announcement Banner Dismissal (Pure CSS variable driven, zero forced reflow) ──

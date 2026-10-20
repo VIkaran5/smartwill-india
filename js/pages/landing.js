@@ -1,17 +1,35 @@
 /* Landing Page Interactivity Module */
 
 export function initLandingPage() {
-  // Defer nomineeCheck — pulls i18n chain (1,079ms). Load only when browser is idle.
-  const scheduleNomineeCheck = () => {
+  // Lazy-load nomineeCheck via IntersectionObserver when section comes into view
+  const loadNomineeCheck = () => {
+    if (window._nomineeCheckLoaded) return;
+    window._nomineeCheckLoaded = true;
     import('../ui/nomineeCheck.js').then(({ initNomineeCheck }) => {
       initNomineeCheck();
     });
   };
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(scheduleNomineeCheck, { timeout: 3000 });
+
+  const nomineeSection = document.getElementById('nominee-check');
+  if (nomineeSection && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some(e => e.isIntersecting)) {
+        loadNomineeCheck();
+        observer.disconnect();
+      }
+    }, { rootMargin: '400px' });
+    observer.observe(nomineeSection);
   } else {
-    setTimeout(scheduleNomineeCheck, 2000);
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadNomineeCheck, { timeout: 8000 });
+    } else {
+      setTimeout(loadNomineeCheck, 4000);
+    }
   }
+
+  document.querySelectorAll('a[href*="#nominee-check"]').forEach(link => {
+    link.addEventListener('click', loadNomineeCheck, { once: true });
+  });
 
   const faqItems = document.querySelectorAll('.faq-item');
   
