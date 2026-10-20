@@ -1,8 +1,17 @@
 /* Landing Page Interactivity Module */
-import { initNomineeCheck } from '../ui/nomineeCheck.js';
 
 export function initLandingPage() {
-  initNomineeCheck();
+  // Defer nomineeCheck — pulls i18n chain (1,079ms). Load only when browser is idle.
+  const scheduleNomineeCheck = () => {
+    import('../ui/nomineeCheck.js').then(({ initNomineeCheck }) => {
+      initNomineeCheck();
+    });
+  };
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(scheduleNomineeCheck, { timeout: 3000 });
+  } else {
+    setTimeout(scheduleNomineeCheck, 2000);
+  }
 
   const faqItems = document.querySelectorAll('.faq-item');
   

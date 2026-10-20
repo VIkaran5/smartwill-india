@@ -83,8 +83,13 @@
         btn.setAttribute('title', ariaLabel);
         btn.innerHTML = newHTML;
       });
+      // PERF: Don't call lucide.createIcons() here — it causes forced reflow on all icons.
+      // index.html already schedules createIcons() via requestIdleCallback after page load.
+      // Only re-init the specific buttons we just updated, not the entire page.
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons();
+        toUpdate.forEach(function(btn) {
+          window.lucide.createIcons({ nodes: btn.querySelectorAll('[data-lucide]') });
+        });
       }
     });
   }
