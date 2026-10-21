@@ -439,18 +439,18 @@ I help you understand:
       id: 'intent_human_support',
       title: 'SmartWill సహాయ కేంద్రం',
       answer: `మా లీగల్ సపోర్ట్ టీమ్ మీకు సహాయం చేయడానికి సిద్ధంగా ఉంది!<br><br>
-📧 <strong>ఈమెయిల్:</strong> <a href="mailto:smartwillindia.help@gmail.com" class="smartwill-bot-inline-link">smartwillindia.help@gmail.com</a><br>
+📧 <strong>ఈమెయిల్:</strong> <a href="mailto:support@smartwillindia.in" class="smartwill-bot-inline-link">support@smartwillindia.in</a><br>
 ⏱️ <strong>స్పందన సమయం:</strong> 2 నుండి 4 పని గంటలలోపు.<br><br>
 దిగువ బటన్ క్లిక్ చేసి నేరుగా ఈమెయిల్ పంపవచ్చు:`,
-      cta: { text: '✉️ ఈమెయిల్ చేయండి', link: 'mailto:smartwillindia.help@gmail.com?subject=SmartWill%20Telugu%20Query', type: 'gold' }
+      cta: { text: '✉️ ఈమెయిల్ చేయండి', link: 'mailto:support@smartwillindia.in?subject=SmartWill%20Telugu%20Query', type: 'gold' }
     } : {
       id: 'intent_human_support',
       title: 'SmartWill Grievance & Legal Support Desk',
       answer: `Our dedicated legal and grievance support team is here to help you!<br><br>
-📧 <strong>Official Helpdesk:</strong> <a href="mailto:smartwillindia.help@gmail.com" class="smartwill-bot-inline-link">smartwillindia.help@gmail.com</a><br>
+📧 <strong>Official Helpdesk:</strong> <a href="mailto:support@smartwillindia.in" class="smartwill-bot-inline-link">support@smartwillindia.in</a><br>
 ⏱️ <strong>Typical Response Time:</strong> Within 2 to 4 business hours.<br><br>
 Click below to open a pre-filled email or copy our address:`,
-      cta: { text: '✉️ Email Helpdesk', link: 'mailto:smartwillindia.help@gmail.com?subject=SmartWill%20Customer%20Query', type: 'gold' }
+      cta: { text: '✉️ Email Helpdesk', link: 'mailto:support@smartwillindia.in?subject=SmartWill%20Customer%20Query', type: 'gold' }
     };
   }
 
@@ -823,12 +823,12 @@ export class SmartWillLegalBot {
       const copyBtn = e.target.closest('[data-bot-action="copy_email"]');
       if (copyBtn) {
         e.preventDefault();
-        navigator.clipboard.writeText('smartwillindia.help@gmail.com').then(() => {
+        navigator.clipboard.writeText('support@smartwillindia.in').then(() => {
           const orig = copyBtn.innerText;
           copyBtn.innerText = this.isTelugu ? '✅ కాపీ చేయబడింది!' : '✅ Copied to Clipboard!';
           setTimeout(() => { copyBtn.innerText = orig; }, 2500);
         }).catch(() => {
-          alert('SmartWill Email: smartwillindia.help@gmail.com');
+          alert('SmartWill Email: support@smartwillindia.in');
         });
       }
     });
@@ -933,7 +933,7 @@ export class SmartWillLegalBot {
         // Welcoming fallback with multiple quick paths & zero-quota email escalation
         const emailSubject = encodeURIComponent(`SmartWill Legal Query: "${text.substring(0, 40)}..."`);
         const emailBody = encodeURIComponent(`Hi SmartWill Support Team,\n\nI have a question regarding Indian Will creation:\n"${text}"\n\nPlease advise.\n\nThank you!`);
-        const mailtoUrl = `mailto:smartwillindia.help@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+        const mailtoUrl = `mailto:support@smartwillindia.in?subject=${emailSubject}&body=${emailBody}`;
 
         const fallbackHtml = te
           ? `

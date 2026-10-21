@@ -216,7 +216,7 @@ export function bindEvents() {
         setTimeout(() => { window.location.href = '/'; }, 1200);
       } catch (err) {
         console.error('Account deletion error', err);
-        showToast('error', 'Deletion Notice', 'Local data cleared. For cloud profile deletion, email smartwillindia.help@gmail.com');
+        showToast('error', 'Deletion Notice', 'Local data cleared. For cloud profile deletion, email support@smartwillindia.in');
       }
     });
   }
