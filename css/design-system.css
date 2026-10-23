@@ -537,11 +537,19 @@ a {
 
 /* Native Date Picker & Form Controls — Crisp Cross-Theme Contrast */
 input[type="date"] {
-  color-scheme: light;
+  color-scheme: light dark;
 }
 
 [data-theme="dark"] input[type="date"] {
   color-scheme: dark;
+}
+
+.dob-dropdowns-row select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

@@ -112,6 +112,7 @@ export function bindEvents() {
   setupPincodeAutoLookup();
   setupGovtIdValidation();
   setupMobileAndEmailValidation();
+  setupDobPicker();
 
   if (addAssetBtn) {
     addAssetBtn.addEventListener('click', () => {
@@ -347,6 +348,16 @@ export function populatePersonalFields(state) {
     const el = document.getElementById(id);
     if (el) el.value = p[id] || '';
   });
+
+  // Sync Date of Birth dropdowns & Govt ID inputmode from populated state
+  const dobEl = document.getElementById('dob');
+  if (dobEl && dobEl.value) {
+    dobEl.dispatchEvent(new Event('change'));
+  }
+  const typeSelect = document.getElementById('govtIdType');
+  if (typeSelect) {
+    typeSelect.dispatchEvent(new Event('change'));
+  }
 
   // Restore Pincode Verification State if already present
   const pinInput = document.getElementById('addressPincode');
@@ -633,7 +644,26 @@ function setupGovtIdValidation() {
 
   if (!typeSelect || !digitsInput) return;
 
+  function syncGovtIdInputMode() {
+    const type = typeSelect.value;
+    if (type === 'PAN Card') {
+      digitsInput.setAttribute('inputmode', 'text');
+      digitsInput.setAttribute('autocapitalize', 'characters');
+      digitsInput.placeholder = 'e.g. 719M or 482F';
+    } else if (type === 'Aadhaar Card') {
+      digitsInput.setAttribute('inputmode', 'numeric');
+      digitsInput.removeAttribute('autocapitalize');
+      digitsInput.placeholder = 'e.g. 9812';
+    } else {
+      // Voter ID, Passport
+      digitsInput.setAttribute('inputmode', 'text');
+      digitsInput.setAttribute('autocapitalize', 'characters');
+      digitsInput.placeholder = 'e.g. 1234 or 567A';
+    }
+  }
+
   function validate() {
+    syncGovtIdInputMode();
     const type = typeSelect.value;
     let val = digitsInput.value.trim();
 
@@ -656,7 +686,102 @@ function setupGovtIdValidation() {
   }
 
   digitsInput.addEventListener('input', validate);
-  typeSelect.addEventListener('change', validate);
+  typeSelect.addEventListener('change', () => {
+    syncGovtIdInputMode();
+    validate();
+  });
+  syncGovtIdInputMode();
+}
+
+function setupDobPicker() {
+  const dobInput = document.getElementById('dob');
+  const daySelect = document.getElementById('dob_day');
+  const monthSelect = document.getElementById('dob_month');
+  const yearSelect = document.getElementById('dob_year');
+  const badge = document.getElementById('dobStatusBadge');
+
+  if (!dobInput || !daySelect || !monthSelect || !yearSelect) return;
+
+  // 1. Populate Day options (01 to 31) if needed
+  if (daySelect.options.length <= 1) {
+    for (let d = 1; d <= 31; d++) {
+      const val = d < 10 ? '0' + d : String(d);
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = val;
+      daySelect.appendChild(opt);
+    }
+  }
+
+  // 2. Populate Year options (from 2008 down to 1930 — 18+ years old)
+  if (yearSelect.options.length <= 1) {
+    const currentYear = new Date().getFullYear();
+    const maxYear = currentYear - 18;
+    const minYear = 1930;
+    for (let y = maxYear; y >= minYear; y--) {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = String(y);
+      yearSelect.appendChild(opt);
+    }
+  }
+
+  function syncDropdownsToInput() {
+    const day = daySelect.value;
+    const month = monthSelect.value;
+    const year = yearSelect.value;
+
+    if (day && month && year) {
+      // Validate days in month (e.g. Feb, April, June, Sept, Nov)
+      const maxDaysInMonth = new Date(parseInt(year, 10), parseInt(month, 10), 0).getDate();
+      if (parseInt(day, 10) > maxDaysInMonth) {
+        daySelect.value = String(maxDaysInMonth < 10 ? '0' + maxDaysInMonth : maxDaysInMonth);
+      }
+      const finalDay = daySelect.value;
+      const isoDate = year + '-' + month + '-' + finalDay;
+      if (dobInput.value !== isoDate) {
+        dobInput.value = isoDate;
+        dobInput.dispatchEvent(new Event('input', { bubbles: true }));
+        dobInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (badge) {
+        const birthDate = new Date(isoDate);
+        const ageDifMs = Date.now() - birthDate.getTime();
+        const ageDate = new Date(ageDifMs);
+        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+        badge.classList.remove('hidden');
+        badge.style.color = age >= 18 ? '#10b981' : '#f43f5e';
+        badge.textContent = age >= 18
+          ? '✓ Age: ' + age + ' years (Eligible to make a Will)'
+          : '⚠️ Age: ' + age + ' years. Must be 18+ under Indian Succession Act.';
+      }
+    } else {
+      if (badge) badge.classList.add('hidden');
+    }
+  }
+
+  function syncInputToDropdowns() {
+    const val = dobInput.value ? dobInput.value.trim() : '';
+    if (val && val.includes('-')) {
+      const parts = val.split('-');
+      if (parts.length === 3) {
+        const [y, m, d] = parts;
+        if (yearSelect.value !== y) yearSelect.value = y;
+        if (monthSelect.value !== m) monthSelect.value = m;
+        if (daySelect.value !== d) daySelect.value = d;
+        syncDropdownsToInput();
+      }
+    }
+  }
+
+  daySelect.addEventListener('change', syncDropdownsToInput);
+  monthSelect.addEventListener('change', syncDropdownsToInput);
+  yearSelect.addEventListener('change', syncDropdownsToInput);
+
+  dobInput.addEventListener('change', syncInputToDropdowns);
+  dobInput.addEventListener('input', syncInputToDropdowns);
+
+  syncInputToDropdowns();
 }
 
 function setupMobileAndEmailValidation() {

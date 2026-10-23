@@ -120,6 +120,17 @@ export class WizardController {
         el.classList.add('input-error-highlight');
         setTimeout(() => el.classList.remove('input-error-highlight'), 3000);
       }
+      if (field === 'dob') {
+        ['dob_day', 'dob_month', 'dob_year'].forEach(id => {
+          const dEl = document.getElementById(id);
+          if (dEl && !dEl.value) {
+            dEl.classList.add('input-error-highlight');
+            setTimeout(() => dEl.classList.remove('input-error-highlight'), 3000);
+          }
+        });
+        const firstEmpty = ['dob_day', 'dob_month', 'dob_year'].map(id => document.getElementById(id)).find(e => e && !e.value);
+        if (firstEmpty) firstEmpty.focus();
+      }
     }
   }
 }

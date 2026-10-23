@@ -28,6 +28,7 @@ Desktop.ini
 # Build output
 dist/
 build/
+work/
 playwright-report/
 test-results/
 raw-assets/

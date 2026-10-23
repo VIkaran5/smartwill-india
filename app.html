@@ -184,7 +184,31 @@
 
             <div class="form-group">
               <label class="form-label"><span data-i18n="form.dob">Date of Birth</span> <span class="required">*</span></label>
-              <input type="date" id="dob" class="form-control" required>
+              <div class="dob-dropdowns-row" style="display:grid;grid-template-columns:1fr 1.3fr 1.2fr;gap:0.5rem;">
+                <select id="dob_day" class="form-select" aria-label="Day of Birth" style="width:100%;font-size:16px;padding:0.6rem 0.5rem;">
+                  <option value="" data-i18n="form.dobDay">Day</option>
+                </select>
+                <select id="dob_month" class="form-select" aria-label="Month of Birth" style="width:100%;font-size:16px;padding:0.6rem 0.5rem;">
+                  <option value="" data-i18n="form.dobMonth">Month</option>
+                  <option value="01">Jan (01)</option>
+                  <option value="02">Feb (02)</option>
+                  <option value="03">Mar (03)</option>
+                  <option value="04">Apr (04)</option>
+                  <option value="05">May (05)</option>
+                  <option value="06">Jun (06)</option>
+                  <option value="07">Jul (07)</option>
+                  <option value="08">Aug (08)</option>
+                  <option value="09">Sep (09)</option>
+                  <option value="10">Oct (10)</option>
+                  <option value="11">Nov (11)</option>
+                  <option value="12">Dec (12)</option>
+                </select>
+                <select id="dob_year" class="form-select" aria-label="Year of Birth" style="width:100%;font-size:16px;padding:0.6rem 0.5rem;">
+                  <option value="" data-i18n="form.dobYear">Year</option>
+                </select>
+              </div>
+              <input type="date" id="dob" class="form-control" max="2008-12-31" required style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0.01;pointer-events:none;">
+              <div id="dobStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
             </div>
 
             <div class="form-group">
@@ -218,7 +242,7 @@
           </div>
           <div class="form-group">
             <label class="form-label"><span data-i18n="form.govtIdDigits">Last 4 Digits / Chars</span> <span class="required">*</span></label>
-            <input type="text" id="govtIdDigits" class="form-control" placeholder="e.g. 9812 or 1234" maxlength="4" inputmode="numeric" required style="width:100%;font-size:16px;" data-i18n-placeholder="form.govtIdDigitsPlaceholder">
+            <input type="text" id="govtIdDigits" class="form-control" placeholder="e.g. 719M or 482F" maxlength="4" inputmode="text" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" required style="width:100%;font-size:16px;" data-i18n-placeholder="form.govtIdDigitsPlaceholder">
           </div>
           <div id="govtIdStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
 
