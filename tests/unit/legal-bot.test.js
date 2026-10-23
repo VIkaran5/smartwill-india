@@ -79,7 +79,7 @@ describe('SmartWill Legal Assistant Bot — Conversational AI & Legal Engine', (
         const result = findBestAnswer(q);
         expect(result, `Query "${q}" should provide helpdesk contact details`).not.toBeNull();
         expect(result.id).toBe('intent_human_support');
-        expect(result.answer).toContain('smartwillindia.help@gmail.com');
+        expect(result.answer).toContain('support@smartwillindia.in');
       }
     });
 
