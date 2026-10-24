@@ -8,6 +8,7 @@ import { showToast } from '../ui/toast.js';
 import { t } from '../i18n/index.js';
 import { renderAllocations } from '../render/allocations.js';
 import { renderSummary } from '../render/summary.js';
+import { trackStepCompleted, trackStepViewed } from '../services/analytics.js';
 
 export class WizardController {
   static next() {
@@ -56,6 +57,22 @@ export class WizardController {
 
     // Persist UI step update
     updateWizardUiState({ currentStep: targetStep });
+
+    // Funnel Analytics Tracking: record step completion on forward progression and step view
+    try {
+      if (targetStep > currentStepNum) {
+        const meta = {};
+        if (currentStepNum === 2 && domainState && Array.isArray(domainState.assets)) {
+          meta.asset_count = domainState.assets.length;
+        } else if (currentStepNum === 3 && domainState && Array.isArray(domainState.beneficiaries)) {
+          meta.beneficiary_count = domainState.beneficiaries.length;
+        }
+        trackStepCompleted(currentStepNum, meta);
+      }
+      trackStepViewed(targetStep);
+    } catch (analyticsErr) {
+      // Non-blocking
+    }
 
     // Smooth scroll to top of wizard on transition
     if (typeof window !== 'undefined') {

@@ -7,6 +7,7 @@ import { buildCleanAddress } from '../utils/formatters.js';
 import { currentLang, t } from '../i18n/index.js';
 import { showToast } from '../ui/toast.js';
 import { WizardController } from '../wizard/controller.js';
+import { trackDraftPreviewOpened } from '../services/analytics.js';
 
 export let activeDraftLang = 'en';
 
@@ -555,6 +556,11 @@ export function openDraftPreviewModal(preferredLang) {
   });
 
   updateDraftContainer();
+
+  // Track draft preview modal opened
+  try {
+    trackDraftPreviewOpened(activeDraftLang);
+  } catch (analyticsErr) {}
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';

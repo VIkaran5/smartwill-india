@@ -4,6 +4,7 @@ import { showToast } from '../ui/toast.js';
 import { logger } from './logger.js';
 import { t } from '../i18n/index.js';
 import { WILL_PRICE_INR } from '../config/constants.js';
+import { trackBeginCheckout } from './analytics.js';
 
 let activeOrderSession = null;
 let activeOrderTimestamp = 0;
@@ -38,6 +39,9 @@ export function initPaymentService() {
       }
 
       logger.info('Payment started');
+      try {
+        trackBeginCheckout(WILL_PRICE_INR || 299);
+      } catch (analyticsErr) {}
 
       try {
         let sessionData = getValidActiveSession();

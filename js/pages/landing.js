@@ -1,4 +1,5 @@
 /* Landing Page Interactivity Module */
+import { trackLandingCtaClick } from '../services/analytics.js';
 
 export function initLandingPage() {
   // Lazy-load nomineeCheck via IntersectionObserver when section comes into view
@@ -85,7 +86,23 @@ export function initLandingPage() {
       }
     });
   }
+
+  // Wire up CTA buttons to Google Analytics 4 Funnel
+  const ctaLinks = document.querySelectorAll('a[href="/app"], a[href="app.html"], a[href="/app.html"], a[href*="/app"]');
+  ctaLinks.forEach(link => {
+    link.addEventListener('click', function () {
+      const text = this.innerText ? this.innerText.trim() : 'Create Will';
+      const loc = this.closest('#mobileStickyBar') ? 'sticky_bar' :
+                  this.closest('.hero, .hero-section') ? 'hero' :
+                  this.closest('.pricing, .pricing-card') ? 'pricing' :
+                  this.closest('nav, header') ? 'header' : 'general';
+      try {
+        trackLandingCtaClick(text, loc);
+      } catch (e) {}
+    });
+  });
 }
+
 
 export function openSampleWillModal() {
   const modal = document.getElementById('sampleWillModal');

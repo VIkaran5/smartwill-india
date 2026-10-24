@@ -11,6 +11,7 @@ import { logger } from './services/logger.js';
 import { generateWillPDF } from './services/pdf.js';
 import { showToast } from './ui/toast.js';
 import { initReviewWidget } from './ui/reviewWidget.js';
+import { trackWizardStart } from './services/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initApp();
@@ -35,6 +36,9 @@ async function initApp() {
     initWizardHistory();
 
     bindEvents();
+
+    // Track Wizard Start Event for Drop-off Funnel Analytics
+    trackWizardStart();
 
     // Wire up the PDF download button (Step 6 post-payment state)
     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
