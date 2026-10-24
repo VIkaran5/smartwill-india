@@ -11,6 +11,13 @@
         if (sessionStorage.getItem('sw_banner_dismissed') !== '1') {
           document.documentElement.classList.add('banner-visible');
         }
+        if (window.location && window.location.search) {
+          if (window.location.search.indexOf('dev=exclude_me') !== -1 || window.location.search.indexOf('dev=disable_analytics') !== -1) {
+            localStorage.setItem('sw_exclude_analytics', 'true');
+          } else if (window.location.search.indexOf('dev=include_me') !== -1 || window.location.search.indexOf('dev=enable_analytics') !== -1) {
+            localStorage.removeItem('sw_exclude_analytics');
+          }
+        }
       } catch(e) {}
     })();
   </script>

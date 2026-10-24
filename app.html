@@ -7,6 +7,13 @@
       try {
         var t = localStorage.getItem('sw_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', t);
+        if (window.location && window.location.search) {
+          if (window.location.search.indexOf('dev=exclude_me') !== -1 || window.location.search.indexOf('dev=disable_analytics') !== -1) {
+            localStorage.setItem('sw_exclude_analytics', 'true');
+          } else if (window.location.search.indexOf('dev=include_me') !== -1 || window.location.search.indexOf('dev=enable_analytics') !== -1) {
+            localStorage.removeItem('sw_exclude_analytics');
+          }
+        }
       } catch(e) {}
     })();
   </script>

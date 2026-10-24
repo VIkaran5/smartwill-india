@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Founder Traffic Filter | SmartWill India</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #070913;
+      color: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+    }
+    .filter-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 16px;
+      padding: 2.25rem 1.75rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      text-align: center;
+    }
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0 0 0.5rem 0;
+      color: #fbbf24;
+      font-weight: 700;
+    }
+    p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.75rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin: 1.5rem 0;
+      transition: all 0.2s ease;
+    }
+    .status-excluded {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    .status-active {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+    .btn-action {
+      display: block;
+      width: 100%;
+      padding: 0.95rem 1.25rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .btn-exclude {
+      background: #10b981;
+      color: #042f2e;
+    }
+    .btn-exclude:hover {
+      background: #059669;
+      color: #fff;
+    }
+    .btn-include {
+      background: #334155;
+      color: #e2e8f0;
+    }
+    .btn-include:hover {
+      background: #475569;
+    }
+    .alert-box {
+      display: none;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #a7f3d0;
+      padding: 0.85rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .btn-home {
+      display: inline-block;
+      margin-top: 1.75rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .btn-home:hover {
+      color: #fbbf24;
+    }
+  </style>
+</head>
+<body>
+  <div class="filter-card">
+    <div class="icon">🛡️</div>
+    <h1>SmartWill Founder Traffic Filter</h1>
+    <p>Manage whether your visits, clicks, and test orders appear in Google Analytics.</p>
+
+    <div id="statusBadge" class="status-badge status-active">
+      Checking status...
+    </div>
+
+    <button id="btnExclude" class="btn-action btn-exclude" onclick="excludeDevice()">
+      🛡️ Block My Device (Exclude from Analytics)
+    </button>
+    <button id="btnInclude" class="btn-action btn-include" onclick="includeDevice()">
+      📊 Enable Analytics (Track My Device)
+    </button>
+
+    <div id="alertBox" class="alert-box"></div>
+
+    <p style="font-size: 0.8rem; color: #64748b; line-height: 1.5; margin-top: 1.25rem;">
+      When blocked, your browser permanently remembers this device in local storage. Google Analytics will <strong>never load</strong> on this phone or laptop, ensuring your customer analytics remains 100% genuine.
+    </p>
+
+    <a href="/" class="btn-home">➔ Go back to SmartWill India Home</a>
+  </div>
+
+  <script>
+    const DEV_KEY = 'sw_exclude_analytics';
+
+    function updateUI() {
+      const isExcluded = localStorage.getItem(DEV_KEY) === 'true';
+      const badge = document.getElementById('statusBadge');
+      if (isExcluded) {
+        badge.className = 'status-badge status-excluded';
+        badge.innerHTML = '✓ ACTIVE: Google Analytics is BLOCKED on this device';
+      } else {
+        badge.className = 'status-badge status-active';
+        badge.innerHTML = '⚠️ INACTIVE: Google Analytics is TRACKING this device';
+      }
+    }
+
+    function showAlert(msg) {
+      const box = document.getElementById('alertBox');
+      box.textContent = msg;
+      box.style.display = 'block';
+      setTimeout(() => { box.style.display = 'none'; }, 4000);
+    }
+
+    function excludeDevice() {
+      localStorage.setItem(DEV_KEY, 'true');
+      updateUI();
+      showAlert('✓ Success! Your device is now completely blocked from Google Analytics.');
+    }
+
+    function includeDevice() {
+      localStorage.removeItem(DEV_KEY);
+      updateUI();
+      showAlert('Analytics tracking has been re-enabled for this device.');
+    }
+
+    // Auto-apply if query parameter is present
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('dev') === 'exclude_me' || params.get('dev') === 'disable_analytics') {
+      excludeDevice();
+    } else if (params.get('dev') === 'include_me' || params.get('dev') === 'enable_analytics') {
+      includeDevice();
+    } else {
+      updateUI();
+    }
+  </script>
+</body>
+</html>

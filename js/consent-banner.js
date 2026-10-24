@@ -12,14 +12,22 @@
   try {
     if (typeof window !== 'undefined' && window.location && window.location.search) {
       const params = new URLSearchParams(window.location.search);
+      function renderNotification(title, text, color) {
+        const div = document.createElement('div');
+        div.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999999;background:#0f172a;border:2px solid ' + color + ';border-radius:12px;padding:18px 24px;color:#f8fafc;box-shadow:0 12px 35px rgba(0,0,0,0.85);max-width:92%;width:420px;text-align:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;animation:swBannerSlideUp 0.3s ease;';
+        div.innerHTML = '<div style="font-size:1.15rem;font-weight:700;color:' + color + ';margin-bottom:8px;">' + title + '</div><div style="font-size:0.9rem;color:#cbd5e1;margin-bottom:14px;line-height:1.4;">' + text + '</div><button onclick="this.parentElement.remove()" style="background:' + color + ';color:#042f2e;border:none;padding:8px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.92rem;">✓ OK, Got it!</button>';
+        const attach = () => { if (document.body && !document.getElementById('swFounderNotice')) { div.id = 'swFounderNotice'; document.body.appendChild(div); } };
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', attach); } else { attach(); }
+      }
+
       if (params.get('dev') === 'exclude_me' || params.get('dev') === 'disable_analytics') {
         localStorage.setItem(DEV_EXCLUDE_KEY, 'true');
         console.log('🛡️ [SmartWill] Founder device detected: Google Analytics disabled for this browser.');
-        alert('🛡️ SmartWill Founder Mode:\nGoogle Analytics has been DISABLED on this device.\nYour visits, clicks, and test orders will NO LONGER be tracked.');
+        renderNotification('🛡️ SmartWill Founder Mode Active', 'Google Analytics has been <strong>DISABLED</strong> on this device.<br>Your visits, clicks, and test orders will NO LONGER be tracked.', '#10b981');
       } else if (params.get('dev') === 'include_me' || params.get('dev') === 'enable_analytics') {
         localStorage.removeItem(DEV_EXCLUDE_KEY);
         console.log('🛡️ [SmartWill] Developer mode cleared: Google Analytics re-enabled.');
-        alert('🛡️ SmartWill Founder Mode:\nGoogle Analytics has been RE-ENABLED on this device.');
+        renderNotification('📊 Google Analytics Re-enabled', 'Analytics tracking has been <strong>RE-ENABLED</strong> for this device.', '#38bdf8');
       }
     }
   } catch (e) {}
