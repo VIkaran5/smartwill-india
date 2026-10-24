@@ -13,10 +13,16 @@ import {
 describe('Analytics Funnel Service', () => {
   beforeEach(() => {
     window.gtag = vi.fn();
+    if (typeof localStorage !== 'undefined') {
+      localStorage.clear();
+    }
   });
 
   afterEach(() => {
     delete window.gtag;
+    if (typeof localStorage !== 'undefined') {
+      localStorage.clear();
+    }
   });
 
   it('safely calls window.gtag with GA_MEASUREMENT_ID and custom payload', () => {
@@ -114,5 +120,11 @@ describe('Analytics Funnel Service', () => {
         quantity: 1
       }]
     });
+  });
+
+  it('completely suppresses tracking when founder exclusion flag is set', () => {
+    localStorage.setItem('sw_exclude_analytics', 'true');
+    trackEvent('founder_test_event', { sample: 'val' });
+    expect(window.gtag).not.toHaveBeenCalled();
   });
 });

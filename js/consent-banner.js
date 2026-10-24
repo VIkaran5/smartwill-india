@@ -6,8 +6,37 @@
   const CONSENT_KEY = 'sw_analytics_consent';
   const GA_ID = 'G-HGQ9XHMEWH';
   const ALT_GA_ID = 'G-1QEJP9NTE1';
+  const DEV_EXCLUDE_KEY = 'sw_exclude_analytics';
+
+  // Founder/Developer Exclusion Switch: ?dev=exclude_me or ?dev=include_me
+  try {
+    if (typeof window !== 'undefined' && window.location && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('dev') === 'exclude_me' || params.get('dev') === 'disable_analytics') {
+        localStorage.setItem(DEV_EXCLUDE_KEY, 'true');
+        console.log('🛡️ [SmartWill] Founder device detected: Google Analytics disabled for this browser.');
+        alert('🛡️ SmartWill Founder Mode:\nGoogle Analytics has been DISABLED on this device.\nYour visits, clicks, and test orders will NO LONGER be tracked.');
+      } else if (params.get('dev') === 'include_me' || params.get('dev') === 'enable_analytics') {
+        localStorage.removeItem(DEV_EXCLUDE_KEY);
+        console.log('🛡️ [SmartWill] Developer mode cleared: Google Analytics re-enabled.');
+        alert('🛡️ SmartWill Founder Mode:\nGoogle Analytics has been RE-ENABLED on this device.');
+      }
+    }
+  } catch (e) {}
+
+  function isDevExcluded() {
+    try {
+      return localStorage.getItem(DEV_EXCLUDE_KEY) === 'true';
+    } catch (e) {
+      return false;
+    }
+  }
 
   function loadGA() {
+    if (isDevExcluded()) {
+      window.gtag = function() {}; // Safe stub to prevent any reference errors
+      return;
+    }
     if (window._gaLoaded) return;
     window._gaLoaded = true;
     const script = document.createElement('script');
@@ -27,6 +56,10 @@
   window.loadGA = loadGA;
 
   function initConsent() {
+    if (isDevExcluded()) {
+      window.gtag = function() {};
+      return;
+    }
     const isApp = window.location.pathname.includes('app.html') || window.location.pathname === '/app';
     const currentConsent = localStorage.getItem(CONSENT_KEY);
 

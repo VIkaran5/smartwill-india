@@ -21,11 +21,25 @@ export const FUNNEL_STEPS = {
 };
 
 /**
+ * Checks whether this device/browser is marked as founder/developer excluded
+ */
+export function isAnalyticsExcluded() {
+  try {
+    return typeof localStorage !== 'undefined' && localStorage.getItem('sw_exclude_analytics') === 'true';
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
  * Safe wrapper around window.gtag.
  * Silently catches errors and handles environments without gtag.
  */
 export function trackEvent(eventName, params = {}) {
   try {
+    if (isAnalyticsExcluded()) {
+      return; // Founder/developer device — completely skip analytics
+    }
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       window.gtag('event', eventName, {
         send_to: GA_MEASUREMENT_ID,
