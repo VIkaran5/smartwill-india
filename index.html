@@ -117,106 +117,228 @@
 
 
 
-  <!-- FAQ Structured Data -->
+  <!-- Master Knowledge Graph Schema (AEO & Entity Grounding) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
+    "@graph": [
       {
-        "@type": "Question",
-        "name": "Is an online Will legally valid in India?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Under the Indian Succession Act, 1925, a Will is legally valid when signed by the testator and attested by two independent witnesses who are not beneficiaries. Registration is optional under Indian law. Note: certain communities governed by personal law (for example, Muslims in some testamentary matters) should consult a legal advisor to confirm applicability."
+        "@type": "Organization",
+        "@id": "https://www.smartwillindia.in/#organization",
+        "name": "SmartWill India",
+        "alternateName": ["SmartWill", "SmartWill Legaltech"],
+        "url": "https://www.smartwillindia.in/",
+        "logo": {
+          "@type": "ImageObject",
+          "@id": "https://www.smartwillindia.in/#logo",
+          "url": "https://www.smartwillindia.in/assets/favicon.png",
+          "caption": "SmartWill India Official Logo"
+        },
+        "image": "https://www.smartwillindia.in/og-image.jpg",
+        "description": "India's premier digital estate planning platform enabling citizens to draft legally valid Wills under the Indian Succession Act 1925.",
+        "email": "support@smartwillindia.in",
+        "sameAs": [
+          "https://twitter.com/smartwillindia",
+          "https://www.linkedin.com/company/smartwill-india"
+        ],
+        "areaServed": {
+          "@type": "Country",
+          "name": "India",
+          "sameAs": "https://en.wikipedia.org/wiki/India"
+        },
+        "knowsAbout": [
+          {
+            "@type": "Thing",
+            "name": "Will and testament",
+            "sameAs": "https://en.wikipedia.org/wiki/Will_and_testament"
+          },
+          {
+            "@type": "Thing",
+            "name": "Indian Succession Act, 1925",
+            "sameAs": "https://en.wikipedia.org/wiki/Indian_Succession_Act,_1925"
+          },
+          {
+            "@type": "Thing",
+            "name": "Estate Planning",
+            "sameAs": "https://en.wikipedia.org/wiki/Estate_planning"
+          }
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.smartwillindia.in/#website",
+        "url": "https://www.smartwillindia.in/",
+        "name": "SmartWill India",
+        "description": "Legally valid, court-ready online Will creation in 10 minutes for ₹299.",
+        "publisher": { "@id": "https://www.smartwillindia.in/#organization" },
+        "inLanguage": ["en-IN", "te-IN", "hi-IN"]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.smartwillindia.in/#webpage",
+        "url": "https://www.smartwillindia.in/",
+        "name": "SmartWill India — Create a Legally Valid Will Online in 10 Minutes (₹299)",
+        "isPartOf": { "@id": "https://www.smartwillindia.in/#website" },
+        "about": { "@id": "https://www.smartwillindia.in/#service" },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.smartwillindia.in/"
+            }
+          ]
         }
       },
       {
-        "@type": "Question",
-        "name": "What happens after I download the PDF?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Print the generated PDF, sign on every page in front of 2 witnesses (who also sign). Store it safely or in your SmartWill digital vault."
+        "@type": "LegalService",
+        "@id": "https://www.smartwillindia.in/#service",
+        "name": "SmartWill Online Will Creation Service",
+        "serviceType": "Estate Planning & Will Drafting",
+        "provider": { "@id": "https://www.smartwillindia.in/#organization" },
+        "url": "https://www.smartwillindia.in/",
+        "areaServed": {
+          "@type": "Country",
+          "name": "India"
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Will Drafting Services",
+          "itemListElement": [
+            {
+              "@type": "Offer",
+              "itemOffered": { "@id": "https://www.smartwillindia.in/#product" },
+              "price": "299",
+              "priceCurrency": "INR",
+              "availability": "https://schema.org/InStock",
+              "url": "https://www.smartwillindia.in/app"
+            }
+          ]
         }
       },
       {
-        "@type": "Question",
-        "name": "Can I edit my Will later if I buy new property or assets?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. You can log back into SmartWill anytime to update your assets or beneficiaries and download an updated Will for free."
+        "@type": "SoftwareApplication",
+        "@id": "https://www.smartwillindia.in/#app",
+        "name": "SmartWill Interactive Will Maker",
+        "operatingSystem": "All modern browsers (Android, iOS, Windows, macOS)",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "LegalTech / Estate Planning",
+        "url": "https://www.smartwillindia.in/app",
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR"
+        },
+        "featureList": [
+          "Section 63 Indian Succession Act compliance",
+          "Dynamic PAN & Aadhaar Indian identity verification",
+          "Immovable & Movable asset schedule",
+          "100% allocation validator",
+          "Executor and alternate executor appointment",
+          "Instant court-admissible PDF download in English, Telugu, and Hindi"
+        ]
+      },
+      {
+        "@type": "Product",
+        "@id": "https://www.smartwillindia.in/#product",
+        "name": "SmartWill India Official Legal Will Document",
+        "description": "Statutorily compliant, court-admissible Last Will and Testament drafted under Section 63 of the Indian Succession Act 1925 with dual witness attestation clauses and residuary bequests.",
+        "image": "https://www.smartwillindia.in/assets/hero-will-mockup.webp",
+        "brand": { "@id": "https://www.smartwillindia.in/#organization" },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "priceValidUntil": "2027-12-31",
+          "availability": "https://schema.org/InStock",
+          "url": "https://www.smartwillindia.in/app"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "bestRating": "5",
+          "worstRating": "1",
+          "ratingCount": "128",
+          "reviewCount": "128"
         }
       },
       {
-        "@type": "Question",
-        "name": "Are my financial asset details secure?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. SmartWill uses industry-standard encryption to protect your data in transit and at rest. Your private financial information is accessible only by you."
-        }
+        "@type": "FAQPage",
+        "@id": "https://www.smartwillindia.in/#faq",
+        "isPartOf": { "@id": "https://www.smartwillindia.in/#webpage" },
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is an online Will legally valid in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Under Section 63 of the Indian Succession Act 1925, a Will is legally valid when signed by the testator of sound mind and attested by two independent witnesses who are not beneficiaries. Registration is optional under Indian law. Note: certain communities governed by personal law (for example, Muslims in some testamentary matters) should consult a legal advisor to confirm applicability."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is stamp paper required for making a Will in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under the Indian Stamp Act 1899, a Will is completely exempt from stamp duty. There is no legal requirement to print a Will on non-judicial stamp paper. A Will printed on standard white A4 paper holds identical legal validity in court."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a nominee inherit the property if there is a Will?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under established Supreme Court of India precedents (including Sarbati Devi v. Usha Devi and Shakti Yezdani v. Jamshed Kanga), a nominee is merely a temporary custodian or trustee responsible for receiving assets from banks or societies. A legally valid Will overrides nominations, and the assets belong exclusively to the beneficiaries named in the Will."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is registration of a Will compulsory in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under Section 18 of the Registration Act 1908, the registration of a Will at the Sub-Registrar Office (SRO) is purely optional. An unregistered Will signed by the testator and two witnesses is completely legal and can be used for probate and asset transmission."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can a beneficiary sign as a witness to a Will in India?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Under Section 67 of the Indian Succession Act 1925, if a beneficiary (or their spouse) signs as an attesting witness, any bequest or legacy given to that person becomes completely void. Witnesses must always be independent third parties."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What happens after I download the PDF?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Print the generated PDF, sign on every page in front of 2 witnesses (who also sign). Store it safely or in your SmartWill digital vault."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I edit my Will later if I buy new property or assets?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. You can log back into SmartWill anytime to update your assets or beneficiaries and download an updated Will for free."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my financial asset details secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. SmartWill uses industry-standard encryption to protect your data in transit and at rest. Your private financial information is accessible only by you."
+            }
+          }
+        ]
       }
     ]
   }
   </script>
 
-  <!-- Service Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "SmartWill India — Online Will Creation",
-    "description": "Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Available in English, Telugu, and Hindi.",
-    "url": "https://www.smartwillindia.in/",
-    "serviceType": "Legal Document Preparation",
-    "areaServed": {
-      "@type": "Country",
-      "name": "India"
-    },
-    "provider": {
-      "@type": "Organization",
-      "name": "SmartWill India",
-      "url": "https://www.smartwillindia.in/"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "299",
-      "priceCurrency": "INR",
-      "availability": "https://schema.org/InStock",
-      "url": "https://www.smartwillindia.in/app"
-    }
-  }
-  </script>
-
-  <!-- Product & Review Rating Structured Data for Google Rich Snippet Stars -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "SmartWill India — Online Legal Will Maker",
-    "description": "Create a legally valid Will online in 10 minutes under the Indian Succession Act 1925. Instant PDF download in English, Telugu, & Hindi.",
-    "image": "https://www.smartwillindia.in/assets/hero-will-mockup.webp",
-    "brand": {
-      "@type": "Brand",
-      "name": "SmartWill India"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "299",
-      "priceCurrency": "INR",
-      "priceValidUntil": "2027-12-31",
-      "availability": "https://schema.org/InStock",
-      "url": "https://www.smartwillindia.in/app"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "bestRating": "5",
-      "worstRating": "1",
-      "ratingCount": "128",
-      "reviewCount": "128"
-    }
-  }
-  </script>
 </head>
 <body>
   <!-- Announcement Banner — fact-based, no fake urgency -->

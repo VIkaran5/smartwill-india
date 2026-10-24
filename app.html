@@ -64,6 +64,46 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" integrity="sha384-4gq9w/AGf72FXdNQ3Kn3EqWP7633NbCMjpYHt8YCZyXf23o2opcuAr4cif41tLrC" crossorigin="anonymous" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" integrity="sha384-xtdq4MQqPj1dB5DQsuw9O7dh4kHhMP/Wp5u8O1jiaWiou13ZfJIgiccjtVK2pBhL" crossorigin="anonymous" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" integrity="sha384-Qgqc/HETq5lqJnRDqWnV1AZGw3pgMYNUVaqLLN1W/55XuWK94epwbCQrOvdoh1Zo" crossorigin="anonymous" defer></script>
+  <!-- WebApplication Structured Data (AEO & Entity Grounding) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://www.smartwillindia.in/app#app",
+        "name": "SmartWill India Will Creation Application",
+        "url": "https://www.smartwillindia.in/app",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "LegalTech / Estate Planning",
+        "operatingSystem": "All modern web browsers",
+        "browserRequirements": "Requires JavaScript. Requires HTML5.",
+        "description": "5-step reactive legal estate planning wizard for drafting Indian Wills under Section 63 of the Indian Succession Act 1925.",
+        "creator": {
+          "@type": "Organization",
+          "@id": "https://www.smartwillindia.in/#organization",
+          "name": "SmartWill India",
+          "url": "https://www.smartwillindia.in/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "299",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "url": "https://www.smartwillindia.in/app"
+        },
+        "featureList": [
+          "Section 63 Indian Succession Act compliance",
+          "Dynamic PAN & Aadhaar Indian identity verification",
+          "Immovable & Movable asset schedule",
+          "100% allocation validator",
+          "Executor and alternate executor appointment",
+          "Instant court-admissible PDF download in English, Telugu, and Hindi"
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
   <h1 class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0">Create Your Legally Valid Will Online — SmartWill India</h1>
