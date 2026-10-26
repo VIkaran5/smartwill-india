@@ -131,6 +131,8 @@ function applyNriUiState(isNri) {
   const badgeEl = document.getElementById('complianceBadgeDisplay');
   const phoneInput = document.getElementById('phone');
   const pincodeInput = document.getElementById('addressPincode');
+  const btnVerify = document.getElementById('btnVerifyPincode');
+  const pincodeBadge = document.getElementById('pincodeStatusBadge');
   const nriNote = document.getElementById('nriPaymentModesNote');
 
   if (isNri) {
@@ -142,8 +144,19 @@ function applyNriUiState(isNri) {
     }
     if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock NRI Legal Will PDF';
     if (badgeEl) badgeEl.innerHTML = '🇮🇳 100% Legally Binding for Indian Assets under Section 63 &bull; Global NRI Compliant';
-    if (phoneInput) phoneInput.placeholder = 'e.g. +1 416 555 1234 or local number';
-    if (pincodeInput) pincodeInput.placeholder = 'e.g. M5V 2T6 or Indian PIN';
+    if (phoneInput) {
+      phoneInput.placeholder = 'e.g. +1 416 555 1234 or +971 50 123 4567';
+      phoneInput.maxLength = 20;
+    }
+    if (pincodeInput) {
+      pincodeInput.placeholder = 'e.g. M5V 2T6, 90210, SW1A 1AA';
+      pincodeInput.maxLength = 12;
+      pincodeInput.removeAttribute('pattern');
+      pincodeInput.setAttribute('inputmode', 'text');
+      pincodeInput.dataset.status = 'verified';
+    }
+    if (btnVerify) btnVerify.style.display = 'none';
+    if (pincodeBadge) pincodeBadge.classList.add('hidden');
     if (nriNote) nriNote.classList.remove('hidden');
   } else {
     if (amtEl) amtEl.textContent = '299';
@@ -151,8 +164,20 @@ function applyNriUiState(isNri) {
     if (subEl) subEl.classList.add('hidden');
     if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock Legal Will PDF';
     if (badgeEl) badgeEl.innerHTML = '🇮🇳 Aligned with Section 63, Indian Succession Act 1925 &bull; Valid in All Indian Courts';
-    if (phoneInput) phoneInput.placeholder = '10-digit mobile number';
-    if (pincodeInput) pincodeInput.placeholder = '6-digit PIN code';
+    if (phoneInput) {
+      phoneInput.placeholder = '10-digit mobile number';
+      phoneInput.maxLength = 10;
+    }
+    if (pincodeInput) {
+      pincodeInput.placeholder = '6-digit PIN code';
+      pincodeInput.maxLength = 6;
+      pincodeInput.setAttribute('pattern', '[0-9]{6}');
+      pincodeInput.setAttribute('inputmode', 'numeric');
+      if (pincodeInput.value && !/^[1-9]\d{5}$/.test(pincodeInput.value)) {
+        pincodeInput.dataset.status = '';
+      }
+    }
+    if (btnVerify) btnVerify.style.display = '';
     if (nriNote) nriNote.classList.add('hidden');
   }
 }

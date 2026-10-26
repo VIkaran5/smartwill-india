@@ -233,44 +233,87 @@ export function bindEvents() {
           return;
         }
 
+        const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || document.getElementById('nriPlanCheckbox')?.checked));
         const pinInput = document.getElementById('addressPincode');
         if (pinInput) {
-          const pinVal = pinInput.value.trim().replace(/\D/g, '');
-          if (!pinVal) {
-            showToast('warning', t('toast.mandatoryFields'));
-            pinInput.focus();
-            pinInput.classList.add('input-error-highlight');
-            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
-            return;
-          }
-          if (pinVal.startsWith('0')) {
-            showToast('warning', t('toast.pincodeZero'));
-            pinInput.focus();
-            pinInput.classList.add('input-error-highlight');
-            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
-            return;
-          }
-          if (pinVal.length !== 6) {
-            showToast('warning', t('toast.pincodeIncomplete'));
-            pinInput.focus();
-            pinInput.classList.add('input-error-highlight');
-            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
-            return;
-          }
-          if (pinInput.dataset.status === 'invalid') {
-            showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound'));
-            pinInput.focus();
-            pinInput.classList.add('input-error-highlight');
-            setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
-            return;
-          }
-          if (!pinInput.dataset.status || pinInput.dataset.status === 'incomplete') {
-            const verifiedOk = await verifyPincode(false);
-            if (!verifiedOk && pinInput.dataset.status === 'invalid') {
+          if (isNri) {
+            const pinVal = pinInput.value.trim();
+            if (!pinVal) {
+              showToast('warning', t('toast.mandatoryFields'));
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+            if (pinVal.length < 3 || pinVal.length > 12) {
+              showToast('warning', 'Please enter a valid postal / ZIP code (3-12 characters).');
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+          } else {
+            const pinVal = pinInput.value.trim().replace(/\D/g, '');
+            if (!pinVal) {
+              showToast('warning', t('toast.mandatoryFields'));
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+            if (pinVal.startsWith('0')) {
+              showToast('warning', t('toast.pincodeZero'));
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+            if (pinVal.length !== 6) {
+              showToast('warning', t('toast.pincodeIncomplete'));
+              pinInput.focus();
+              pinInput.classList.add('input-error-highlight');
+              setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+            if (pinInput.dataset.status === 'invalid') {
               showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound'));
               pinInput.focus();
               pinInput.classList.add('input-error-highlight');
               setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+            if (!pinInput.dataset.status || pinInput.dataset.status === 'incomplete') {
+              const verifiedOk = await verifyPincode(false);
+              if (!verifiedOk && pinInput.dataset.status === 'invalid') {
+                showToast('error', 'Invalid PIN Code', t('toast.pincodeNotFound'));
+                pinInput.focus();
+                pinInput.classList.add('input-error-highlight');
+                setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
+                return;
+              }
+            }
+          }
+        }
+
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+          const rawPhone = phoneInput.value.trim();
+          if (isNri) {
+            const cleanDigits = rawPhone.replace(/\D/g, '');
+            if (cleanDigits.length < 7 || cleanDigits.length > 15) {
+              showToast('warning', 'Please enter a valid international mobile number (7-15 digits).');
+              phoneInput.focus();
+              phoneInput.classList.add('input-error-highlight');
+              setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
+              return;
+            }
+          } else {
+            const cleanDigits = rawPhone.replace(/\D/g, '');
+            if (!/^[6-9]\d{9}$/.test(cleanDigits)) {
+              showToast('warning', 'Please enter a valid 10-digit Indian mobile number.');
+              phoneInput.focus();
+              phoneInput.classList.add('input-error-highlight');
+              setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
               return;
             }
           }
@@ -405,6 +448,8 @@ function updateEmailTargetDisplay() {
 }
 
 export async function verifyPincode(isExplicit = false) {
+  const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || document.getElementById('nriPlanCheckbox')?.checked));
+  if (isNri) return true;
   const pinInput = document.getElementById('addressPincode');
   const cityInput = document.getElementById('addressCity');
   const stateInput = document.getElementById('addressState');
@@ -577,6 +622,23 @@ function setupPincodeAutoLookup() {
   if (!pinInput) return;
 
   pinInput.addEventListener('input', () => {
+    const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || document.getElementById('nriPlanCheckbox')?.checked));
+    if (isNri) {
+      const raw = pinInput.value.replace(/[^a-zA-Z0-9\s-]/g, '').slice(0, 12);
+      if (pinInput.value !== raw) pinInput.value = raw;
+      pinInput.dataset.status = 'verified';
+      if (btnVerify) btnVerify.style.display = 'none';
+      if (badge) {
+        if (raw.trim().length >= 3) {
+          badge.classList.remove('hidden');
+          badge.style.color = '#10b981';
+          badge.textContent = `✓ Overseas Postal / ZIP Code: ${raw.trim()}`;
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+      return;
+    }
     const raw = pinInput.value.replace(/\D/g, '').slice(0, 6);
     if (pinInput.value !== raw) pinInput.value = raw;
 
@@ -792,6 +854,25 @@ function setupMobileAndEmailValidation() {
 
   if (phoneInput && phoneBadge) {
     phoneInput.addEventListener('input', () => {
+      const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || document.getElementById('nriPlanCheckbox')?.checked));
+      if (isNri) {
+        const val = phoneInput.value.replace(/[^\d+\s()-]/g, '').slice(0, 20);
+        if (phoneInput.value !== val) phoneInput.value = val;
+        const digitsOnly = val.replace(/\D/g, '');
+        if (!digitsOnly) {
+          phoneBadge.classList.add('hidden');
+          return;
+        }
+        phoneBadge.classList.remove('hidden');
+        if (digitsOnly.length >= 7 && digitsOnly.length <= 15) {
+          phoneBadge.style.color = '#10b981';
+          phoneBadge.textContent = `✓ Valid International Phone (${val.trim()})`;
+        } else {
+          phoneBadge.style.color = '#f43f5e';
+          phoneBadge.textContent = `⚠️ International phone must be 7–15 digits.`;
+        }
+        return;
+      }
       const val = phoneInput.value.trim().replace(/\D/g, '');
       if (phoneInput.value !== val) phoneInput.value = val;
 

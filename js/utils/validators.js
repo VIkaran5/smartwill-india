@@ -83,13 +83,19 @@ export function validateGovtId(type, digits) {
     return { isValid: valid, message: valid ? `✓ Valid Aadhaar Card (Last 4 Digits: XXXX-${cleanDigits})` : '⚠️ Aadhaar last 4 digits must contain exactly 4 numbers (0-9).' };
   } else if (type === 'PAN Card') {
     const valid = /^\d{3}[A-Z]$/.test(cleanDigits);
-    return { isValid: valid, message: valid ? `✓ Valid PAN Card Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ PAN Card last 4 characters must be 3 numbers + 1 letter (e.g. 7190M).' };
-  } else if (type === 'Voter ID') {
-    const valid = /^\d{4}$/.test(cleanDigits);
-    return { isValid: valid, message: valid ? `✓ Valid Voter ID (EPIC) Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ Voter ID last 4 digits must contain exactly 4 numbers (0-9).' };
+    return { isValid: valid, message: valid ? `✓ Valid PAN Card Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ PAN Card last 4 characters must be 3 numbers + 1 letter (e.g. 719M).' };
   } else if (type === 'Passport') {
-    const valid = /^\d{4}$/.test(cleanDigits);
-    return { isValid: valid, message: valid ? `✓ Valid Passport Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ Passport last 4 digits must contain exactly 4 numbers (0-9).' };
+    const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);
+    return { isValid: valid, message: valid ? `✓ Valid Passport Last 4 Digits/Chars (XXXX-${cleanDigits})` : '⚠️ Passport last 4 characters must be 4 numbers or letters (e.g. 1234 or 567A).' };
+  } else if (type === 'OCI Card') {
+    const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);
+    return { isValid: valid, message: valid ? `✓ Valid OCI Card Last 4 Digits/Chars (XXXX-${cleanDigits})` : '⚠️ OCI Card last 4 characters must be 4 numbers or letters.' };
+  } else if (type === 'Driving License') {
+    const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);
+    return { isValid: valid, message: valid ? `✓ Valid Driving License Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ Driving License last 4 characters must be 4 numbers or letters.' };
+  } else if (type === 'Voter ID') {
+    const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);
+    return { isValid: valid, message: valid ? `✓ Valid Voter ID (EPIC) Last 4 Digits (XXXX-${cleanDigits})` : '⚠️ Voter ID last 4 characters must be 4 numbers or letters.' };
   }
 
   const valid = /^[A-Z0-9]{4}$/.test(cleanDigits);

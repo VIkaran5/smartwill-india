@@ -81,8 +81,7 @@ export const STEP_GUARDS = {
       let valid = true;
       if (idType === 'Aadhaar Card' && !/^\d{4}$/.test(digits)) valid = false;
       else if (idType === 'PAN Card' && !/^\d{3}[a-zA-Z]$/.test(digits)) valid = false;
-      else if (idType === 'Passport' && !/^\d{4}$/.test(digits)) valid = false;
-      else if (idType === 'Voter ID' && !/^\d{4}$/.test(digits)) valid = false;
+      else if ((idType === 'Passport' || idType === 'OCI Card' || idType === 'Driving License' || idType === 'Voter ID') && !/^[a-zA-Z0-9]{4}$/.test(digits)) valid = false;
       else if (!/^[a-zA-Z0-9]{4}$/.test(digits)) valid = false;
 
       if (!valid) {
