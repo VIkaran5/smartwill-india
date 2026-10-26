@@ -23,7 +23,7 @@ if ((!botToken || !chatId) && fs.existsSync(envFile)) {
 const TELEGRAM_BOT_TOKEN = botToken || Buffer.from('ODc3NDM2NTYxNTpBQUV3VjhZVEMzSXotMXNrLVFTTDdRTjhBRTBpcW1kSVZlTQ==', 'base64').toString('utf8');
 const TELEGRAM_CHAT_ID = chatId || '1579449701';
 
-async function sendTelegramMessage(text) {
+async function sendSingleMessage(text) {
   const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   const response = await fetch(url, {
     method: 'POST',
@@ -35,21 +35,45 @@ async function sendTelegramMessage(text) {
     })
   });
   const data = await response.json();
+  if (!data.ok) {
+    console.error('Telegram API error:', data);
+  }
   return data;
+}
+
+// Safe sender that splits long text into chunks < 3500 chars
+async function sendTelegramMessage(text) {
+  const MAX_CHUNK = 3500;
+  if (text.length <= MAX_CHUNK) {
+    return sendSingleMessage(text);
+  }
+
+  // Split into chunks
+  let remaining = text;
+  let lastRes = null;
+  while (remaining.length > 0) {
+    const chunk = remaining.slice(0, MAX_CHUNK);
+    remaining = remaining.slice(MAX_CHUNK);
+    lastRes = await sendSingleMessage(chunk);
+    // 500ms delay between consecutive chunks to maintain ordering
+    await new Promise(r => setTimeout(r, 500));
+  }
+  return lastRes;
 }
 
 async function run() {
   const postPath = path.join(__dirname, '..', 'marketing', 'ready_to_post.md');
   if (!fs.existsSync(postPath)) {
     console.error('ready_to_post.md not found');
-    return;
+    process.exit(1);
   }
   const content = fs.readFileSync(postPath, 'utf8');
 
-  // Split into Quora and X sections
-  const parts = content.split('## ⚡ Thursday Post (X / Twitter)');
-  const quoraSection = parts[0].trim();
-  const twitterSection = ('## ⚡ Thursday Post (X / Twitter)' + (parts[1] || '')).trim();
+  // Split sections
+  const sections = content.split(/\n(?=## )/);
+  const quoraSection = sections.find(s => s.includes('Tuesday Post (Quora)')) || '';
+  const twitterSection = sections.find(s => s.includes('Thursday Post (X / Twitter)')) || '';
+  const nriSection = sections.find(s => s.includes('NRI / Cross-Border Succession')) || '';
 
   // Determine current day in IST (UTC + 5:30)
   const nowUtc = new Date();
@@ -64,22 +88,35 @@ async function run() {
 
   if (isTuesday) {
     console.log('Dispatching Tuesday Quora Post...');
-    const res = await sendTelegramMessage(`🔔 *SMARTWILL TUESDAY 8:00 PM CONTENT DROP*\n\n` + quoraSection);
+    const res = await sendTelegramMessage(`🔔 *SMARTWILL TUESDAY 8:00 PM CONTENT DROP*\n\n` + quoraSection.trim());
     console.log('Quora result:', res.ok ? 'SUCCESS' : res);
   }
 
   if (isThursday) {
     console.log('Dispatching Thursday X (Twitter) Post...');
-    const res = await sendTelegramMessage(`⚡ *SMARTWILL THURSDAY 8:00 PM CONTENT DROP*\n\n` + twitterSection);
+    const res = await sendTelegramMessage(`⚡ *SMARTWILL THURSDAY 8:00 PM CONTENT DROP*\n\n` + twitterSection.trim());
     console.log('Twitter result:', res.ok ? 'SUCCESS' : res);
   }
 
-  // Fallback if triggered on other days manually without --all
+  // If triggered manually on other days without --all, send the pack as individual section messages
   if (!isTuesday && !isThursday) {
-    console.log('Manual trigger on non-scheduled day — sending current ready-to-post pack...');
-    const res = await sendTelegramMessage(`📢 *SMARTWILL READY-TO-POST CONTENT PACK*\n\n` + content);
-    console.log('Fallback result:', res.ok ? 'SUCCESS' : res);
+    console.log('Manual trigger on non-scheduled day — sending current ready-to-post pack section by section...');
+    if (quoraSection) {
+      await sendTelegramMessage(`🔔 *SMARTWILL TUESDAY DROP (Quora)*\n\n` + quoraSection.trim());
+      await new Promise(r => setTimeout(r, 800));
+    }
+    if (twitterSection) {
+      await sendTelegramMessage(`⚡ *SMARTWILL THURSDAY DROP (X / Twitter)*\n\n` + twitterSection.trim());
+      await new Promise(r => setTimeout(r, 800));
+    }
+    if (nriSection) {
+      await sendTelegramMessage(`🌍 *SMARTWILL BONUS DROP (NRI & Cross-Border)*\n\n` + nriSection.trim());
+    }
+    console.log('Manual multi-section dispatch complete!');
   }
 }
 
-run().catch(console.error);
+run().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
