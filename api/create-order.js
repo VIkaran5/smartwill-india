@@ -4,7 +4,6 @@ const { validateCreateOrderPayload } = require('./validation/createOrderSchema')
 const { calculateReferralDiscount } = require('./referral-helpers');
 
 const WILL_PRICE_INR = 299;
-const NRI_PRICE_INR = 999;
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
 
 module.exports = async function handler(req, res) {
@@ -40,7 +39,7 @@ module.exports = async function handler(req, res) {
 
   const { name: customerName, phone: customerPhone, email: bodyEmail, plan } = validation.data;
   const isNri = plan === 'nri';
-  const targetBasePrice = isNri ? NRI_PRICE_INR : WILL_PRICE_INR;
+  const targetBasePrice = WILL_PRICE_INR; // Growth-first: flat ₹299 for all users (Domestic & NRI)
   const finalEmail = auth.email || bodyEmail || 'customer@smartwill.in';
   const requestId = generateRequestId();
 

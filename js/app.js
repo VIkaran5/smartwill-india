@@ -134,10 +134,13 @@ function applyNriUiState(isNri) {
   const nriNote = document.getElementById('nriPaymentModesNote');
 
   if (isNri) {
-    if (amtEl) amtEl.textContent = '999';
-    if (strikeEl) strikeEl.textContent = '₹14,999';
-    if (subEl) subEl.classList.remove('hidden');
-    if (payBtnText) payBtnText.textContent = 'Pay ₹999 & Unlock Legal Will PDF';
+    if (amtEl) amtEl.textContent = '299';
+    if (strikeEl) strikeEl.textContent = '₹4,999';
+    if (subEl) {
+      subEl.textContent = '~$3.50 USD • ~$4.90 CAD • Global NRI Compliant (Cross-Border Clauses Included Free)';
+      subEl.classList.remove('hidden');
+    }
+    if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock NRI Legal Will PDF';
     if (badgeEl) badgeEl.innerHTML = '🇮🇳 100% Legally Binding for Indian Assets under Section 63 &bull; Global NRI Compliant';
     if (phoneInput) phoneInput.placeholder = 'e.g. +1 416 555 1234 or local number';
     if (pincodeInput) pincodeInput.placeholder = 'e.g. M5V 2T6 or Indian PIN';

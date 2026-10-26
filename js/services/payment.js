@@ -33,7 +33,7 @@ export function initPaymentService() {
       const customerPhone = /^[6-9]\d{9}$/.test(rawPhone) ? rawPhone : '9999999999';
       const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')) || Boolean(state?.isNri);
       const plan = isNri ? 'nri' : 'standard';
-      const orderPrice = isNri ? 999 : (WILL_PRICE_INR || 299);
+      const orderPrice = WILL_PRICE_INR || 299; // Growth-first: flat ₹299 for all users
       const uid = (typeof window.currentUser !== 'undefined' && window.currentUser) ? window.currentUser.uid : null;
       if (!uid) {
         resetPayNowBtn();
@@ -157,7 +157,7 @@ export function resetPayNowBtn() {
   if (payNowBtn) {
     payNowBtn.disabled = false;
     const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri'));
-    const btnText = isNri ? 'Pay ₹999 & Unlock Legal Will PDF' : t('form.payBtn');
+    const btnText = isNri ? 'Pay ₹299 & Unlock NRI Legal Will PDF' : t('form.payBtn');
     payNowBtn.innerHTML = `<i data-lucide="lock"></i> <span data-i18n="form.payBtn">${btnText}</span>`;
     if (window.lucide) window.lucide.createIcons();
   }

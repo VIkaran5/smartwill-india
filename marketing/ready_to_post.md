@@ -66,3 +66,30 @@ Protect your family before it's too late: https://www.smartwillindia.in
 
 #PersonalFinance #EstatePlanning #MoneyMatters #India #SmartWill
 ```
+
+
+---
+
+## 🌍 Bonus Post: NRI / Cross-Border Succession (Reddit & Quora)
+
+* **Platform:** Reddit (`r/nri`, `r/IndiaInvestments`, `r/LegalAdviceIndia`) / Quora
+* **Direct Links:**
+  1. 👉 [Can an NRI make a Will for property in India without travelling?](https://www.quora.com/Can-an-NRI-make-a-will-for-property-in-India)
+  2. 👉 [Is a foreign Will valid for Indian property?](https://www.quora.com/Is-a-foreign-will-valid-in-India)
+* **Action:** Copy and paste this exact advice:
+
+```text
+If you are an NRI living in the USA, Canada, UK, UAE, or Singapore and own flat/land/FDs in India, here is a critical legal reality:
+
+Under the Private International Law doctrine of 'Lex Situs' and Section 5 of the Indian Succession Act 1925, succession to immovable property situated in India is strictly governed by the law of India — NOT the law of your country of residence.
+
+If you only have a local foreign Will (e.g. drafted in California or Ontario):
+1. Foreign Wills cannot be directly implemented by Indian sub-registrars or banks.
+2. Your family will be forced to apply for an 'Ancillary Probate' or Letters of Administration in an Indian District Court, taking 1.5 to 3 years and ₹1.5L–₹3L in legal fees.
+
+How to do it properly from abroad:
+• Draft an India-specific Will covering your Indian immovable & movable assets (NRE/NRO accounts).
+• Under Section 63, you can sign it overseas in the presence of 2 independent witnesses (colleagues/friends over 18 who aren't beneficiaries).
+• Registration at the Sub-Registrar Office in India is purely optional under Section 18 of the Registration Act.
+• To avoid paying $500–$1,000 to cross-border law firms, you can generate a court-ready, Section 63 compliant Will online in 10 minutes for just ₹299 (~$3.50 USD) at SmartWill India: https://www.smartwillindia.in/nri-will
+```
