@@ -1,0 +1,26 @@
+name: Weekly Content Delivery to Telegram
+
+on:
+  schedule:
+    # 14:30 UTC = 20:00 (8:00 PM) IST every Tuesday (2) and Thursday (4)
+    - cron: '30 14 * * 2,4'
+  workflow_dispatch: # Allows manual trigger from GitHub UI anytime
+
+jobs:
+  deliver-content:
+    name: Deliver Ready-to-Post Content to Founder's Phone
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Telegram Content Dispatcher
+        run: node scripts/send-telegram-post.cjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

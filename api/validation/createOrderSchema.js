@@ -11,12 +11,16 @@ const createOrderSchema = z.object({
     .optional()
     .default('SmartWill Customer'),
   phone: z.string()
-    .transform(val => String(val || '').replace(/\D/g, ''))
-    // Bug #5 Fix: Also enforce Indian mobile leading digit rule [6-9].
-    // The frontend validator (isValidIndianPhone) does this, but without
-    // it here Cashfree rejects the order with a cryptic error.
-    .refine(val => /^[6-9]\d{9}$/.test(val), { message: 'Phone number must be a valid 10-digit Indian mobile number starting with 6-9' }),
-  email: z.string().email('Invalid email address').optional()
+    .transform(val => {
+      const digits = String(val || '').replace(/\D/g, '');
+      // If valid 10-digit Indian mobile starting with 6-9, retain it
+      if (/^[6-9]\d{9}$/.test(digits)) return digits;
+      // For international / NRI numbers, default to safe Cashfree customer phone
+      return '9999999999';
+    })
+    .default('9999999999'),
+  email: z.string().email('Invalid email address').optional(),
+  plan: z.enum(['standard', 'nri']).optional().default('standard')
 });
 
 function validateCreateOrderPayload(data) {

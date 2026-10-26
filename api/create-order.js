@@ -4,6 +4,7 @@ const { validateCreateOrderPayload } = require('./validation/createOrderSchema')
 const { calculateReferralDiscount } = require('./referral-helpers');
 
 const WILL_PRICE_INR = 299;
+const NRI_PRICE_INR = 999;
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
 
 module.exports = async function handler(req, res) {
@@ -37,7 +38,9 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  const { name: customerName, phone: customerPhone, email: bodyEmail } = validation.data;
+  const { name: customerName, phone: customerPhone, email: bodyEmail, plan } = validation.data;
+  const isNri = plan === 'nri';
+  const targetBasePrice = isNri ? NRI_PRICE_INR : WILL_PRICE_INR;
   const finalEmail = auth.email || bodyEmail || 'customer@smartwill.in';
   const requestId = generateRequestId();
 
@@ -53,7 +56,7 @@ module.exports = async function handler(req, res) {
         const existingOrdersSnap = await db.collection('orders')
           .where('uid', '==', auth.uid)
           .where('status', '==', 'PENDING')
-          .where('amount', '==', WILL_PRICE_INR)
+          .where('amount', '==', targetBasePrice)
           .where('currency', '==', 'INR')
           .limit(3)
           .get();
@@ -95,7 +98,7 @@ module.exports = async function handler(req, res) {
     // calculateReferralDiscount in referral-helpers.js is the single source of
     // truth — create-order.js does not contain a copy of the discount math.
     let creditRedeemed = 0;
-    let expectedAmount = WILL_PRICE_INR; // default: full price, no credit
+    let expectedAmount = targetBasePrice; // default: full price, no credit
     let referredBy = null;
 
     if (db) {
@@ -115,7 +118,7 @@ module.exports = async function handler(req, res) {
         const creditDoc = await db.collection('referralCredits').doc(auth.uid).get();
         if (creditDoc.exists) {
           const availableBalance = (creditDoc.data() || {}).balance || 0;
-          ({ creditRedeemed, expectedAmount } = calculateReferralDiscount(availableBalance, WILL_PRICE_INR));
+          ({ creditRedeemed, expectedAmount } = calculateReferralDiscount(availableBalance, targetBasePrice));
         }
       } catch (err) {
         console.warn(`[Referral Check Note] requestId=${requestId}, error=${err.message}`);
@@ -167,6 +170,7 @@ module.exports = async function handler(req, res) {
         email: finalEmail,
         amount: expectedAmount,
         expectedAmount: expectedAmount,
+        plan: plan || 'standard',
         creditRedeemed: creditRedeemed,
         referredBy: referredBy,
         currency: 'INR',

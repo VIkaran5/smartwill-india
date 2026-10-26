@@ -30,7 +30,10 @@ export function initPaymentService() {
       const customerName = personal.fullName || 'SmartWill Customer';
       const customerEmail = personal.email || 'customer@smartwill.in';
       const rawPhone = (personal.phone || '9999999999').replace(/\D/g, '');
-      const customerPhone = rawPhone.length === 10 ? rawPhone : '9999999999';
+      const customerPhone = /^[6-9]\d{9}$/.test(rawPhone) ? rawPhone : '9999999999';
+      const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')) || Boolean(state?.isNri);
+      const plan = isNri ? 'nri' : 'standard';
+      const orderPrice = isNri ? 999 : (WILL_PRICE_INR || 299);
       const uid = (typeof window.currentUser !== 'undefined' && window.currentUser) ? window.currentUser.uid : null;
       if (!uid) {
         resetPayNowBtn();
@@ -40,14 +43,14 @@ export function initPaymentService() {
 
       logger.info('Payment started');
       try {
-        trackBeginCheckout(WILL_PRICE_INR || 299);
+        trackBeginCheckout(orderPrice);
       } catch (analyticsErr) {}
 
       try {
         let sessionData = getValidActiveSession();
 
         if (!sessionData) {
-          sessionData = await createCashfreeOrderSession(customerName, customerEmail, customerPhone, uid);
+          sessionData = await createCashfreeOrderSession(customerName, customerEmail, customerPhone, uid, plan);
           if (sessionData && sessionData.payment_session_id) {
             activeOrderSession = sessionData;
             activeOrderTimestamp = Date.now();
@@ -153,7 +156,9 @@ export function resetPayNowBtn() {
   const payNowBtn = document.getElementById('payNowBtn');
   if (payNowBtn) {
     payNowBtn.disabled = false;
-    payNowBtn.innerHTML = `<i data-lucide="lock"></i> <span data-i18n="form.payBtn">${t('form.payBtn')}</span>`;
+    const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri'));
+    const btnText = isNri ? 'Pay ₹999 & Unlock Legal Will PDF' : t('form.payBtn');
+    payNowBtn.innerHTML = `<i data-lucide="lock"></i> <span data-i18n="form.payBtn">${btnText}</span>`;
     if (window.lucide) window.lucide.createIcons();
   }
 }
@@ -180,13 +185,13 @@ function getApiBaseUrl() {
   return '';
 }
 
-export async function createCashfreeOrderSession(name, email, phone, uid) {
+export async function createCashfreeOrderSession(name, email, phone, uid, plan = 'standard') {
   try {
     const headers = await getAuthHeaders();
     const apiRes = await fetch(`${getApiBaseUrl()}/api/create-order`, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify({ name, email, phone, uid })
+      body: JSON.stringify({ name, email, phone, uid, plan })
     });
 
     const rawText = await apiRes.text();

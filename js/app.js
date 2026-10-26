@@ -89,6 +89,9 @@ async function initApp() {
 
     // Initialize In-App Review & Rating Widget
     initReviewWidget();
+
+    // Initialize NRI Mode & Pricing Sync
+    initNriMode();
   } catch (error) {
     logger.error('Failed to initialize application', error);
   }
@@ -98,3 +101,55 @@ async function initApp() {
 window.goToStep = goToStep;
 window.validateCurrentStep = validateCurrentStep;
 window.generateWillPDF = generateWillPDF;
+
+function initNriMode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('plan') === 'nri') {
+    sessionStorage.setItem('sw_nri_plan', 'true');
+  }
+  const isNri = sessionStorage.getItem('sw_nri_plan') === 'true';
+  const nriCheckbox = document.getElementById('nriPlanCheckbox');
+  if (nriCheckbox) {
+    nriCheckbox.checked = isNri;
+    nriCheckbox.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        sessionStorage.setItem('sw_nri_plan', 'true');
+      } else {
+        sessionStorage.removeItem('sw_nri_plan');
+      }
+      applyNriUiState(e.target.checked);
+    });
+  }
+  applyNriUiState(isNri);
+}
+
+function applyNriUiState(isNri) {
+  const amtEl = document.getElementById('checkoutAmountDisplay');
+  const strikeEl = document.getElementById('checkoutStrikeDisplay');
+  const subEl = document.getElementById('nriPriceSubtext');
+  const payBtnText = document.getElementById('payBtnText');
+  const badgeEl = document.getElementById('complianceBadgeDisplay');
+  const phoneInput = document.getElementById('phone');
+  const pincodeInput = document.getElementById('addressPincode');
+  const nriNote = document.getElementById('nriPaymentModesNote');
+
+  if (isNri) {
+    if (amtEl) amtEl.textContent = '999';
+    if (strikeEl) strikeEl.textContent = '₹14,999';
+    if (subEl) subEl.classList.remove('hidden');
+    if (payBtnText) payBtnText.textContent = 'Pay ₹999 & Unlock Legal Will PDF';
+    if (badgeEl) badgeEl.innerHTML = '🇮🇳 100% Legally Binding for Indian Assets under Section 63 &bull; Global NRI Compliant';
+    if (phoneInput) phoneInput.placeholder = 'e.g. +1 416 555 1234 or local number';
+    if (pincodeInput) pincodeInput.placeholder = 'e.g. M5V 2T6 or Indian PIN';
+    if (nriNote) nriNote.classList.remove('hidden');
+  } else {
+    if (amtEl) amtEl.textContent = '299';
+    if (strikeEl) strikeEl.textContent = '₹4,999';
+    if (subEl) subEl.classList.add('hidden');
+    if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock Legal Will PDF';
+    if (badgeEl) badgeEl.innerHTML = '🇮🇳 Aligned with Section 63, Indian Succession Act 1925 &bull; Valid in All Indian Courts';
+    if (phoneInput) phoneInput.placeholder = '10-digit mobile number';
+    if (pincodeInput) pincodeInput.placeholder = '6-digit PIN code';
+    if (nriNote) nriNote.classList.add('hidden');
+  }
+}

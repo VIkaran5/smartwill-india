@@ -41,8 +41,17 @@ export const STEP_GUARDS = {
       return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: missingField };
     }
 
-    if (!isValidIndianPhone(phone)) {
-      return { ok: false, code: GUARD_ERROR_CODES.INVALID_PHONE, field: 'phone' };
+    const isNri = Boolean(p.isNri || domainState?.isNri || (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')));
+
+    if (isNri) {
+      const cleanPhone = phone.replace(/\D/g, '');
+      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+        return { ok: false, code: GUARD_ERROR_CODES.INVALID_PHONE, field: 'phone' };
+      }
+    } else {
+      if (!isValidIndianPhone(phone)) {
+        return { ok: false, code: GUARD_ERROR_CODES.INVALID_PHONE, field: 'phone' };
+      }
     }
 
     const typoWarn = getEmailTypoWarning(email);
@@ -54,12 +63,18 @@ export const STEP_GUARDS = {
       return { ok: false, code: GUARD_ERROR_CODES.INVALID_EMAIL, field: 'email' };
     }
 
-    if (!isValidIndianPincode(pincode)) {
-      return { ok: false, code: GUARD_ERROR_CODES.INVALID_PINCODE, field: 'addressPincode' };
-    }
+    if (isNri) {
+      if (!pincode || pincode.length < 3 || pincode.length > 12) {
+        return { ok: false, code: GUARD_ERROR_CODES.INVALID_PINCODE, field: 'addressPincode' };
+      }
+    } else {
+      if (!isValidIndianPincode(pincode)) {
+        return { ok: false, code: GUARD_ERROR_CODES.INVALID_PINCODE, field: 'addressPincode' };
+      }
 
-    if (p.pincodeValid === false || p.pincodeStatus === 'invalid') {
-      return { ok: false, code: GUARD_ERROR_CODES.PINCODE_NOT_FOUND, field: 'addressPincode' };
+      if (p.pincodeValid === false || p.pincodeStatus === 'invalid') {
+        return { ok: false, code: GUARD_ERROR_CODES.PINCODE_NOT_FOUND, field: 'addressPincode' };
+      }
     }
 
     if (digits) {
