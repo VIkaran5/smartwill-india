@@ -2,6 +2,7 @@
   "buildCommand": "node scripts/build-dist.cjs",
   "outputDirectory": "dist",
   "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/assets/(.*)",
