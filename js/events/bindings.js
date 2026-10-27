@@ -245,8 +245,8 @@ export function bindEvents() {
               setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
               return;
             }
-            if (pinVal.length < 3 || pinVal.length > 12) {
-              showToast('warning', 'Please enter a valid postal / ZIP code (3-12 characters).');
+            if (!/^(?=.*\d)[a-zA-Z0-9\s-]{3,10}$/.test(pinVal)) {
+              showToast('warning', 'Please enter a valid postal / ZIP code with digits (e.g. 90210, M5V 2T6, SW1A 1AA).');
               pinInput.focus();
               pinInput.classList.add('input-error-highlight');
               setTimeout(() => pinInput.classList.remove('input-error-highlight'), 3000);
@@ -299,9 +299,10 @@ export function bindEvents() {
         if (phoneInput) {
           const rawPhone = phoneInput.value.trim();
           if (isNri) {
+            const hasPlus = rawPhone.startsWith('+');
             const cleanDigits = rawPhone.replace(/\D/g, '');
-            if (cleanDigits.length < 7 || cleanDigits.length > 15) {
-              showToast('warning', 'Please enter a valid international mobile number (7-15 digits).');
+            if (!hasPlus || cleanDigits.length < 7 || cleanDigits.length > 15) {
+              showToast('warning', 'Please enter your international number with country code starting with + (e.g. +1 416 555 1234 or +971 50 123 4567).');
               phoneInput.focus();
               phoneInput.classList.add('input-error-highlight');
               setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
@@ -626,15 +627,31 @@ function setupPincodeAutoLookup() {
     if (isNri) {
       const raw = pinInput.value.replace(/[^a-zA-Z0-9\s-]/g, '').slice(0, 12);
       if (pinInput.value !== raw) pinInput.value = raw;
-      pinInput.dataset.status = 'verified';
       if (btnVerify) btnVerify.style.display = 'none';
+      const trimmed = raw.trim();
+      const hasDigit = /\d/.test(trimmed);
+      const isValidFormat = /^(?=.*\d)[a-zA-Z0-9\s-]{3,10}$/.test(trimmed);
+
+      if (!trimmed) {
+        if (badge) badge.classList.add('hidden');
+        pinInput.dataset.status = '';
+        return;
+      }
+
       if (badge) {
-        if (raw.trim().length >= 3) {
+        if (!hasDigit && trimmed.length >= 2) {
+          badge.classList.remove('hidden');
+          badge.style.color = '#f59e0b';
+          badge.textContent = '⚠️ Postal codes must include numbers (e.g. 90210, M5V 2T6, SW1A 1AA)';
+          pinInput.dataset.status = 'invalid';
+        } else if (isValidFormat) {
           badge.classList.remove('hidden');
           badge.style.color = '#10b981';
-          badge.textContent = `✓ Overseas Postal / ZIP Code: ${raw.trim()}`;
+          badge.textContent = `✓ Valid Overseas Postal Format (${trimmed})`;
+          pinInput.dataset.status = 'verified';
         } else {
           badge.classList.add('hidden');
+          pinInput.dataset.status = 'incomplete';
         }
       }
       return;
@@ -858,18 +875,24 @@ function setupMobileAndEmailValidation() {
       if (isNri) {
         const val = phoneInput.value.replace(/[^\d+\s()-]/g, '').slice(0, 20);
         if (phoneInput.value !== val) phoneInput.value = val;
-        const digitsOnly = val.replace(/\D/g, '');
-        if (!digitsOnly) {
+        const trimmed = val.trim();
+        const digitsOnly = trimmed.replace(/\D/g, '');
+        if (!trimmed) {
           phoneBadge.classList.add('hidden');
           return;
         }
         phoneBadge.classList.remove('hidden');
-        if (digitsOnly.length >= 7 && digitsOnly.length <= 15) {
+        const hasPlus = trimmed.startsWith('+');
+
+        if (!hasPlus) {
+          phoneBadge.style.color = '#f59e0b';
+          phoneBadge.textContent = '⚠️ Include country code with + (e.g. +1 416 555 1234 or +971 50 123 4567)';
+        } else if (digitsOnly.length >= 7 && digitsOnly.length <= 15) {
           phoneBadge.style.color = '#10b981';
-          phoneBadge.textContent = `✓ Valid International Phone (${val.trim()})`;
+          phoneBadge.textContent = `✓ Valid International Mobile (${trimmed})`;
         } else {
           phoneBadge.style.color = '#f43f5e';
-          phoneBadge.textContent = `⚠️ International phone must be 7–15 digits.`;
+          phoneBadge.textContent = '⚠️ International mobile must be 7–15 digits after country code.';
         }
         return;
       }

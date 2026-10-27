@@ -44,8 +44,9 @@ export const STEP_GUARDS = {
     const isNri = Boolean(p.isNri || domainState?.isNri || (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')));
 
     if (isNri) {
+      const hasPlus = phone.trim().startsWith('+');
       const cleanPhone = phone.replace(/\D/g, '');
-      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+      if (!hasPlus || cleanPhone.length < 7 || cleanPhone.length > 15) {
         return { ok: false, code: GUARD_ERROR_CODES.INVALID_PHONE, field: 'phone' };
       }
     } else {
@@ -64,7 +65,7 @@ export const STEP_GUARDS = {
     }
 
     if (isNri) {
-      if (!pincode || pincode.length < 3 || pincode.length > 12) {
+      if (!pincode || !/^(?=.*\d)[a-zA-Z0-9\s-]{3,10}$/.test(pincode.trim())) {
         return { ok: false, code: GUARD_ERROR_CODES.INVALID_PINCODE, field: 'addressPincode' };
       }
     } else {
