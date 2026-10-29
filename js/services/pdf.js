@@ -220,7 +220,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   
-  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${p.dob || 'N/A'}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over (or had read over and explained to me in a language I fully understand) and approved the contents hereof, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
+  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${p.dob || 'N/A'}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over and fully understood the contents hereof in a language known to me and having approved the same, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
 
   const splitIntro = doc.splitTextToSize(introText, pageWidth - (margin * 2));
   doc.text(splitIntro, margin, y);
@@ -269,7 +269,7 @@ export async function generateEnglishWillPDF(willData) {
   if (altExecName) {
     c4Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecName}${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with identical powers and obligations.`;
   }
-  c4Text += ` I confer upon my Executor the following full powers: (a) To take possession and custody of all my movable and immovable assets, title deeds, bank accounts, and lockers; (b) To represent my estate before all banks, depositories, mutual funds, companies, sub-registrars, municipal authorities, and cooperative societies to complete transfers and mutations; (c) To pay all my just debts, funeral expenses, and administrative charges prior to final distribution; (d) To engage legal counsel and apply for voluntary Probate or Letters of Administration if required by any institution or court of law.`;
+  c4Text += ` I confer upon my Executor the following full powers: (a) To take possession and custody of all my movable and immovable assets, title deeds, bank accounts, and lockers; (b) To represent my estate before all banks, depositories, mutual funds, companies, sub-registrars, municipal authorities, and cooperative societies to complete transfers and mutations; (c) To pay all my just debts, funeral expenses, and administrative charges prior to final distribution; (d) To prepare and file my final Income Tax Returns (ITR) and clear all tax liabilities; (e) To be reimbursed from my estate for actual out-of-pocket administrative expenses without remuneration; (f) Encumbrance Rule: Any specific property bequeathed subject to an existing mortgage shall pass to the respective beneficiary subject to such liability unless discharged by insurance or estate funds; (g) To engage legal counsel and apply for Probate or Letters of Administration if required by any institution or court of law.`;
   const splitC4 = doc.splitTextToSize(c4Text, pageWidth - (margin * 2));
   doc.text(splitC4, margin, y);
   y += (splitC4.length * 4.5) + 4;
@@ -305,7 +305,7 @@ export async function generateEnglishWillPDF(willData) {
 
   checkPageBreak(18);
   doc.setFont("helvetica", "italic");
-  const antiLapseText = "Survivorship & Anti-Lapse Provision (Sections 105 & 109, Indian Succession Act, 1925): If any named beneficiary predeceases me, their designated share shall not lapse into intestacy, but shall devolve upon their surviving lineal descendants per stirpes in equal proportions. Failing lineal descendants, such share shall be divided proportionately among the surviving named beneficiaries.";
+  const antiLapseText = "Survivorship & Anti-Lapse Provision (30-Day Rule): If any named beneficiary predeceases me, or fails to survive me by thirty (30) clear days, the share bequeathed to such beneficiary (including any residuary share) shall not lapse, but shall devolve upon their surviving lineal descendants per stirpes in equal proportions. Failing lineal descendants, such share shall be divided equally among the remaining surviving named beneficiaries. Minority Protection: If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by their Guardian without remuneration for their welfare and education until age 18.";
   const splitAntiLapse = doc.splitTextToSize(antiLapseText, pageWidth - (margin * 2) - 4);
   doc.text(splitAntiLapse, margin + 4, y);
   y += (splitAntiLapse.length * 4.3) + 4;
@@ -316,7 +316,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("6. NOMINATION OVERRIDE CLAUSE (SUPREME COURT OF INDIA PRECEDENTS)", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c6Text = "I hereby declare that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, mutual funds, provident funds, or insurance policies is solely for procedural convenience. Under the settled law of India laid down by the Hon'ble Supreme Court of India (Sarbati Devi v. Usha Devi and Shakti Yezdani v. Janki Harindra Hingorani), a nominee holds assets merely as a Trustee and has no beneficial ownership. The bequests made in this Will confer absolute title and shall supersede and override any nomination or contrary claim.";
+  const c6Text = "I hereby declare and direct that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, shares, mutual funds, or other financial assets is made solely for institutional transmission and procedural convenience. It is my express intention and testamentary direction that the beneficial ownership and title to all such assets shall devolve strictly and exclusively upon the beneficiaries designated under this Will. My nominees and beneficiaries are directed to execute all requisite receipts, release deeds, and indemnity instruments to give full and immediate effect to this testamentary disposition.";
   const splitC6 = doc.splitTextToSize(c6Text, pageWidth - (margin * 2));
   doc.text(splitC6, margin, y);
   y += (splitC6.length * 4.5) + 4;
