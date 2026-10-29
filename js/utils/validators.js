@@ -70,7 +70,12 @@ export function getEmailTypoWarning(email) {
 
 export function isValidIndianPhone(phone) {
   if (!phone) return false;
-  const cleanPhone = String(phone).trim().replace(/\D/g, '');
+  let cleanPhone = String(phone).trim().replace(/\D/g, '');
+  if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
+    cleanPhone = cleanPhone.slice(2);
+  } else if (cleanPhone.length === 11 && cleanPhone.startsWith('0')) {
+    cleanPhone = cleanPhone.slice(1);
+  }
   return /^[6-9]\d{9}$/.test(cleanPhone);
 }
 

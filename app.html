@@ -308,7 +308,30 @@
           <div class="grid grid-2">
             <div class="form-group">
               <label class="form-label"><span data-i18n="form.phone">Mobile Number</span> <span class="required">*</span></label>
-              <input type="tel" id="phone" class="form-control" placeholder="e.g. 9876543210" maxlength="20" inputmode="tel" autocomplete="tel" required data-i18n-placeholder="form.phonePlaceholder">
+              <div class="phone-input-group">
+                <!-- Country Trigger Button -->
+                <button type="button" id="countryCodeBtn" class="country-picker-btn" aria-haspopup="listbox" aria-expanded="false" title="Select Country (India +91)">
+                  <span class="country-flag" id="selectedCountryFlag">🇮🇳</span>
+                  <span class="country-dial-code" id="selectedCountryCode">+91</span>
+                  <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <input type="hidden" id="countryCode" value="+91">
+
+                <!-- Phone Input Field -->
+                <input type="tel" id="phone" class="form-control" placeholder="98765 43210" maxlength="10" inputmode="numeric" autocomplete="tel-national" required data-i18n-placeholder="form.phonePlaceholder" style="flex: 1;">
+
+                <!-- Country Picker Dropdown Panel -->
+                <div id="countryDropdownPanel" class="country-dropdown-panel hidden" role="listbox">
+                  <div class="country-search-box">
+                    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="countrySearchInput" class="country-search-input" placeholder="Search country or code (+1, UAE, etc.)..." autocomplete="off">
+                    <button type="button" id="countrySearchClear" class="country-search-clear hidden" aria-label="Clear Search">&times;</button>
+                  </div>
+                  <div class="country-list" id="countryList">
+                    <!-- Populated dynamically by countryPicker.js -->
+                  </div>
+                </div>
+              </div>
               <div id="phoneStatusBadge" class="text-xs mt-1 font-semibold hidden"></div>
             </div>
 

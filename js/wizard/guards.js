@@ -41,12 +41,12 @@ export const STEP_GUARDS = {
       return { ok: false, code: GUARD_ERROR_CODES.MANDATORY_FIELDS_MISSING, field: missingField };
     }
 
-    const isNri = Boolean(p.isNri || domainState?.isNri || (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')));
+    const isNri = Boolean(p.isNri || domainState?.isNri || (p.countryCode && p.countryCode !== '+91') || (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')));
 
     if (isNri) {
       const hasPlus = phone.trim().startsWith('+');
       const cleanPhone = phone.replace(/\D/g, '');
-      if (!hasPlus || cleanPhone.length < 7 || cleanPhone.length > 15) {
+      if ((!hasPlus && (!p.countryCode || p.countryCode === '+91')) || cleanPhone.length < 7 || cleanPhone.length > 15) {
         return { ok: false, code: GUARD_ERROR_CODES.INVALID_PHONE, field: 'phone' };
       }
     } else {

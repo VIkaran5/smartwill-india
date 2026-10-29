@@ -12,6 +12,7 @@ import { generateWillPDF } from './services/pdf.js';
 import { showToast } from './ui/toast.js';
 import { initReviewWidget } from './ui/reviewWidget.js';
 import { trackWizardStart } from './services/analytics.js';
+import { getSelectedCountry } from './ui/countryPicker.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await initApp();
@@ -145,8 +146,9 @@ function applyNriUiState(isNri) {
     if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock NRI Legal Will PDF';
     if (badgeEl) badgeEl.innerHTML = '🇮🇳 100% Legally Binding for Indian Assets under Section 63 &bull; Global NRI Compliant';
     if (phoneInput) {
-      phoneInput.placeholder = 'e.g. +1 416 555 1234 or +971 50 123 4567';
-      phoneInput.maxLength = 20;
+      const currentCountry = getSelectedCountry();
+      phoneInput.placeholder = currentCountry?.placeholder || '98765 43210';
+      phoneInput.maxLength = currentCountry?.maxDigits || 15;
     }
     if (pincodeInput) {
       pincodeInput.placeholder = 'e.g. M5V 2T6, 90210, SW1A 1AA';
@@ -165,8 +167,9 @@ function applyNriUiState(isNri) {
     if (payBtnText) payBtnText.textContent = 'Pay ₹299 & Unlock Legal Will PDF';
     if (badgeEl) badgeEl.innerHTML = '🇮🇳 Aligned with Section 63, Indian Succession Act 1925 &bull; Valid in All Indian Courts';
     if (phoneInput) {
-      phoneInput.placeholder = '10-digit mobile number';
-      phoneInput.maxLength = 10;
+      const currentCountry = getSelectedCountry();
+      phoneInput.placeholder = currentCountry?.placeholder || '98765 43210';
+      phoneInput.maxLength = currentCountry?.maxDigits || 10;
     }
     if (pincodeInput) {
       pincodeInput.placeholder = '6-digit PIN code';

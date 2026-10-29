@@ -16,6 +16,8 @@ import { renderLanguageSelector } from '../ui/langSelector.js';
 import { initAuthService } from '../services/auth.js';
 import { showToast } from '../ui/toast.js';
 import { initDraftPreview, updateDraftContainer } from '../render/draftPreview.js';
+import { initCountryPicker, setSelectedCountry, getSelectedCountry } from '../ui/countryPicker.js';
+import { cleanLocalPhone, validatePhone } from '../utils/countries.js';
 
 export function bindEvents() {
   initI18n();
@@ -23,6 +25,7 @@ export function bindEvents() {
   initAuthService();
   initPaymentService();
   initDraftPreview();
+  initCountryPicker();
 
   // Re-render dynamic modules immediately whenever the user switches language
   window.addEventListener('languageChanged', (e) => {
@@ -58,6 +61,13 @@ export function bindEvents() {
       });
     }
   });
+
+  const countryCodeEl = document.getElementById('countryCode');
+  if (countryCodeEl) {
+    countryCodeEl.addEventListener('change', () => {
+      saveCurrentStepInputs();
+    });
+  }
 
   // Blur address cleaning
   ['addressLine1', 'addressCity', 'addressState'].forEach(id => {
@@ -297,26 +307,16 @@ export function bindEvents() {
 
         const phoneInput = document.getElementById('phone');
         if (phoneInput) {
+          const country = getSelectedCountry();
           const rawPhone = phoneInput.value.trim();
-          if (isNri) {
-            const hasPlus = rawPhone.startsWith('+');
-            const cleanDigits = rawPhone.replace(/\D/g, '');
-            if (!hasPlus || cleanDigits.length < 7 || cleanDigits.length > 15) {
-              showToast('warning', 'Please enter your international number with country code starting with + (e.g. +1 416 555 1234 or +971 50 123 4567).');
-              phoneInput.focus();
-              phoneInput.classList.add('input-error-highlight');
-              setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
-              return;
-            }
-          } else {
-            const cleanDigits = rawPhone.replace(/\D/g, '');
-            if (!/^[6-9]\d{9}$/.test(cleanDigits)) {
-              showToast('warning', 'Please enter a valid 10-digit Indian mobile number.');
-              phoneInput.focus();
-              phoneInput.classList.add('input-error-highlight');
-              setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
-              return;
-            }
+          const cleanDigits = cleanLocalPhone(rawPhone, country);
+          const validation = validatePhone(cleanDigits, country);
+          if (!validation.isValid) {
+            showToast('warning', validation.message || 'Please enter a valid mobile number.');
+            phoneInput.focus();
+            phoneInput.classList.add('input-error-highlight');
+            setTimeout(() => phoneInput.classList.remove('input-error-highlight'), 3000);
+            return;
           }
         }
       }
@@ -346,6 +346,10 @@ export function bindEvents() {
 export function saveCurrentStepInputs() {
   const state = getState();
   if (state.currentStep === 1) {
+    const countryCode = document.getElementById('countryCode')?.value || '+91';
+    const localPhone = document.getElementById('phone')?.value?.trim() || '';
+    const fullPhone = localPhone ? `${countryCode} ${localPhone}` : '';
+
     updateState({
       personal: {
         fullName: document.getElementById('fullName')?.value?.trim() || '',
@@ -354,7 +358,9 @@ export function saveCurrentStepInputs() {
         religion: document.getElementById('religion')?.value || 'Hindu',
         govtIdType: document.getElementById('govtIdType')?.value || 'PAN Card',
         govtIdDigits: document.getElementById('govtIdDigits')?.value?.trim() || '',
-        phone: document.getElementById('phone')?.value?.trim() || '',
+        countryCode: countryCode,
+        localPhone: localPhone,
+        phone: fullPhone,
         email: document.getElementById('email')?.value?.trim() || '',
         addressLine1: document.getElementById('addressLine1')?.value?.trim() || '',
         addressCity: document.getElementById('addressCity')?.value?.trim() || '',
@@ -384,14 +390,30 @@ export function saveCurrentStepInputs() {
 
 export function populatePersonalFields(state) {
   const p = state.personal || {};
+
+  // Restore Country Code and Mobile Number
+  if (p.countryCode) {
+    setSelectedCountry(p.countryCode, false);
+  } else if (p.phone && p.phone.startsWith('+')) {
+    const parts = p.phone.split(' ');
+    if (parts.length > 0) {
+      setSelectedCountry(parts[0], false);
+    }
+  }
+
   const personalFields = [
     'fullName', 'dob', 'gender', 'religion', 'govtIdType', 'govtIdDigits',
-    'phone', 'email', 'addressLine1', 'addressCity', 'addressState', 'addressPincode'
+    'email', 'addressLine1', 'addressCity', 'addressState', 'addressPincode'
   ];
   personalFields.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = p[id] || '';
   });
+
+  const phoneEl = document.getElementById('phone');
+  if (phoneEl) {
+    phoneEl.value = p.localPhone || (p.phone ? p.phone.replace(/^\+\d+\s*/, '') : '');
+  }
 
   // Sync Date of Birth dropdowns & Govt ID inputmode from populated state
   const dobEl = document.getElementById('dob');
@@ -871,47 +893,27 @@ function setupMobileAndEmailValidation() {
 
   if (phoneInput && phoneBadge) {
     phoneInput.addEventListener('input', () => {
-      const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || document.getElementById('nriPlanCheckbox')?.checked));
-      if (isNri) {
-        const val = phoneInput.value.replace(/[^\d+\s()-]/g, '').slice(0, 20);
-        if (phoneInput.value !== val) phoneInput.value = val;
-        const trimmed = val.trim();
-        const digitsOnly = trimmed.replace(/\D/g, '');
-        if (!trimmed) {
-          phoneBadge.classList.add('hidden');
-          return;
-        }
-        phoneBadge.classList.remove('hidden');
-        const hasPlus = trimmed.startsWith('+');
-
-        if (!hasPlus) {
-          phoneBadge.style.color = '#f59e0b';
-          phoneBadge.textContent = '⚠️ Include country code with + (e.g. +1 416 555 1234 or +971 50 123 4567)';
-        } else if (digitsOnly.length >= 7 && digitsOnly.length <= 15) {
-          phoneBadge.style.color = '#10b981';
-          phoneBadge.textContent = `✓ Valid International Mobile (${trimmed})`;
-        } else {
-          phoneBadge.style.color = '#f43f5e';
-          phoneBadge.textContent = '⚠️ International mobile must be 7–15 digits after country code.';
-        }
-        return;
+      const country = getSelectedCountry();
+      const raw = phoneInput.value;
+      const cleaned = cleanLocalPhone(raw, country);
+      if (phoneInput.value !== cleaned) {
+        phoneInput.value = cleaned;
       }
-      const val = phoneInput.value.trim().replace(/\D/g, '');
-      if (phoneInput.value !== val) phoneInput.value = val;
 
-      if (!val) {
+      if (!cleaned) {
         phoneBadge.classList.add('hidden');
         return;
       }
 
       phoneBadge.classList.remove('hidden');
+      const result = validatePhone(cleaned, country);
 
-      if (/^[6-9]\d{9}$/.test(val)) {
+      if (result.isValid) {
         phoneBadge.style.color = '#10b981';
-        phoneBadge.textContent = `✓ Valid Indian Mobile (+91 ${val})`;
+        phoneBadge.textContent = result.message;
       } else {
         phoneBadge.style.color = '#f43f5e';
-        phoneBadge.textContent = `⚠️ Must be 10 digits starting with 6, 7, 8, or 9.`;
+        phoneBadge.textContent = result.message;
       }
     });
   }

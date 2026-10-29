@@ -2379,3 +2379,252 @@ button:disabled [data-lucide="loader-2"] {
   color: var(--text-muted);
 }
 
+
+/* ── Country Code Dropdown & International Mobile Picker ── */
+.phone-input-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+.country-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+}
+
+.country-picker-btn:hover {
+  background: var(--bg-surface);
+  border-color: var(--border-focus);
+}
+
+.country-picker-btn:focus-visible {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.country-picker-btn .country-flag {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.country-picker-btn .country-dial-code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  letter-spacing: -0.2px;
+}
+
+.country-picker-btn .chevron-icon {
+  width: 13px;
+  height: 13px;
+  opacity: 0.65;
+  transition: transform 0.2s ease;
+}
+
+.country-picker-btn[aria-expanded="true"] .chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* Dropdown popover panel */
+.country-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 320px;
+  max-width: 90vw;
+  max-height: 380px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  animation: countryDropdownFade 0.18s ease-out;
+}
+
+[data-theme="dark"] .country-dropdown-panel {
+  background: #111827;
+  border-color: rgba(223, 183, 108, 0.25);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes countryDropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.country-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--bg-surface);
+}
+
+[data-theme="dark"] .country-search-box {
+  background: #0b0f19;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.country-search-box .search-icon {
+  position: absolute;
+  left: 18px;
+  color: var(--text-subtle);
+  pointer-events: none;
+}
+
+.country-search-input {
+  width: 100%;
+  padding: 0.5rem 2rem 0.5rem 2rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-size: 0.86rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.country-search-input:focus {
+  border-color: var(--border-focus);
+}
+
+.country-search-clear {
+  position: absolute;
+  right: 18px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.country-search-clear:hover {
+  color: var(--text-main);
+}
+
+.country-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 310px;
+  padding: 4px 0;
+  overscroll-behavior: contain;
+}
+
+/* Custom scrollbar */
+.country-list::-webkit-scrollbar {
+  width: 6px;
+}
+.country-list::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
+}
+
+.country-group-label {
+  padding: 8px 12px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-subtle);
+}
+
+[data-theme="dark"] .country-group-label {
+  color: #94a3b8;
+}
+
+.country-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.country-item:hover,
+.country-item:focus {
+  background: var(--bg-surface);
+  outline: none;
+}
+
+[data-theme="dark"] .country-item:hover,
+[data-theme="dark"] .country-item:focus {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.country-item.active {
+  background: rgba(223, 183, 108, 0.15);
+  font-weight: 600;
+}
+
+[data-theme="dark"] .country-item.active {
+  background: rgba(223, 183, 108, 0.2);
+  color: #fce7b2;
+}
+
+.country-item-flag {
+  font-size: 1.15rem;
+  line-height: 1;
+  width: 22px;
+  text-align: center;
+}
+
+.country-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.country-item-dial {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.country-item-check {
+  color: var(--accent-gold);
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-left: 4px;
+}
+
+.country-no-results {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
