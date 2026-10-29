@@ -552,6 +552,16 @@ input[type="date"] {
   cursor: pointer;
 }
 
+.dob-dropdowns-row select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .dob-dropdowns-row select option {
+  background-color: #1e293b;
+  color: #f8fafc;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.85;

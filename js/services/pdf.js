@@ -1,3 +1,17 @@
+
+export function formatIndianDob(dobStr) {
+  if (!dobStr) return 'DD/MM/YYYY';
+  const trimmed = String(dobStr).trim();
+  if (trimmed.includes('-')) {
+    const parts = trimmed.split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+      // ISO YYYY-MM-DD -> DD/MM/YYYY
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+  }
+  return trimmed;
+}
+
 /* PDF Generation Engine Service for SmartWill India using jsPDF & html2canvas
  * Multi-Language Support (EN, TE, HI) + EmailJS Integration */
 import { sendWillToEmail } from './email.js';
@@ -220,7 +234,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   
-  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${p.dob || 'N/A'}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over and fully understood the contents hereof in a language known to me and having approved the same, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
+  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over and fully understood the contents hereof in a language known to me and having approved the same, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
 
   const splitIntro = doc.splitTextToSize(introText, pageWidth - (margin * 2));
   doc.text(splitIntro, margin, y);
@@ -438,8 +452,8 @@ export async function generateRegionalWillPDF(willData, lang) {
       
       <p style="margin-bottom: 14px; text-align: justify;">
         ${isTe ? 
-          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong> [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, పుట్టిన తేది: ${escapeHTML(p.dob || 'N/A')}, మతము: ${escapeHTML(p.religion || 'హిందూ')}, సంపూర్ణ మానసిక వివేచనతో, ఎవరి ఒత్తిడి లేదా మోసం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, <strong>${executionPlace}</strong> నగరంలో నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
-          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong> [पहचान पत्र: ${idStr}], पता: ${fullAddress}, जन्म तिथि: ${escapeHTML(p.dob || 'N/A')}, धर्म: ${escapeHTML(p.religion || 'हिंदू')}, स्थान: <strong>${executionPlace}</strong>, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से, बिना किसी दबाव या प्रलोभन के, इस दस्तावेज़ की सभी शर्तों को भली-भांति समझकर अपनी अंतिम वसीयत निष्पादित करता/करती हूँ:`}
+          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong> [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, పుట్టిన తేది: ${escapeHTML(formatIndianDob(p.dob))}, మతము: ${escapeHTML(p.religion || 'హిందూ')}, సంపూర్ణ మానసిక వివేచనతో, ఎవరి ఒత్తిడి లేదా మోసం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, <strong>${executionPlace}</strong> నగరంలో నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
+          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong> [पहचान पत्र: ${idStr}], पता: ${fullAddress}, जन्म तिथि: ${escapeHTML(formatIndianDob(p.dob))}, धर्म: ${escapeHTML(p.religion || 'हिंदू')}, स्थान: <strong>${executionPlace}</strong>, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से, बिना किसी दबाव या प्रलोभन के, इस दस्तावेज़ की सभी शर्तों को भली-भांति समझकर अपनी अंतिम वसीयत निष्पादित करता/करती हूँ:`}
       </p>
 
       <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">

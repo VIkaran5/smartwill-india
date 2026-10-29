@@ -417,8 +417,12 @@ export function populatePersonalFields(state) {
 
   // Sync Date of Birth dropdowns & Govt ID inputmode from populated state
   const dobEl = document.getElementById('dob');
-  if (dobEl && dobEl.value) {
-    dobEl.dispatchEvent(new Event('change'));
+  if (dobEl) {
+    if (p.dob) dobEl.value = p.dob;
+    setupDobPicker();
+    if (dobEl.value) {
+      dobEl.dispatchEvent(new Event('change'));
+    }
   }
   const typeSelect = document.getElementById('govtIdType');
   if (typeSelect) {

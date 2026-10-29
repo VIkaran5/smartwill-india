@@ -1,3 +1,17 @@
+
+export function formatIndianDob(dobStr) {
+  if (!dobStr) return 'DD/MM/YYYY';
+  const trimmed = String(dobStr).trim();
+  if (trimmed.includes('-')) {
+    const parts = trimmed.split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+      // ISO YYYY-MM-DD -> DD/MM/YYYY
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+  }
+  return trimmed;
+}
+
 /* Draft Will Document Preview Service & Modal Controller for SmartWill India
  * Renders authentic formatted legal drafts in English, Telugu, and Hindi under Indian Succession Act 1925
  */
@@ -62,7 +76,7 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         <p>
           I, <strong>${(safeFullName || 'TESTATOR').toUpperCase()}</strong>${idStr ? ' [Identity Document: ' + idStr + ']' : ''},
           residing at <strong>${escapeHTML(fullAddress)}</strong>,
-          born on <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
+          born on <strong>${escapeHTML(formatIndianDob(p.dob))}</strong>,
           professing <strong>${escapeHTML(p.religion || 'Hindu')}</strong> faith,
           being of sound disposing mind, memory, and understanding, having read over and fully understood the contents hereof in a language known to me and having approved the same, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever,
           do hereby make, publish, and declare this writing to be my <strong>Last Will and Testament</strong>, executed at <strong>${executionPlace}</strong>, India.
@@ -300,7 +314,7 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
         <p>
           నేను, <strong>${safeFullName || '____________________ (శాసనకర్త)'}</strong>${idStr ? ' [గుర్తింపు పత్రం: ' + idStr + ']' : ''},
           నివాసము: <strong>${escapeHTML(fullAddress)}</strong>,
-          పుట్టిన తేది: <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
+          పుట్టిన తేది: <strong>${escapeHTML(formatIndianDob(p.dob))}</strong>,
           మతము: <strong>${escapeHTML(p.religion || 'హిందూ')}</strong>,
           సంపూర్ణ మానసిక ఆరోగ్య స్పృహతో, వివేచనతో, మరియు ఎవరి బలవంతం, మోసం లేదా ప్రలోభం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, నా స్వచ్ఛంద ఆమోదంతో <strong>${executionPlace}</strong> నగరంలో ఈ క్రింది విధంగా నా కడపటి విల్ (మరణ శాసనము) వ్రాయించి ఆమోదిస్తున్నాను.
         </p>
@@ -532,7 +546,7 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
         <p>
           मैं, <strong>${safeFullName || '____________________ (वसीयतकर्ता)'}</strong>${idStr ? ' [पहचान पत्र: ' + idStr + ']' : ''},
           निवासी: <strong>${escapeHTML(fullAddress)}</strong>,
-          जन्म तिथि: <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
+          जन्म तिथि: <strong>${escapeHTML(formatIndianDob(p.dob))}</strong>,
           धर्म: <strong>${escapeHTML(p.religion || 'हिंदू')}</strong>,
           स्थान: <strong>${executionPlace}</strong>,
           पूर्ण स्वस्थ चित्त, स्मरण शक्ति एवं स्वेच्छा से, बिना किसी दबाव, कपट, प्रलोभन अथवा अनुचित प्रभाव के, इस दस्तावेज़ की सभी शर्तों को भली-भांति पढ़कर व समझकर, इसे अपनी <strong>अंतिम वसीयत (LAST WILL & TESTAMENT)</strong> के रूप में निष्पादित एवं घोषित करता/करती हूँ।
