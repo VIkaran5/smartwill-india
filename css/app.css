@@ -2229,37 +2229,70 @@ button:disabled [data-lucide="loader-2"] {
   margin-bottom: 1.6rem;
 }
 
+.legal-paper-preview p {
+  margin-top: 0;
+  margin-bottom: 1.35rem;
+  line-height: 1.85;
+}
+
+.legal-paper-preview p:last-child {
+  margin-bottom: 0;
+}
+
 .paper-preamble {
-  margin-bottom: 1.4rem;
+  margin-bottom: 2rem;
   text-align: justify;
   font-size: 0.96rem;
-  line-height: 1.8;
-  background: rgba(255, 255, 255, 0.6);
-  padding: 1rem 1.25rem;
+  line-height: 1.85;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1.2rem 1.4rem;
   border-radius: 4px;
-  border-left: 3px solid #1e293b;
+  border-left: 3.5px solid #1e293b;
+}
+
+.paper-preamble p {
+  margin-bottom: 0;
 }
 
 .clause-block {
-  margin-top: 1.3rem;
-  margin-bottom: 1.3rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   position: relative;
   z-index: 2;
 }
 
+.clause-block p {
+  margin-bottom: 1.25rem;
+  line-height: 1.85;
+}
+
 .clause-title {
   font-family: 'Cinzel', 'Georgia', serif;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: 0.8px;
   color: #0f172a;
   border-bottom: 1.5px solid #cbd5e1;
-  padding-bottom: 0.35rem;
-  margin-bottom: 0.65rem;
+  padding-bottom: 0.45rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.executor-powers-list {
+  margin: 0.9rem 0 0.5rem 0;
+  padding-left: 0.5rem;
+  list-style: none;
+}
+
+.executor-powers-list li {
+  margin-bottom: 0.7rem;
+  line-height: 1.75;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  color: #334155;
 }
 
 .clause-tag {

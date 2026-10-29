@@ -106,16 +106,17 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       `;
     }
     html += `
-          <br><br>
-          I expressly confer upon my Executor full administrative powers to:
-          <br>• (a) Take custody, charge, and possession of all my movable and immovable assets, title deeds, bank accounts, and lockers;
-          <br>• (b) Represent my estate before all Banks, Depository Participants, Asset Management Companies, Registrars, Housing Societies, and Revenue Authorities, and execute all necessary discharges and transfer instruments;
-          <br>• (c) Settle all my legitimate debts, testamentary charges, and funeral expenses out of my liquid estate prior to distributing any bequests to my beneficiaries;
-          <br>• (d) Prepare and file my final Income Tax Returns (ITR) and discharge all outstanding tax liabilities of the estate;
-          <br>• (e) Realise, sell, or lease assets only if strictly necessary to discharge enforceable debts or liabilities of the estate;
-          <br>• (f) Be reimbursed from the estate for all actual and reasonable out-of-pocket legal, travel, and administrative expenses incurred in the discharge of duties, without extra remuneration or profit;
-          <br>• (g) Encumbrance Rule: Any specific property bequeathed subject to an existing mortgage or loan shall pass to the respective beneficiary subject to such liability, unless discharged by mortgage-redemption insurance or estate funds;
-          <br>• (h) Apply for Probate or Letters of Administration from a competent Court of Law if deemed prudent or requested by any financial institution.
+          <p style="margin-top: 1rem; margin-bottom: 0.6rem; font-weight: 600;">I expressly confer upon my Executor full administrative powers to:</p>
+          <ul class="executor-powers-list">
+            <li>• <strong>(a) Possession & Custody:</strong> Take custody, charge, and possession of all my movable and immovable assets, title deeds, bank accounts, and lockers;</li>
+            <li>• <strong>(b) Representation & Transfer:</strong> Represent my estate before all Banks, Depository Participants, Asset Management Companies, Registrars, Housing Societies, and Revenue Authorities, and execute all necessary discharges and transfer instruments;</li>
+            <li>• <strong>(c) Debt Settlement:</strong> Settle all my legitimate debts, testamentary charges, and funeral expenses out of my liquid estate prior to distributing any bequests to my beneficiaries;</li>
+            <li>• <strong>(d) Tax Obligations:</strong> Prepare and file my final Income Tax Returns (ITR) and discharge all outstanding tax liabilities of the estate;</li>
+            <li>• <strong>(e) Debt Discharge:</strong> Realise, sell, or lease assets only if strictly necessary to discharge enforceable debts or liabilities of the estate;</li>
+            <li>• <strong>(f) Expense Reimbursement:</strong> Be reimbursed from the estate for all actual and reasonable out-of-pocket legal, travel, and administrative expenses incurred in the discharge of duties, without extra remuneration or profit;</li>
+            <li>• <strong>(g) Encumbrance Liability:</strong> Any specific property bequeathed subject to an existing mortgage or loan shall pass to the respective beneficiary subject to such liability, unless discharged by mortgage-redemption insurance or estate funds;</li>
+            <li>• <strong>(h) Court Authority:</strong> Apply for Probate or Letters of Administration from a competent Court of Law if deemed prudent or requested by any financial institution.</li>
+          </ul>
     `;
   } else {
     html += `
@@ -341,14 +342,15 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
       `;
     }
     html += `
-          <br><br>
-          నా ఎగ్జిక్యూటర్‌కు నేను క్రింది సంపూర్ణ అధికారాలను కల్పిస్తున్నాను:
-          <br>• (ఎ) నా స్థిర మరియు చర ఆస్తులు, దస్తావేజులు మరియు బ్యాంక్ ఖాతాల నిర్వహణ బాధ్యత తీసుకోవడం;
-          <br>• (బి) బ్యాంకులు, డీమ్యాట్ సంస్థలు, సబ్-రిజిస్ట్రార్ కార్యాలయాలు మరియు ప్రభుత్వ సంస్థలతో లావాదేవీలు నిర్వహించి ఆస్తుల బదిలీలు పూర్తి చేయడం;
-          <br>• (సి) నా న్యాయబద్ధమైన అప్పులు, అంత్యక్రియల ఖర్చులు మరియు చట్టపరమైన బాధ్యతలను ముందుగా చెల్లించడం;
-          <br>• (డి) నా తుది ఆదాయపు పన్ను రిటర్న్స్ (ITR) దాఖలు చేసి పన్ను బకాయిలు క్లియర్ చేయడం;
-          <br>• (ఇ) ఎగ్జిక్యూటర్ నిర్వర్తించిన సేవలకు అయ్యే వాస్తవ ఖర్చులను ఎస్టేట్ నుండి రీయింబర్స్ చేసుకోవడం;
-          <br>• (ఎఫ్) ఏదైనా సంస్థ కోరినచో కోర్టు ద్వారా ప్రొబేట్ (Probate) లేదా లెటర్స్ ఆఫ్ అడ్మినిస్ట్రేషన్ పొందుటకు న్యాయవాదులను నియమించడం.
+          <p style="margin-top: 1rem; margin-bottom: 0.6rem; font-weight: 600;">నా ఎగ్జిక్యూటర్‌కు నేను క్రింది సంపూర్ణ అధికారాలను కల్పిస్తున్నాను:</p>
+          <ul class="executor-powers-list">
+            <li>• <strong>(ఎ) స్వాధీనం & నిర్వహణ:</strong> నా స్థిర మరియు చర ఆస్తులు, దస్తావేజులు మరియు బ్యాంక్ ఖాతాల నిర్వహణ బాధ్యత తీసుకోవడం;</li>
+            <li>• <strong>(బి) బదిలీల పూర్తి:</strong> బ్యాంకులు, డీమ్యాట్ సంస్థలు, సబ్-రిజిస్ట్రార్ కార్యాలయాలు మరియు ప్రభుత్వ సంస్థలతో లావాదేవీలు నిర్వహించి ఆస్తుల బదిలీలు పూర్తి చేయడం;</li>
+            <li>• <strong>(సి) అప్పుల చెల్లింపు:</strong> నా న్యాయబద్ధమైన అప్పులు, అంత్యక్రియల ఖర్చులు మరియు చట్టపరమైన బాధ్యతలను ముందుగా చెల్లించడం;</li>
+            <li>• <strong>(డి) పన్ను బాధ్యతలు:</strong> నా తుది ఆదాయపు పన్ను రిటర్న్స్ (ITR) దాఖలు చేసి పన్ను బకాయిలు క్లియర్ చేయడం;</li>
+            <li>• <strong>(ఇ) ఖర్చుల రీయింబర్స్‌మెంట్:</strong> ఎగ్జిక్యూటర్ నిర్వర్తించిన సేవలకు అయ్యే వాస్తవ ఖర్చులను ఎస్టేట్ నుండి రీయింబర్స్ చేసుకోవడం;</li>
+            <li>• <strong>(ఎఫ్) చట్టపరమైన అధికారాలు:</strong> ఏదైనా సంస్థ కోరినచో కోర్టు ద్వారా ప్రొబేట్ (Probate) లేదా లెటర్స్ ఆఫ్ అడ్మినిస్ట్రేషన్ పొందుటకు న్యాయవాదులను నియమించడం.</li>
+          </ul>
     `;
   } else {
     html += `
@@ -573,13 +575,14 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
       `;
     }
     html += `
-          <br><br>
-          मैं अपने निष्पादक को निम्नलिखित समस्त विधिक अधिकार प्रदान करता/करती हूँ:
-          <br>• (क) मेरी समस्त चल एवं अचल संपत्तियों, बैंक खातों एवं लॉकरों का प्रभार प्राप्त करना;
-          <br>• (ख) बैंकों, वित्तीय संस्थानों, सोसायटी एवं प्राधिकरणों के समक्ष उपस्थित होकर नामान्तरण (Mutation) एवं हस्तांतरण पूर्ण कराना;
-          <br>• (ग) सर्वप्रथम वैध देनदारियों, अंतिम संस्कार व्यय एवं प्रशासनिक शुल्कों का भुगतान करना;
-          <br>• (घ) मेरा अंतिम आयकर रिटर्न (ITR) दाखिल कर कर-देयताएं चुकाना;
-          <br>• (ङ) आवश्यक होने पर इस वसीयत का प्रोबेट (Probate) प्राप्त करने हेतु अधिवक्ताओं की सेवाएं लेना।
+          <p style="margin-top: 1rem; margin-bottom: 0.6rem; font-weight: 600;">मैं अपने निष्पादक को निम्नलिखित समस्त विधिक अधिकार प्रदान करता/करती हूँ:</p>
+          <ul class="executor-powers-list">
+            <li>• <strong>(क) प्रभार एवं नियंत्रण:</strong> मेरी समस्त चल एवं अचल संपत्तियों, बैंक खातों एवं लॉकरों का प्रभार प्राप्त करना;</li>
+            <li>• <strong>(ख) विधिक हस्तांतरण:</strong> बैंकों, वित्तीय संस्थानों, सोसायटी एवं प्राधिकरणों के समक्ष उपस्थित होकर नामान्तरण (Mutation) एवं हस्तांतरण पूर्ण कराना;</li>
+            <li>• <strong>(ग) देयताओं का भुगतान:</strong> सर्वप्रथम वैध देनदारियों, अंतिम संस्कार व्यय एवं प्रशासनिक शुल्कों का भुगतान करना;</li>
+            <li>• <strong>(घ) कर-दायित्व:</strong> मेरा अंतिम आयकर रिटर्न (ITR) दाखिल कर कर-देयताएं चुकाना;</li>
+            <li>• <strong>(ङ) न्यायालयीन प्रक्रिया:</strong> आवश्यक होने पर इस वसीयत का प्रोबेट (Probate) प्राप्त करने हेतु अधिवक्ताओं की सेवाएं लेना।</li>
+          </ul>
     `;
   } else {
     html += `
