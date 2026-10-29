@@ -215,56 +215,68 @@ export async function generateEnglishWillPDF(willData) {
   const p = willData.personal || {};
   const fullAddress = formatCleanAddress(p);
   const govIdStr = (p.govtIdType && p.govtIdDigits) ? ` [Identity Doc: ${p.govtIdType} ending in XXXX-${p.govtIdDigits}]` : '';
+  const executionPlace = (p.addressCity || 'Hyderabad').toUpperCase();
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   
-  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${p.dob || 'N/A'}, professing ${p.religion || 'Hindu'} faith, being of sound mind and disposing memory, do hereby make, publish, and declare this to be my Last Will and Testament.`;
+  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${p.dob || 'N/A'}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over (or had read over and explained to me in a language I fully understand) and approved the contents hereof, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
 
   const splitIntro = doc.splitTextToSize(introText, pageWidth - (margin * 2));
   doc.text(splitIntro, margin, y);
-  y += (splitIntro.length * 4.8) + 4;
+  y += (splitIntro.length * 4.6) + 4;
 
   checkPageBreak(18);
   doc.setFont("helvetica", "bold");
   doc.text("1. REVOCATION OF FORMER WILLS", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c1Text = "I hereby revoke all former Wills, Codicils, and Testamentary dispositions of every nature made by me prior to this date, and declare this to be my sole, exclusive, and final Last Will and Testament.";
+  const c1Text = "I hereby revoke, cancel, and annul all former Wills, Codicils, and Testamentary dispositions of every nature made by me prior to this date, and declare this to be my sole, exclusive, and final Last Will and Testament.";
   const splitC1 = doc.splitTextToSize(c1Text, pageWidth - (margin * 2));
   doc.text(splitC1, margin, y);
   y += (splitC1.length * 4.5) + 4;
 
   checkPageBreak(18);
   doc.setFont("helvetica", "bold");
-  doc.text("2. DECLARATION OF SOUND HEALTH AND MIND", margin, y);
+  doc.text("2. DECLARATION OF SOUND HEALTH AND TESTAMENTARY CAPACITY", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c2Text = "I declare that I am executing this Will out of my own free choice, volition, and sound disposing mind, without any coercion, force, fraud, misrepresentation, or undue influence from any person whatsoever.";
+  const c2Text = "I declare that I possess sound disposing mind, memory, and physical health, and am in full possession of my mental faculties. I fully comprehend the nature and extent of my estate, the value of my assets, and the natural objects of my bounty, and execute this instrument willingly.";
   const splitC2 = doc.splitTextToSize(c2Text, pageWidth - (margin * 2));
   doc.text(splitC2, margin, y);
   y += (splitC2.length * 4.5) + 4;
 
-  checkPageBreak(18);
+  checkPageBreak(22);
   doc.setFont("helvetica", "bold");
-  doc.text("3. APPOINTMENT OF EXECUTOR", margin, y);
+  doc.text("3. DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE", margin, y);
+  y += 4.5;
+  doc.setFont("helvetica", "normal");
+  const c3Text = "I hereby expressly declare that all properties, whether movable or immovable, listed and bequeathed in this Will are my absolute self-acquired properties, acquired out of my own personal earnings, resources, and separate investments. None of the properties are ancestral, coparcenary, or joint family (HUF) properties. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, unrestricted legal title and testamentary power to dispose of the same according to my sole wishes.";
+  const splitC3 = doc.splitTextToSize(c3Text, pageWidth - (margin * 2));
+  doc.text(splitC3, margin, y);
+  y += (splitC3.length * 4.5) + 4;
+
+  checkPageBreak(26);
+  doc.setFont("helvetica", "bold");
+  doc.text("4. APPOINTMENT & OPERATIONAL POWERS OF EXECUTOR", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
   const execName = (willData.executor && willData.executor.name) || "My Legal Representative";
   const execRel = (willData.executor && willData.executor.relation) || "Nominated Executor";
   const altExecName = (willData.executor && willData.executor.alternateName) || "";
   const altExecRel = (willData.executor && willData.executor.alternateRelation) || "";
-  let c3Text = `I hereby nominate and appoint ${execName} (${execRel}) as the Executor of this my Last Will and Testament. My Executor shall pay all my just debts, funeral expenses, legal charges, and testamentary costs prior to distributing assets to beneficiaries.`;
+  let c4Text = `I hereby nominate and appoint ${execName} (${execRel}) as the Executor of this my Last Will and Testament.`;
   if (altExecName) {
-    c3Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecName}${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with the same powers and duties.`;
+    c4Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecName}${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with identical powers and obligations.`;
   }
-  const splitC3 = doc.splitTextToSize(c3Text, pageWidth - (margin * 2));
-  doc.text(splitC3, margin, y);
-  y += (splitC3.length * 4.5) + 4;
+  c4Text += ` I confer upon my Executor the following full powers: (a) To take possession and custody of all my movable and immovable assets, title deeds, bank accounts, and lockers; (b) To represent my estate before all banks, depositories, mutual funds, companies, sub-registrars, municipal authorities, and cooperative societies to complete transfers and mutations; (c) To pay all my just debts, funeral expenses, and administrative charges prior to final distribution; (d) To engage legal counsel and apply for voluntary Probate or Letters of Administration if required by any institution or court of law.`;
+  const splitC4 = doc.splitTextToSize(c4Text, pageWidth - (margin * 2));
+  doc.text(splitC4, margin, y);
+  y += (splitC4.length * 4.5) + 4;
 
   checkPageBreak(25);
   doc.setFont("helvetica", "bold");
-  doc.text("4. BEQUEST OF ASSETS AND BENEFICIARIES SCHEDULE", margin, y);
+  doc.text("5. BEQUEST OF ASSETS AND BENEFICIARIES SCHEDULE", margin, y);
   y += 5.5;
 
   (willData.assets || []).forEach((asset, idx) => {
@@ -281,7 +293,7 @@ export async function generateEnglishWillPDF(willData) {
         if (ben && ben.idType && ben.idDigits) {
           benName += ` [${ben.idType} Ending in: XXXX-${ben.idDigits}]`;
         }
-        doc.text(`   • ${alloc.percentage}% share bequeathed to ${benName}`, margin + 4, y);
+        doc.text(`   • ${alloc.percentage}% absolute share bequeathed to ${benName}`, margin + 4, y);
         y += 4.2;
       });
     } else {
@@ -292,30 +304,58 @@ export async function generateEnglishWillPDF(willData) {
   });
 
   checkPageBreak(18);
+  doc.setFont("helvetica", "italic");
+  const antiLapseText = "Survivorship & Anti-Lapse Provision (Sections 105 & 109, Indian Succession Act, 1925): If any named beneficiary predeceases me, their designated share shall not lapse into intestacy, but shall devolve upon their surviving lineal descendants per stirpes in equal proportions. Failing lineal descendants, such share shall be divided proportionately among the surviving named beneficiaries.";
+  const splitAntiLapse = doc.splitTextToSize(antiLapseText, pageWidth - (margin * 2) - 4);
+  doc.text(splitAntiLapse, margin + 4, y);
+  y += (splitAntiLapse.length * 4.3) + 4;
+  doc.setFont("helvetica", "normal");
+
+  checkPageBreak(20);
   doc.setFont("helvetica", "bold");
-  doc.text("5. RESIDUARY ESTATE", margin, y);
+  doc.text("6. NOMINATION OVERRIDE CLAUSE (SUPREME COURT OF INDIA PRECEDENTS)", margin, y);
+  y += 4.5;
+  doc.setFont("helvetica", "normal");
+  const c6Text = "I hereby declare that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, mutual funds, provident funds, or insurance policies is solely for procedural convenience. Under the settled law of India laid down by the Hon'ble Supreme Court of India (Sarbati Devi v. Usha Devi and Shakti Yezdani v. Janki Harindra Hingorani), a nominee holds assets merely as a Trustee and has no beneficial ownership. The bequests made in this Will confer absolute title and shall supersede and override any nomination or contrary claim.";
+  const splitC6 = doc.splitTextToSize(c6Text, pageWidth - (margin * 2));
+  doc.text(splitC6, margin, y);
+  y += (splitC6.length * 4.5) + 4;
+
+  checkPageBreak(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("7. RESIDUARY ESTATE CLAUSE", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
   const bens = (willData.beneficiaries || []).filter(b => b && b.name);
-  let c5Text;
+  let c7Text;
   if (bens.length === 1) {
-    c5Text = `Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${bens[0].name} (${bens[0].relation}).`;
+    c7Text = `Any other property, asset, claim, or sum belonging to me not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${bens[0].name} (${bens[0].relation}).`;
   } else if (bens.length > 1) {
     const benList = bens.map(b => `${b.name} (${b.relation})`).join(', ');
-    c5Text = `Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries: ${benList}.`;
+    c7Text = `Any other property, asset, claim, or sum belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries: ${benList}.`;
   } else {
-    c5Text = "Any other property, asset, claim, or money belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries.";
+    c7Text = "Any other property, asset, claim, or sum belonging to me not specifically detailed in this Will shall be divided equally among my designated beneficiaries.";
   }
-  const splitC5 = doc.splitTextToSize(c5Text, pageWidth - (margin * 2));
-  doc.text(splitC5, margin, y);
-  y += (splitC5.length * 4.5) + 6;
+  const splitC7 = doc.splitTextToSize(c7Text, pageWidth - (margin * 2));
+  doc.text(splitC7, margin, y);
+  y += (splitC7.length * 4.5) + 4;
+
+  checkPageBreak(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("8. EXCLUSION OF UNINTENDED HEIRS & THIRD PARTIES", margin, y);
+  y += 4.5;
+  doc.setFont("helvetica", "normal");
+  const c8Text = "Having carefully provided for my beloved beneficiaries in accordance with my judgment, I hereby declare that no other relative, heir, or third party shall have any claim, title, or interest whatsoever in my estate save as expressly bequeathed under this Will.";
+  const splitC8 = doc.splitTextToSize(c8Text, pageWidth - (margin * 2));
+  doc.text(splitC8, margin, y);
+  y += (splitC8.length * 4.5) + 6;
 
   checkPageBreak(30);
   doc.setFont("helvetica", "bold");
   doc.text("IN WITNESS WHEREOF", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  doc.text(`I, ${p.fullName || 'Testator'}, have signed and set my hand to this Will on this _____ day of ____________, 2026.`, margin, y);
+  doc.text(`I, ${p.fullName || 'Testator'}, have signed and set my hand to this Will at ${executionPlace}, India, on this _____ day of ____________, 2026.`, margin, y);
   y += 12;
 
   doc.line(margin, y, margin + 65, y);
@@ -331,10 +371,10 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("ATTESTATION BY TWO INDEPENDENT WITNESSES", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const witText = "Signed, published, and declared by the Testator in our presence, and we, at his/her request, in his/her presence, and in the presence of each other, have subscribed our names as attesting witnesses. We confirm we are NOT beneficiaries under this Will.";
+  const witText = "Signed, published, and declared by the Testator as and for their Last Will and Testament, in the presence of us, who at their request, in their presence, and in the presence of each other, all being present at the same time, have subscribed our names as attesting witnesses. We confirm we are above 18 years of age, of sound mind, and are NEITHER beneficiaries NOR spouses of beneficiaries under this Will (in strict compliance with Sections 63 & 67 of the Indian Succession Act, 1925).";
   const splitWit = doc.splitTextToSize(witText, pageWidth - (margin * 2));
   doc.text(splitWit, margin, y);
-  y += (splitWit.length * 4.5) + 6;
+  y += (splitWit.length * 4.3) + 6;
 
   doc.rect(margin, y, 82, 32);
   doc.rect(margin + 88, y, 82, 32);
@@ -358,9 +398,13 @@ export async function generateEnglishWillPDF(willData) {
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text(`SmartWill India — Formatted Legal Document under Indian Succession Act 1925 | Page ${i} of ${totalPages}`, pageWidth / 2, pageHeight - 8, { align: "center" });
+    doc.setFontSize(7.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(110, 110, 110);
+    doc.text(`Page ${i} of ${totalPages}   |   Testator Initial: _________   |   Witness 1 Initial: _________   |   Witness 2 Initial: _________`, pageWidth / 2, pageHeight - 10, { align: "center" });
+    doc.setFontSize(7);
+    doc.setTextColor(140, 140, 140);
+    doc.text(`SmartWill India Legal Documentation • Indian Succession Act, 1925 (Sections 59, 63, 67, 105, 109)`, pageWidth / 2, pageHeight - 6, { align: "center" });
   }
 
   const fileName = `SmartWill_${(p.fullName || 'Draft').replace(/\s+/g, '_')}_EN.pdf`;
@@ -383,46 +427,61 @@ export async function generateRegionalWillPDF(willData, lang) {
   const altExecRel = escapeHTML((willData.executor && willData.executor.alternateRelation) || '');
 
   const isTe = lang === 'te';
-  const title = isTe ? "కడపటి ఇష్టపూర్వక మరణ శాసన పత్రము (WILL)" : "अंतिम इच्छा पत्र / वसीयतनामा (LAST WILL)";
-  const subtitle = isTe ? "(భారతీయ వారసత్వ చట్టం 1925 ప్రకారం రూపొందించబడినది)" : "(भारतीय उत्तराधिकार अधिनियम 1925 के अंतर्गत)";
+  const executionPlace = escapeHTML(p.addressCity || (isTe ? 'హైదరాబాద్' : 'हैदराबाद'));
+  const title = isTe ? "కడపటి ఇష్టపూర్వక మరణ శాసన పత్రము (LAST WILL & TESTAMENT)" : "अंतिम इच्छा पत्र / वसीयतनामा (LAST WILL & TESTAMENT)";
+  const subtitle = isTe ? "(భారతీయ వారసత్వ చట్టం 1925 ప్రకారం రూపొందించబడిన విధిబద్ధ పత్రము)" : "(भारतीय उत्तराधिकार अधिनियम 1925 के अंतर्गत तैयार विधिक प्रारूप)";
 
   let html = `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; padding: 15px; font-size: 13px;">
-      <h2 style="text-align: center; font-size: 20px; margin-bottom: 4px; text-transform: uppercase;">${title}</h2>
-      <p style="text-align: center; font-size: 12px; font-style: italic; color: #555; margin-bottom: 20px;">${subtitle}</p>
-      <p style="margin-bottom: 16px; text-align: justify;">
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; padding: 15px; font-size: 12.5px;">
+      <h2 style="text-align: center; font-size: 19px; margin-bottom: 4px; text-transform: uppercase;">${title}</h2>
+      <p style="text-align: center; font-size: 11.5px; font-style: italic; color: #555; margin-bottom: 18px;">${subtitle}</p>
+      
+      <p style="margin-bottom: 14px; text-align: justify;">
         ${isTe ? 
-          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong> [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, సంపూర్ణ ఆరోగ్య స్పృహతో మరియు స్వచ్ఛంద నిర్ణయంతో ఈ క్రింది విధంగా నా విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
-          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong> [पहचान पत्र: ${idStr}], पता: ${fullAddress}, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से अपनी अंतिम वसीयत घोषित करता/करती हूँ:`}
+          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong> [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, పుట్టిన తేది: ${escapeHTML(p.dob || 'N/A')}, మతము: ${escapeHTML(p.religion || 'హిందూ')}, సంపూర్ణ మానసిక వివేచనతో, ఎవరి ఒత్తిడి లేదా మోసం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, <strong>${executionPlace}</strong> నగరంలో నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
+          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong> [पहचान पत्र: ${idStr}], पता: ${fullAddress}, जन्म तिथि: ${escapeHTML(p.dob || 'N/A')}, धर्म: ${escapeHTML(p.religion || 'हिंदू')}, स्थान: <strong>${executionPlace}</strong>, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से, बिना किसी दबाव या प्रलोभन के, इस दस्तावेज़ की सभी शर्तों को भली-भांति समझकर अपनी अंतिम वसीयत निष्पादित करता/करती हूँ:`}
       </p>
-      <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
-        ${isTe ? '1. పూర్వ విల్స్ రద్దు నిబంధన (Revocation of Former Wills)' : '1. पूर्व वसीयत निरस्तीकरण (Revocation of Former Wills)'}
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '1. పూర్వ విల్స్ రద్దు నిబంధన (REVOCATION OF FORMER WILLS)' : '1. पूर्व वसीयतों का निरस्तीकरण (REVOCATION OF FORMER WILLS)'}
       </h3>
-      <p style="margin-bottom: 12px;">
+      <p style="margin-bottom: 10px;">
         ${isTe ? 
-          'ఈ తేదికి ముందు నేను చేసిన అన్ని పూర్వ విల్స్ మరియు దస్తావేజులను రద్దు చేస్తున్నాను. ఇదియే నా ఏకైక చెల్లుబాటు అయ్యే విల్.' :
-          'मैं इस तिथि से पूर्व बनाई गई अपनी सभी पूर्व वसीयतों को निरस्त करता/करती हूँ। यह मेरी अंतिम वैध वसीयत है।'}
+          'ఈ తేదికి ముందు నేను చేసిన అన్ని పూర్వ విల్స్, దస్తావేజులు మరియు నిబంధనలను దీని ద్వారా పూర్తిగా రద్దు చేస్తున్నాను. ఇదియే నా ఏకైక చెల్లుబాటు అయ్యే తుది విల్ పత్రము.' :
+          'मैं इस तिथि से पूर्व अपने द्वारा निष्पादित सभी पूर्व वसीयतों, कोडीसिल एवं विधिक प्रपत्रों को पूर्णतः निरस्त करता/करती हूँ। यह मेरी एकमात्र अंतिम वैध वसीयत है।'}
       </p>
-      <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
-        ${isTe ? '2. సంపూర్ణ ఆరోగ్య స్పృహ ప్రకటన (Sound Health & Mind Declaration)' : '2. स्वस्थ दिमाग की घोषणा (Sound Mind Declaration)'}
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '2. సంపూర్ణ ఆరోగ్య స్పృహ ప్రకటన (SOUND HEALTH & DISPOSING MIND)' : '2. स्वस्थ चित्त एवं स्वेच्छा की घोषणा (SOUND DISPOSING MIND)'}
       </h3>
-      <p style="margin-bottom: 12px;">
+      <p style="margin-bottom: 10px;">
         ${isTe ? 
-          'నేను ఎవరి బలవంతం లేదా ఒత్తిడి లేకుండా, స్వచ్ఛందంగా నా స్వంత ఆలోచనతో ఈ విల్ రాయడం జరిగినది.' :
-          'मैं बिना किसी दबाव या जबरदस्ती के, अपनी स्वेच्छा और स्वस्थ दिमाग से यह वसीयत लिख रहा/रही हूँ।'}
+          'నేను సంపూర్ణ శారీరక మరియు మానసిక ఆరోగ్యంతో, నా ఆస్తుల విలువ మరియు నా లబ్ధిదారుల సంక్షేమాన్ని గుర్తించి, నా స్వంత ఆలోచనతో స్వేచ్ఛగా ఈ విల్ రాయడం జరిగినది.' :
+          'मैं शारीरिक एवं मानसिक रूप से पूर्णतः स्वस्थ हूँ तथा अपनी संपत्तियों के मूल्य और अपने परिजनों के कल्याण को ध्यान में रखते हुए स्वेच्छा से यह वसीयत लिख रहा/रही हूँ।'}
       </p>
-      <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
-        ${isTe ? '3. విల్ ఎగ్జిక్యూటర్ నియామకం (Appointment of Executor)' : '3. वसीयत निष्पादक नियुक्ति (Appointment of Executor)'}
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '3. స్వార్జిత ఆస్తుల ప్రకటన (DECLARATION OF SELF-ACQUIRED PROPERTIES)' : '3. स्वअर्जित संपत्ति की घोषणा (SELF-ACQUIRED PROPERTIES)'}
       </h3>
-      <p style="margin-bottom: 12px;">
+      <p style="margin-bottom: 10px;">
         ${isTe ? 
-          `నా తరువాత నా ఆస్తులను విల్ ప్రకారం పంచడానికి <strong>${executorName || 'ఎగ్జిక్యూటర్'}</strong> (${executorRel || 'బంధువు'}) ని ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను.${altExecName ? ` ఒకవేళ సదరు ఎగ్జిక్యూటర్ ఈ బాధ్యతను నిర్వర్తించలేని పక్షంలో, <strong>${altExecName}</strong> (${altExecRel || 'బంధువు'}) ప్రత్యామ్నాయ ఎగ్జిక్యూటర్ (Alternate Executor) గా వ్యవహరిస్తారు.` : ''}` :
-          `मेरे पश्चात मेरी संपत्तियों का वितरण करने हेतु <strong>${executorName || 'निष्पादक'}</strong> (${executorRel || 'संबंध'}) को नियुक्त करता/करती हूँ।${altExecName ? ` यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecName}</strong> (${altExecRel || 'संबंध'}) वैकल्पिक निष्पादक (Alternate Executor) के रूप में कार्य करेंगे।` : ''}`}
+          'ఈ విల్‌లో పేర్కొన్న నా ఆస్తులన్నీ నా స్వంత సంపాదనతో సంపాదించిన స్వార్జిత ఆస్తులు (Self-Acquired Properties). వీటిపై ఎటువంటి పూర్వీకుల లేదా ఉమ్మడి కుటుంబపు (HUF) హక్కులు లేవు. హిందూ వారసత్వ చట్టం సెక్షన్ 30 ప్రకారం వీటిని నా ఇష్టానుసారం పంచే పూర్తి అధికారం నాకు కలదు.' :
+          'इस वसीयत में वर्णित समस्त चल एवं अचल संपत्तियां मेरी व्यक्तिगत कमाई से अर्जित स्वअर्जित संपत्तियां हैं। इन पर किसी भी संयुक्त हिंदू परिवार (HUF) अथवा पैतृक अधिकार का दावा नहीं है। अतः धारा 30 के अधीन मुझे इनके निस्तारण का पूर्ण विधिक अधिकार प्राप्त है।'}
       </p>
-      <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
-        ${isTe ? '4. ఆస్తుల కేటాయింపు పట్టిక (Bequest of Assets Schedule)' : '4. संपत्ति आवंटन विवरण (Asset Allocation Schedule)'}
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '4. విల్ ఎగ్జిక్యూటర్ నియామకం & అధికారాలు (APPOINTMENT & POWERS OF EXECUTOR)' : '4. निष्पादक की नियुक्ति एवं व्यापक अधिकार (POWERS OF EXECUTOR)'}
       </h3>
-      <ul style="padding-left: 20px; margin-bottom: 16px;">
+      <p style="margin-bottom: 10px;">
+        ${isTe ? 
+          `నా తదనంతరం నా ఆస్తులను విల్ ప్రకారం పంచడానికి <strong>${executorName || 'ఎగ్జిక్యూటర్'}</strong> (${executorRel || 'బంధువు'}) గారిని ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను.${altExecName ? ` ఒకవేళ సదరు ఎగ్జిక్యూటర్ బాధ్యత నిర్వర్తించలేని పక్షంలో, <strong>${altExecName}</strong> (${altExecRel || 'బంధువు'}) ప్రత్యామ్నాయ ఎగ్జిక్యూటర్‌గా వ్యవహరిస్తారు.` : ''} నా ఎగ్జిక్యూటర్‌కు బ్యాంకులు, డీమ్యాట్, రిజిస్ట్రార్ కార్యాలయాలలో నా ఆస్తుల బదిలీలు పూర్తి చేయడానికి మరియు అప్పులు/ఖర్చులు చెల్లించడానికి సంపూర్ణ అధికారాలు కల్పిస్తున్నాను.` :
+          `मेरे पश्चात मेरी संपत्तियों का वितरण करने हेतु <strong>${executorName || 'निष्पादक'}</strong> (${executorRel || 'संबंध'}) को नियुक्त करता/करती हूँ।${altExecName ? ` यदि उक्त निष्पादक असमर्थ रहें, तो <strong>${altExecName}</strong> (${altExecRel || 'संबंध'}) वैकल्पिक निष्पादक होंगे।` : ''} निष्पादक को बैंकों, सब-रजिस्ट्रार एवं वित्तीय संस्थानों के समक्ष संपत्तियों का हस्तांतरण पूर्ण कराने तथा वैध देयताएं चुकाने के समस्त अधिकार प्राप्त होंगे।`}
+      </p>
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '5. ఆస్తుల కేటాయింపు పట్టిక (BEQUEST OF ASSETS SCHEDULE)' : '5. संपत्ति आवंटन विवरण (BEQUEST OF ASSETS SCHEDULE)'}
+      </h3>
+      <ul style="padding-left: 18px; margin-bottom: 10px;">
   `;
 
   (willData.assets || []).forEach(asset => {
@@ -434,8 +493,8 @@ export async function generateRegionalWillPDF(willData, lang) {
         const ben = (willData.beneficiaries || []).find(b => b.id === alloc.beneficiaryId);
         const benName = ben ? `${escapeHTML(ben.name)} (${escapeHTML(ben.relation)})` : (isTe ? 'లబ్ధిదారుడు' : 'उत्तराधिकारी');
         const benId = (ben && ben.idType && ben.idDigits) ? ` [${escapeHTML(ben.idType)}: XXXX-${escapeHTML(ben.idDigits)}]` : '';
-        const pctLabel = isTe ? `${alloc.percentage}% శాతం భాగం` : `${alloc.percentage}% प्रतिशत हिस्सा`;
-        html += `   • ${pctLabel}: <strong>${benName}</strong>${benId}<br>`;
+        const pctLabel = isTe ? `${alloc.percentage}% వాటా` : `${alloc.percentage}% हिस्सा`;
+        html += `   • ${pctLabel} సంపూర్ణ హక్కులతో: <strong>${benName}</strong>${benId}<br>`;
       });
     }
     html += `</li>`;
@@ -443,10 +502,27 @@ export async function generateRegionalWillPDF(willData, lang) {
 
   html += `
       </ul>
-      <h3 style="font-size: 14px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 12px; margin-bottom: 6px;">
-        ${isTe ? '5. మిగిలిన ఆస్తుల నిబంధన (Residuary Estate)' : '5. शेष संपत्ति नियम (Residuary Estate)'}
+
+      <div style="background: rgba(0,0,0,0.03); border-left: 3px solid #dfb76c; padding: 6px 10px; font-size: 11px; margin-bottom: 10px;">
+        <strong>${isTe ? 'వారసత్వ భద్రత నిబంధన (Anti-Lapse / Survivorship - సెక్షన్లు 105 & 109):' : 'उत्तरजीविता नियम (Anti-Lapse / Survivorship - धारा 105 एवं 109):'}</strong>
+        ${isTe ? 
+          'ఒకవేళ నా లబ్ధిదారులలో ఎవరైనా నాకంటే ముందు మరణిస్తే, వారి వాటా వారి చట్టబద్ధ సంతానానికి సమానంగా చెందుతుంది. సంతానం లేనిచో సజీవులైన ఇతర లబ్ధిదారులకు సమానంగా పంపిణీ అవుతుంది.' :
+          'यदि कोई उत्तराधिकारी मुझसे पूर्व दिवंगत हो जाता है, तो उनका हिस्सा उनके विधिक वंशजों को समान रूप से प्राप्त होगा। अन्यथा जीवित उत्तराधिकारियों में विभाजित होगा।'}
+      </div>
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '6. నామినేషన్ల కంటే విల్ ప్రాధాన్యత (NOMINATION OVERRIDE CLAUSE)' : '6. नामांकन पर वसीयत की सर्वोच्चता (NOMINATION OVERRIDE)'}
       </h3>
-      <p style="margin-bottom: 20px;">
+      <p style="margin-bottom: 10px;">
+        ${isTe ? 
+          'సుప్రీం కోర్టు తీర్పుల ప్రకారం (Sarbati Devi & Shakti Yezdani కేసులు), బ్యాంక్ లేదా ఇతర ఖాతాలలోని నామినీ కేవలం ధర్మకర్త (Trustee) మాత్రమే. ఈ విల్‌లో పేర్కొన్న లబ్ధిదారుల హక్కులే అన్ని నామినేషన్లను అధిగమిస్తాయి.' :
+          'माननीय सर्वोच्च न्यायालय के स्थापित विधि-सिद्धांतों (सरबती देवी व शक्ति यजदानी) के अनुसार, नॉमिनी केवल ट्रस्टी मात्र है। इस वसीयत में नामित उत्तराधिकारियों के विधिक अधिकार किसी भी पूर्व नामांकन से ऊपर व बाध्यकारी होंगे।'}
+      </p>
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '7. మిగిలిన ఆస్తుల నిబంధన (RESIDUARY ESTATE)' : '7. अवशिष्ट संपत्ति नियम (RESIDUARY ESTATE)'}
+      </h3>
+      <p style="margin-bottom: 10px;">
         ${(() => {
           const bens = (willData.beneficiaries || []).filter(b => b && b.name);
           if (isTe) {
@@ -468,27 +544,38 @@ export async function generateRegionalWillPDF(willData, lang) {
           }
         })()}
       </p>
-      <div style="margin-top: 20px; border-top: 1px dashed #666; padding-top: 10px;">
-        <p style="margin-bottom: 8px; font-size: 11.5px;">
+
+      <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
+        ${isTe ? '8. ఇతర వ్యక్తుల మినహాయింపు (EXCLUSION OF UNINTENDED HEIRS)' : '8. अन्य उत्तराधिकारियों का विवर्जन (EXCLUSION OF UNINTENDED HEIRS)'}
+      </h3>
+      <p style="margin-bottom: 14px;">
+        ${isTe ? 
+          'ఈ విల్‌లో నిర్దిష్టంగా పేర్కొనబడిన లబ్ధిదారులు మినహా, ఇతర ఏ బంధువు లేదా మూడవ వ్యక్తికి నా ఆస్తిపై ఎటువంటి హక్కు గానీ, వాటా గానీ ఉండకూడదని స్పష్టం చేస్తున్నాను.' :
+          'इस वसीयत में नामित उत्तराधिकारियों के अतिरिक्त, मेरे किसी अन्य रिश्तेदार अथवा तृतीय पक्ष का मेरी संपत्तियों पर कोई अधिकार अथवा दावा मान्य नहीं होगा।'}
+      </p>
+
+      <div style="margin-top: 14px; border-top: 1px dashed #666; padding-top: 10px;">
+        <p style="margin-bottom: 6px; font-size: 11px;">
           ${isTe ? 
-            `పై విషయాలన్నీ సత్యమని ధృవీకరిస్తూ, నేను (<strong>${safeFullName}</strong>) ఈ దినమున అనగా 2026 సంవత్సరం _________ నెల _________ వ తేదీన నా సంపూర్ణ సమ్మతితో ఈ విల్ పత్రంపై సంతకం చేయుచున్నాను.` :
-            `उपरोक्त सभी विवरणों को सत्य मानते हुए, मैं (<strong>${safeFullName}</strong>) आज दिनांक _____ माह ____________, 2026 को अपनी पूर्ण सहमति से इस वसीयत पर हस्ताक्षर कर रहा/रही हूँ।`}
+            `పై విషయాలన్నీ సత్యమని ధృవీకరిస్తూ, నేను (<strong>${safeFullName}</strong>) <strong>${executionPlace}</strong> నగరంలో ఈ దినమున అనగా 2026 సంవత్సరం _________ నెల _________ వ తేదీన నా సంపూర్ణ సమ్మతితో ఈ విల్ పత్రంపై సంతకం చేయుచున్నాను.` :
+            `उपरोक्त सभी विवरणों को सत्य मानते हुए, मैं (<strong>${safeFullName}</strong>) <strong>${executionPlace}</strong> में आज दिनांक _____ माह ____________, 2026 को अपनी पूर्ण सहमति से इस वसीयत पर हस्ताक्षर कर रहा/रही हूँ।`}
         </p>
         <p><strong>${isTe ? 'శాసనకర్త సంతకం / Signature of Testator:' : 'वसीयतकर्ता के हस्ताक्षर / Signature of Testator:'}</strong></p>
         <br>
         <p>_____________________________________</p>
-        <p style="font-size: 12px; color: #333;">${safeFullName}</p>
+        <p style="font-size: 11.5px; color: #333;">${safeFullName}</p>
       </div>
-      <div style="margin-top: 18px; border: 1px solid #777; padding: 10px; border-radius: 4px;">
-        <h4 style="font-size: 12px; margin-bottom: 4px;">
-          ${isTe ? 'ఇద్దరు సాక్షుల ధృవీకరణ సంతకాలు (ATTESTATION BY TWO INDEPENDENT WITNESSES):' : 'दो स्वतंत्र गवाहों के हस्ताक्षर (ATTESTATION BY TWO INDEPENDENT WITNESSES):'}
+
+      <div style="margin-top: 14px; border: 1px solid #777; padding: 10px; border-radius: 4px;">
+        <h4 style="font-size: 11.5px; margin-bottom: 4px;">
+          ${isTe ? 'ఇద్దరు స్వతంత్ర సాక్షుల ధృవీకరణ సంతకాలు (ATTESTATION BY TWO INDEPENDENT WITNESSES):' : 'दो स्वतंत्र गवाहों के हस्ताक्षर (ATTESTATION BY TWO INDEPENDENT WITNESSES):'}
         </h4>
-        <p style="font-size: 10px; color: #444; margin-bottom: 8px; line-height: 1.35;">
+        <p style="font-size: 9.5px; color: #444; margin-bottom: 6px; line-height: 1.35;">
           ${isTe ? 
-            'శాసనకర్త మా సమక్షంలో సంతకం చేయగా చూసి, వారి కోరిక మేరకు, వారి సమక్షంలో మరియు మా ఇద్దరి సమక్షంలో మేము సాక్షులుగా సంతకాలు చేయుచున్నాము. మేము ఈ విల్ ద్వారా ఎటువంటి ఆస్తి లబ్ధి పొందని స్వతంత్ర సాక్షులమని ధృవీకరిస్తున్నాము.' :
-            'वसीयतकर्ता द्वारा हमारे समक्ष हस्ताक्षर किए जाने की पुष्टि करते हुए, उनके अनुरोध पर, उनकी उपस्थिति में और एक-दूसरे की उपस्थिति में हम गवाह के रूप में हस्ताक्षर कर रहे हैं। हम पुष्टि करते हैं कि हम इस वसीयत के लाभार्थी नहीं हैं।'}
+            'శాసనకర్త మా సమక్షంలో సంతకం చేయగా చూసి, వారి కోరిక మేరకు, వారి సమక్షంలో మరియు మా ఇద్దరి సమక్షంలో మేము సాక్షులుగా సంతకాలు చేయుచున్నాము. మేము 18 సంవత్సరాలు నిండిన స్వతంత్ర సాక్షులమని మరియు ఈ విల్ ద్వారా ఎటువంటి ఆస్తి లబ్ధి పొందని వారమని లేదా లబ్ధిదారుల జీవిత భాగస్వాములం కాదని ధృవీకరిస్తున్నాము (సెక్షన్లు 63 మరియు 67).' :
+            'वसीयतकर्ता द्वारा हमारे समक्ष हस्ताक्षर किए जाने की पुष्टि करते हुए, उनके अनुरोध पर, उनकी उपस्थिति में और एक-दूसरे की उपस्थिति में हम गवाह के रूप में हस्ताक्षर कर रहे हैं। हम पुष्टि करते हैं कि हम 18 वर्ष से अधिक के हैं तथा इस वसीयत के लाभार्थी या उनके जीवनसाथी नहीं हैं (धारा 63 व 67)।'}
         </p>
-        <div style="display: flex; justify-content: space-between; font-size: 11px;">
+        <div style="display: flex; justify-content: space-between; font-size: 10.5px;">
           <div style="width: 48%;">
             <p><strong>1. ${isTe ? 'సాక్షి 1 / Witness 1:' : 'गवाह 1 / Witness 1:'}</strong></p>
             <p>${isTe ? 'సంతకం:' : 'हस्ताक्षर:'} ____________________</p>
@@ -505,7 +592,15 @@ export async function generateRegionalWillPDF(willData, lang) {
           </div>
         </div>
       </div>
-      <p style="font-size: 9px; color: #888; text-align: center; margin-top: 20px;">SmartWill India — ${isTe ? 'తెలుగు పత్రము' : 'हिंदी दस्तावेज'} — Indian Succession Act 1925</p>
+
+      <div style="margin-top: 12px; padding: 6px 10px; background: #f8f9fa; border: 1px dashed #aaa; font-size: 9.5px; display: flex; justify-content: space-between;">
+        <span>${isTe ? 'పేజీల సంతకాల భద్రత (Page Initials):' : 'पृष्ठ हस्ताक्षर सुरक्षा (Page Initials):'}</span>
+        <span>${isTe ? 'శాసనకర్త:' : 'वसीयतकर्ता:'} [ ________ ]</span>
+        <span>${isTe ? 'సాక్షి 1:' : 'गवाह 1:'} [ ________ ]</span>
+        <span>${isTe ? 'సాక్షి 2:' : 'गवाह 2:'} [ ________ ]</span>
+      </div>
+
+      <p style="font-size: 8.5px; color: #888; text-align: center; margin-top: 14px;">SmartWill India — ${isTe ? 'తెలుగు పత్రము' : 'हिंदी दस्तावेज'} — Indian Succession Act 1925 (Sections 59, 63, 67, 105, 109)</p>
     </div>
   `;
 

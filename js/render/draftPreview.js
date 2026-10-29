@@ -41,6 +41,8 @@ export function renderDraftContent(willData, lang = 'en') {
  * 🇬🇧 English Legal Draft Template (Indian Succession Act, 1925)
  */
 function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
+  const executionPlace = escapeHTML(p.addressCity || 'Hyderabad');
+
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">SAMPLE DRAFT • SMARTWILL INDIA</div>
@@ -56,8 +58,8 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
           residing at <strong>${escapeHTML(fullAddress)}</strong>,
           born on <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
           professing <strong>${escapeHTML(p.religion || 'Hindu')}</strong> faith,
-          being of sound disposing mind, memory, and understanding, and acting of my own free choice, volition, and without any coercion, undue influence, or fraud,
-          do hereby make, publish, and declare this writing to be my <strong>Last Will and Testament</strong>.
+          being of sound disposing mind, memory, and understanding, having read over (or had read over and explained to me in a language I fully understand) and approved the contents hereof, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever,
+          do hereby make, publish, and declare this writing to be my <strong>Last Will and Testament</strong>, executed at <strong>${executionPlace}</strong>, India.
         </p>
       </div>
 
@@ -77,20 +79,35 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">3. APPOINTMENT OF WILL EXECUTOR</h4>
+        <h4 class="clause-title">3. DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE</h4>
+        <p>
+          I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, self-acquired properties, acquired out of my own hard-earned funds, personal earnings, and investments (or inherited by me with absolute, alienable ownership rights). No other person, coparcener, or relative has any ancestral, joint family, or Hindu Undivided Family (HUF) right, title, or interest in any of these properties, and I possess the absolute, unfettered right to bequeath the same under Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925.
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">4. APPOINTMENT OF WILL EXECUTOR & OPERATIONAL POWERS</h4>
         <p>
   `;
 
   if (execName) {
     html += `
-          I hereby nominate, constitute, and appoint <strong>${execName}</strong> (${execRel || 'Legal Representative'}) as the sole Executor and Trustee of this my Last Will and Testament.
-          I direct my said Executor to first settle all my legitimate debts, testamentary charges, medical expenses, and funeral costs out of my estate prior to distributing any bequests or shares to my beneficiaries.
+          I hereby nominate, constitute, and appoint <strong>${execName}</strong> (${execRel || 'Legal Representative'}) as the sole Executor of this my Last Will and Testament.
     `;
     if (altExecName) {
       html += `
-          In the event that <strong>${execName}</strong> is unable, unwilling, or predeceases me, I hereby nominate and appoint <strong>${altExecName}</strong>${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with the same powers and duties.
+          In the event that <strong>${execName}</strong> is unable, unwilling, or predeceases me, I hereby nominate and appoint <strong>${altExecName}</strong>${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with identical powers and duties.
       `;
     }
+    html += `
+          <br><br>
+          I expressly confer upon my Executor full power and authority to:
+          <br>• (a) Take possession, custody, and charge of all my movable and immovable assets, title documents, and financial records;
+          <br>• (b) Deal with all Banks, Depository Participants, Asset Management Companies, Registrars, Housing Societies, and Municipal or Revenue Authorities, and execute all necessary discharges and transfer documents;
+          <br>• (c) Settle all my legitimate debts, testamentary charges, taxes, and funeral expenses out of my estate prior to distributing any bequests to my beneficiaries;
+          <br>• (d) Apply for Probate or Letters of Administration from a court of competent jurisdiction if deemed necessary or requested by any financial institution, and engage advocates or chartered accountants for the same;
+          <br>• (e) Be reimbursed from my estate for all legitimate and reasonable out-of-pocket expenses incurred in the proper administration of this Will.
+    `;
   } else {
     html += `
           Under the provisions of the Indian Succession Act, 1925, I have not nominated a private Executor. My estate shall be administered jointly by my designated beneficiaries or by an administrator appointed by a court of competent jurisdiction under Letters of Administration.
@@ -102,14 +119,14 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">4. SCHEDULE OF BEQUEST OF ASSETS & BENEFICIARY ALLOCATIONS</h4>
+        <h4 class="clause-title">5. SCHEDULE OF BEQUEST OF ASSETS & BENEFICIARY ALLOCATIONS</h4>
         <p>
           I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in the exact proportions set forth below:
         </p>
   `;
 
   if (assets.length === 0) {
-    html += `<p class="text-muted italic-note">No specific assets recorded. All property will pass according to Clause 5 (Residuary Estate).</p>`;
+    html += `<p class="text-muted italic-note">No specific assets recorded. All property will pass according to Clause 7 (Residuary Estate).</p>`;
   } else {
     assets.forEach((asset, idx) => {
       const safeType = escapeHTML(asset.type || 'Asset');
@@ -141,32 +158,53 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         </div>
       `;
     });
+
+    html += `
+        <div class="draft-subclause mt-2 p-2" style="background: rgba(0,0,0,0.02); border-left: 3px solid #dfb76c; font-size: 0.88rem; line-height: 1.5;">
+          <strong>Survivorship & Anti-Lapse Provision (Sections 105 & 109, Indian Succession Act, 1925):</strong>
+          In the event that any of my designated beneficiaries predeceases me, the bequest intended for such deceased beneficiary shall devolve upon their lawful surviving lineal descendants (children) in equal shares (<em>per stirpes</em>). If such deceased beneficiary leaves no surviving lineal descendants, their share shall accrue and be divided equally among my remaining surviving beneficiaries named herein.
+        </div>
+    `;
   }
 
   html += `
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">5. RESIDUARY ESTATE CLAUSE</h4>
+        <h4 class="clause-title">6. NOMINATION OVERRIDE & BENEFICIAL OWNERSHIP CLAUSE</h4>
+        <p>
+          I expressly declare and clarify that any nominee registered by me in respect of any bank account, Fixed Deposit, locker, Demat account, mutual fund holding, provident fund, gratuity, or insurance policy is appointed solely as a procedural custodian to facilitate receipt of funds upon my demise. As settled under Indian law (including decisions of the Hon'ble Supreme Court of India in <em>Sarbati Devi</em> and <em>Shakti Yezdani</em>), any nominee who receives such funds shall hold the same strictly as a trustee for the benefit of the legatee(s) named in this Will, and the bequests in this Will shall strictly supersede and prevail over all nominations.
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">7. RESIDUARY ESTATE CLAUSE</h4>
         <p>
           ${(() => {
             const bens = beneficiaries.filter(b => b && b.name);
             if (bens.length === 1) {
               const b = bens[0];
-              return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall devolve entirely and absolutely upon my sole designated beneficiary, <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'Beneficiary')}).`;
+              return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall devolve entirely and absolutely upon my sole designated beneficiary, <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'Beneficiary')}). In the event that my sole beneficiary predeceases me, the residuary estate shall devolve upon their surviving lineal descendants in equal shares.`;
             } else if (bens.length > 1) {
               const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
-              return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries: ${benList}.`;
+              return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries: ${benList}. In the event that any beneficiary predeceases me, their share shall pass to their surviving children, or accrue to the remaining surviving beneficiaries.`;
             }
-            return `Any other real or personal property, bank accounts, investments, jewellery, digital assets, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries surviving me.`;
+            return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries surviving me, or in their absence, to my nearest surviving legal heirs under law.`;
           })()}
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">8. EXCLUSION OF UNINTENDED HEIRS & DELIBERATE INTENTION</h4>
+        <p>
+          I declare that I have made adequate and loving provision for the objects of my affection. Except for the beneficiaries specifically named herein, I have intentionally not bequeathed any part of my estate to any other relative, heir, or claimant. This is my deliberate and conscious testamentary disposition.
         </p>
       </div>
 
       <div class="clause-block signature-section">
         <h4 class="clause-title">IN WITNESS WHEREOF</h4>
         <p>
-          I, the said <strong>${safeFullName || 'Testator'}</strong>, have hereunto set my hand and affixed my signature to this my Last Will and Testament on this <strong>${currentDate}</strong>.
+          I, the said <strong>${safeFullName || 'Testator'}</strong>, having understood and approved this Will, have hereunto set my hand and affixed my signature to this my Last Will and Testament on this <strong>${currentDate}</strong> at <strong>${executionPlace}</strong>, India.
         </p>
         <div class="testator-sign-box">
           <div class="sign-line"></div>
@@ -178,7 +216,7 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       <div class="clause-block witness-section">
         <h4 class="clause-title">ATTESTATION BY TWO INDEPENDENT WITNESSES</h4>
         <p class="witness-intro">
-          Signed, acknowledged, and declared by the above-named Testator as and for their Last Will and Testament, in the presence of us, both present at the same time, who at their request, in their presence, and in the presence of each other, have hereunto subscribed our names as attesting witnesses. We verify that we are of legal age and are NOT beneficiaries under this Will.
+          Signed, acknowledged, and declared by the above-named Testator as and for their Last Will and Testament, in the presence of us, both present at the same time, who at their request, in their presence, and in the presence of each other, have hereunto subscribed our names as attesting witnesses. We verify and solemnly affirm that we are of legal age (18+ years), of sound disposing mind, and are NOT beneficiaries nor spouses of beneficiaries under this Will (satisfying the requirements of Section 63 and Section 67 of the Indian Succession Act, 1925).
         </p>
         <div class="witness-grid">
           <div class="witness-card">
@@ -200,8 +238,15 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         </div>
       </div>
 
-      <div class="paper-footer text-center">
-        <small class="text-muted">SmartWill India Legal Documentation Service • Governed by the Indian Succession Act, 1925</small>
+      <div class="draft-page-initials-box" style="margin-top: 20px; padding: 10px 14px; background: rgba(0,0,0,0.03); border: 1px dashed #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.78rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>Page Initial Safeguard:</span>
+        <span>Testator Initial: [ ____________ ]</span>
+        <span>Witness 1: [ ____________ ]</span>
+        <span>Witness 2: [ ____________ ]</span>
+      </div>
+
+      <div class="paper-footer text-center mt-3">
+        <small class="text-muted">SmartWill India Legal Documentation Service • Aligned with Sections 59, 63, 67, 105 & 109 of the Indian Succession Act, 1925</small>
       </div>
     </div>
   `;
@@ -212,6 +257,8 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
  * 🇮🇳 Telugu Legal Draft Template (భారతీయ వారసత్వ చట్టం 1925)
  */
 function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
+  const executionPlace = escapeHTML(p.addressCity || 'హైదరాబాద్');
+
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">నమూనా ముసాయిదా • SMARTWILL INDIA</div>
@@ -227,7 +274,7 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
           నివాసము: <strong>${escapeHTML(fullAddress)}</strong>,
           పుట్టిన తేది: <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
           మతము: <strong>${escapeHTML(p.religion || 'హిందూ')}</strong>,
-          సంపూర్ణ ఆరోగ్య స్పృహతో, జ్ఞాపకశక్తితో మరియు ఎవరి బలవంతం లేదా ప్రలోభం లేకుండా, నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ (మరణ శాసనము) వ్రాయించి ఆమోదిస్తున్నాను.
+          సంపూర్ణ మానసిక ఆరోగ్య స్పృహతో, వివేచనతో, మరియు ఎవరి బలవంతం, మోసం లేదా ప్రలోభం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, నా స్వచ్ఛంద ఆమోదంతో <strong>${executionPlace}</strong> నగరంలో ఈ క్రింది విధంగా నా కడపటి విల్ (మరణ శాసనము) వ్రాయించి ఆమోదిస్తున్నాను.
         </p>
       </div>
 
@@ -241,24 +288,39 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
       <div class="clause-block">
         <h4 class="clause-title">2. సంపూర్ణ ఆరోగ్య స్పృహ ప్రకటన (SOUND HEALTH & MIND DECLARATION)</h4>
         <p>
-          నేను చక్కటి మానసిక స్థితిలో, సంపూర్ణ వివేచనతో నా ఆస్తుల వివరాలను మరియు నాపై ఆధారపడిన కుటుంబ సభ్యుల సంక్షేమాన్ని గుర్తించి, నా స్వంత ఆలోచనతో ఈ విల్ రాయడం జరిగినది.
+          నేను చక్కటి శారీరక మరియు మానసిక స్థితిలో, సంపూర్ణ వివేచనతో నా స్థిర, చర ఆస్తుల విలువను మరియు నాపై ఆధారపడిన కుటుంబ సభ్యుల సంక్షేమాన్ని గుర్తించి, నా స్వంత ఆలోచనతో ఈ విల్ రాయడం జరిగినది.
         </p>
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">3. విల్ ఎగ్జిక్యూటర్ నియామకం (APPOINTMENT OF EXECUTOR)</h4>
+        <h4 class="clause-title">3. స్వార్జిత ఆస్తుల ప్రకటన (DECLARATION OF SELF-ACQUIRED PROPERTIES)</h4>
+        <p>
+          ఈ విల్‌లో పేర్కొన్న నా స్థిర మరియు చర ఆస్తులన్నీ నా స్వంత సంపాదనతో, కష్టార్జితంతో మరియు పెట్టుబడులతో స్వయంగా సంపాదించిన "స్వార్జిత ఆస్తులు" (Self-Acquired Properties) అని ఇందుమూలముగా ప్రకటిస్తున్నాను. వీటిపై ఎటువంటి ఉమ్మడి కుటుంబపు (HUF) లేదా పూర్వీకుల (Ancestral/Coparcenary) హక్కులు ఎవరికీ లేవు. కావున భారతీయ వారసత్వ చట్టం మరియు హిందూ వారసత్వ చట్టం సెక్షన్ 30 ప్రకారం ఈ ఆస్తులను నా ఇష్టానుసారం పంచడానికి నాకు సంపూర్ణ చట్టపరమైన అధికారం కలదు.
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">4. విల్ ఎగ్జిక్యూటర్ నియామకం & అధికారాలు (APPOINTMENT & POWERS OF EXECUTOR)</h4>
         <p>
   `;
 
   if (execName) {
     html += `
-          నా తదనంతరం నా ఈ విల్ ప్రకారం నా ఆస్తులను కేటాయించడానికి మరియు పంపిణీ చేయడానికి <strong>${execName}</strong> (${execRel || 'బంధువు / ప్రతినిధి'}) గారిని నా విల్ ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను. నా ఎగ్జిక్యూటర్ నా ఋణాలు, అంత్యక్రియల ఖర్చులు మరియు చట్టపరమైన బాధ్యతలను ముందుగా చెల్లించి, ఆపై మిగిలిన ఆస్తులను లబ్ధిదారులకు పంచవలెను.
+          నా తదనంతరం నా ఈ విల్ ప్రకారం నా ఆస్తులను కేటాయించడానికి మరియు పంపిణీ చేయడానికి <strong>${execName}</strong> (${execRel || 'బంధువు / ప్రతినిధి'}) గారిని నా విల్ ఎగ్జిక్యూటర్‌గా నియమిస్తున్నాను.
     `;
     if (altExecName) {
       html += `
           ఒకవేళ సదరు ఎగ్జిక్యూటర్ ఈ బాధ్యతను నిర్వర్తించలేని పక్షంలో, <strong>${altExecName}</strong> (${altExecRel || 'బంధువు / ప్రతినిధి'}) ప్రత్యామ్నాయ ఎగ్జిక్యూటర్ (Alternate Executor) గా వ్యవహరిస్తారు.
       `;
     }
+    html += `
+          <br><br>
+          నా ఎగ్జిక్యూటర్‌కు నేను క్రింది సంపూర్ణ అధికారాలను కల్పిస్తున్నాను:
+          <br>• (ఎ) నా స్థిర మరియు చర ఆస్తులు, దస్తావేజులు మరియు బ్యాంక్ ఖాతాల నిర్వహణ బాధ్యత తీసుకోవడం;
+          <br>• (బి) బ్యాంకులు, డీమ్యాట్ సంస్థలు, సబ్-రిజిస్ట్రార్ కార్యాలయాలు మరియు ప్రభుత్వ సంస్థలతో లావాదేవీలు నిర్వహించి ఆస్తుల బదిలీలు పూర్తి చేయడం;
+          <br>• (సి) నా న్యాయబద్ధమైన అప్పులు, అంత్యక్రియల ఖర్చులు మరియు చట్టపరమైన బాధ్యతలను ముందుగా చెల్లించి, ఆపై మిగిలిన ఆస్తులను లబ్ధిదారులకు పంచడం;
+          <br>• (డి) ఏదైనా సంస్థ కోరినచో కోర్టు ద్వారా ప్రొబేట్ (Probate) లేదా లెటర్స్ ఆఫ్ అడ్మినిస్ట్రేషన్ పొందుటకు న్యాయవాదులను నియమించడం.
+    `;
   } else {
     html += `
           భారతీయ వారసత్వ చట్టం 1925 ప్రకారం, ప్రస్తుతం ప్రత్యేక ఎగ్జిక్యూటర్‌ను నియమించలేదు. నా విల్ అమలును నా లబ్ధిదారులు సంయుక్తంగా లేదా సంబంధిత న్యాయస్థానం నియమించే అడ్మినిస్ట్రేటర్ ద్వారా జరుపవలెను.
@@ -270,12 +332,12 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">4. ఆస్తుల కేటాయింపు పట్టిక (BEQUEST OF ASSETS SCHEDULE)</h4>
+        <h4 class="clause-title">5. ఆస్తుల కేటాయింపు పట్టిక (BEQUEST OF ASSETS SCHEDULE)</h4>
         <p>నా చర మరియు స్థిర ఆస్తులు నా తరువాత క్రింది విధంగా నా లబ్ధిదారులకు చెందవలెను:</p>
   `;
 
   if (assets.length === 0) {
-    html += `<p class="text-muted italic-note">ప్రత్యేక ఆస్తులు నమోదు కాలేదు. మిగిలిన ఆస్తుల నిబంధన (5వ క్లాజ్) వర్తిస్తుంది.</p>`;
+    html += `<p class="text-muted italic-note">ప్రత్యేక ఆస్తులు నమోదు కాలేదు. మిగిలిన ఆస్తుల నిబంధన (7వ క్లాజ్) వర్తిస్తుంది.</p>`;
   } else {
     assets.forEach((asset, idx) => {
       const safeType = escapeHTML(asset.type || 'ఆస్తి');
@@ -307,13 +369,27 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
         </div>
       `;
     });
+
+    html += `
+        <div class="draft-subclause mt-2 p-2" style="background: rgba(0,0,0,0.02); border-left: 3px solid #dfb76c; font-size: 0.88rem; line-height: 1.5;">
+          <strong>వారసత్వ భద్రత నిబంధన (Anti-Lapse / Survivorship - సెక్షన్లు 105 & 109):</strong>
+          ఒకవేళ నా లబ్ధిదారులలో ఎవరైనా నాకంటే ముందే మరణించినచో, వారికి కేటాయించిన వాటా వారి చట్టబద్ధమైన సంతానానికి సమానంగా చెందుతుంది. సంతానం లేని పక్షంలో ఆ వాటా సజీవులైన ఇతర లబ్ధిదారులకు సమానంగా పంపిణీ కావలెను.
+        </div>
+    `;
   }
 
   html += `
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">5. మిగిలిన ఆస్తుల నిబంధన (RESIDUARY ESTATE)</h4>
+        <h4 class="clause-title">6. నామినేషన్ల కంటే విల్ ప్రాధాన్యత నిబంధన (NOMINATION OVERRIDE CLAUSE)</h4>
+        <p>
+          నా బ్యాంక్ ఖాతాలు, ఫిక్స్‌డ్ డిపాజిట్లు, డీమ్యాట్ అకౌంట్లు లేదా బీమా పాలసీలలో నమోదైన 'నామినీ' (Nominee) కేవలం ప్రక్రియ సౌలభ్యం కొరకు మాత్రమేనని స్పష్టం చేస్తున్నాను. భారత సర్వోన్నత న్యాయస్థానం (సుప్రీం కోర్టు) తీర్పుల ప్రకారం, నామినీ కేవలం ధర్మకర్త (Trustee) మాత్రమే. ఈ విల్‌లో పేర్కొన్న లబ్ధిదారుల హక్కులే అత్యున్నతమైనవి మరియు అన్ని నామినేషన్లను అధిగమిస్తాయి.
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">7. మిగిలిన ఆస్తుల నిబంధన (RESIDUARY ESTATE)</h4>
         <p>
           ${(() => {
             const bens = beneficiaries.filter(b => b && b.name);
@@ -329,10 +405,17 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
         </p>
       </div>
 
+      <div class="clause-block">
+        <h4 class="clause-title">8. ఇతర వ్యక్తుల మినహాయింపు (EXCLUSION OF UNINTENDED HEIRS)</h4>
+        <p>
+          నేను నా ప్రియమైన కుటుంబ సభ్యులకు తగిన ఆస్తి ఏర్పాటు చేశాను. ఈ విల్‌లో ప్రత్యేకంగా పేర్కొనబడిన లబ్ధిదారులు మినహా, ఇతర ఏ బంధువు లేదా మూడవ వ్యక్తికి నా ఆస్తిపై ఎటువంటి హక్కు గానీ, వాటా గానీ ఉండకూడదని స్పష్టం చేస్తున్నాను.
+        </p>
+      </div>
+
       <div class="clause-block signature-section">
         <h4 class="clause-title">శాసనకర్త సంతకం (SIGNATURE OF TESTATOR)</h4>
         <p>
-          పై తెలిపిన వివరాలన్నీ సత్యమైనవని ధృవీకరిస్తూ ఈ తేది <strong>${currentDate}</strong> న శాసనకర్తగా నేను నా సంతకం చేస్తున్నాను.
+          పై తెలిపిన వివరాలన్నీ సత్యమైనవని ధృవీకరిస్తూ ఈ తేది <strong>${currentDate}</strong> న <strong>${executionPlace}</strong> లో శాసనకర్తగా నేను నా సంతకం చేస్తున్నాను.
         </p>
         <div class="testator-sign-box">
           <div class="sign-line"></div>
@@ -342,9 +425,9 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
       </div>
 
       <div class="clause-block witness-section">
-        <h4 class="clause-title">ఇద్దరు సాక్షుల సంతకాలు (ATTESTATION BY TWO WITNESSES)</h4>
+        <h4 class="clause-title">ఇద్దరు సాక్షుల సంతకాలు (ATTESTATION BY TWO INDEPENDENT WITNESSES)</h4>
         <p class="witness-intro">
-          శాసనకర్త తమ స్వచ్ఛంద నిర్ణయంతో, స్వస్థ చిత్తంతో మా సమక్షంలో సంతకం చేయగా, వారి కోరిక మేరకు, వారి సమక్షంలో మరియు ఒకరి సమక్షంలో మరొకరం సాక్షులుగా సంతకాలు చేస్తున్నాము. మేము ఈ విల్‌లో ఎటువంటి ఆస్తి లబ్ధి పొందే వారము కాదని ధృవీకరిస్తున్నాము.
+          శాసనకర్త తమ స్వచ్ఛంద నిర్ణయంతో, స్వస్థ చిత్తంతో మా సమక్షంలో సంతకం చేయగా, వారి కోరిక మేరకు, వారి సమక్షంలో మరియు ఒకరి సమక్షంలో మరొకరం సాక్షులుగా సంతకాలు చేస్తున్నాము. మేము 18 సంవత్సరాలు నిండిన స్వతంత్ర సాక్షులమని మరియు ఈ విల్‌లో ఎటువంటి ఆస్తి లబ్ధి పొందే వారము లేదా లబ్ధిదారుల జీవిత భాగస్వాములం కాదని ధృవీకరిస్తున్నాము (భారతీయ వారసత్వ చట్టం సెక్షన్లు 63 మరియు 67 ప్రకారం).
         </p>
         <div class="witness-grid">
           <div class="witness-card">
@@ -366,8 +449,15 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
         </div>
       </div>
 
-      <div class="paper-footer text-center">
-        <small class="text-muted">SmartWill India • భారతీయ వారసత్వ చట్టం 1925 కి లోబడి తయారు చేయబడిన లీగల్ పత్రం</small>
+      <div class="draft-page-initials-box" style="margin-top: 20px; padding: 10px 14px; background: rgba(0,0,0,0.03); border: 1px dashed #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.78rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>పేజీల సంతకాల భద్రత:</span>
+        <span>శాసనకర్త సంతకం: [ ____________ ]</span>
+        <span>సాక్షి 1: [ ____________ ]</span>
+        <span>సాక్షి 2: [ ____________ ]</span>
+      </div>
+
+      <div class="paper-footer text-center mt-3">
+        <small class="text-muted">SmartWill India • భారతీయ వారసత్వ చట్టం 1925 (సెక్షన్లు 59, 63, 67, 105, 109) కి లోబడి రూపొందించబడిన అధికారిక పత్రం</small>
       </div>
     </div>
   `;
@@ -378,13 +468,15 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
  * 🇮🇳 Hindi Legal Draft Template (भारतीय उत्तराधिकार अधिनियम 1925)
  */
 function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
+  const executionPlace = escapeHTML(p.addressCity || 'हैदराबाद');
+
   let html = `
     <div class="legal-paper-preview">
       <div class="paper-watermark">नमूना ड्राफ्ट • SMARTWILL INDIA</div>
 
       <div class="paper-header text-center">
         <h2 class="doc-title">अंतिम इच्छा पत्र / वसीयतनामा (LAST WILL & TESTAMENT)</h2>
-        <p class="doc-subtitle">(भारतीय उत्तराधिकार अधिनियम 1925 के अंतर्गत तैयार)</p>
+        <p class="doc-subtitle">(भारतीय उत्तराधिकार अधिनियम 1925 के अंतर्गत तैयार विधिक प्रारूप)</p>
       </div>
 
       <div class="paper-preamble">
@@ -393,41 +485,57 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
           निवासी: <strong>${escapeHTML(fullAddress)}</strong>,
           जन्म तिथि: <strong>${escapeHTML(p.dob || 'DD/MM/YYYY')}</strong>,
           धर्म: <strong>${escapeHTML(p.religion || 'हिंदू')}</strong>,
-          पूर्ण स्वस्थ चित्त, स्मरण शक्ति एवं स्वेच्छा से, बिना किसी दबाव, प्रलोभन अथवा अनुचित प्रभाव के, इस दस्तावेज़ को अपनी <strong>अंतिम वसीयत (वसीयतनामा)</strong> के रूप में घोषित एवं निष्पादित करता/करती हूँ।
+          स्थान: <strong>${executionPlace}</strong>,
+          पूर्ण स्वस्थ चित्त, स्मरण शक्ति एवं स्वेच्छा से, बिना किसी दबाव, कपट, प्रलोभन अथवा अनुचित प्रभाव के, इस दस्तावेज़ की सभी शर्तों को भली-भांति पढ़कर व समझकर (अथवा अपनी समझ की भाषा में समझकर), इसे अपनी <strong>अंतिम वसीयत (LAST WILL & TESTAMENT)</strong> के रूप में निष्पादित एवं घोषित करता/करती हूँ।
         </p>
       </div>
 
       <div class="clause-block">
         <h4 class="clause-title">1. पूर्व वसीयतों का निरस्तीकरण (REVOCATION OF FORMER WILLS)</h4>
         <p>
-          मैं इस तिथि से पूर्व अपने द्वारा निष्पादित की गई सभी पूर्व वसीयतों, इच्छा पत्रों एवं संबंधित प्रपत्रों को पूर्णतः निरस्त करता/करती हूँ तथा इसे ही अपनी एकमात्र वैध वसीयत घोषित करता/करती हूँ।
+          मैं इस तिथि से पूर्व अपने द्वारा निष्पादित की गई सभी पूर्व वसीयतों, इच्छा पत्रों, कोडीसिल (Codicils) एवं संबंधित प्रपत्रों को इसके द्वारा पूर्णतः निरस्त करता/करती हूँ तथा इसे ही अपनी एकमात्र वैध वसीयत घोषित करता/करती हूँ।
         </p>
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">2. स्वस्थ चित्त एवं स्वेच्छा की घोषणा (SOUND MIND DECLARATION)</h4>
+        <h4 class="clause-title">2. स्वस्थ चित्त एवं स्वेच्छा की घोषणा (SOUND DISPOSING MIND DECLARATION)</h4>
         <p>
-          मैं यह घोषणा करता/करती हूँ कि मैं शारीरिक एवं मानसिक रूप से स्वस्थ हूँ। मैं अपनी संपत्तियों के मूल्य और अपने उत्तराधिकारियों के कल्याण को भली-भांति समझते हुए यह वसीयत लिख रहा/रही हूँ।
+          मैं यह घोषित करता/करती हूँ कि मैं शारीरिक एवं मानसिक रूप से पूर्णतः स्वस्थ हूँ। मैं अपनी संपत्तियों की प्रकृति व मूल्य और अपने आश्रित उत्तराधिकारियों के भविष्य को पूर्णतः समझते हुए स्वेच्छा से यह वसीयत निष्पादित कर रहा/रही हूँ।
         </p>
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">3. वसीयत निष्पादक की नियुक्ति (APPOINTMENT OF EXECUTOR)</h4>
+        <h4 class="clause-title">3. स्वअर्जित संपत्ति की घोषणा (DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTY)</h4>
+        <p>
+          मैं स्पष्ट रूप से घोषित करता/करती हूँ कि इस वसीयत में वर्णित समस्त चल एवं अचल संपत्तियां मेरी अपनी कमाई, व्यक्तिगत संसाधनों एवं निवेशों द्वारा अर्जित की गई "स्वअर्जित संपत्तियां" (Self-Acquired Properties) हैं। इन पर किसी भी संयुक्त हिंदू परिवार (HUF) अथवा पैतृक अधिकार (Ancestral / Coparcenary Claim) का कोई प्रभाव नहीं है। अतः हिंदू उत्तराधिकार अधिनियम 1956 की धारा 30 एवं भारतीय उत्तराधिकार अधिनियम 1925 के तहत मुझे अपनी इच्छानुसार इनका निस्तारण करने का पूर्ण विधिक अधिकार प्राप्त है।
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">4. निष्पादक की नियुक्ति एवं व्यापक अधिकार (APPOINTMENT & POWERS OF EXECUTOR)</h4>
         <p>
   `;
 
   if (execName) {
     html += `
-          मेरे उपरांत मेरी संपत्तियों का वितरण इस वसीयत के अनुसार कराने हेतु मैं <strong>${execName}</strong> (${execRel || 'कानूनी प्रतिनिधि'}) को अपना निष्पादक (Executor) नियुक्त करता/करती हूँ। निष्पादक सबसे पहले मेरे वैध ऋण, अंतिम संस्कार और प्रशासनिक व्यय चुकाएंगे, तत्पश्चात शेष संपत्ति का वितरण करेंगे।
+          मेरे उपरांत मेरी संपत्तियों का वितरण इस वसीयत के अनुसार कराने हेतु मैं <strong>${execName}</strong> (${execRel || 'कानूनी प्रतिनिधि'}) को अपना निष्पादक (Executor) नियुक्त करता/करती हूँ।
     `;
     if (altExecName) {
       html += `
           यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecName}</strong> (${altExecRel || 'कानूनी प्रतिनिधि'}) वैकल्पिक निष्पादक (Alternate Executor) के रूप में कार्य करेंगे।
       `;
     }
+    html += `
+          <br><br>
+          मैं अपने निष्पादक को निम्नलिखित समस्त विधिक अधिकार प्रदान करता/करती हूँ:
+          <br>• (क) मेरी चल एवं अचल संपत्तियों, बैंक खातों, जमा राशियों एवं लॉकरों का प्रभार प्राप्त करना;
+          <br>• (ख) बैंकों, वित्तीय संस्थानों, कंपनियों, सोसायटी, सब-रजिस्ट्रार एवं सरकारी प्राधिकरणों के समक्ष उपस्थित होकर संपत्तियों का नामान्तरण (Mutation) एवं हस्तांतरण पूर्ण कराना;
+          <br>• (ग) सर्वप्रथम मेरी वैध देनदारियों, अंतिम संस्कार व्यय एवं प्रशासनिक शुल्कों का भुगतान करना, तत्पश्चात अवशिष्ट संपत्तियों का वितरण करना;
+          <br>• (घ) आवश्यकता पड़ने पर किसी भी प्राधिकरण के समक्ष इस वसीयत का प्रोबेट (Probate) अथवा लेटर्स ऑफ एडमिनिस्ट्रेशन प्राप्त करने हेतु अधिवक्ताओं की सेवाएं लेना।
+    `;
   } else {
     html += `
-          भारतीय उत्तराधिकार अधिनियम 1925 के प्रावधानों के तहत, मैंने कोई निजी निष्पादक नियुक्त नहीं किया है। मेरी संपत्ति का प्रबंधन मेरे उत्तराधिकारियों या न्यायालय द्वारा नियुक्त प्रशासक के माध्यम से किया जाएगा।
+          भारतीय उत्तराधिकार अधिनियम 1925 के प्रावधानों के तहत, मैंने कोई निजी निष्पादक नियुक्त नहीं किया है। मेरी संपत्ति का प्रबंधन मेरे उत्तराधिकारियों द्वारा आपसी सहमति से या सक्षम न्यायालय द्वारा नियुक्त प्रशासक के माध्यम से किया जाएगा।
     `;
   }
 
@@ -436,12 +544,12 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">4. संपत्ति आवंटन अनुसूची (BEQUEST OF ASSETS SCHEDULE)</h4>
+        <h4 class="clause-title">5. संपत्ति आवंटन अनुसूची एवं उत्तरजीविता नियम (BEQUEST OF ASSETS & ANTI-LAPSE PROVISION)</h4>
         <p>मेरी चल एवं अचल संपत्तियों का अधिकार मेरे उपरांत निम्नलिखित रूप से मेरे उत्तराधिकारियों को दिया जाए:</p>
   `;
 
   if (assets.length === 0) {
-    html += `<p class="text-muted italic-note">कोई विशिष्ट संपत्ति दर्ज नहीं। शेष संपत्ति नियम (खंड 5) लागू होगा।</p>`;
+    html += `<p class="text-muted italic-note">कोई विशिष्ट संपत्ति दर्ज नहीं। अवशिष्ट संपत्ति नियम (खंड 7) लागू होगा।</p>`;
   } else {
     assets.forEach((asset, idx) => {
       const safeType = escapeHTML(asset.type || 'संपत्ति');
@@ -464,7 +572,7 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
           const ben = beneficiaries.find(b => b.id === alloc.beneficiaryId);
           const benName = ben ? `${escapeHTML(ben.name)} (${escapeHTML(ben.relation || 'उत्तराधिकारी')})` : 'उत्तराधिकारी';
           const benId = (ben && ben.idType && ben.idDigits) ? ` [${escapeHTML(ben.idType)}: XXXX-${escapeHTML(ben.idDigits)}]` : '';
-          html += `<li>• <strong>${alloc.percentage}% हिस्सा</strong> पूर्ण अधिकारों के साथ <strong>${benName}</strong>${benId} को दिया जाता है।</li>`;
+          html += `<li>• <strong>${alloc.percentage}% हिस्सा</strong> पूर्ण विधिक स्वामित्व के साथ <strong>${benName}</strong>${benId} को दिया जाता है।</li>`;
         });
       }
 
@@ -473,32 +581,53 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
         </div>
       `;
     });
+
+    html += `
+        <div class="draft-subclause mt-2 p-2" style="background: rgba(0,0,0,0.02); border-left: 3px solid #dfb76c; font-size: 0.88rem; line-height: 1.5;">
+          <strong>उत्तरजीविता एवं सुरक्षित हस्तांतरण नियम (Anti-Lapse / Survivorship - धारा 105 एवं 109):</strong>
+          यदि मेरे किसी नामित उत्तराधिकारी का स्वर्गवास मुझसे पूर्व हो जाता है, तो उनका निर्धारित हिस्सा उनके विधिक वंशजों (Lineal Descendants) को समान रूप से प्राप्त होगा। वंशज न होने की स्थिति में, वह हिस्सा शेष जीवित उत्तराधिकारियों में उनके मूल अनुपात के अनुसार विभाजित किया जाएगा।
+        </div>
+    `;
   }
 
   html += `
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title">5. शेष संपत्ति नियम (RESIDUARY ESTATE)</h4>
+        <h4 class="clause-title">6. नामांकन पर वसीयत की सर्वोच्चता (NOMINATION OVERRIDE CLAUSE)</h4>
+        <p>
+          मैं यह स्पष्ट करता/करती हूँ कि मेरे किसी भी बैंक खाते, सावधि जमा (FDs), डीमैट खाते, म्यूचुअल फंड अथवा जीवन बीमा पॉलिसी में उल्लिखित कोई भी 'नामांकित व्यक्ति' (Nominee) केवल प्रशासनिक सुविधा हेतु धर्ता (Trustee) मात्र है। भारत के सर्वोच्च न्यायालय के स्थापित विधि-सिद्धांतों (सरबती देवी एवं शक्ति यजदानी मामले) के अनुसार, इस वसीयत में नामित उत्तराधिकारियों के विधिक अधिकार किसी भी पूर्व नामांकन से ऊपर व बाध्यकारी होंगे।
+        </p>
+      </div>
+
+      <div class="clause-block">
+        <h4 class="clause-title">7. अवशिष्ट संपत्ति नियम (RESIDUARY ESTATE CLAUSE)</h4>
         <p>
           ${(() => {
             const bens = beneficiaries.filter(b => b && b.name);
             if (bens.length === 1) {
               const b = bens[0];
-              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य कोई भी चल या अचल संपत्ति, बैंक खाते या अधिकार पूर्ण रूप से मेरे एकमात्र उत्तराधिकारी <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'उत्तराधिकारी')}) को प्राप्त होंगे।`;
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य कोई भी वर्तमान अथवा भविष्य की चल या अचल संपत्ति, बैंक खाते, अप्रत्याशित राशियां या अधिकार पूर्ण रूप से मेरे एकमात्र उत्तराधिकारी <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'उत्तराधिकारी')}) को प्राप्त होंगे।`;
             } else if (bens.length > 1) {
               const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
-              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य समस्त संपत्ति मेरे नामित उत्तराधिकारियों: ${benList} में समान रूप से विभाजित की जाएगी।`;
+              return `इस वसीयत में विशेष रूप से उल्लेख न की गई मेरी अन्य समस्त वर्तमान अथवा भविष्य की संपत्तियां मेरे नामित उत्तराधिकारियों: ${benList} में समान अनुपात में वितरित की जाएंगी।`;
             }
             return `मेरी अन्य कोई भी चल या अचल संपत्ति, बैंक खाते या अधिकार जिनका उल्लेख इस वसीयत में नहीं हुआ है, वे मेरे सभी जीवित उत्तराधिकारियों में समान रूप से बांटी जाएंगी।`;
           })()}
         </p>
       </div>
 
+      <div class="clause-block">
+        <h4 class="clause-title">8. अन्य उत्तराधिकारियों का विवर्जन (EXCLUSION OF UNINTENDED HEIRS)</h4>
+        <p>
+          मैंने अपनी समस्त संपत्तियों का वितरण अपने प्रिय परिजनों के कल्याण हेतु सोच-समझकर किया है। इस वसीयत में नामित उत्तराधिकारियों के अतिरिक्त, मेरे किसी अन्य रिश्तेदार अथवा तृतीय पक्ष का मेरी संपत्तियों पर कोई अधिकार अथवा दावा मान्य नहीं होगा।
+        </p>
+      </div>
+
       <div class="clause-block signature-section">
         <h4 class="clause-title">वसीयतकर्ता के हस्ताक्षर (SIGNATURE OF TESTATOR)</h4>
         <p>
-          इसके साक्ष्य स्वरूप, मैंने आज दिनांक <strong>${currentDate}</strong> को अपनी पूर्ण सहमति से इस वसीयत पर हस्ताक्षर किए हैं।
+          इसके साक्ष्य स्वरूप, मैंने आज दिनांक <strong>${currentDate}</strong> को <strong>${executionPlace}</strong> में अपनी पूर्ण सहमति, स्वस्थ चित्त एवं स्वेच्छा से इस वसीयत पर अपने हस्ताक्षर किए हैं।
         </p>
         <div class="testator-sign-box">
           <div class="sign-line"></div>
@@ -508,9 +637,9 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
       </div>
 
       <div class="clause-block witness-section">
-        <h4 class="clause-title">दो गवाहों के हस्ताक्षर (ATTESTATION BY TWO WITNESSES)</h4>
+        <h4 class="clause-title">दो स्वतंत्र गवाहों द्वारा सत्यापन (ATTESTATION BY TWO INDEPENDENT WITNESSES)</h4>
         <p class="witness-intro">
-          वसीयतकर्ता ने हमारे समक्ष इस वसीयत पर हस्ताक्षर किए और हमने उनके अनुरोध पर, उनकी उपस्थिति में तथा एक-दूसरे की उपस्थिति में गवाह के रूप में हस्ताक्षर किए हैं। हम पुष्टि करते हैं कि हम इस वसीयत में लाभार्थी नहीं हैं।
+          वसीयतकर्ता ने हमारे समक्ष इस वसीयत पर हस्ताक्षर किए और हमने उनके अनुरोध पर, उनकी उपस्थिति में तथा एक-दूसरे की उपस्थिति में स्वतंत्र गवाह के रूप में हस्ताक्षर किए हैं। हम पुष्टि करते हैं कि हमारी आयु 18 वर्ष से अधिक है तथा हम इस वसीयत में न तो लाभार्थी हैं और न ही किसी लाभार्थी के जीवनसाथी हैं (भारतीय उत्तराधिकार अधिनियम 1925 की धारा 63 एवं 67 के अनुरूप)।
         </p>
         <div class="witness-grid">
           <div class="witness-card">
@@ -532,8 +661,15 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
         </div>
       </div>
 
-      <div class="paper-footer text-center">
-        <small class="text-muted">SmartWill India • भारतीय उत्तराधिकार अधिनियम 1925 के अधीन तैयार विधिक प्रारूप</small>
+      <div class="draft-page-initials-box" style="margin-top: 20px; padding: 10px 14px; background: rgba(0,0,0,0.03); border: 1px dashed #cbd5e1; border-radius: 6px; font-family: monospace; font-size: 0.78rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span>पृष्ठ हस्ताक्षर सुरक्षा (Page Initials):</span>
+        <span>वसीयतकर्ता हस्ताक्षर: [ ____________ ]</span>
+        <span>गवाह 1: [ ____________ ]</span>
+        <span>गवाह 2: [ ____________ ]</span>
+      </div>
+
+      <div class="paper-footer text-center mt-3">
+        <small class="text-muted">SmartWill India • भारतीय उत्तराधिकार अधिनियम 1925 (धारा 59, 63, 67, 105 एवं 109) के अंतर्गत तैयार विधिक प्रारूप</small>
       </div>
     </div>
   `;
