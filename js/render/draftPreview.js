@@ -757,7 +757,9 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
 }
 
 /**
- * function openDraftPreviewModal(preferredLang) {
+ * Open Draft Modal and populate current state
+ */
+export function openDraftPreviewModal(preferredLang) {
   const modal = document.getElementById('draftPreviewModal');
   if (!modal) return;
 
