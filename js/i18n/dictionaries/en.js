@@ -391,5 +391,9 @@ export const en = {
   "advisory.w2Title": "Plain White Paper:",
   "advisory.w2Desc": "Print your downloaded PDF on standard A4 paper. Stamp paper or notarization is NOT legally mandatory in India.",
   "advisory.w3Title": "Safe Storage:",
-  "advisory.w3Desc": "Keep the physically signed original in a secure place (home safe or locker) and inform your trusted executor."
+  "advisory.w3Desc": "Keep the physically signed original in a secure place (home safe or locker) and inform your trusted executor.",
+  "advisory.w4Title": "Multi-Page & Xerox Protection (Every Page Initial):",
+  "advisory.w4Desc": "If your estate spans across multiple A4 pages (2 to 5+ pages), print single-sided. You and both witnesses MUST initial (short sign) the footer of EVERY single page to prevent page-swapping fraud. Full signatures + thumb impression go on the final page.",
+  "advisory.w5Title": "Binding & Certified Xerox Copies:",
+  "advisory.w5Desc": "Bind multi-page sheets with a corner eyelet rivet or green legal ribbon. Keep the original in your locker and provide a signed Xerox copy to your Executor."
 };

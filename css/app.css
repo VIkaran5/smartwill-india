@@ -2842,3 +2842,29 @@ button:disabled [data-lucide="loader-2"] {
   font-size: 0.86rem;
   color: var(--text-muted);
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT & A4 MULTI-PAGE STYLING (Zero Cut-Offs & Clean Page Breaks)
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 18mm 15mm;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .navbar, .footer, .btn, .wizard-header, .stepper-wrapper, .step-header, .draft-preview-modal-footer, .draft-preview-close-btn, .toast, #toastNotification, #floatingLegalBotBtn {
+    display: none !important;
+  }
+  .clause-block, .draft-asset-split-card, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .page-auth-safeguard, .legal-advisory-callout {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  h2, h3, h4, .clause-title, .section-number-tag {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+}

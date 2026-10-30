@@ -840,9 +840,20 @@ export function printDraftDocument() {
           .witness-grid { display: flex; justify-content: space-between; margin-top: 18px; }
           .witness-card { width: 48%; border: 1px solid #777; padding: 10px; font-size: 11px; line-height: 1.8; }
           .testator-sign-box { margin-top: 25px; border-top: 1px dashed #666; width: 280px; padding-top: 6px; }
+          .clause-block, .draft-asset-split-card, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .page-auth-safeguard {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+          h2, h3, h4, .clause-title, .section-number-tag {
+            break-after: avoid;
+            page-break-after: avoid;
+          }
           @media print {
             body { padding: 0; }
-            @page { margin: 1.5cm; }
+            @page {
+              size: A4 portrait;
+              margin: 15mm 15mm 18mm 15mm;
+            }
           }
         </style>
       </head>
