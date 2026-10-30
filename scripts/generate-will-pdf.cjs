@@ -33,7 +33,7 @@ async function generatePDF() {
     /* Print & Executive Legal Parchment Optimization */
     @page {
       size: A4 portrait;
-      margin: 18mm 18mm 20mm 18mm;
+      margin: 14mm 16mm 14mm 16mm;
     }
 
     * {
@@ -45,8 +45,8 @@ async function generatePDF() {
       background: #ffffff !important;
       color: #0f172a !important;
       font-family: 'Times New Roman', Times, Georgia, serif !important;
-      font-size: 10.5pt !important;
-      line-height: 1.65 !important;
+      font-size: 9.8pt !important;
+      line-height: 1.52 !important;
       margin: 0 !important;
       padding: 0 !important;
     }
@@ -62,14 +62,14 @@ async function generatePDF() {
 
     .legal-paper-crest {
       text-align: center;
-      margin-bottom: 14pt;
-      padding-bottom: 8pt;
+      margin-bottom: 10pt;
+      padding-bottom: 6pt;
       border-bottom: 1.5pt solid #855d14;
     }
 
     .crest-title {
       font-family: 'Times New Roman', Georgia, serif;
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: bold;
       letter-spacing: 2px;
       color: #855d14;
@@ -82,56 +82,56 @@ async function generatePDF() {
       letter-spacing: 0.5px;
       color: #64748b;
       text-transform: uppercase;
-      margin-top: 3pt;
+      margin-top: 2pt;
     }
 
     .doc-title {
       font-family: 'Times New Roman', Georgia, serif;
-      font-size: 16pt;
+      font-size: 15pt;
       font-weight: bold;
       text-align: center;
       letter-spacing: 1.5px;
-      margin-bottom: 4pt;
+      margin-bottom: 3pt;
       color: #0f172a;
     }
 
     .doc-subtitle {
       font-family: 'Times New Roman', Georgia, serif;
       font-style: italic;
-      font-size: 9pt;
+      font-size: 8.5pt;
       text-align: center;
       color: #475569;
-      margin-bottom: 16pt;
+      margin-bottom: 12pt;
     }
 
     .paper-preamble {
       background: #fdfcf9 !important;
       border: 1pt solid #e2e8f0;
       border-left: 3.5pt solid #855d14;
-      padding: 10pt 12pt;
-      margin-bottom: 16pt;
+      padding: 8pt 10pt;
+      margin-bottom: 12pt;
       text-align: justify;
-      font-size: 10pt;
-      line-height: 1.6;
+      font-size: 9.5pt;
+      line-height: 1.5;
     }
 
     .clause-block {
-      margin-top: 14pt;
-      margin-bottom: 12pt;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      margin-top: 10pt;
+      margin-bottom: 8pt;
+      break-inside: auto !important;
+      page-break-inside: auto !important;
     }
 
     .clause-title {
       font-family: 'Times New Roman', Georgia, serif;
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: bold;
       color: #0f172a;
-      border-bottom: 1pt solid #cbd5e1;
-      padding-bottom: 3pt;
-      margin-bottom: 6pt;
-      break-after: avoid;
-      page-break-after: avoid;
+      border-bottom: 0.75pt solid #cbd5e1;
+      padding-bottom: 2pt;
+      margin-bottom: 4pt;
+      break-after: avoid !important;
+      page-break-after: avoid !important;
     }
 
     .clause-tag {
@@ -147,34 +147,34 @@ async function generatePDF() {
     .executor-powers-list {
       list-style: none;
       padding-left: 0;
-      margin-top: 6pt;
+      margin-top: 4pt;
     }
 
     .executor-powers-list li {
-      margin-bottom: 6pt;
+      margin-bottom: 4pt;
       padding-left: 8pt;
-      font-size: 9.5pt;
-      line-height: 1.55;
+      font-size: 9.2pt;
+      line-height: 1.48;
     }
 
     .draft-asset-item {
       background: #f8fafc !important;
       border: 1pt solid #e2e8f0;
       border-left: 3pt solid #1e293b;
-      padding: 8pt 10pt;
-      margin-bottom: 8pt;
+      padding: 6pt 8pt;
+      margin-bottom: 6pt;
       break-inside: avoid;
       page-break-inside: avoid;
     }
 
     .draft-asset-header {
       font-weight: bold;
-      font-size: 9.5pt;
+      font-size: 9.2pt;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 5pt;
+      margin-bottom: 3pt;
       border-bottom: 0.5pt dashed #cbd5e1;
-      padding-bottom: 3pt;
+      padding-bottom: 2pt;
     }
 
     .draft-protective-proviso {
@@ -182,9 +182,11 @@ async function generatePDF() {
       border-left: 3pt solid #d97706 !important;
       padding: 6pt 8pt;
       margin: 6pt 0;
-      font-style: italic;
-      font-size: 9pt;
-      color: #78350f;
+      font-size: 8.8pt;
+      line-height: 1.48;
+      color: #1e293b;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .draft-alloc-list {
@@ -194,19 +196,19 @@ async function generatePDF() {
     }
 
     .draft-alloc-list li {
-      font-size: 9pt;
-      padding: 3pt 0;
+      font-size: 8.8pt;
+      padding: 2pt 0;
       display: flex;
       align-items: center;
-      gap: 6pt;
+      gap: 5pt;
     }
 
     .alloc-badge {
       background: #e2e8f0;
       color: #0f172a;
       font-weight: bold;
-      font-size: 8pt;
-      padding: 1pt 5pt;
+      font-size: 7.5pt;
+      padding: 1pt 4pt;
       border-radius: 2pt;
       font-family: Arial, sans-serif;
     }
@@ -215,100 +217,100 @@ async function generatePDF() {
       background: #f8fafc !important;
       border: 1pt solid #cbd5e1;
       border-left: 3pt solid #0284c7;
-      padding: 8pt 10pt;
-      margin: 10pt 0;
-      font-size: 9pt;
-      line-height: 1.55;
+      padding: 6pt 8pt;
+      margin: 6pt 0;
+      font-size: 8.8pt;
+      line-height: 1.48;
       break-inside: avoid;
       page-break-inside: avoid;
+    }
+
+    .closing-execution-container {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-top: 8pt;
     }
 
     .testator-execution-deck {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-top: 14pt;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      align-items: center;
+      margin-top: 6pt;
+      margin-bottom: 6pt;
     }
 
     .testator-sign-box {
-      width: 55%;
+      width: 58%;
     }
 
     .sign-line {
       border-bottom: 1pt solid #0f172a;
-      margin-bottom: 5pt;
-      width: 220pt;
+      margin-bottom: 3pt;
+      width: 190pt;
     }
 
     .sign-label {
       font-weight: bold;
-      font-size: 9pt;
+      font-size: 8pt;
       margin: 0;
     }
 
     .sign-name {
-      font-size: 9.5pt;
-      margin: 2pt 0;
+      font-size: 8.5pt;
+      margin: 1pt 0;
     }
 
     .thumb-impression-box {
-      width: 35%;
+      width: 32%;
       border: 1pt dashed #94a3b8;
-      height: 75pt;
+      height: 48pt;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 4pt;
+      padding: 2pt;
       background: #fafaf9 !important;
     }
 
     .witness-grid {
       display: flex;
       justify-content: space-between;
-      margin-top: 10pt;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      margin-top: 6pt;
     }
 
     .witness-card {
       width: 48%;
-      border: 1pt solid #94a3b8;
-      padding: 8pt 10pt;
-      font-size: 8.5pt;
-      line-height: 1.7;
+      border: 0.75pt solid #94a3b8;
+      padding: 4pt 6pt;
+      font-size: 7.5pt;
+      line-height: 1.35;
       background: #fdfdfd !important;
     }
 
+    .witness-card p {
+      margin: 1.5pt 0 !important;
+    }
+
     .witness-title {
-      font-size: 9pt;
+      font-size: 8pt;
       font-weight: bold;
       margin-top: 0;
-      margin-bottom: 4pt;
+      margin-bottom: 2pt;
       border-bottom: 0.5pt solid #cbd5e1;
-      padding-bottom: 2pt;
+      padding-bottom: 1pt;
     }
 
     .witness-intro {
-      font-size: 9pt;
+      font-size: 7.8pt;
       text-align: justify;
       color: #334155;
-      margin-bottom: 8pt;
+      margin-bottom: 4pt;
+      line-height: 1.35;
     }
 
     .draft-page-initials-box {
-      margin-top: 16pt;
-      padding: 6pt 10pt;
-      border: 0.75pt dashed #94a3b8;
-      background: #f8fafc !important;
-      display: flex;
-      justify-content: space-between;
-      font-size: 8pt;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      display: none !important;
     }
   </style>
 </head>

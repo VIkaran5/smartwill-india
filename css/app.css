@@ -2859,7 +2859,11 @@ button:disabled [data-lucide="loader-2"] {
   .navbar, .footer, .btn, .wizard-header, .stepper-wrapper, .step-header, .draft-preview-modal-footer, .draft-preview-close-btn, .toast, #toastNotification, #floatingLegalBotBtn {
     display: none !important;
   }
-  .clause-block, .draft-asset-split-card, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .page-auth-safeguard, .legal-advisory-callout {
+  .clause-block {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  .draft-asset-split-card, .draft-asset-item, .draft-subclause-box, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .closing-execution-container, .page-auth-safeguard, .legal-advisory-callout {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }

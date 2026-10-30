@@ -135,7 +135,7 @@ async function runTest() {
     const bankName = page.locator('.asset-subfield[data-field="bankName"]').first();
     await bankName.fill('State Bank of India (SBI)');
     const branch = page.locator('.asset-subfield[data-field="branch"]').first();
-    await branch.fill('Hitec City Branch, Hyderabad (Savings A/c No. ending in 4521, or any successor/renewed account)');
+    await branch.fill('Hitec City Branch, Hyderabad (Savings Account No. ending in 4521 & all sole Fixed Deposits held with the bank, or any renewed/successor accounts)');
     const last4 = page.locator('.asset-subfield[data-field="last4"]').first();
     await last4.fill('4521');
     await page.locator('.asset-val').first().fill('3500000');
@@ -164,9 +164,9 @@ async function runTest() {
     await page.waitForTimeout(300);
 
     const platform = page.locator('.asset-subfield[data-field="platform"]').first();
-    if (await platform.count() > 0) await platform.fill('Zerodha Broking Ltd (DP ID: IN300183, CDSL/NSDL)');
+    if (await platform.count() > 0) await platform.fill('Zerodha Broking Ltd (CDSL DP ID: 12081600)');
     const clientId = page.locator('.asset-subfield[data-field="clientId"]').first();
-    if (await clientId.count() > 0) await clientId.fill('ZR4521 (including all equity shares, ETF units, and mutual fund folios)');
+    if (await clientId.count() > 0) await clientId.fill('BO ID: 12081600-04521892 (Trading Client Code: ZR4521, covering all equity shares, ETF units, and mutual fund folios)');
     await page.locator('.asset-val').nth(2).fill('4500000');
 
     await page.waitForTimeout(500);
