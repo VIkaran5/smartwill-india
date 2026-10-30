@@ -135,7 +135,7 @@ async function runTest() {
     const bankName = page.locator('.asset-subfield[data-field="bankName"]').first();
     await bankName.fill('State Bank of India (SBI)');
     const branch = page.locator('.asset-subfield[data-field="branch"]').first();
-    await branch.fill('Hitec City Branch, Hyderabad (Savings Account No. ending in 4521 & all sole Fixed Deposits held with the bank, or any renewed/successor accounts)');
+    await branch.fill('Hitec City, Hyderabad (Savings A/c No. ending in 4521, along with all fixed deposits standing in my sole name with SBI, or any renewed/successor accounts)');
     const last4 = page.locator('.asset-subfield[data-field="last4"]').first();
     await last4.fill('4521');
     await page.locator('.asset-val').first().fill('3500000');
