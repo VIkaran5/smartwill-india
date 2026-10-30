@@ -162,6 +162,8 @@ export const hi = {
   "form.personalSubtitle": "अपने आधिकारिक पहचान पत्रों के अनुसार ही विवरण दर्ज करें।",
   "form.fullName": "पूरा कानूनी नाम",
   "form.fullNamePlaceholder": "आधार / पैन के अनुसार (उदा. रमेश शर्मा)",
+  "form.fatherName": "पिता / पति का नाम",
+  "form.fatherNamePlaceholder": "राजस्व रिकॉर्ड के अनुसार (उदा. कैलाश शर्मा)",
   "form.dob": "जन्म तिथि",
   "form.dobDay": "दिन",
   "form.dobMonth": "महीना",

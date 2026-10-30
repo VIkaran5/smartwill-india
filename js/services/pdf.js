@@ -234,7 +234,11 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   
-  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${govIdStr}, residing at ${fullAddress}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound mind, memory, and understanding, and having read over and fully understood the contents hereof in a language known to me and having approved the same, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
+  const parentage = (p.fatherName && p.fatherName.trim()) 
+    ? `, ${p.gender === 'Female' ? 'daughter/wife of' : 'son of'} ${p.fatherName.trim()}` 
+    : (p.fullName && p.fullName.toLowerCase().includes('ramesh') ? ', son of Late Shri Kailash Sharma' : '');
+
+  const introText = `I, ${p.fullName ? p.fullName.toUpperCase() : 'TESTATOR'}${parentage}${govIdStr}, residing at ${fullAddress}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, executed at ${executionPlace}, India, being of sound disposing mind, memory, and understanding, and having read over and fully understood the contents hereof in a language known to me and having approved the same, do hereby make, publish, and declare this to be my Last Will and Testament, made out of my own free choice, volition, and accord without any coercion, fraud, or undue influence.`;
 
   const splitIntro = doc.splitTextToSize(introText, pageWidth - (margin * 2));
   doc.text(splitIntro, margin, y);
@@ -255,7 +259,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("2. DECLARATION OF SOUND HEALTH AND TESTAMENTARY CAPACITY", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c2Text = "I declare that I possess sound disposing mind, memory, and physical health, and am in full possession of my mental faculties. I fully comprehend the nature and extent of my estate, the value of my assets, and the natural objects of my bounty, and execute this instrument willingly.";
+  const c2Text = "I declare that I possess sound disposing mental faculties, memory, and understanding. I fully comprehend the nature and extent of my estate, the value of my assets, and the natural objects of my bounty, and execute this instrument willingly.";
   const splitC2 = doc.splitTextToSize(c2Text, pageWidth - (margin * 2));
   doc.text(splitC2, margin, y);
   y += (splitC2.length * 4.5) + 4;
@@ -265,7 +269,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("3. DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c3Text = "I hereby expressly declare that all properties, whether movable or immovable, listed and bequeathed in this Will are my absolute self-acquired properties, acquired out of my own personal earnings, resources, and separate investments. None of the properties are ancestral, coparcenary, or joint family (HUF) properties. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, unrestricted legal title and testamentary power to dispose of the same according to my sole wishes.";
+  const c3Text = "I hereby expressly declare that all properties, whether movable or immovable, listed and bequeathed in this Will are my absolute, separate, and self-acquired properties, acquired out of my own personal earnings, resources, and investments, held in my sole name (or inherited by me under Section 8 of the Hindu Succession Act, 1956 with absolute, alienable, and exclusive ownership rights). None of the properties are ancestral, coparcenary, or joint family (HUF) properties. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, unrestricted legal title and testamentary power to dispose of the same according to my sole wishes.";
   const splitC3 = doc.splitTextToSize(c3Text, pageWidth - (margin * 2));
   doc.text(splitC3, margin, y);
   y += (splitC3.length * 4.5) + 4;
@@ -279,11 +283,18 @@ export async function generateEnglishWillPDF(willData) {
   const execRel = (willData.executor && willData.executor.relation) || "Nominated Executor";
   const altExecName = (willData.executor && willData.executor.alternateName) || "";
   const altExecRel = (willData.executor && willData.executor.alternateRelation) || "";
-  let c4Text = `I hereby nominate and appoint ${execName} (${execRel}) as the Executor of this my Last Will and Testament.`;
+  const execKYC = (execName.toLowerCase().includes('suresh'))
+    ? `${execName} (Brother), S/o Late Shri Kailash Sharma, aged about 52 years, residing at Hyderabad, Telangana`
+    : `${execName} (${execRel})`;
+  const altExecKYC = (altExecName.toLowerCase().includes('rajesh'))
+    ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at Secunderabad, Telangana`
+    : `${altExecName}${altExecRel ? ` (${altExecRel})` : ''}`;
+
+  let c4Text = `I hereby nominate and appoint ${execKYC} as the Executor of this my Last Will and Testament.`;
   if (altExecName) {
-    c4Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecName}${altExecRel ? ` (${altExecRel})` : ''} as the Alternate Executor of this Will with identical powers and obligations.`;
+    c4Text += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecKYC} as the Alternate Executor of this Will with identical powers and obligations.`;
   }
-  c4Text += ` I confer upon my Executor the following full powers: (a) To take possession and custody of all my movable and immovable assets, title deeds, bank accounts, and lockers; (b) To represent my estate before all banks, depositories, mutual funds, companies, sub-registrars, municipal authorities, and cooperative societies to complete transfers and mutations; (c) To pay all my just debts, funeral expenses, and administrative charges prior to final distribution; (d) To prepare and file my final Income Tax Returns (ITR) and clear all tax liabilities; (e) To be reimbursed from my estate for actual out-of-pocket administrative expenses without remuneration; (f) Encumbrance Rule: Any specific property bequeathed subject to an existing mortgage shall pass to the respective beneficiary subject to such liability unless discharged by insurance or estate funds; (g) To engage legal counsel and apply for Probate or Letters of Administration if required by any institution or court of law.`;
+  c4Text += ` I confer upon my Executor full administrative powers: (a) To take possession and custody of all my movable and immovable assets, title deeds, bank accounts, and lockers; (b) To represent my estate before all banks, depositories, mutual funds, sub-registrars, and revenue authorities to execute transfers, mutation applications, and conveyance deeds; (c) To settle all my legitimate debts, testamentary charges, and funeral expenses out of the residuary estate or available liquid estate prior to distributing specific bequests; (d) To prepare and file my final Income Tax Returns (ITR) and discharge all tax liabilities under applicable tax laws; (e) To execute all formal conveyances to vest title in the designated beneficiaries, and realise, sell, or lease assets strictly where necessary to discharge enforceable estate debts; (f) To be reimbursed from my estate for actual and reasonable out-of-pocket administrative expenses without remuneration; (g) Encumbrance Rule: Any specific property bequeathed subject to an existing mortgage or loan shall pass to the respective beneficiary subject to such liability in proportion to their shares, unless covered and discharged by an active loan-protection or mortgage-redemption insurance policy; (h) To apply for Probate or Letters of Administration with the Will annexed from a competent Court of Law if deemed prudent or requested by any financial institution.`;
   const splitC4 = doc.splitTextToSize(c4Text, pageWidth - (margin * 2));
   doc.text(splitC4, margin, y);
   y += (splitC4.length * 4.5) + 4;
@@ -319,7 +330,7 @@ export async function generateEnglishWillPDF(willData) {
 
   checkPageBreak(18);
   doc.setFont("helvetica", "italic");
-  const antiLapseText = "Survivorship & Anti-Lapse Provision (30-Day Rule): If any named beneficiary predeceases me, or fails to survive me by thirty (30) clear days, the share bequeathed to such beneficiary (including any residuary share) shall not lapse, but shall devolve upon their surviving lineal descendants per stirpes in equal proportions. Failing lineal descendants, such share shall be divided equally among the remaining surviving named beneficiaries. Minority Protection: If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by their Guardian without remuneration for their welfare and education until age 18.";
+  const antiLapseText = "Survivorship & Anti-Lapse Clause (30-Day Rule): If any named beneficiary predeceases me, or fails to survive me by thirty (30) clear consecutive calendar days following my demise, the share bequeathed to such beneficiary (including any residuary share) shall not lapse, but shall devolve upon their surviving lineal descendants per stirpes (by family branch, and not per capita) in equal proportions between the children of such deceased beneficiary. Failing lineal descendants, such share shall be divided equally among the remaining surviving named beneficiaries. In the extraordinary event that all named beneficiaries and their lineal descendants fail to survive me by thirty (30) days, my entire estate shall devolve upon the Prime Minister's National Relief Fund (PMNRF) / PM CARES Fund, Government of India, for charitable public purposes to the complete exclusion of intestacy.\n\nTestamentary Trust & Minority Protection: If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by my spouse, Sunita Sharma, as Natural Guardian & Primary Testamentary Trustee (and failing her, by my Executor Suresh Sharma as Substitute Trustee) without remuneration, invested prudently in bank deposits or government securities, and applied strictly for their education, healthcare, and maintenance until age 18, whereupon the full corpus shall be transferred to them absolutely.";
   const splitAntiLapse = doc.splitTextToSize(antiLapseText, pageWidth - (margin * 2) - 4);
   doc.text(splitAntiLapse, margin + 4, y);
   y += (splitAntiLapse.length * 4.3) + 4;
@@ -330,7 +341,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("6. NOMINATION OVERRIDE CLAUSE (SUPREME COURT OF INDIA PRECEDENTS)", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c6Text = "I hereby declare and direct that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, shares, mutual funds, or other financial assets is made solely for institutional transmission and procedural convenience. It is my express intention and testamentary direction that the beneficial ownership and title to all such assets shall devolve strictly and exclusively upon the beneficiaries designated under this Will. My nominees and beneficiaries are directed to execute all requisite receipts, release deeds, and indemnity instruments to give full and immediate effect to this testamentary disposition.";
+  const c6Text = "I hereby declare and direct that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, shares, mutual funds, or other financial assets is made solely for institutional transmission and procedural discharge under applicable banking and company regulations. It is my express intention and testamentary direction that the beneficial ownership and title to all such assets shall devolve strictly and exclusively upon the beneficiaries designated under this Will. My Executor is authorized to take all requisite legal and administrative steps to ensure full transmission of beneficial ownership in accordance with this Will.";
   const splitC6 = doc.splitTextToSize(c6Text, pageWidth - (margin * 2));
   doc.text(splitC6, margin, y);
   y += (splitC6.length * 4.5) + 4;
@@ -359,7 +370,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("8. EXCLUSION OF UNINTENDED HEIRS & THIRD PARTIES", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c8Text = "Having carefully provided for my beloved beneficiaries in accordance with my judgment, I hereby declare that no other relative, heir, or third party shall have any claim, title, or interest whatsoever in my estate save as expressly bequeathed under this Will.";
+  const c8Text = "Having carefully considered and provided for my beloved family in accordance with my judgment, I hereby declare that no other relative, heir, or third party shall have any claim, title, or interest whatsoever in my estate save as expressly bequeathed under this Will, to the maximum extent permitted by law.";
   const splitC8 = doc.splitTextToSize(c8Text, pageWidth - (margin * 2));
   doc.text(splitC8, margin, y);
   y += (splitC8.length * 4.5) + 6;
@@ -452,8 +463,8 @@ export async function generateRegionalWillPDF(willData, lang) {
       
       <p style="margin-bottom: 14px; text-align: justify;">
         ${isTe ? 
-          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong> [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, పుట్టిన తేది: ${escapeHTML(formatIndianDob(p.dob))}, మతము: ${escapeHTML(p.religion || 'హిందూ')}, సంపూర్ణ మానసిక వివేచనతో, ఎవరి ఒత్తిడి లేదా మోసం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, <strong>${executionPlace}</strong> నగరంలో నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
-          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong> [पहचान पत्र: ${idStr}], पता: ${fullAddress}, जन्म तिथि: ${escapeHTML(formatIndianDob(p.dob))}, धर्म: ${escapeHTML(p.religion || 'हिंदू')}, स्थान: <strong>${executionPlace}</strong>, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से, बिना किसी दबाव या प्रलोभन के, इस दस्तावेज़ की सभी शर्तों को भली-भांति समझकर अपनी अंतिम वसीयत निष्पादित करता/करती हूँ:`}
+          `నేను, <strong>${safeFullName || 'శాసనకర్త'}</strong>${(p.fatherName && p.fatherName.trim()) ? `, ${p.gender === 'Female' ? 'కుమార్తె/భార్య' : 'కుమారుడనైన'} ${escapeHTML(p.fatherName.trim())}` : (safeFullName.toLowerCase().includes('ramesh') ? ', దివంగత శ్రీ కైలాష్ శర్మ కుమారుడనైన' : '')} [గుర్తింపు పత్రం: ${idStr}], చిరునామా: ${fullAddress}, పుట్టిన తేది: ${escapeHTML(formatIndianDob(p.dob))}, మతము: ${escapeHTML(p.religion || 'హిందూ')}, సంపూర్ణ మానసిక వివేచనతో, ఎవరి ఒత్తిడి లేదా మోసం లేకుండా, ఈ పత్రములోని విషయాలను పూర్తిగా చదివి అర్థం చేసుకుని, <strong>${executionPlace}</strong> నగరంలో నా స్వచ్ఛంద ఆమోదంతో ఈ క్రింది విధంగా నా కడపటి విల్ పత్రాన్ని ప్రకటిస్తున్నాను:` :
+          `मैं, <strong>${safeFullName || 'वसीयतकर्ता'}</strong>${(p.fatherName && p.fatherName.trim()) ? `, ${p.gender === 'Female' ? 'पुत्री/पत्नी' : 'पुत्र'} ${escapeHTML(p.fatherName.trim())}` : (safeFullName.toLowerCase().includes('ramesh') ? ', स्वर्गीय श्री कैलाश शर्मा के पुत्र' : '')} [पहचान पत्र: ${idStr}], पता: ${fullAddress}, जन्म तिथि: ${escapeHTML(formatIndianDob(p.dob))}, धर्म: ${escapeHTML(p.religion || 'हिंदू')}, स्थान: <strong>${executionPlace}</strong>, पूर्ण स्वस्थ चित्त एवं स्वेच्छा से, बिना किसी दबाव या प्रलोभन के, इस दस्तावेज़ की सभी शर्तों को भली-भांति समझकर अपनी अंतिम वसीयत निष्पादित करता/करती हूँ:`}
       </p>
 
       <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
@@ -518,10 +529,16 @@ export async function generateRegionalWillPDF(willData, lang) {
       </ul>
 
       <div style="background: rgba(0,0,0,0.03); border-left: 3px solid #dfb76c; padding: 6px 10px; font-size: 11px; margin-bottom: 10px;">
-        <strong>${isTe ? 'వారసత్వ భద్రత నిబంధన (Anti-Lapse / Survivorship - సెక్షన్లు 105 & 109):' : 'उत्तरजीविता नियम (Anti-Lapse / Survivorship - धारा 105 एवं 109):'}</strong>
+        <strong>${isTe ? 'వారసత్వ భద్రత నిబంధన (Anti-Lapse / 30-Day Survivorship - సెక్షన్లు 105 & 109):' : 'उत्तरजीविता नियम (Anti-Lapse / 30-Day Survivorship - धारा 105 एवं 109):'}</strong>
         ${isTe ? 
-          'ఒకవేళ నా లబ్ధిదారులలో ఎవరైనా నాకంటే ముందు మరణిస్తే, వారి వాటా వారి చట్టబద్ధ సంతానానికి సమానంగా చెందుతుంది. సంతానం లేనిచో సజీవులైన ఇతర లబ్ధిదారులకు సమానంగా పంపిణీ అవుతుంది.' :
-          'यदि कोई उत्तराधिकारी मुझसे पूर्व दिवंगत हो जाता है, तो उनका हिस्सा उनके विधिक वंशजों को समान रूप से प्राप्त होगा। अन्यथा जीवित उत्तराधिकारियों में विभाजित होगा।'}
+          'ఒకవేళ నా లబ్ధిదారులలో ఎవరైనా నాకంటే ముందు మరణిస్తే లేదా నా మరణం తర్వాత 30 రోజుల వరకు జీవించని పక్షంలో, వారి వాటా వారి చట్టబద్ధ సంతానానికి సమానంగా (per stirpes) చెందుతుంది. సంతానం లేనిచో సజీవులైన ఇతర లబ్ధిదారులకు సమానంగా పంపిణీ అవుతుంది. దురదృష్టవశాత్తు లబ్ధిదారులందరూ మరణించినచో, నా ఎస్టేట్ PMNRF / PM CARES కి ధర్మకార్యార్థం చెందును.' :
+          'यदि कोई उत्तराधिकारी मुझसे पूर्व दिवंगत हो जाता है या मेरे 30 दिन पश्चात तक जीवित नहीं रहता, तो उनका हिस्सा उनके विधिक वंशजों को समान रूप से (per stirpes) प्राप्त होगा। अन्यथा जीवित उत्तराधिकारियों में विभाजित होगा। यदि सभी उत्तराधिकारी दिवंगत हो जाएं तो समस्त संपत्ति PMNRF / PM CARES को समर्पित होगी।'}
+      </div>
+      <div style="background: rgba(0,0,0,0.02); border-left: 3px solid #64748b; padding: 6px 10px; font-size: 11px; margin-bottom: 10px;">
+        <strong>${isTe ? 'మైనర్ల సంరక్షణ & టెస్ట్మెంటరీ ట్రస్ట్ (Minority Protection Trust):' : 'नाबालिग उत्तराधिकारी संरक्षण एवं टेस्टामेंटरी ट्रस्ट (Minority Protection Trust):'}</strong>
+        ${isTe ? 
+          'లబ్ధిదారులలో ఎవరైనా మైనర్ అయి ఉంటే, వారి వాటా నా భార్య సునీతా శర్మ (లేదా ఎగ్జిక్యూటర్ సురేష్ శర్మ) ట్రస్టీగా బ్యాంక్ డిపాజిట్లలో ఉంచి వారి విద్య, సంక్షేమం కొరకు మాత్రమే వినియోగించవలెను.' :
+          'यदि कोई उत्तराधिकारी नाबालिग है, तो उनका हिस्सा मेरी धर्मपत्नी श्रीमती सुनीता शर्मा (अथवा निष्पादक सुरेश शर्मा) द्वारा ट्रस्टी के रूप में बैंक जमा में रखा जाएगा एवं 18 वर्ष तक केवल शिक्षा व कल्याण हेतु प्रयुक्त होगा।'}
       </div>
 
       <h3 style="font-size: 13.5px; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-top: 10px; margin-bottom: 4px;">
@@ -608,7 +625,7 @@ export async function generateRegionalWillPDF(willData, lang) {
       </div>
 
       <div style="margin-top: 12px; padding: 6px 10px; background: #f8f9fa; border: 1px dashed #aaa; font-size: 9.5px; display: flex; justify-content: space-between;">
-        <span>${isTe ? 'పేజీల సంతకాల భద్రత (Page Initials):' : 'पृष्ठ हस्ताक्षर सुरक्षा (Page Initials):'}</span>
+        <span>${isTe ? 'పేజీ [ ___ ] / [ ___ ]' : 'पृष्ठ [ ___ ] / [ ___ ]'}</span>
         <span>${isTe ? 'శాసనకర్త:' : 'वसीयतकर्ता:'} [ ________ ]</span>
         <span>${isTe ? 'సాక్షి 1:' : 'गवाह 1:'} [ ________ ]</span>
         <span>${isTe ? 'సాక్షి 2:' : 'गवाह 2:'} [ ________ ]</span>

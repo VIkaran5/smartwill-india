@@ -162,6 +162,8 @@ export const te = {
   "form.personalSubtitle": "మీ అధికారిక గుర్తింపు పత్రాలలో ఉన్న విధంగా వివరాలను నమోదు చేయండి.",
   "form.fullName": "పూర్తి పేరు (చట్టబద్ధమైనది)",
   "form.fullNamePlaceholder": "ఆధార్ / పాన్ కార్డ్ ప్రకారం (ఉదా. రమేష్ శర్మ)",
+  "form.fatherName": "తండ్రి / జీవిత భాగస్వామి పేరు",
+  "form.fatherNamePlaceholder": "రెవెన్యూ రికార్డుల ప్రకారం (ఉదా. కైలాష్ శర్మ)",
   "form.dob": "పుట్టిన తేదీ",
   "form.dobDay": "రోజు",
   "form.dobMonth": "నెల",

@@ -9,6 +9,7 @@ const defaultState = {
   currentStep: 1,
   personal: {
     fullName: '',
+    fatherName: '',
     dob: '',
     gender: 'Male',
     religion: 'Hindu',

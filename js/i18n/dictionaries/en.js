@@ -162,6 +162,8 @@ export const en = {
   "form.personalSubtitle": "Enter your legal details exactly as printed on your official Identity Documents.",
   "form.fullName": "Full Legal Name",
   "form.fullNamePlaceholder": "e.g. Ramesh Kumar Sharma",
+  "form.fatherName": "Father's / Spouse's Legal Name",
+  "form.fatherNamePlaceholder": "e.g. Late Shri Kailash Sharma",
   "form.dob": "Date of Birth",
   "form.dobDay": "Day",
   "form.dobMonth": "Month",

@@ -52,7 +52,7 @@ export function bindEvents() {
   const resetDataBtn = document.getElementById('resetDataBtn');
 
   // Step 1 Input listeners
-  const personalInputs = ['fullName', 'dob', 'gender', 'religion', 'govtIdType', 'govtIdDigits', 'phone', 'email', 'addressLine1', 'addressCity', 'addressState', 'addressPincode'];
+  const personalInputs = ['fullName', 'fatherName', 'dob', 'gender', 'religion', 'govtIdType', 'govtIdDigits', 'phone', 'email', 'addressLine1', 'addressCity', 'addressState', 'addressPincode'];
   personalInputs.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
