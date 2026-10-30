@@ -135,7 +135,7 @@ async function runTest() {
     const bankName = page.locator('.asset-subfield[data-field="bankName"]').first();
     await bankName.fill('State Bank of India (SBI)');
     const branch = page.locator('.asset-subfield[data-field="branch"]').first();
-    await branch.fill('Hitec City Branch, Hyderabad');
+    await branch.fill('Hitec City Branch, Hyderabad (Savings A/c No. ending in 4521, or any successor/renewed account)');
     const last4 = page.locator('.asset-subfield[data-field="last4"]').first();
     await last4.fill('4521');
     await page.locator('.asset-val').first().fill('3500000');
@@ -149,9 +149,9 @@ async function runTest() {
     await page.waitForTimeout(300);
 
     const unitNo = page.locator('.asset-subfield[data-field="unitNo"]').first();
-    if (await unitNo.count() > 0) await unitNo.fill('Flat 402, Sai Balaji Residency');
+    if (await unitNo.count() > 0) await unitNo.fill('Flat 402, 4th Floor, Sai Balaji Residency');
     const locality = page.locator('.asset-subfield[data-field="locality"]').first();
-    if (await locality.count() > 0) await locality.fill('Madhapur, Sale Deed No. 4521/2018 (1,450 sq ft)');
+    if (await locality.count() > 0) await locality.fill('Madhapur, Super Built-up Area: 1,450 sq ft (UDS: 42 sq yds), Regd. Sale Deed No. 4521/2018 dated 14/06/2018 at SRO Serilingampally, Bounded N: Open Driveway, S: Flat 401, E: Corridor, W: Compound Wall');
     const city = page.locator('.asset-subfield[data-field="city"]').first();
     if (await city.count() > 0) await city.fill('Hyderabad');
     await page.locator('.asset-val').nth(1).fill('12000000');
@@ -164,9 +164,9 @@ async function runTest() {
     await page.waitForTimeout(300);
 
     const platform = page.locator('.asset-subfield[data-field="platform"]').first();
-    if (await platform.count() > 0) await platform.fill('Zerodha Broking Ltd');
+    if (await platform.count() > 0) await platform.fill('Zerodha Broking Ltd (DP ID: IN300183, CDSL/NSDL)');
     const clientId = page.locator('.asset-subfield[data-field="clientId"]').first();
-    if (await clientId.count() > 0) await clientId.fill('ZR4521');
+    if (await clientId.count() > 0) await clientId.fill('ZR4521 (including all equity shares, ETF units, and mutual fund folios)');
     await page.locator('.asset-val').nth(2).fill('4500000');
 
     await page.waitForTimeout(500);

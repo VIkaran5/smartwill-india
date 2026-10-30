@@ -269,7 +269,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("3. DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c3Text = "I hereby expressly declare that all properties, whether movable or immovable, listed and bequeathed in this Will are my absolute, separate, and self-acquired properties, acquired out of my own personal earnings, resources, and investments, held in my sole name (or inherited by me under Section 8 of the Hindu Succession Act, 1956 with absolute, alienable, and exclusive ownership rights). None of the properties are ancestral, coparcenary, or joint family (HUF) properties. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, unrestricted legal title and testamentary power to dispose of the same according to my sole wishes.";
+  const c3Text = "I hereby expressly declare and affirm that all properties, whether movable or immovable, listed and bequeathed in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, absolute, and unfettered testamentary power to bequeath and dispose of the same according to my sole wishes.";
   const splitC3 = doc.splitTextToSize(c3Text, pageWidth - (margin * 2));
   doc.text(splitC3, margin, y);
   y += (splitC3.length * 4.5) + 4;
@@ -284,10 +284,10 @@ export async function generateEnglishWillPDF(willData) {
   const altExecName = (willData.executor && willData.executor.alternateName) || "";
   const altExecRel = (willData.executor && willData.executor.alternateRelation) || "";
   const execKYC = (execName.toLowerCase().includes('suresh'))
-    ? `${execName} (Brother), S/o Late Shri Kailash Sharma, aged about 52 years, residing at Hyderabad, Telangana`
+    ? `${execName} (Brother), S/o Late Shri Kailash Sharma, aged about 52 years, residing at Flat 201, Srinivasa Towers, Street No. 3, Habsiguda, Hyderabad, Telangana 500007`
     : `${execName} (${execRel})`;
   const altExecKYC = (altExecName.toLowerCase().includes('rajesh'))
-    ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at Secunderabad, Telangana`
+    ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at House No. 12-5-84/2, Vijayapuri Colony, Tarnaka, Secunderabad, Telangana 500017`
     : `${altExecName}${altExecRel ? ` (${altExecRel})` : ''}`;
 
   let c4Text = `I hereby nominate and appoint ${execKYC} as the Executor of this my Last Will and Testament.`;
@@ -341,7 +341,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("6. NOMINATION OVERRIDE CLAUSE (SUPREME COURT OF INDIA PRECEDENTS)", margin, y);
   y += 4.5;
   doc.setFont("helvetica", "normal");
-  const c6Text = "I hereby declare and direct that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, shares, mutual funds, or other financial assets is made solely for institutional transmission and procedural discharge under applicable banking and company regulations. It is my express intention and testamentary direction that the beneficial ownership and title to all such assets shall devolve strictly and exclusively upon the beneficiaries designated under this Will. My Executor is authorized to take all requisite legal and administrative steps to ensure full transmission of beneficial ownership in accordance with this Will.";
+  const c6Text = "I hereby declare and direct that any nomination registered in respect of my bank accounts, Fixed Deposits, Demat accounts, shares, mutual funds, or other financial assets is made solely for institutional transmission and procedural discharge under applicable banking and company regulations. Pursuant to the law laid down by the Supreme Court of India in Shakti Yezdani v. Jayanand Jayant Salgaonkar (2023) and Ram Chander Talwar v. Devender Kumar Talwar (2010), any nominee receiving funds or securities holds the same strictly as a trustee and custodian for the beneficial owners designated under this Will. It is my express testamentary direction that the entire beneficial ownership and title to all such assets shall devolve strictly and exclusively upon the beneficiaries named herein, subject always to applicable statutory enactments without purporting to override any beneficial entitlement expressly conferred by law.";
   const splitC6 = doc.splitTextToSize(c6Text, pageWidth - (margin * 2));
   doc.text(splitC6, margin, y);
   y += (splitC6.length * 4.5) + 4;
