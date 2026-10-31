@@ -2308,7 +2308,7 @@ button:disabled [data-lucide="loader-2"] {
   text-transform: uppercase;
 }
 
-.draft-asset-item {
+.page-gap-marker { display: none; }.draft-asset-item {
   margin: 0.8rem 0;
   padding: 0.85rem 1.15rem;
   background: #ffffff;
@@ -2859,7 +2859,7 @@ button:disabled [data-lucide="loader-2"] {
   .navbar, .footer, .btn, .wizard-header, .stepper-wrapper, .step-header, .draft-preview-modal-footer, .draft-preview-close-btn, .toast, #toastNotification, #floatingLegalBotBtn {
     display: none !important;
   }
-  .clause-block, .draft-asset-item {
+  .clause-block, .page-gap-marker { display: none; }.draft-asset-item {
     break-inside: auto !important;
     page-break-inside: auto !important;
   }
@@ -2871,8 +2871,21 @@ button:disabled [data-lucide="loader-2"] {
     break-after: avoid !important;
     page-break-after: avoid !important;
   }
+  /* Page gap markers visible only in print mode */
+  .page-gap-marker {
+    display: block !important;
+    text-align: center !important;
+    border-top: 0.5pt dashed #64748b !important;
+    border-bottom: 0.5pt dashed #64748b !important;
+    color: #64748b !important;
+    font-size: 7pt !important;
+    font-style: italic !important;
+    padding: 2pt 0 !important;
+    margin: 4pt 0 !important;
+    letter-spacing: 1pt !important;
+  }
   /* Flatten asset boxes so content flows without creating empty bordered shells */
-  .draft-asset-item {
+  .page-gap-marker { display: none; }.draft-asset-item {
     border: none !important;
     border-left: none !important;
     background: none !important;

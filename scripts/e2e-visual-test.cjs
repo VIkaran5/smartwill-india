@@ -76,7 +76,8 @@ async function runTest() {
     page.on('pageerror', err => errors.push(err.toString()));
 
     console.log('Navigating to http://127.0.0.1:' + PORT + '/app.html...');
-    await page.goto(`http://127.0.0.1:${PORT}/app.html`, { waitUntil: 'networkidle' });
+    await page.goto(`http://127.0.0.1:${PORT}/app.html`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForTimeout(2000);
 
     console.log('Page loaded. Checking for initial JS errors...');
     if (errors.length > 0) {
