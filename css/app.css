@@ -2871,4 +2871,29 @@ button:disabled [data-lucide="loader-2"] {
     break-after: avoid !important;
     page-break-after: avoid !important;
   }
+  /* Flatten asset boxes so content flows without creating empty bordered shells */
+  .draft-asset-item {
+    border: none !important;
+    border-left: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 2pt 0 !important;
+    margin: 4pt 0 !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  .draft-asset-item .draft-asset-header {
+    border-bottom: 0.75pt solid #1e293b !important;
+    margin-bottom: 4pt !important;
+    padding-bottom: 2pt !important;
+    font-weight: bold !important;
+  }
+  .draft-protective-proviso {
+    border: none !important;
+    border-left: 2pt solid #1e293b !important;
+    background: none !important;
+    padding: 4pt 8pt !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
 }
