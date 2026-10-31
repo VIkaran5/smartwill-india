@@ -2308,7 +2308,11 @@ button:disabled [data-lucide="loader-2"] {
   text-transform: uppercase;
 }
 
-.page-gap-marker { display: none; }.draft-asset-item {
+.page-gap-marker {
+  display: none;
+}
+
+.draft-asset-item {
   margin: 0.8rem 0;
   padding: 0.85rem 1.15rem;
   background: #ffffff;
@@ -2859,7 +2863,10 @@ button:disabled [data-lucide="loader-2"] {
   .navbar, .footer, .btn, .wizard-header, .stepper-wrapper, .step-header, .draft-preview-modal-footer, .draft-preview-close-btn, .toast, #toastNotification, #floatingLegalBotBtn {
     display: none !important;
   }
-  .clause-block, .page-gap-marker { display: none; }.draft-asset-item {
+  .page-gap-marker {
+    display: none;
+  }
+  .draft-asset-item {
     break-inside: auto !important;
     page-break-inside: auto !important;
   }
@@ -2885,7 +2892,10 @@ button:disabled [data-lucide="loader-2"] {
     letter-spacing: 1pt !important;
   }
   /* Flatten asset boxes so content flows without creating empty bordered shells */
-  .page-gap-marker { display: none; }.draft-asset-item {
+  .page-gap-marker {
+    display: none;
+  }
+  .draft-asset-item {
     border: none !important;
     border-left: none !important;
     background: none !important;
