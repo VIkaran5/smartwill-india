@@ -297,7 +297,7 @@ export function computeAssetDesc(type, details = {}) {
       const bPart = bankName ? `${bankName.trim()} ` : '';
       const aPart = accType ? `${accType} ` : 'Account ';
       const lPart = last4 ? `ending in ${last4.trim()}` : '';
-      const brPart = branch ? `, ${branch.trim()} Branch` : '';
+      const brPart = branch ? `, ${branch.trim()}` : '';
       return `${bPart}${aPart}${lPart}${brPart}`.trim();
     }
     case 'Property / Land': {
