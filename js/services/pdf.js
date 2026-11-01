@@ -18,6 +18,7 @@ import { sendWillToEmail } from './email.js';
 import { showToast } from '../ui/toast.js';
 import { logger } from './logger.js';
 import { escapeHTML } from '../utils/sanitizer.js';
+import { computeAssetDesc } from '../render/assets.js';
 import { getAuthHeaders, resetPaymentState } from './payment.js';
 
 export async function generateWillPDF(willData) {
@@ -221,7 +222,26 @@ export async function generateEnglishWillPDF(willData) {
 
   const beneficiaries = willData.beneficiaries || [];
   const spouse = beneficiaries.find(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
-  const spouseName = spouse ? spouse.name.trim() : 'Spouse';
+  const spouseName = (spouse && spouse.name && spouse.name.trim()) ? spouse.name.trim() : '';
+  const spouseDisplayName = spouseName ? `My spouse, ${spouseName}` : 'My spouse';
+  const spousePossessive = spouseName ? `${spouseName}'s` : "my spouse's";
+
+  function getAssetDisplay(a, fallbackType) {
+    if (!a) return fallbackType;
+    return (a.desc && a.desc.trim()) || computeAssetDesc(a.type || fallbackType, a.details) || a.type || fallbackType;
+  }
+
+  function formatBeneficiaryShare(al, bens) {
+    const b = bens.find(x => String(x.id) === String(al.beneficiaryId));
+    let bStr = 'Beneficiary';
+    if (b) {
+      const namePart = (b.name || '').trim() || (b.relation || 'Beneficiary');
+      const relPart = (b.name && b.relation) ? ` (${b.relation})` : '';
+      const idPart = (b.idType && b.idDigits) ? ` [${b.idType}: XXXX-${b.idDigits}]` : '';
+      bStr = `${namePart}${relPart}${idPart}`;
+    }
+    return `• ${al.percentage}% absolute share bequeathed to ${bStr}`;
+  }
 
   const children = beneficiaries.filter(b => b && b.relation && (
     b.relation.toLowerCase().includes('son') ||
@@ -452,12 +472,10 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.4);
   doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #1 [${a1.type || 'Bank Account'}]: ${a1.desc || ''}`, margin, y);
+  doc.text(`Asset #1 [${a1.type || 'Bank Account / FD'}]: ${getAssetDisplay(a1, 'Bank Account / FD')}`, margin, y);
   y += 4;
   (a1.allocations || []).forEach(al => {
-    const b = beneficiaries.find(x => x.id === al.beneficiaryId);
-    const bStr = b ? `${b.name} (${b.relation}) [${b.idType || 'ID'}: XXXX-${b.idDigits || ''}]` : 'Beneficiary';
-    y = printWrapped(`• ${al.percentage}% absolute share bequeathed to ${bStr}`, margin + 3, y, contentWidth - 3, 3.5, 7.8);
+    y = printWrapped(formatBeneficiaryShare(al, beneficiaries), margin + 3, y, contentWidth - 3, 3.5, 7.8);
     y += 0.5;
   });
   y += 3;
@@ -467,12 +485,11 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.4);
   doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #2 [${a2.type || 'Property / Land'}]: ${a2.desc || ''}`, margin, y);
+  doc.text(`Asset #2 [${a2.type || 'Property / Land'}]: ${getAssetDisplay(a2, 'Property / Land')}`, margin, y);
   y += 4;
-  (a2.allocations || []).forEach(al => {
-    const b = beneficiaries.find(x => x.id === al.beneficiaryId);
-    const bStr = b ? `${b.name} (${b.relation}) [${b.idType || 'ID'}: XXXX-${b.idDigits || ''}]` : 'Beneficiary';
-    y = printWrapped(`• ${al.percentage}% undivided ownership share bequeathed to ${bStr}`, margin + 3, y, contentWidth - 3, 3.5, 7.8);
+  const a2Allocs = (a2.allocations && a2.allocations.length > 0) ? a2.allocations : (a1.allocations || []);
+  a2Allocs.forEach(al => {
+    y = printWrapped(formatBeneficiaryShare(al, beneficiaries).replace('absolute share', 'undivided ownership share'), margin + 3, y, contentWidth - 3, 3.5, 7.8);
     y += 0.5;
   });
   y += 2.5;
@@ -485,12 +502,12 @@ export async function generateEnglishWillPDF(willData) {
   y += 3.5;
 
   const resClauses = [
-    `(i) Undisturbed Exclusive Lifetime Right of Residence: My spouse, ${spouseName}, is granted an absolute, exclusive, unhindered, and irrevocable lifetime right to reside in, occupy, and enjoy the entirety of the residential flat, free from payment of rent or eviction.`,
-    `(ii) Legal Character, Assent & Protection of Lifetime Residence: Remainder co-owners (${childrenNeitherNorStr}) shall not seek physical partition or separate possession during ${spouseName}'s lifetime. Remainder transfers remain subordinate to this lifetime right. The Executor shall register a Deed of Assent incorporating this covenant under Sections 332-333 ISA.`,
-    `(iii) Property Taxes, Society Dues & Structural Outgoings: Routine utility charges borne by ${spouseName}; statutory property taxes, society charges, and structural repairs shared rateably by co-owners.`,
+    `(i) Undisturbed Exclusive Lifetime Right of Residence: ${spouseDisplayName} is granted an absolute, exclusive, unhindered, and irrevocable lifetime right to reside in, occupy, and enjoy the entirety of the residential flat, free from payment of rent or eviction.`,
+    `(ii) Legal Character, Assent & Protection of Lifetime Residence: Remainder co-owners (${childrenNeitherNorStr}) shall not seek physical partition or separate possession during ${spousePossessive} lifetime. Remainder transfers remain subordinate to this lifetime right. The Executor shall register a Deed of Assent incorporating this covenant under Sections 332-333 ISA.`,
+    `(iii) Property Taxes, Society Dues & Structural Outgoings: Routine utility charges borne by ${spouseName || 'my spouse'}; statutory property taxes, society charges, and structural repairs shared rateably by co-owners.`,
     `(iv) Substitute Accommodation & Shortfall Funding: If the property is damaged, acquired, or sold by mutual consent, substitute accommodation shall be provided, with any shortfall funded from liquid estate.`,
     `(v) Voluntary Surrender: This right terminates only upon natural demise or voluntary registered surrender deed.`,
-    `(vi) Non-Recursive Ultimate Devolution: Upon demise of ${spouseName}, her remainder share devolves directly upon surviving co-owners without further recursive life interests.`
+    `(vi) Non-Recursive Ultimate Devolution: Upon demise of ${spouseName || 'my spouse'}, her remainder share devolves directly upon surviving co-owners without further recursive life interests.`
   ];
   resClauses.forEach(rc => {
     y = printWrapped(rc, margin + 2, y, contentWidth - 2, 3.4, 7.4);
@@ -508,12 +525,11 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.4);
   doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #3 [${a3.type || 'Mutual Funds / Stocks'}]: ${a3.desc || ''}`, margin, y);
+  doc.text(`Asset #3 [${a3.type || 'Mutual Funds / Stocks'}]: ${getAssetDisplay(a3, 'Mutual Funds / Stocks')}`, margin, y);
   y += 4;
-  (a3.allocations || []).forEach(al => {
-    const b = beneficiaries.find(x => x.id === al.beneficiaryId);
-    const bStr = b ? `${b.name} (${b.relation}) [${b.idType || 'ID'}: XXXX-${b.idDigits || ''}]` : 'Beneficiary';
-    y = printWrapped(`• ${al.percentage}% absolute share bequeathed to ${bStr}`, margin + 3, y, contentWidth - 3, 3.5, 7.8);
+  const a3Allocs = (a3.allocations && a3.allocations.length > 0) ? a3.allocations : (a1.allocations || []);
+  a3Allocs.forEach(al => {
+    y = printWrapped(formatBeneficiaryShare(al, beneficiaries), margin + 3, y, contentWidth - 3, 3.5, 7.8);
     y += 0.5;
   });
   y += 4;
@@ -595,7 +611,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFontSize(8.2);
   doc.text("Minority Protection & Statutory Capacity Separation (HMGA Section 8):", margin, y);
   y += 3.5;
-  const minorityText = `If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by ${spouseName} as Natural Guardian in respect of person and custody, while the testamentary trustee shall hold the bequest corpus under the Will without remuneration, invested prudently in scheduled bank deposits or government securities until age 18. Dealing with minor's immovable property shall strictly comply with Section 8 of the Hindu Minority and Guardianship Act, 1956 and Sections 27 to 29 of the Guardians and Wards Act, 1890 with prior court permission.`;
+  const minorityText = `If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by ${spouseName || (execName || 'my testamentary trustee')} as Natural Guardian in respect of person and custody, while the testamentary trustee shall hold the bequest corpus under the Will without remuneration, invested prudently in scheduled bank deposits or government securities until age 18. Dealing with minor's immovable property shall strictly comply with Section 8 of the Hindu Minority and Guardianship Act, 1956 and Sections 27 to 29 of the Guardians and Wards Act, 1890 with prior court permission.`;
   y = printWrapped(minorityText, margin + 2, y, contentWidth - 2, 3.5, 7.6);
   y += 3;
 
