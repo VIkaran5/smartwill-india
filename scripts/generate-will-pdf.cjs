@@ -17,6 +17,10 @@ async function generatePDF() {
     throw new Error('draft_preview_rendered.html not found!');
   }
 
+  // Extract dynamic Testator name
+  const testatorMatch = draftBodyHtml.match(/I,\s*<strong>([^<]+)<\/strong>/i);
+  const testatorName = testatorMatch ? testatorMatch[1].trim() : 'RAMESH SHARMA';
+
   // 2. Read CSS from app.css
   const appCssPath = path.join(PROJECT_DIR, 'css', 'app.css');
   const appCss = fs.existsSync(appCssPath) ? fs.readFileSync(appCssPath, 'utf8') : '';
@@ -26,14 +30,14 @@ async function generatePDF() {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Last Will and Testament — Ramesh Sharma</title>
+  <title>Last Will and Testament — ${testatorName}</title>
   <style>
     ${appCss}
 
     /* Print & Executive Legal Parchment Optimization */
     @page {
       size: A4 portrait;
-      margin: 14mm 16mm 14mm 16mm;
+      margin: 11mm 16mm 11mm 16mm;
     }
 
     * {
@@ -45,8 +49,8 @@ async function generatePDF() {
       background: #ffffff !important;
       color: #0f172a !important;
       font-family: 'Times New Roman', Times, Georgia, serif !important;
-      font-size: 9.8pt !important;
-      line-height: 1.52 !important;
+      font-size: 9.4pt !important;
+      line-height: 1.43 !important;
       margin: 0 !important;
       padding: 0 !important;
     }
@@ -116,20 +120,20 @@ async function generatePDF() {
     }
 
     .clause-block {
-      margin-top: 10pt;
-      margin-bottom: 8pt;
+      margin-top: 6pt;
+      margin-bottom: 4pt;
       break-inside: auto !important;
       page-break-inside: auto !important;
     }
 
     .clause-title {
       font-family: 'Times New Roman', Georgia, serif;
-      font-size: 10.5pt;
+      font-size: 10pt;
       font-weight: bold;
       color: #0f172a;
       border-bottom: 0.75pt solid #cbd5e1;
-      padding-bottom: 2pt;
-      margin-bottom: 4pt;
+      padding-bottom: 1.5pt;
+      margin-bottom: 2pt;
       break-after: avoid !important;
       page-break-after: avoid !important;
     }
@@ -147,14 +151,15 @@ async function generatePDF() {
     .executor-powers-list {
       list-style: none;
       padding-left: 0;
-      margin-top: 4pt;
+      margin-top: 2pt;
+      margin-bottom: 2pt;
     }
 
     .executor-powers-list li {
-      margin-bottom: 4pt;
-      padding-left: 8pt;
-      font-size: 9.2pt;
-      line-height: 1.48;
+      margin-bottom: 1pt !important;
+      padding-left: 6pt;
+      font-size: 8.05pt !important;
+      line-height: 1.25 !important;
     }
 
     .draft-asset-item {
@@ -175,6 +180,8 @@ async function generatePDF() {
       margin-bottom: 3pt;
       border-bottom: 0.5pt dashed #cbd5e1;
       padding-bottom: 2pt;
+      break-after: avoid;
+      page-break-after: avoid;
     }
 
     .draft-protective-proviso {
@@ -193,6 +200,8 @@ async function generatePDF() {
       list-style: none;
       padding-left: 0;
       margin: 0;
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .draft-alloc-list li {
@@ -213,16 +222,24 @@ async function generatePDF() {
       font-family: Arial, sans-serif;
     }
 
+    .protective-subclause {
+      margin: 2pt 0 !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      font-size: 8.25pt !important;
+      line-height: 1.32 !important;
+    }
+
     .draft-subclause-box {
       background: #f8fafc !important;
       border: 1pt solid #cbd5e1;
       border-left: 3pt solid #0284c7;
-      padding: 6pt 8pt;
-      margin: 6pt 0;
-      font-size: 8.8pt;
-      line-height: 1.48;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      padding: 3pt 5pt;
+      margin: 2pt 0;
+      font-size: 8.15pt !important;
+      line-height: 1.28 !important;
+      break-inside: auto !important;
+      page-break-inside: auto !important;
     }
 
     .closing-execution-container {
@@ -337,8 +354,8 @@ async function generatePDF() {
     path: pdfArtifactPath,
     format: 'A4',
     margin: {
-      top: '16mm',
-      bottom: '16mm',
+      top: '11mm',
+      bottom: '11mm',
       left: '16mm',
       right: '16mm'
     },
@@ -347,7 +364,7 @@ async function generatePDF() {
     headerTemplate: `
       <div style="font-family: 'Times New Roman', serif; font-size: 7.5pt; color: #64748b; width: 100%; display: flex; justify-content: space-between; padding: 0 16mm;">
         <span>LEGAL TESTAMENTARY INSTRUMENT • INDIAN SUCCESSION ACT, 1925</span>
-        <span>TESTATOR: RAMESH SHARMA</span>
+        <span>TESTATOR: ${testatorName}</span>
       </div>
     `,
     footerTemplate: `

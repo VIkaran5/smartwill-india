@@ -103,7 +103,7 @@ describe('Wizard Step Validation Guards (Pure Logic)', () => {
       const result = STEP_GUARDS.PERSONAL({
         personal: {
           fullName: 'Ramesh Sharma', dob: '1985-05-15', addressLine1: 'MG Road', addressCity: 'Mumbai', addressState: 'Maharashtra', addressPincode: '400001', phone: '9876543210', email: 'ramesh@gmail.com',
-          govtIdType: 'Passport', govtIdDigits: 'ABCD'
+          govtIdType: 'Passport', govtIdDigits: 'ABC'
         }
       });
       expect(result.ok).toBe(false);

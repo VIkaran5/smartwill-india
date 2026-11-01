@@ -49,8 +49,14 @@ export function serializeDraft(state) {
   const cleanExecutor = {
     name: state.executor?.name || '',
     relation: state.executor?.relation || '',
+    fatherName: state.executor?.fatherName || '',
+    address: state.executor?.address || '',
+    age: state.executor?.age || '',
     alternateName: state.executor?.alternateName || '',
-    alternateRelation: state.executor?.alternateRelation || ''
+    alternateRelation: state.executor?.alternateRelation || '',
+    altFatherName: state.executor?.altFatherName || '',
+    altAddress: state.executor?.altAddress || '',
+    altAge: state.executor?.altAge || ''
   };
 
   const payload = {

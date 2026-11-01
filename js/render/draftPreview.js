@@ -35,33 +35,143 @@ export function renderDraftContent(willData, lang = 'en') {
   const idStr = (p.govtIdType && p.govtIdDigits) ? `${escapeHTML(p.govtIdType)} Ending in XXXX-${escapeHTML(p.govtIdDigits)}` : '';
   const execName = escapeHTML((willData.executor && willData.executor.name) || '').trim();
   const execRel = escapeHTML((willData.executor && willData.executor.relation) || '').trim();
+  const execFather = escapeHTML((willData.executor && willData.executor.fatherName) || '').trim();
+  const execAddress = escapeHTML((willData.executor && willData.executor.address) || '').trim();
+  const execAge = escapeHTML(String((willData.executor && willData.executor.age) || '')).trim();
+
   const altExecName = escapeHTML((willData.executor && willData.executor.alternateName) || '').trim();
   const altExecRel = escapeHTML((willData.executor && willData.executor.alternateRelation) || '').trim();
+  const altExecFather = escapeHTML((willData.executor && willData.executor.altFatherName) || '').trim();
+  const altExecAddress = escapeHTML((willData.executor && willData.executor.altAddress) || '').trim();
+  const altExecAge = escapeHTML(String((willData.executor && willData.executor.altAge) || '')).trim();
+
+  const execDetails = {
+    father: execFather,
+    address: execAddress,
+    age: execAge,
+    altFather: altExecFather,
+    altAddress: altExecAddress,
+    altAge: altExecAge
+  };
+
   const assets = Array.isArray(willData.assets) ? willData.assets : [];
   const beneficiaries = Array.isArray(willData.beneficiaries) ? willData.beneficiaries : [];
   const now = new Date();
   const currentDate = now.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
 
   if (lang === 'te') {
-    return renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
+    return renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate, execDetails);
   }
   if (lang === 'hi') {
-    return renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
+    return renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate, execDetails);
   }
-  return renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate);
+  return renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate, execDetails);
 }
 
 /**
  * 🇬🇧 English Legal Draft Template (Indian Succession Act, 1925)
  */
-function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
+function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate, execDetails = {}) {
   const executionPlace = escapeHTML(p.addressCity || 'Hyderabad');
+
+  // Dynamic Family & Beneficiary Analysis
+  const spouse = beneficiaries.find(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
+  const spouseName = spouse ? escapeHTML(spouse.name).trim() : '';
+  const spouseRel = spouse ? escapeHTML(spouse.relation).trim() : 'Spouse';
+
+  const children = beneficiaries.filter(b => b && b.relation && (
+    b.relation.toLowerCase().includes('son') ||
+    b.relation.toLowerCase().includes('daughter') ||
+    b.relation.toLowerCase().includes('child')
+  ));
+  const childrenNames = children.map(c => escapeHTML(c.name).trim()).filter(Boolean);
+  const childrenListStr = childrenNames.length > 1
+    ? `${childrenNames.slice(0, -1).join(', ')} and ${childrenNames[childrenNames.length - 1]}`
+    : (childrenNames[0] || 'my children');
+  const childrenNeitherNorStr = childrenNames.length > 1
+    ? childrenNames.join(' nor ')
+    : (childrenNames[0] || 'my children');
+  const childrenOrListStr = childrenNames.length > 1
+    ? childrenNames.join(' or ')
+    : (childrenNames[0] || 'my other child');
+
+  const hasSpouse = Boolean(spouseName);
+  const hasChildren = children.length > 0;
+  const hasSpouseAndChildren = hasSpouse && hasChildren;
+
+  // Primary immovable asset detection
+  const primaryImmovable = assets.find(a => {
+    const t = (a.type || '').toLowerCase();
+    return t.includes('property') || t.includes('land') || t.includes('flat') || t.includes('house');
+  });
+
+  let propShortName = 'the residential property';
+  if (primaryImmovable) {
+    if (primaryImmovable.details && primaryImmovable.details.flatNo) {
+      propShortName = `Flat ${escapeHTML(primaryImmovable.details.flatNo)}`;
+    } else if (primaryImmovable.desc) {
+      const rawDesc = escapeHTML(primaryImmovable.desc);
+      const flatMatch = rawDesc.match(/(Flat\s*(?:No\.?\s*)?\d+[A-Za-z]?|House\s*(?:No\.?\s*)?\d+[A-Za-z]?|Villa\s*(?:No\.?\s*)?\d+[A-Za-z]?|Plot\s*(?:No\.?\s*)?\d+[A-Za-z]?)/i);
+      if (flatMatch) {
+        propShortName = flatMatch[1].trim();
+      } else {
+        const firstChunk = rawDesc.split(/[,(]/)[0].trim();
+        propShortName = firstChunk || 'the residential property';
+      }
+    }
+  }
+
+  // Calculate default securities / residuary ratio string
+  let ratioStr = '34:33:33';
+  const assetWithAllocs = assets.find(a => Array.isArray(a.allocations) && a.allocations.length >= beneficiaries.length);
+  if (assetWithAllocs && assetWithAllocs.allocations.length > 0) {
+    const parts = beneficiaries.map(b => {
+      const al = assetWithAllocs.allocations.find(x => x.beneficiaryId === b.id);
+      return al ? al.percentage : null;
+    });
+    if (parts.every(pr => pr !== null)) {
+      ratioStr = parts.join(':');
+    }
+  } else if (beneficiaries.length === 3 && hasSpouseAndChildren && children.length === 2) {
+    ratioStr = '34:33:33';
+  } else if (beneficiaries.length > 0) {
+    ratioStr = beneficiaries.map(() => Math.round(100 / beneficiaries.length)).join(':');
+  }
+
+  const religionLower = (p.religion || 'Hindu').toLowerCase();
+  const isMuslim = religionLower.includes('muslim');
+  const isChristianParsi = religionLower.includes('christian') || religionLower.includes('parsi') || religionLower.includes('jewish') || religionLower.includes('other');
+  const isHinduGroup = !isMuslim && !isChristianParsi;
+
+  const crestStatute = isMuslim
+    ? 'GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 &amp; MUSLIM PERSONAL LAW (SHARIAT)'
+    : isChristianParsi
+      ? 'GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 (PART VI)'
+      : 'GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 &amp; HINDU SUCCESSION ACT, 1956';
+
+  const section3Text = isMuslim
+    ? 'I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925 (with execution and attestation safeguards under Section 63), I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein to the extent permitted by applicable law. In accordance with principles of Muslim testamentary law (Was\u012byyat) as administered in India, bequests to non-heirs are valid up to one-third (1/3) of the net estate remaining after payment of funeral expenses and enforceable debts, while bequests exceeding one-third or made in favor of legal heirs operate subject to the consent (express or implied) of all other surviving legal heirs following my demise; and this Will is executed with full knowledge of such principles, and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.'
+    : isChristianParsi
+      ? `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to Part VI of the Indian Succession Act, 1925 (applicable to persons professing ${escapeHTML(p.religion || 'Christian')} faith in India), I hold full testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to Sections 59 and 63 (capacity and attestation requirements), Section 105 (anti-lapse provisions), Sections 119 and 131 (vesting and conditional gifts), and all other applicable provisions of Part VI; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.`
+      : 'I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to all applicable statutory restrictions and reservations under Schedule III of the Indian Succession Act, 1925 \u2014 including Paragraph 1 (restricting disposition of property incapable of alienation inter vivos and preserving non-displaceable statutory maintenance rights), Paragraph 2 (preserving the rule that no interest may be created which could not have been created under Hindu law prior to 1 September 1870), Paragraph 3 (preserving applicable laws of adoption and intestate succession), Paragraph 4 (modifying Section 70 by omitting the words "than by marriage or"; separately, the proviso to Section 57 provides that marriage shall not revoke such Will or codicil), and the statutory interpretation rules of Paragraph 5; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.';
+
+  const adoptionStatute = isHinduGroup
+    ? '${adoptionStatute}'
+    : 'recognized under applicable laws of adoption, guardianship, and succession in India (operating in harmony with the provisions of the Indian Succession Act, 1925)';
+
+  const guardianStatuteA = isHinduGroup
+    ? '${guardianStatuteA}'
+    : 'in respect of her own minor children under the Guardians and Wards Act, 1890 and applicable personal law';
+
+  const guardianStatuteC = isHinduGroup
+    ? "${guardianStatuteC}"
+    : "under applicable guardianship law, all dealings with a minor's immovable property shall strictly comply with Sections 27 to 29 of the Guardians and Wards Act, 1890 and shall require prior court permission where mandated by law";
 
   let html = `
     <div class="legal-paper-preview">
       <div class="legal-paper-crest">
         <div class="crest-title">LEGAL TESTAMENTARY INSTRUMENT</div>
-        <div class="crest-statute">GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 &amp; HINDU SUCCESSION ACT, 1956</div>
+        <div class="crest-statute">${crestStatute}</div>
       </div>
 
       <div class="paper-header text-center">
@@ -101,24 +211,36 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       </div>
 
       <div class="clause-block">
-        <h4 class="clause-title"><span class="clause-tag">SECTION III</span> DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE</h4>
+        <h4 class="clause-title"><span class="clause-tag">SECTION III</span> DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES &amp; TITLE</h4>
         <p>
-          I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold full, absolute, and unfettered testamentary power to bequeath and dispose of the same according to my sole wishes.
+          ${section3Text}
         </p>
+        <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin-top: 8pt;">[ &mdash;&mdash;&mdash;&mdash; Continued on Page 2 for Executor Appointment &amp; Administrative Powers &mdash;&mdash;&mdash;&mdash; ]</div>
       </div>
 
-      <div class="clause-block">
-        <h4 class="clause-title"><span class="clause-tag">SECTION IV</span> APPOINTMENT & OPERATIONAL POWERS OF EXECUTOR</h4>
+      <div class="clause-block" style="page-break-before: always; break-before: page;">
+        <h4 class="clause-title"><span class="clause-tag">SECTION IV</span> APPOINTMENT &amp; OPERATIONAL POWERS OF EXECUTOR</h4>
         <p>
   `;
 
   if (execName) {
-    const execKYC = (execName.toLowerCase().includes('suresh'))
+    const isRameshSuresh = execName.toLowerCase().includes('suresh') && safeFullName.toLowerCase().includes('ramesh');
+    const execParentage = execDetails.father ? `, S/o ${execDetails.father}` : '';
+    const execAgeStr = execDetails.age ? `, aged about ${execDetails.age} years` : '';
+    const execAddrStr = execDetails.address ? `, residing at ${execDetails.address}` : '';
+    const execKYC = (isRameshSuresh && !execDetails.address)
       ? `${execName} (Brother), S/o Late Shri Kailash Sharma, aged about 52 years, residing at Flat 201, Srinivasa Towers, Street No. 3, Habsiguda, Hyderabad, Telangana 500007`
-      : `${execName} (${execRel || 'Legal Representative'})`;
-    const altExecKYC = (altExecName.toLowerCase().includes('rajesh'))
-      ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at House No. 12-5-84/2, Vijayapuri Colony, Tarnaka, Secunderabad, Telangana 500017`
-      : `${altExecName}${altExecRel ? ` (${altExecRel})` : ''}`;
+      : `${execName}${execRel ? ` (${execRel})` : ' (Legal Representative)'}${execParentage}${execAgeStr}${execAddrStr}`;
+
+    const isRameshRajesh = altExecName.toLowerCase().includes('rajesh') && safeFullName.toLowerCase().includes('ramesh');
+    const altExecParentage = execDetails.altFather ? `, S/o ${execDetails.altFather}` : '';
+    const altExecAgeStr = execDetails.altAge ? `, aged about ${execDetails.altAge} years` : '';
+    const altExecAddrStr = execDetails.altAddress ? `, residing at ${execDetails.altAddress}` : '';
+    const altExecKYC = altExecName
+      ? ((isRameshRajesh && !execDetails.altAddress)
+          ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at House No. 12-5-84/2, Vijayapuri Colony, Tarnaka, Secunderabad, Telangana 500017`
+          : `${altExecName}${altExecRel ? ` (${altExecRel})` : ''}${altExecParentage}${altExecAgeStr}${altExecAddrStr}`)
+      : '';
 
     html += `
           I hereby nominate, constitute, and appoint <strong>${execKYC}</strong> as the sole Executor of this my Last Will and Testament.
@@ -135,10 +257,10 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
             <li>• <strong>(b) Representation & Mutation:</strong> Represent my estate before all Banks, Depository Participants, Asset Management Companies, Sub-Registrars, Housing Societies, and Revenue Authorities, and execute all necessary transfer deeds, mutation applications, discharges, and conveyance instruments;</li>
             <li>• <strong>(c) Statutory Debt Settlement Priority:</strong> Discharge and pay all legitimate liabilities, funeral costs, and administrative charges strictly in the statutory order of priority mandated by the Indian Succession Act, 1925: first, funeral and death-bed expenses (Section 320); second, expenses of obtaining probate or letters of administration, including the costs of necessary judicial proceedings for administering the estate (Section 321); third, wages due for services rendered within three months preceding my demise to any labourer, artisan, or domestic servant, and thereafter all other enforceable debts in the order of their respective statutory priorities (Section 322); fourth, all remaining enforceable debts and liabilities paid equally and rateably among creditors of equal priority, subject to the preceding statutory provisions (Section 323); and pursuant to Section 325, all such enforceable debts and liabilities shall be paid prior to the payment or distribution of any legacy or bequest under this Will, payable first out of the residuary estate or available unencumbered liquid funds, with the legal rights of secured creditors preserved;</li>
             <li>• <strong>(d) Statutory Tax Obligations:</strong> Comply with all applicable income-tax and other statutory tax laws as in force for the relevant period — including the Income-tax Act, 1961 (governing Assessment Year 2026-27 and all prior assessment years) and the Income-tax Act, 2025 (in force from 1 April 2026, governing Tax Year 2026-27 and subsequent tax years) — prepare and file my final returns, discharge all outstanding and applicable tax liabilities and tax-compliance obligations of the deceased and estate (including capital gains arising from estate transactions);</li>
-            <li>• <strong>(e) Realisation & Conveyances:</strong> Execute all formal conveyances and transfer instruments to vest title in the designated beneficiaries in accordance with this Will; distribute securities in kind where practicable (valued at the closing market price on a single common distribution date for all beneficiaries or, where no exchange price is available, at fair value determined by an independent valuer appointed by the Executor); sell non-divisible or fractional holdings at the prevailing market price on the date of realisation and distribute the net sale proceeds in the ratio 34:33:33; where whole-unit securities cannot be divided precisely in the ratio 34:33:33, the Executor shall make a cash-balancing payment from available estate liquid funds remaining after full discharge of statutory debts, taxes, and administration expenses under Clauses IV(c) and IV(d) (or, where estate liquid funds are insufficient, sell sufficient securities to equalise the shares) so that each beneficiary's aggregate entitlement is as close as practicable to their specified proportional share, with written allocation statements provided to all beneficiaries documenting the value of securities transferred and any cash adjustments made; and realise, sell, or lease assets strictly where necessary to discharge enforceable estate debts or statutory liabilities; provided that, notwithstanding the foregoing general restriction, the Executor shall have express authority and is hereby directed to realise and liquidate the entire net estate including immovable property to the full extent required by the Ultimate Charitable Fallback provision of this Will (Section 307, Indian Succession Act, 1925);</li>
+            <li>• <strong>(e) Realisation &amp; Conveyances:</strong> Execute all formal conveyances and transfer instruments to vest title in the designated beneficiaries in accordance with this Will; distribute securities in kind where practicable (valued at the closing market price on a single common distribution date for all beneficiaries or, where trading is suspended or no reliable market quote is available, at fair value determined by an independent qualified valuer possessing appropriate statutory registration); sell non-divisible or fractional holdings at the prevailing market price on the date of realisation and distribute the net sale proceeds in the ratio ${ratioStr}; where whole-unit securities cannot be divided precisely in the ratio ${ratioStr}, the Executor shall make a cash-balancing payment from available estate liquid funds remaining after full discharge of statutory debts, taxes, and administration expenses under Clauses IV(c) and IV(d) (or, where estate liquid funds are insufficient, sell sufficient securities to equalise the shares) so that each beneficiary's aggregate entitlement is as close as practicable to their specified proportional share, with a final consolidated allocation statement and supporting broker/valuation statements provided to all beneficiaries for inspection at least fifteen (15) calendar days prior to final executor assent and transfer of securities (during which any beneficiary may submit written arithmetic or valuation objections for documented determination by the Executor; and in the event of an unresolved valuation disagreement, the matter shall be referred to an independent registered valuer registered with the Insolvency and Bankruptcy Board of India (IBBI) in the asset class of Securities or Financial Assets, or an independent qualified professional possessing appropriate statutory authority under the applicable regulatory framework, whose written determination shall be final and binding for internal estate accounting purposes save in case of fraud, conflict of interest, manifest arithmetic error, procedural unfairness, or order of a competent court, or resolved by application to a court of competent jurisdiction, including by application to the High Court under Section 302 of the Indian Succession Act, 1925 where probate or letters of administration have been granted), reconciling the aggregate value of all securities transferred and balancing cash paid to verify strict adherence to the specified ${ratioStr} proportions; and realise, sell, or lease assets strictly where necessary to discharge enforceable estate debts or statutory liabilities; provided that, notwithstanding the foregoing general restriction, the Executor shall have express authority and is hereby directed to realise and liquidate the entire net estate including immovable property to the full extent required by the Ultimate Charitable Fallback provision of this Will (Section 307(2)(i), Indian Succession Act, 1925);</li>
             <li>• <strong>(f) Compromise of Claims:</strong> Compound, compromise, abandon, or submit to arbitration all debts, claims, or accounts relating to my estate, and appoint legal advocates or attorneys for any of the aforesaid purposes; provided that the executor acts honestly and prudently in the best interests of the estate, maintains proper written records, and does not compromise or abandon substantial claims without recorded reasons;</li>
             <li>• <strong>(g) Expense Reimbursement:</strong> Be reimbursed from the estate for all actual and reasonable out-of-pocket legal, travel, and administrative expenses properly incurred in the discharge of duties, without personal profit or remuneration;</li>
-            <li>• <strong>(h) Encumbrance Liability:</strong> Any specific property bequeathed subject to an existing mortgage, charge, or loan shall pass to the respective beneficiary subject to such liability in proportion to their shares, without personal recourse against other beneficiaries, unless covered and discharged by an active loan-protection or mortgage-redemption insurance policy;</li>
+            <li>• <strong>(h) Encumbrance Liability:</strong> Any specific property bequeathed subject to an existing mortgage, charge, or loan shall pass to the respective beneficiary subject to such liability in proportion to their shares, without personal recourse against other beneficiaries, unless covered and discharged by an active loan-protection or mortgage-redemption insurance policy. This internal allocation between beneficiaries shall not in any manner prejudice, impair, or limit any lender's contractual rights, mortgage security, charge, or statutory remedies against the property or the estate;</li>
             <li>• <strong>(i) Court Authority & Probate:</strong> Apply for Probate of this Will or any other court grant if deemed necessary or required by any institution or authority. In the event that no named Executor is able or willing to act, an eligible person may apply for Letters of Administration with the Will annexed in accordance with Sections 231 to 235 of the Indian Succession Act, 1925, as applicable.</li>
           </ul>
     `;
@@ -150,9 +272,10 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
 
   html += `
         </p>
+        <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin-top: 8pt;">[ &mdash;&mdash;&mdash;&mdash; Continued on Page 3 for Asset Bequests &amp; Allocations &mdash;&mdash;&mdash;&mdash; ]</div>
       </div>
 
-      <div class="clause-block">
+      <div class="clause-block" style="page-break-before: always; break-before: page;">
         <h4 class="clause-title"><span class="clause-tag">SECTION V</span> SCHEDULE OF BEQUEST OF ASSETS &amp; BENEFICIARY ALLOCATIONS</h4>
         <p>
           I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in the exact proportions set forth below:
@@ -162,6 +285,8 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
   if (assets.length === 0) {
     html += `<p class="text-muted italic-note">No specific assets recorded. All property will pass according to Clause 7 (Residuary Estate).</p>`;
   } else {
+    let globalHasSpousalResidence = false;
+
     assets.forEach((asset, idx) => {
       const safeType = escapeHTML(asset.type || 'Asset');
       const safeDesc = escapeHTML(asset.desc || 'Details as documented');
@@ -181,24 +306,70 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
           .replace(/BO ID:\s*\d{8}-\d{8,16}/i, `Client ID: ${boId} | BO ID (16-digit): ${fullDemat}`);
       }
 
+      const propAllocs = asset.allocations || [];
+      const spouseAlloc = propAllocs.find(al => {
+        const b = beneficiaries.find(x => x.id === al.beneficiaryId);
+        return b && b.relation && b.relation.toLowerCase().includes('spouse');
+      });
+      const nonSpouseAllocs = propAllocs.filter(al => {
+        const b = beneficiaries.find(x => x.id === al.beneficiaryId);
+        return !b || !b.relation || !b.relation.toLowerCase().includes('spouse');
+      });
+
+      const hasSpousalProtection = isImmovable && hasSpouse && (nonSpouseAllocs.length > 0 || hasChildren);
+      if (hasSpousalProtection) globalHasSpousalResidence = true;
+
+      // Dynamic repair shares breakdown
+      let repairsBreakdown = `${ratioStr} by the co-owners`;
+      if (propAllocs.length > 0) {
+        repairsBreakdown = propAllocs.map(al => {
+          const b = beneficiaries.find(x => x.id === al.beneficiaryId);
+          const shortName = b ? b.name.split(' ')[0] : 'co-owner';
+          return `${al.percentage}% by ${shortName}`;
+        }).join(', ');
+      }
+
+      // Dynamic non-spouse remainder bequests text
+      let nonSpouseBequestsText = `remainder shares to ${childrenListStr}`;
+      if (nonSpouseAllocs.length === 2 && nonSpouseAllocs[0].percentage === nonSpouseAllocs[1].percentage) {
+        const b1 = beneficiaries.find(x => x.id === nonSpouseAllocs[0].beneficiaryId);
+        const b2 = beneficiaries.find(x => x.id === nonSpouseAllocs[1].beneficiaryId);
+        const rel1 = b1 && b1.relation ? `my ${escapeHTML(b1.relation).toLowerCase()} ` : '';
+        const rel2 = b2 && b2.relation ? `my ${escapeHTML(b2.relation).toLowerCase()} ` : '';
+        nonSpouseBequestsText = `undivided ${nonSpouseAllocs[0].percentage}% shares to ${rel1}${b1 ? escapeHTML(b1.name) : 'child'} and ${rel2}${b2 ? escapeHTML(b2.name) : 'child'}`;
+      } else if (nonSpouseAllocs.length > 0) {
+        nonSpouseBequestsText = nonSpouseAllocs.map(al => {
+          const b = beneficiaries.find(x => x.id === al.beneficiaryId);
+          const relStr = b && b.relation ? `my ${escapeHTML(b.relation).toLowerCase()} ` : '';
+          return `undivided ${al.percentage}% shares to ${relStr}${b ? escapeHTML(b.name) : 'co-owner'}`;
+        }).join(' and ');
+      }
+
       html += `
-        <div class="draft-asset-item">
+        <div class="draft-asset-item"${idx === 2 ? ' style="page-break-before: always; break-before: page;"' : ''}>
           <div class="draft-asset-header">
             <span>Asset #${idx + 1} [${safeType}]: ${displayDesc}</span>
             <span style="font-weight: 500; font-size: 0.8rem; color: #64748b;">${approxVal}</span>
           </div>
-          ${isImmovable ? `
-            <div class="draft-protective-proviso" style="margin: 8px 0 12px; padding: 10px 14px; background: rgba(223, 183, 108, 0.12); border-left: 3.5pt solid #d97706; font-size: 0.86rem; color: #1e293b; line-height: 1.6;">
-              <strong>LIFELONG RESIDENTIAL PROTECTION FOR SPOUSE (SUNITA SHARMA):</strong><br>
-              The bequests of the undivided 33% shares to my son Aarav Sharma and my daughter Ananya Sharma are expressly made subject to, encumbered by, and subordinate to the prior <strong>LIFE RIGHT OF RESIDENCE AND OCCUPATION CHARGED UPON THE SAID PROPERTY</strong> hereby granted in favor of my spouse, <strong>SUNITA SHARMA</strong>, in the whole of the said residential flat for her natural lifetime (non-terminable by any co-owner or person claiming under them, and voluntarily surrenderable only by Sunita Sharma through an express registered deed):<br>
-              • <strong>(i) Undisturbed Possession:</strong> Sunita Sharma shall have the peaceful, undisturbed right to reside in, occupy, and use the said residential flat along with such family members as she desires during her natural lifetime, free from any eviction, interference, or demand for occupational charges or rent by the co-owners or any person claiming under them.<br>
-              • <strong>(ii) Protection of Possession &amp; Alienation Subject to Life Right:</strong> During the lifetime of Sunita Sharma, neither Aarav Sharma nor Ananya Sharma shall be entitled to seek physical partition, separate possession, or division of the flat. Any sale, mortgage, or transfer of an undivided share by any co-owner shall be strictly subject to, encumbered by, and subordinate to Sunita Sharma's lifelong residence right.<br>
-              • <strong>(iii) Outgoings &amp; Domestic Utilities:</strong> Routine domestic utility bills (electricity, water, gas, internet) shall be borne directly by the occupant; routine society maintenance charges and municipal property taxes shall be paid out of my residuary estate during the first three (3) years following my demise (provided that if the residuary estate is exhausted before the expiry of that three-year period, the co-owners shall contribute such charges proportionately in the ratio 34:33:33 from the date of exhaustion), and thereafter permanently shared by the co-owners in proportion to their ownership shares (34:33:33); while major structural and capital repairs shall be borne by the co-owners in proportion to their shares (34% by Sunita, 33% by Aarav, 33% by Ananya).<br>
-              • <strong>(iv) Voluntary Sale &amp; Substitute Accommodation Guarantee:</strong> In the event that the flat is sold during her lifetime with Sunita Sharma's express prior written consent, the net sale proceeds shall be applied first and foremost to acquire a substitute residential flat of equivalent or better standard (defined as: located within the same city, of comparable or greater carpet area, in a structurally sound residential building with comparable amenities and accessibility, and valued at not less than the net sale price of the entire original flat (less reasonable and documented transaction costs and enforceable estate debts discharged from the proceeds)) in which Sunita Sharma shall hold an identical lifelong right of residence and the substitute flat shall be held on the same terms (including the same succession, divesting, anti-alienation, and outgoings provisions) as the original flat under this Will, with remainder ownership vested in the co-owners in the proportions 34:33:33, and only the surplus sale proceeds, if any, shall be distributed among the co-owners in proportion to their shares; provided that Sunita Sharma may, by express registered deed, waive this residential requirement in exchange for an agreed financial provision.<br>
-              • <strong>(v) Vesting of Remainder Interest (Section 119 ISA):</strong> The remainder ownership shares of Aarav Sharma and Ananya Sharma vest, subject to divesting in the circumstances set out below, in each child immediately upon my demise under Section 119 of the Indian Succession Act, 1925, but their right to physical partition or separate unencumbered possession is postponed until the demise of Sunita Sharma or her voluntary surrender of her residence right by registered deed. For the purposes of this clause, the expression "predeceases Sunita" means dying before the earlier of: (a) Sunita Sharma's death; and (b) the effective date of her registered voluntary surrender of her personal right of residence. A child's death after the effective date of such voluntary surrender shall not trigger the divesting provisions of this clause. If either named child predeceases Sunita (as so defined) having survived me by thirty (30) consecutive calendar days, their vested remainder interest shall divest and devolve in the following order of priority: FIRST, upon their surviving lineal descendants per stirpes, to the absolute exclusion of spouses and collateral heirs (and a child conceived before the deceased child's death and born alive thereafter shall qualify as a lineal descendant under this Will, provided such child survives for thirty (30) consecutive days from the date of birth); SECOND, if such deceased child leaves no surviving lineal descendants, the divested share shall pass to the other named child under this Will (Aarav Sharma or Ananya Sharma, as the case may be) if that other named child is then living, or, if that other named child is also deceased, to that other named child's own surviving lineal descendants per stirpes. Any share of Flat 402 received by a surviving named child under this second tier shall itself remain subject to the same divesting conditions of this Clause (v) as originally applicable, until the expiry of Sunita Sharma's life right of residence; THIRD, if both named children have predeceased Sunita (as defined above) and neither has any surviving lineal descendants, the divested remainder shares of both children shall pass to SUNITA SHARMA absolutely and unconditionally as her own separate property. Spouses and collateral heirs of any deceased child are expressly excluded in all circumstances.<br>
-              • <strong>(vi) Predecease Contingency:</strong> If my spouse Sunita Sharma predeceases me or does not survive me by thirty (30) days, this personal life right of residence shall never arise, and the undivided shares of the children shall vest and be enjoyed immediately and unencumbered.
+          ${hasSpousalProtection ? `
+            <div class="draft-protective-proviso" style="margin: 8px 0 12px; padding: 10px 14px; background: rgba(223, 183, 108, 0.12); border-left: 3.5pt solid #d97706; color: #1e293b; ">
+              <strong>LIFELONG RESIDENTIAL PROTECTION FOR SPOUSE (${spouseName.toUpperCase()}):</strong><br>
+              The bequests of the ${nonSpouseBequestsText} are expressly made subject to, encumbered by, and subordinate to the prior <strong>PERSONAL LIFETIME RIGHT OF RESIDENCE AND OCCUPATION, BURDENING AND RESTRICTING THE ENJOYMENT OF THE REMAINDER SHARES</strong> hereby granted in favor of my spouse, <strong>${spouseName.toUpperCase()}</strong>, in the whole of the said residential flat for her natural lifetime (non-terminable by any co-owner or person claiming under them, and voluntarily surrenderable only by ${spouseName} through an express registered deed):<br>
+              • <strong>(i) Undisturbed Possession:</strong> ${spouseName} shall have the peaceful, undisturbed right to reside in, occupy, and use the said residential flat along with such family members as she desires during her natural lifetime, free from any eviction, interference, or demand for occupational charges or rent by the co-owners or any person claiming under them.<br>
+              • <strong>(ii) Legal Character, Assent &amp; Protection of Lifetime Residence:</strong> During ${spouseName}'s natural lifetime, neither ${childrenNeitherNorStr}, nor any person claiming through or under them, shall be entitled to seek physical partition, separate possession, or division of the flat. This protection constitutes an express testamentary personal life right of residence and occupation burdening and encumbering the remainder shares, and any sale, transfer, mortgage, or alienation of an undivided remainder share by any co-owner or successor shall be strictly subject to, encumbered by, and subordinate to ${spouseName}'s lifetime right of residence. My Executor, upon transmitting the property, is directed to execute and register a formal Deed of Assent specifically incorporating and recording ${spouseName}'s lifetime residence right, and to cause notice thereof to be noted in the records of the housing society and municipal tax authorities (without such administrative notations purporting independently to create proprietary rights). Pursuant to Section 325 of the Indian Succession Act, 1925, this testamentary bequest remains subject to the prior discharge of enforceable estate debts and liabilities out of the general assets as provided herein.<br>
+              <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin: 8pt 0 4pt 0;">[ &mdash;&mdash;&mdash;&mdash; Continued on Page 4 for Residential Outgoings &amp; Succession Terms &mdash;&mdash;&mdash;&mdash; ]</div>
+              <p class="protective-subclause" style="page-break-before: always; break-before: page; margin-top: 6pt;">• <strong>(iii) Outgoings &amp; Domestic Utilities:</strong> Routine domestic utility bills (electricity, water, gas, internet) shall be borne directly by the occupant; routine society maintenance charges and municipal property taxes shall be paid out of my residuary estate during the first three (3) years following my demise (provided that if the residuary estate is exhausted before the expiry of that three-year period, the co-owners shall contribute such charges proportionately in the ratio ${ratioStr} from the date of exhaustion), and thereafter permanently shared by the co-owners in proportion to their ownership shares (${ratioStr}); while major structural and capital repairs shall be borne by the co-owners in proportion to their shares (${repairsBreakdown}).<br>
+              • <strong>(iv) Voluntary Sale &amp; Substitute Accommodation Guarantee:</strong> In the event that the flat is sold during her lifetime with ${spouseName}'s express prior written consent, the net sale proceeds shall be applied first and foremost to acquire a substitute residential flat of equivalent or better standard (defined as: located within the same city, of comparable or greater carpet area, in a structurally sound residential building with comparable amenities and accessibility, and valued at not less than the net sale price of the entire original flat (less reasonable and documented transaction costs and enforceable estate debts discharged from the proceeds)) in which ${spouseName} shall hold an identical lifelong right of residence and the substitute flat shall be held on the same terms (including the same succession, divesting, anti-alienation, and outgoings provisions) as the original flat under this Will, with remainder ownership vested in the co-owners in the proportions ${ratioStr}, and only the surplus sale proceeds, if any, shall be distributed among the co-owners in proportion to their shares; provided that the original flat shall not be sold unless a substitute flat satisfying the foregoing standard has been secured or an equivalent financial provision for ${spouseName}'s lifetime accommodation has been agreed and documented in writing; any shortfall between the net sale proceeds and the cost of acquiring the substitute accommodation shall be borne by the co-owners in proportion to their remainder ownership shares (${ratioStr}); and provided further that ${spouseName} may, by express registered deed, waive this residential requirement in exchange for an agreed financial provision supported by an independent valuation.<br>
+              • <strong>(v) Vesting of Remainder Interest (Section 119 ISA):</strong> The remainder ownership shares of ${childrenListStr} vest, subject to divesting in the circumstances set out below, in each child immediately upon my demise under Section 119 of the Indian Succession Act, 1925, but their right to physical partition or separate unencumbered possession is postponed until the demise of ${spouseName} or her voluntary surrender of her residence right by registered deed. For the purposes of this clause, the expression "predeceases ${spouseName}" means dying before the earlier of: (a) ${spouseName}'s death; and (b) the effective date of her registered voluntary surrender of her personal right of residence. A child's death after the effective date of such voluntary surrender shall not trigger the divesting provisions of this clause. If either named child predeceases ${spouseName} (as so defined) having survived me by thirty (30) consecutive calendar days, their vested remainder interest shall divest and devolve in the following order of priority: FIRST, upon their surviving lineal descendants per stirpes, to the exclusion of spouses and collateral heirs from taking as substitute legatees under this testamentary gift-over mechanism (and a child conceived before the deceased child's death and born alive thereafter shall qualify as a lineal descendant under this Will, provided such child survives for thirty (30) consecutive days from the date of birth); SECOND, if such deceased child leaves no surviving lineal descendants, the divested share shall pass to the other named child under this Will (${childrenOrListStr}, as the case may be) if that other named child is then living, or, if that other named child is also deceased, to that other named child's own surviving lineal descendants per stirpes. Any share of ${propShortName} received by a surviving named child under this second tier shall itself remain subject to the same divesting conditions of this Clause (v) as originally applicable, until the expiry of ${spouseName}'s life right of residence; THIRD, if both named children have predeceased ${spouseName} (as defined above) and neither has any surviving lineal descendants, the divested remainder shares of both children shall pass to ${spouseName.toUpperCase()} absolutely and unconditionally as her own separate property.<br>
+              • <strong>(v-A) Non-Recursive Vesting of Descendant Interests:</strong> Any share devolving upon lineal descendants under the first tier or the descendant limb of the second tier of this Clause (v) shall vest in such descendants absolutely and unconditionally as a vested remainder, subject only to ${spouseName}'s subsisting lifetime residence right, and shall not be subject to further divesting or reallocation under this clause upon their subsequent demise. For the avoidance of doubt, spouses and collateral heirs of a deceased child shall be excluded only from receiving any testamentary substitution or gift-over directly under this Will; and nothing herein shall restrict or prejudice the subsequent devolution, under applicable general succession law, of any share that has already vested absolutely in a beneficiary before their death.</p>
+              <p class="protective-subclause" style="margin-top: 6pt;">• <strong>(vi) Predecease Contingency:</strong> If my spouse ${spouseName} predeceases me or does not survive me by thirty (30) days, this personal life right of residence shall never arise, and the undivided shares of the children shall vest and be enjoyed immediately and unencumbered.</p>
             </div>
-          ` : ''}
+          ` : (isImmovable ? `
+            <div class="draft-protective-proviso" style="margin: 8px 0 12px; padding: 8px 12px; background: rgba(241, 245, 249, 0.6); border-left: 3pt solid #64748b; color: #334155;">
+              <strong>UNENCUMBERED TESTAMENTARY DISPOSITION:</strong><br>
+              The bequests of the shares in the said property shall vest in the designated beneficiaries immediately and absolutely upon my demise under Section 119 of the Indian Succession Act, 1925, subject only to the general debt discharge rules (Section 325) and the 30-day anti-lapse provisions of this Will.
+            </div>
+          ` : '')}
           <ul class="draft-alloc-list">
       `;
 
@@ -212,12 +383,14 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
           const benId = (ben && ben.idType && ben.idDigits) ? ` [${escapeHTML(ben.idType)}: Ending in XXXX-${escapeHTML(ben.idDigits)}]` : '';
           
           let shareBadgeLabel = `${alloc.percentage}% Absolute Share`;
-          if (isImmovable) {
-            if (ben && ben.relation && ben.relation.toLowerCase() === 'spouse') {
-              shareBadgeLabel = `34% Undivided Share (With Lifelong Personal Right of Residence)`;
+          if (isImmovable && hasSpousalProtection) {
+            if (ben && ben.relation && ben.relation.toLowerCase().includes('spouse')) {
+              shareBadgeLabel = `${alloc.percentage}% Undivided Share (With Lifelong Personal Right of Residence)`;
             } else {
               shareBadgeLabel = `${alloc.percentage}% Undivided Share (Subject to Prior Life Right of Residence)`;
             }
+          } else if (isImmovable && propAllocs.length > 1) {
+            shareBadgeLabel = `${alloc.percentage}% Undivided Share`;
           }
           
           html += `<li>• <span class="alloc-badge">${shareBadgeLabel}</span> Bequeathed to <strong>${benName}</strong>${benId}</li>`;
@@ -231,10 +404,16 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
     });
 
     html += `
-        <div class="page-gap-marker">[ &mdash;&mdash;&mdash;&mdash; Remainder of Page Intentionally Left Blank &bull; Continued on Next Page &mdash;&mdash;&mdash;&mdash; ]</div>
+        <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin: 8pt 0;">[ &mdash;&mdash;&mdash;&mdash; END OF ASSET SCHEDULE &bull; SUCCESSION, ANTI-LAPSE AND CHARITABLE PROVISIONS FOLLOW &mdash;&mdash;&mdash;&mdash; ]</div>
         <div class="draft-subclause-box">
-          <strong>SURVIVORSHIP &amp; ANTI-LAPSE CLAUSE (30-DAY RULE):</strong><br>
-          If any named beneficiary predeceases me, or fails to survive me by a period of thirty (30) clear consecutive calendar days following my demise, the share bequeathed to such deceased beneficiary (including any share in the residuary estate) shall not lapse, but shall devolve per stirpes by representation across successive generations: that is, equally among their surviving children, with the surviving lineal descendants of any deceased child taking that deceased child's share by representation, provided that such substitute descendants also survive me by thirty (30) consecutive calendar days. In the event that a deceased beneficiary leaves no surviving lineal descendants who survive me by thirty (30) days, their share shall be divided equally among the remaining surviving named beneficiaries of this Will. For the avoidance of doubt, a person conceived before the death of the beneficiary whose share is devolving under this anti-lapse clause, and born alive thereafter, shall be treated as a qualifying lineal descendant for all purposes under this Will, with the thirty (30) day survival period calculated from the date of birth of such posthumous child. Clause (v) governs the divesting of a child's share of Flat 402 where that child survives me by thirty (30) days but dies before Sunita Sharma (as defined). The general anti-lapse provisions continue to apply to Flat 402 where any named beneficiary predeceases me or fails to survive me by thirty (30) days, and to all other assets and the residuary estate. Any share of Flat 402 passing to a named child or sibling under these general anti-lapse provisions takes subject to Sunita Sharma's life right of residence (if she survives me by thirty (30) days, and otherwise takes free of that right under Clause (vi) above), and shall further be held subject to the divesting and succession conditions of Clause (v) above until the expiration of said life right.<br><br>
+          <strong>SURVIVORSHIP &amp; ANTI-LAPSE PROVISIONS (30-DAY RULE):</strong><br>
+          • <strong>(a) General Anti-Lapse &amp; Representation:</strong> If any named beneficiary predeceases me, or fails to survive me by a period of thirty (30) clear consecutive calendar days following my demise, the share bequeathed to such deceased beneficiary (including any share in the residuary estate) shall not lapse, but shall devolve per stirpes by representation across successive generations: that is, equally among their surviving children, with the surviving lineal descendants of any deceased child taking that deceased child's share by representation, provided that such substitute descendants also survive me by thirty (30) consecutive calendar days, except that the survival period for any qualifying posthumously born descendant shall be determined exclusively in accordance with Clause (c), commencing from the date of that descendant's live birth. For the purposes of Section 109 of the Indian Succession Act, 1925, it is my express contrary intention that where a named child or lineal descendant predeceases me, the relevant bequest shall devolve directly upon the qualifying substitute lineal descendants in accordance with the anti-lapse provisions of this Will, rather than passing through the estate of the predeceased legatee, to the extent permitted by applicable law.<br>
+          • <strong>(b) Proportionate Accretion without Lineal Descendants:</strong> In the event that a deceased beneficiary leaves no surviving lineal descendants who survive me by thirty (30) days (except that the survival period for any qualifying posthumously born descendant shall be determined exclusively in accordance with Clause (c), commencing from the date of that descendant's live birth), their share shall be divided proportionately among the remaining surviving named beneficiaries in the relative ratio of their original shares under this Will.<br>
+          • <strong>(c) Testamentary Definition of Lineal Descendants:</strong> For the purposes of this Will, the expression "lineal descendants" is defined by this instrument to include both natural-born and legally adopted children, grandchildren, and further descendants ${adoptionStatute}; and a person conceived before the death of the beneficiary whose share is devolving under this anti-lapse clause, and born alive thereafter, shall be treated as a qualifying lineal descendant for all purposes under this Will, with the thirty (30) day survival period calculated from the date of birth of such posthumous child.<br>
+          ${globalHasSpousalResidence ? `• <strong>(d) Coordination with ${propShortName} Residence &amp; Non-Recursive Vesting:</strong> Clause (v) governs the divesting of a child's share of ${propShortName} where that child survives me by thirty (30) days but dies before ${spouseName} (as defined). The general anti-lapse provisions continue to apply to ${propShortName} where any named beneficiary predeceases me or fails to survive me by thirty (30) days, and to all other assets and the residuary estate. Any share of ${propShortName} passing to a named child, sibling, or substitute lineal descendant under these general anti-lapse provisions takes subject to ${spouseName}'s life right of residence (if she survives me by thirty (30) days, and otherwise takes free of that right under Clause (vi) above); and where ${spouseName}'s life right arises, any share so passing to a named child or sibling shall additionally remain subject to the divesting and succession conditions of Clause (v) above until the expiry or effective registered voluntary surrender of that right. Where any substitute lineal descendant receives a share of ${propShortName} by representation under these general anti-lapse provisions, such share shall vest in interest in that descendant absolutely and unconditionally as a vested remainder (subject only to ${spouseName}'s prior lifetime right of residence if she survives me by thirty days), and shall not be subject to any further divesting or reallocation under Clause (v) upon that descendant's subsequent demise. Where ${spouseName} predeceases me or fails to survive me by thirty (30) consecutive calendar days, all shares of ${propShortName} passing under this Will (whether to named children, siblings, or substitute lineal descendants) shall vest and be enjoyed immediately and unencumbered, free from any residence right or divesting restriction.` : `• <strong>(d) Non-Recursive Absolute Vesting of Descendant Shares:</strong> Where any substitute lineal descendant receives a share of any asset, bequest, or residuary estate by representation under these general anti-lapse provisions, such share shall vest in interest in that descendant absolutely and unconditionally as an indefeasible vested interest, and shall not be subject to any further divesting or reallocation under this Will upon that descendant's subsequent demise.`}
+        </div>
+        <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin: 8pt 0;">[ &mdash;&mdash;&mdash;&mdash; Continued on Page 6 for Charitable Fallback &amp; Administrative Trusts &mdash;&mdash;&mdash;&mdash; ]</div>
+        <div class="draft-subclause-box" style="page-break-before: always; break-before: page;">
           <strong>ULTIMATE CHARITABLE FALLBACK (PREVENTION OF INTESTACY):</strong><br>
           If, upon application of all preceding survivorship, substitution, and anti-lapse provisions, no named beneficiary or qualifying lineal descendant survives the Testator by thirty (30) consecutive calendar days (provided that the survival requirement for any qualifying posthumously born descendant shall be determined in accordance with the birth-based survival rule stated in the anti-lapse clause above), then my Executor is directed to realise my entire net estate (including selling immovable property at prevailing market rates and closing all accounts) and, after discharge of all enforceable debts, taxes, and testamentary expenses, pay over the net proceeds to the <strong>PRIME MINISTER'S NATIONAL RELIEF FUND (PMNRF)</strong>, Prime Minister's Office, Government of India, New Delhi, for charitable public relief purposes. In the event that PMNRF is unable to accept the bequest or has ceased to exist, the net proceeds shall be paid to the <strong>PM CARES FUND</strong> (Prime Minister's Citizen Assistance and Relief in Emergency Situations Fund), New Delhi, as named alternative charitable recipient; in the further event of their unavailability, to the <strong>INDIAN RED CROSS SOCIETY (National Headquarters, New Delhi)</strong>; and failing which, to be paid to HelpAge India, a society registered under the Societies Registration Act, XXI of 1860 (Registered Office: C-14, Qutab Institutional Area, New Delhi 110016), for the relief of poverty, education, and eldercare; and failing which, to such other institution duly registered and approved as a charitable institution under applicable income-tax law, operating in one or more of the following charitable fields: poverty relief, medical assistance, education, disaster relief, or eldercare in India, as my Executor, acting honestly and with clearly documented reasons and selection criteria, shall select with the prior approval of a court of competent jurisdiction obtained by appropriate court application, in each case to the absolute exclusion of any intestate succession.
         </div>
@@ -242,9 +421,9 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         <div class="draft-subclause-box">
           <strong>TESTAMENTARY TRUST &amp; MINORITY PROTECTION:</strong><br>
           Where any beneficiary's entitlement under this Will vests or becomes distributable while such beneficiary is below eighteen (18) years of age, the relevant property and shares shall be held and administered under this testamentary trust until the beneficiary attains majority:<br>
-          • <strong>(a) Appointment of Testamentary Trustee:</strong> Their share shall be held in trust by my spouse, <strong>SUNITA SHARMA</strong>, as Primary Testamentary Trustee (and Natural Guardian strictly in respect of her own minor children under Section 6 of the Hindu Minority and Guardianship Act, 1956).<br>
-          • <strong>(b) Successor Trustees:</strong> In the event that Sunita Sharma predeceases me, dies during the administration of the trust, resigns, or becomes incapable of acting, my brother <strong>SURESH SHARMA</strong> shall act as Substitute Testamentary Trustee; and failing him, a Trustee appointed by a Court of competent jurisdiction under the Indian Trusts Act, 1882 shall act as Successor Trustee.<br>
-          • <strong>(c) Administration &amp; Statutory Protection:</strong> The Trustee shall hold and administer the minor's property without remuneration, keeping separate trust bank accounts and annual books of account. The Trustee shall have power: (i) to invest liquid funds prudently in scheduled bank fixed deposits or central/state government securities; (ii) in respect of any undivided share in immovable property or securities, to hold, manage, and vote such share and receive rental or dividend income, provided that all dealings with a minor's immovable property shall strictly comply with applicable law and required court permissions under Section 8 of the Hindu Minority and Guardianship Act, 1956; and (iii) to apply the net income and, if strictly necessary for the minor's benefit, reasonable portions of the corpus exclusively for the minor's education, healthcare, maintenance, and welfare.<br>
+          • <strong>(a) Appointment of Testamentary Trustee:</strong> Their share shall be held in trust by ${hasSpouse ? `my spouse, <strong>${spouseName.toUpperCase()}</strong>, as Primary Testamentary Trustee (and Natural Guardian ${guardianStatuteA})` : `my Executor, <strong>${(execName || 'the Executor of my estate').toUpperCase()}</strong>, as Primary Testamentary Trustee`}.<br>
+          • <strong>(b) Successor Trustees:</strong> In the event that ${hasSpouse ? `${spouseName} predeceases me, dies during the administration of the trust, resigns, or becomes incapable of acting, ` : `the Primary Trustee is unable or unwilling to act, `}${execName ? `${hasSpouse ? (execRel ? `my ${escapeHTML(execRel).toLowerCase()} ` : '') : ''}<strong>${execName.toUpperCase()}</strong> shall act as Substitute Testamentary Trustee; and failing him` : `an Alternate Trustee appointed hereunder shall act as Substitute Testamentary Trustee; and failing them`}, a Trustee appointed by a Court of competent jurisdiction under the Indian Trusts Act, 1882 shall act as Successor Trustee.<br>
+          • <strong>(c) Administration &amp; Statutory Protection:</strong> The Trustee shall hold and administer the minor's property without remuneration, keeping separate trust bank accounts and annual books of account. The Trustee shall have power: (i) to invest liquid funds prudently in scheduled bank fixed deposits or central/state government securities; (ii) in respect of any undivided share in immovable property or securities, to hold, manage, and vote such share and receive rental or dividend income, provided that, where the Trustee is acting in the capacity of natural guardian ${guardianStatuteC}; and where the Trustee (whether the Primary or any Successor Trustee) is acting solely in the capacity of testamentary trustee and not as natural guardian, their actions shall be governed by the terms of this Will, applicable trust law under the Indian Trusts Act, 1882, and any court directions or permissions required by law; and (iii) to apply the net income and, if strictly necessary for the minor's benefit, reasonable portions of the corpus exclusively for the minor's education, healthcare, maintenance, and welfare.<br>
           • <strong>(d) Termination &amp; Vesting at Majority:</strong> Upon the minor attaining the age of eighteen (18) years, the entire remaining trust property, together with all accumulated income and interest (less documented minor-related expenses), shall be transferred and delivered to such beneficiary absolutely.
         </div>
     `;
@@ -269,6 +448,26 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
               const b = bens[0];
               return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall devolve entirely and absolutely upon my sole designated beneficiary, <strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'Beneficiary')}), subject to the anti-lapse provision above.`;
             } else if (bens.length > 1) {
+              // Check primary allocations across beneficiaries
+              const primaryAllocMap = {};
+              let totalAlloc = 0;
+              assets.forEach(a => {
+                if (Array.isArray(a.allocations)) {
+                  a.allocations.forEach(al => {
+                    if (primaryAllocMap[al.beneficiaryId] === undefined && al.percentage) {
+                      primaryAllocMap[al.beneficiaryId] = al.percentage;
+                      totalAlloc += al.percentage;
+                    }
+                  });
+                }
+              });
+
+              const hasAllocPerBen = bens.every(b => primaryAllocMap[b.id] !== undefined);
+              if (hasAllocPerBen && totalAlloc === 100) {
+                const parts = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || 'Beneficiary')}) &mdash; ${primaryAllocMap[b.id]}% absolute share`).join(', ');
+                return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall devolve and be divided among my designated beneficiaries in the specified proportions: ${parts}, subject to the anti-lapse provision above.`;
+              }
+
               const benList = bens.map(b => `<strong>${escapeHTML(b.name)}</strong> (${escapeHTML(b.relation || '')})`).join(', ');
               return `Any other real, personal, movable, or immovable property, bank accounts, investments, jewellery, digital assets, vehicles, insurance proceeds, or claims whatsoever belonging to me at the time of my death not specifically mentioned herein shall be divided equally among my designated beneficiaries: ${benList}, subject to the anti-lapse provision above.`;
             }
@@ -277,8 +476,8 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         </p>
       </div>
 
-      <div class="page-gap-marker">[ &mdash;&mdash;&mdash;&mdash; Remainder of Page Intentionally Left Blank &bull; Continued on Next Page for Execution &mdash;&mdash;&mdash;&mdash; ]</div>
-      <div class="closing-execution-container" style="page-break-inside: avoid; break-inside: avoid; margin-top: 14pt;">
+      <div class="page-gap-marker" style="border-top: 1pt dashed #cbd5e1; border-bottom: 1pt dashed #cbd5e1; font-weight: bold; font-style: normal; letter-spacing: 1.5px; color: #475569; margin-top: 8pt;">[ &mdash;&mdash;&mdash;&mdash; Continued on Page 7 for Attestation &amp; Execution &mdash;&mdash;&mdash;&mdash; ]</div>
+      <div class="closing-execution-container" style="page-break-before: always; break-before: page; page-break-inside: avoid; break-inside: avoid; margin-top: 10pt;">
         <div class="clause-block" style="margin-top: 8pt; margin-bottom: 12pt;">
           <h4 class="clause-title"><span class="clause-tag">SECTION VIII</span> EXCLUSION OF UNINTENDED HEIRS &amp; THIRD PARTIES</h4>
           <p>
@@ -306,11 +505,11 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
 
         <div class="clause-block witness-section" style="margin-top: 8pt; margin-bottom: 4pt;">
           <h4 class="clause-title"><span class="clause-tag">ATTESTATION</span> ATTESTATION BY TWO INDEPENDENT WITNESSES</h4>
-          <p class="witness-intro" style="font-size: 0.85rem; line-height: 1.45; margin-bottom: 6pt;">
+          <p class="witness-intro" style="margin-bottom: 6pt;">
             Signed, acknowledged, published, and declared by the Testator as and for his Last Will and Testament, in the presence of us, who at his request, in his presence, and in the presence of each other, all being present at the same time, have subscribed our names as attesting witnesses. Each of us confirms that we witnessed the Testator sign this Will, or personally received his acknowledgment of his signature, and that we have each subscribed our signatures in the Testator's presence. We affirm that we are of legal age (18+ years), of sound mind, and each of us confirms that we are NEITHER beneficiaries under this Will NOR the spouses of any beneficiary.
           </p>
           <div class="witness-grid">
-            <div class="witness-card" style="padding: 6pt 8pt; font-size: 8pt; line-height: 1.5;">
+            <div class="witness-card" style="padding: 6pt 8pt; font-size: 8pt; ">
               <h5 class="witness-title" style="margin-bottom: 2pt; font-size: 8.5pt;">WITNESS 1</h5>
               <p>Signature: ________________________________</p>
               <p>Full Name: ________________________________</p>
@@ -319,7 +518,7 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
               <p>Phone / Aadhaar / PAN: ____________________</p>
               <p>Date: ________________________</p>
             </div>
-            <div class="witness-card" style="padding: 6pt 8pt; font-size: 8pt; line-height: 1.5;">
+            <div class="witness-card" style="padding: 6pt 8pt; font-size: 8pt; ">
               <h5 class="witness-title" style="margin-bottom: 2pt; font-size: 8.5pt;">WITNESS 2</h5>
               <p>Signature: ________________________________</p>
               <p>Full Name: ________________________________</p>
@@ -339,6 +538,9 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
 
 function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
   const executionPlace = escapeHTML(p.addressCity || 'హైదరాబాద్');
+  const spouse = beneficiaries.find(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
+  const spouseName = spouse ? escapeHTML(spouse.name).trim() : '';
+  const execNameStr = execName || 'నా ఎగ్జిక్యూటర్';
 
   let html = `
     <div class="legal-paper-preview">
@@ -451,8 +653,8 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
             <span style="font-weight: 500; font-size: 0.8rem; color: #64748b;">${approxVal}</span>
           </div>
           ${isImmovable ? `
-            <div class="draft-protective-proviso" style="margin: 6px 0 10px; padding: 6px 12px; background: rgba(223, 183, 108, 0.12); border-left: 3px solid #dfb76c; font-size: 0.83rem; font-style: italic; color: #475569;">
-              నిబంధన: సదరు నివాస ఫ్లాట్ నా భార్య సునీతా శర్మ జీవిత కాలంలో ఆమె లిఖితపూర్వక అనుమతి లేకుండా ఎట్టి పరిస్థితుల్లోనూ విభజించబడకూడదు, విక్రయించబడకూడదు లేదా తనఖా పెట్టకూడదు. ఆమెకు అందులో సంపూర్ణ జీవితకాల నివాస హక్కు కలదు.
+            <div class="draft-protective-proviso" style="margin: 6px 0 10px; padding: 6px 12px; background: rgba(223, 183, 108, 0.12); border-left: 3px solid #dfb76c; font-style: italic; color: #475569;">
+              నిబంధన: సదరు నివాస ఫ్లాట్ ${spouseName ? `నా భార్య/భర్త ${spouseName}` : 'నా లబ్ధిదారుల'} జీవిత కాలంలో వారి లిఖితపూర్వక అనుమతి లేకుండా ఎట్టి పరిస్థితుల్లోనూ విభజించబడకూడదు, విక్రయించబడకూడదు లేదా తనఖా పెట్టకూడదు. వారికి అందులో సంపూర్ణ జీవితకాల నివాస హక్కు కలదు.
             </div>
           ` : ''}
           <ul class="draft-alloc-list">
@@ -485,8 +687,8 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
         <div class="draft-subclause-box">
           <strong>మైనర్ల సంరక్షణ & టెస్ట్మెంటరీ ట్రస్ట్ నిబంధన (Minority Protection Trust):</strong><br>
           ఈ విల్ ద్వారా వాటా పొందే లబ్ధిదారులలో ఎవరైనా నా మరణ సమయానికి మైనర్ (18 సంవత్సరాల లోపు) అయి ఉంటే:<br>
-          • <strong>(ఎ) ప్రాథమిక ట్రస్టీ:</strong> వారి వాటా నా భార్య <strong>సునీతా శర్మ</strong> సహజ సంరక్షకురాలిగా మరియు ప్రాథమిక ట్రస్టీగా ట్రస్ట్‌లో ఉంచవలెను.<br>
-          • <strong>(బి) ప్రత్యామ్నాయ ట్రస్టీ:</strong> ఆమె అసమర్థురాలైన పక్షంలో, నా ఎగ్జిక్యూటర్ <strong>సురేష్ శర్మ</strong> ప్రత్యామ్నాయ ట్రస్టీగా వ్యవహరించవలెను.<br>
+          • <strong>(ఎ) ప్రాథమిక ట్రస్టీ:</strong> వారి వాటా ${spouseName ? `నా భార్య/భర్త <strong>${spouseName}</strong> సహజ సంరక్షకులుగా మరియు ` : ''}ప్రాథమిక ట్రస్టీగా ట్రస్ట్‌లో ఉంచవలెను.<br>
+          • <strong>(బి) ప్రత్యామ్నాయ ట్రస్టీ:</strong> వారు అసమర్థులైన పక్షంలో, నా ఎగ్జిక్యూటర్ <strong>${execNameStr}</strong> ప్రత్యామ్నాయ ట్రస్టీగా వ్యవహరించవలెను.<br>
           • <strong>(సి) అధికారాలు:</strong> ట్రస్టీ ఎటువంటి పారితోషికం లేకుండా మైనర్ వాటాను సురక్షిత బ్యాంక్ ఫిక్స్‌డ్ డిపాజిట్లలో ఉంచి, ఆ ఆదాయాన్ని కేవలం మైనర్ విద్య, వైద్యం, సంక్షేమం కొరకు మాత్రమే వినియోగించవలెను. మైనర్‌కు 18 సంవత్సరాలు నిండిన వెంటనే పూర్తి నిల్వను వారికి అందజేయవలెను.
         </div>
     `;
@@ -589,6 +791,9 @@ function renderTeluguDraft(p, safeFullName, fullAddress, idStr, execName, execRe
 
 function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel, altExecName, altExecRel, assets, beneficiaries, currentDate) {
   const executionPlace = escapeHTML(p.addressCity || 'हैदराबाद');
+  const spouse = beneficiaries.find(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
+  const spouseName = spouse ? escapeHTML(spouse.name).trim() : '';
+  const execNameStr = execName || 'मेरे निष्पादक';
 
   let html = `
     <div class="legal-paper-preview">
@@ -657,7 +862,7 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
     `;
     if (altExecName) {
       html += `
-          यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecKYC}</strong> वैकल्पिक निष्पादक होंगे।
+          यदि उक्त निष्पादक कार्य करने में असमर्थ रहें, तो <strong>${altExecKYC}</strong> वैकल्पिक निष्पादक (Alternate Executor) होंगे।
       `;
     }
     html += `
@@ -703,8 +908,8 @@ function renderHindiDraft(p, safeFullName, fullAddress, idStr, execName, execRel
             <span style="font-weight: 500; font-size: 0.8rem; color: #64748b;">${approxVal}</span>
           </div>
           ${isImmovable ? `
-            <div class="draft-protective-proviso" style="margin: 6px 0 10px; padding: 6px 12px; background: rgba(223, 183, 108, 0.12); border-left: 3px solid #dfb76c; font-size: 0.83rem; font-style: italic; color: #475569;">
-              शर्त/निबंधन: यह आवासीय फ्लैट मेरी धर्मपत्नी श्रीमती सुनीता शर्मा के संपूर्ण जीवनकाल में उनकी स्पष्ट लिखित सहमति के बिना किसी भी परिस्थिति में न तो विभाजित किया जाएगा, न बेचा जाएगा और न ही किसी प्रकार गिरवी/बंधक रखा जाएगा। उन्हें इसमें संपूर्ण जीवनकाल निर्बाध निवास का अधिकार प्राप्त होगा।
+            <div class="draft-protective-proviso" style="margin: 6px 0 10px; padding: 6px 12px; background: rgba(223, 183, 108, 0.12); border-left: 3px solid #dfb76c; font-style: italic; color: #475569;">
+              शर्त/निबंधन: यह आवासीय संपत्ति ${spouseName ? `मेरे जीवनसाथी ${spouseName}` : 'नामित उत्तराधिकारियों'} के संपूर्ण जीवनकाल में उनकी स्पष्ट लिखित सहमति के बिना किसी भी परिस्थिति में न तो विभाजित की जाएगी, न बेची जाएगी और न ही किसी प्रकार गिरवी/बंधक रखी जाएगी। उन्हें इसमें संपूर्ण जीवनकाल निर्बाध निवास का अधिकार प्राप्त होगा।
             </div>
           ` : ''}
           <ul class="draft-alloc-list">

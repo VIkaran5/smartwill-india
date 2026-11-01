@@ -283,10 +283,11 @@ export async function generateEnglishWillPDF(willData) {
   const execRel = (willData.executor && willData.executor.relation) || "Nominated Executor";
   const altExecName = (willData.executor && willData.executor.alternateName) || "";
   const altExecRel = (willData.executor && willData.executor.alternateRelation) || "";
-  const execKYC = (execName.toLowerCase().includes('suresh'))
+  const isRameshSuresh = execName.toLowerCase().includes('suresh') && (p.fullName || '').toLowerCase().includes('ramesh');
+  const execKYC = isRameshSuresh
     ? `${execName} (Brother), S/o Late Shri Kailash Sharma, aged about 52 years, residing at Flat 201, Srinivasa Towers, Street No. 3, Habsiguda, Hyderabad, Telangana 500007`
     : `${execName} (${execRel})`;
-  const altExecKYC = (altExecName.toLowerCase().includes('rajesh'))
+  const altExecKYC = (altExecName.toLowerCase().includes('rajesh') && (p.fullName || '').toLowerCase().includes('ramesh'))
     ? `${altExecName} (Close Friend / Advisor), S/o Shri R.P. Kumar, aged about 49 years, residing at House No. 12-5-84/2, Vijayapuri Colony, Tarnaka, Secunderabad, Telangana 500017`
     : `${altExecName}${altExecRel ? ` (${altExecRel})` : ''}`;
 
@@ -330,7 +331,14 @@ export async function generateEnglishWillPDF(willData) {
 
   checkPageBreak(18);
   doc.setFont("helvetica", "italic");
-  const antiLapseText = "Survivorship & Anti-Lapse Clause (30-Day Rule): If any named beneficiary predeceases me, or fails to survive me by thirty (30) clear consecutive calendar days following my demise, the share bequeathed to such beneficiary (including any residuary share) shall not lapse, but shall devolve upon their surviving lineal descendants per stirpes (by family branch, and not per capita) in equal proportions between the children of such deceased beneficiary. Failing lineal descendants, such share shall be divided equally among the remaining surviving named beneficiaries. In the extraordinary event that all named beneficiaries and their lineal descendants fail to survive me by thirty (30) days, my entire estate shall devolve upon the Prime Minister's National Relief Fund (PMNRF) / PM CARES Fund, Government of India, for charitable public purposes to the complete exclusion of intestacy.\n\nTestamentary Trust & Minority Protection: If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by my spouse, Sunita Sharma, as Natural Guardian & Primary Testamentary Trustee (and failing her, by my Executor Suresh Sharma as Substitute Trustee) without remuneration, invested prudently in bank deposits or government securities, and applied strictly for their education, healthcare, and maintenance until age 18, whereupon the full corpus shall be transferred to them absolutely.";
+  const spouse = (willData.beneficiaries || []).find(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
+  const spouseName = spouse ? spouse.name : '';
+  const hasSpouse = Boolean(spouseName);
+  const trusteeClause = hasSpouse
+    ? `held in trust by my spouse, ${spouseName}, as Natural Guardian & Primary Testamentary Trustee (and failing ${p.gender === 'Female' ? 'him' : 'her'}, by my Executor ${execName} as Substitute Trustee)`
+    : `held in trust by my Executor ${execName} as Primary Testamentary Trustee`;
+
+  const antiLapseText = `Survivorship & Anti-Lapse Clause (30-Day Rule): If any named beneficiary predeceases me, or fails to survive me by thirty (30) clear consecutive calendar days following my demise, the share bequeathed to such beneficiary (including any residuary share) shall not lapse, but shall devolve upon their surviving lineal descendants per stirpes (by family branch, and not per capita) in equal proportions between the children of such deceased beneficiary. Failing lineal descendants, such share shall be divided equally among the remaining surviving named beneficiaries. In the extraordinary event that all named beneficiaries and their lineal descendants fail to survive me by thirty (30) days, my entire estate shall devolve upon the Prime Minister's National Relief Fund (PMNRF) / PM CARES Fund, Government of India, for charitable public purposes to the complete exclusion of intestacy.\n\nTestamentary Trust & Minority Protection: If any beneficiary is a minor (under 18) at my demise, their share shall be ${trusteeClause} without remuneration, invested prudently in bank deposits or government securities, and applied strictly for their education, healthcare, and maintenance until age 18, whereupon the full corpus shall be transferred to them absolutely.`;
   const splitAntiLapse = doc.splitTextToSize(antiLapseText, pageWidth - (margin * 2) - 4);
   doc.text(splitAntiLapse, margin + 4, y);
   y += (splitAntiLapse.length * 4.3) + 4;

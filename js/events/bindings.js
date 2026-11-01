@@ -59,8 +59,27 @@ export function bindEvents() {
       el.addEventListener('input', () => {
         saveCurrentStepInputs();
       });
+      el.addEventListener('change', () => {
+        saveCurrentStepInputs();
+      });
     }
   });
+
+  const religionEl = document.getElementById('religion');
+  const updateReligionNotice = () => {
+    const note = document.getElementById('muslimLawNote');
+    if (note && religionEl) {
+      if (religionEl.value === 'Muslim') {
+        note.classList.remove('hidden');
+      } else {
+        note.classList.add('hidden');
+      }
+    }
+  };
+  if (religionEl) {
+    religionEl.addEventListener('change', updateReligionNotice);
+    updateReligionNotice();
+  }
 
   const countryCodeEl = document.getElementById('countryCode');
   if (countryCodeEl) {
@@ -82,35 +101,23 @@ export function bindEvents() {
     }
   });
 
-  const executorName = document.getElementById('executorName');
-  const executorRelation = document.getElementById('executorRelation');
-  if (executorName) {
-    executorName.addEventListener('input', () => {
-      saveCurrentStepInputs();
-      renderSummary();
-    });
-  }
-  if (executorRelation) {
-    executorRelation.addEventListener('change', () => {
-      saveCurrentStepInputs();
-      renderSummary();
-    });
-  }
-
-  const altExecName = document.getElementById('alternateExecutorName');
-  const altExecRel = document.getElementById('alternateExecutorRelation');
-  if (altExecName) {
-    altExecName.addEventListener('input', () => {
-      saveCurrentStepInputs();
-      renderSummary();
-    });
-  }
-  if (altExecRel) {
-    altExecRel.addEventListener('change', () => {
-      saveCurrentStepInputs();
-      renderSummary();
-    });
-  }
+  const execInputIds = [
+    'executorName', 'executorRelation', 'executorFatherName', 'executorAddress', 'executorAge',
+    'alternateExecutorName', 'alternateExecutorRelation', 'altExecutorFatherName', 'altExecutorAddress', 'altExecutorAge'
+  ];
+  execInputIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', () => {
+        saveCurrentStepInputs();
+        renderSummary();
+      });
+      el.addEventListener('change', () => {
+        saveCurrentStepInputs();
+        renderSummary();
+      });
+    }
+  });
 
   const confirmCheckbox = document.getElementById('confirmCheckbox');
   if (confirmCheckbox) {
@@ -377,8 +384,14 @@ export function saveCurrentStepInputs() {
       executor: {
         name: document.getElementById('executorName')?.value?.trim() || '',
         relation: document.getElementById('executorRelation')?.value?.trim() || '',
+        fatherName: document.getElementById('executorFatherName')?.value?.trim() || '',
+        address: document.getElementById('executorAddress')?.value?.trim() || '',
+        age: document.getElementById('executorAge')?.value?.trim() || '',
         alternateName: document.getElementById('alternateExecutorName')?.value?.trim() || '',
-        alternateRelation: document.getElementById('alternateExecutorRelation')?.value?.trim() || ''
+        alternateRelation: document.getElementById('alternateExecutorRelation')?.value?.trim() || '',
+        altFatherName: document.getElementById('altExecutorFatherName')?.value?.trim() || '',
+        altAddress: document.getElementById('altExecutorAddress')?.value?.trim() || '',
+        altAge: document.getElementById('altExecutorAge')?.value?.trim() || ''
       }
     };
     if (confirmEl) {
@@ -452,13 +465,29 @@ export function populatePersonalFields(state) {
   const executorFields = { 
     executorName: 'name', 
     executorRelation: 'relation',
+    executorFatherName: 'fatherName',
+    executorAddress: 'address',
+    executorAge: 'age',
     alternateExecutorName: 'alternateName',
-    alternateExecutorRelation: 'alternateRelation'
+    alternateExecutorRelation: 'alternateRelation',
+    altExecutorFatherName: 'altFatherName',
+    altExecutorAddress: 'altAddress',
+    altExecutorAge: 'altAge'
   };
   Object.entries(executorFields).forEach(([elId, key]) => {
     const el = document.getElementById(elId);
     if (el) el.value = e[key] || '';
   });
+
+  const religionEl = document.getElementById('religion');
+  const note = document.getElementById('muslimLawNote');
+  if (note && religionEl) {
+    if (religionEl.value === 'Muslim') {
+      note.classList.remove('hidden');
+    } else {
+      note.classList.add('hidden');
+    }
+  }
 
   const confirmCheckbox = document.getElementById('confirmCheckbox');
   if (confirmCheckbox && state.declarationAccepted !== undefined) {

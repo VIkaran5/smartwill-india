@@ -2288,10 +2288,10 @@ button:disabled [data-lucide="loader-2"] {
 }
 
 .executor-powers-list li {
-  margin-bottom: 0.7rem;
-  line-height: 1.75;
+  margin-bottom: 0.35rem;
+  line-height: 1.52;
   font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.83rem;
   color: #334155;
 }
 
@@ -2436,11 +2436,11 @@ button:disabled [data-lucide="loader-2"] {
 
 .witness-intro {
   font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.83rem;
   color: #334155;
-  text-align: justify;
-  margin-bottom: 0.9rem;
-  line-height: 1.7;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  line-height: 1.52;
 }
 
 .witness-grid {
@@ -2860,6 +2860,27 @@ button:disabled [data-lucide="loader-2"] {
     background: #ffffff !important;
     color: #000000 !important;
   }
+  /* =========================================================
+     GLOBAL PRINT TYPOGRAPHY RESET
+     Applied to ALL users. Guarantees uniform font size,
+     line height and word spacing across every page of the Will.
+     ========================================================= */
+  .clause-block p,
+  .executor-powers-list li,
+  .draft-subclause-box,
+  .draft-subclause-box *,
+  .protective-subclause,
+  .draft-protective-proviso,
+  .draft-protective-proviso *,
+  .paper-preamble,
+  .witness-intro,
+  .draft-alloc-list li {
+    text-align: left !important;
+    word-spacing: normal !important;
+    letter-spacing: normal !important;
+    -webkit-hyphens: none !important;
+    hyphens: none !important;
+  }
   .navbar, .footer, .btn, .wizard-header, .stepper-wrapper, .step-header, .draft-preview-modal-footer, .draft-preview-close-btn, .toast, #toastNotification, #floatingLegalBotBtn {
     display: none !important;
   }
@@ -2867,7 +2888,11 @@ button:disabled [data-lucide="loader-2"] {
     break-inside: auto !important;
     page-break-inside: auto !important;
   }
-  .draft-asset-split-card, .draft-subclause-box, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .closing-execution-container, .page-auth-safeguard, .legal-advisory-callout {
+  .draft-subclause-box {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  .draft-asset-split-card, .draft-alloc-list, .witness-grid, .witness-notarial-card, .execution-signature-grid, .testator-signature-block, .lti-box, .closing-execution-container, .page-auth-safeguard, .legal-advisory-callout {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
@@ -2886,7 +2911,7 @@ button:disabled [data-lucide="loader-2"] {
     font-style: italic !important;
     padding: 2pt 0 !important;
     margin: 4pt 0 !important;
-    letter-spacing: 1pt !important;
+    letter-spacing: 0 !important;
   }
   /* Flatten asset boxes so content flows without creating empty bordered shells */
   .draft-asset-item {
@@ -2904,6 +2929,8 @@ button:disabled [data-lucide="loader-2"] {
     margin-bottom: 4pt !important;
     padding-bottom: 2pt !important;
     font-weight: bold !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
   }
   .draft-protective-proviso {
     border: none !important;
@@ -2913,4 +2940,11 @@ button:disabled [data-lucide="loader-2"] {
     break-inside: auto !important;
     page-break-inside: auto !important;
   }
+}
+
+.protective-subclause {
+  margin: 3pt 0 !important;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+  line-height: 1.5 !important;
 }

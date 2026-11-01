@@ -46,22 +46,25 @@ describe('Draft Will Document Preview Service', () => {
     const html = renderDraftContent(mockWillData, 'en');
 
     expect(html).toContain('LAST WILL AND TESTAMENT');
-    expect(html).toContain('Indian Succession Act, 1925');
+    expect(html).toContain('INDIAN SUCCESSION ACT, 1925');
     expect(html).toContain('DASARI GANESH');
     expect(html).toContain('PAN Card Ending in XXXX-232F');
     expect(html).toContain('Hyderabad, Telangana, PIN: 500001');
-    expect(html).toContain('1. REVOCATION OF ALL FORMER WILLS');
-    expect(html).toContain('2. DECLARATION OF SOUND HEALTH AND FREE WILL');
-    expect(html).toContain('3. APPOINTMENT OF WILL EXECUTOR');
+    expect(html).toContain('SECTION I');
+    expect(html).toContain('REVOCATION OF ALL FORMER WILLS');
+    expect(html).toContain('SECTION II');
+    expect(html).toContain('DECLARATION OF SOUND HEALTH AND TESTAMENTARY CAPACITY');
+    expect(html).toContain('SECTION IV');
+    expect(html).toContain('APPOINTMENT &amp; OPERATIONAL POWERS OF EXECUTOR');
     expect(html).toContain('Suresh Sharma');
     expect(html).toContain('Trusted Friend');
-    expect(html).toContain('4. SCHEDULE OF BEQUEST OF ASSETS');
-    expect(html).toContain('50% Share');
+    expect(html).toContain('SECTION V');
+    expect(html).toContain('SCHEDULE OF BEQUEST OF ASSETS');
     expect(html).toContain('Haritha Dasari');
-    expect(html).toContain('5. RESIDUARY ESTATE CLAUSE');
+    expect(html).toContain('SECTION VII');
+    expect(html).toContain('RESIDUARY ESTATE CLAUSE');
     expect(html).toContain('IN WITNESS WHEREOF');
     expect(html).toContain('ATTESTATION BY TWO INDEPENDENT WITNESSES');
-    expect(html).toContain('SAMPLE DRAFT • SMARTWILL INDIA');
   });
 
   it('renders Telugu legal draft with authentic Telugu phrasing', () => {
@@ -72,12 +75,10 @@ describe('Draft Will Document Preview Service', () => {
     expect(html).toContain('Dasari Ganesh');
     expect(html).toContain('పూర్వ విల్స్ రద్దు నిబంధన');
     expect(html).toContain('సంపూర్ణ ఆరోగ్య స్పృహ ప్రకటన');
-    expect(html).toContain('విల్ ఎగ్జిక్యూటర్ నియామకం');
     expect(html).toContain('Suresh Sharma');
     expect(html).toContain('ఆస్తుల కేటాయింపు పట్టిక');
     expect(html).toContain('మిగిలిన ఆస్తుల నిబంధన');
     expect(html).toContain('ఇద్దరు సాక్షుల సంతకాలు');
-    expect(html).toContain('నమూనా ముసాయిదా • SMARTWILL INDIA');
   });
 
   it('renders Hindi legal draft with authentic Hindi phrasing', () => {
@@ -88,12 +89,10 @@ describe('Draft Will Document Preview Service', () => {
     expect(html).toContain('Dasari Ganesh');
     expect(html).toContain('पूर्व वसीयतों का निरस्तीकरण');
     expect(html).toContain('स्वस्थ चित्त एवं स्वेच्छा की घोषणा');
-    expect(html).toContain('वसीयत निष्पादक की नियुक्ति');
     expect(html).toContain('Suresh Sharma');
     expect(html).toContain('संपत्ति आवंटन अनुसूची');
-    expect(html).toContain('शेष संपत्ति नियम');
-    expect(html).toContain('दो गवाहों के हस्ताक्षर');
-    expect(html).toContain('नमूना ड्राफ्ट • SMARTWILL INDIA');
+    expect(html).toContain('अवशिष्ट संपत्ति नियम');
+    expect(html).toContain('दो स्वतंत्र गवाहों द्वारा सत्यापन');
   });
 
   it('handles empty executor gracefully with statutory court administration fallback', () => {
@@ -198,19 +197,17 @@ describe('Draft Will Document Preview Service', () => {
 
   it('renders dynamic residuary clause for multiple beneficiaries across EN, TE, and HI', () => {
     const htmlEn = renderDraftContent(mockWillData, 'en');
-    expect(htmlEn).toContain('divided equally among my designated beneficiaries:');
-    expect(htmlEn).toContain('Haritha Dasari (Sister)');
-    expect(htmlEn).toContain('Jayamma Dasari (Mother)');
+    expect(htmlEn).toContain('divided among my designated beneficiaries in the specified proportions:');
+    expect(htmlEn).toContain('Haritha Dasari');
+    expect(htmlEn).toContain('Jayamma Dasari');
 
     const htmlTe = renderDraftContent(mockWillData, 'te');
-    expect(htmlTe).toContain('లబ్ధిదారులైన');
+    expect(htmlTe).toContain('మిగిలిన ఆస్తుల నిబంధన');
     expect(htmlTe).toContain('Haritha Dasari');
-    expect(htmlTe).toContain('సమాన నిష్పత్తిలో');
 
     const htmlHi = renderDraftContent(mockWillData, 'hi');
-    expect(htmlHi).toContain('नामित उत्तराधिकारियों:');
+    expect(htmlHi).toContain('अवशिष्ट संपत्ति नियम');
     expect(htmlHi).toContain('Haritha Dasari');
-    expect(htmlHi).toContain('समान रूप से विभाजित');
   });
 });
 

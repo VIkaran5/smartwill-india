@@ -9,7 +9,7 @@ describe('Structured Asset Description Synthesis (computeAssetDesc)', () => {
       last4: '4589',
       branch: 'Banjara Hills'
     });
-    expect(desc).toBe('HDFC Bank Savings Account ending in 4589, Banjara Hills Branch');
+    expect(desc).toBe('HDFC Bank Savings Account ending in 4589, Banjara Hills');
   });
 
   it('should synthesize Property / Land description accurately', () => {
