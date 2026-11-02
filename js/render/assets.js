@@ -78,8 +78,10 @@ export const ASSET_I18N = {
       policyType: 'Policy Type',
       policyTypes: {
         'Term Life Insurance': 'Term Life Insurance',
-        'Endowment / Money Back': 'Endowment / Money Back',
-        'Health Insurance': 'Health Insurance'
+        'Endowment / Money Back': 'Endowment / Money Back / Savings Plan (e.g. Jeevan Labh)',
+        'ULIP / Market Linked': 'ULIP / Market Linked Plan',
+        'Health Insurance': 'Health Insurance',
+        'Other Policy': 'Other Insurance Policy'
       },
       policyNo: 'Policy Number',
       policyNoPh: 'e.g. Policy # 98765432'
@@ -168,8 +170,10 @@ export const ASSET_I18N = {
       policyType: 'పాలసీ రకం',
       policyTypes: {
         'Term Life Insurance': 'టర్మ్ లైఫ్ ఇన్సూరెన్స్',
-        'Endowment / Money Back': 'ఎండోమెంట్ / మనీ బ్యాక్',
-        'Health Insurance': 'హెల్త్ ఇన్సూరెన్స్'
+        'Endowment / Money Back': 'ఎండోమెంట్ / మనీ బ్యాక్ / సేవింగ్స్ పాలసీ (ఉదా: జీవన్ లాభ్)',
+        'ULIP / Market Linked': 'యూలిప్ (ULIP)',
+        'Health Insurance': 'హెల్త్ ఇన్సూరెన్స్',
+        'Other Policy': 'ఇతర భీమా పాలసీ'
       },
       policyNo: 'పాలసీ సంఖ్య',
       policyNoPh: 'ఉదా: పాలసీ నం: 98765432'
@@ -258,8 +262,10 @@ export const ASSET_I18N = {
       policyType: 'पॉलिसी का प्रकार',
       policyTypes: {
         'Term Life Insurance': 'टर्म लाइफ इंश्योरेंस',
-        'Endowment / Money Back': 'एंडोमेंट / मनी बैक',
-        'Health Insurance': 'स्वास्थ्य बीमा'
+        'Endowment / Money Back': 'एंडोमेंट / मनी बैक / सेविंग्स प्लान (उदा: जीवन लाभ)',
+        'ULIP / Market Linked': 'यूलिप (ULIP)',
+        'Health Insurance': 'स्वास्थ्य बीमा',
+        'Other Policy': 'अन्य बीमा पॉलिसी'
       },
       policyNo: 'पॉलिसी संख्या',
       policyNoPh: 'उदा: पॉलिसी नं: 98765432'
@@ -476,7 +482,9 @@ function renderFieldsHTML(asset, lang = 'en') {
           <select class="form-select asset-subfield" data-field="policyType" data-id="${asset.id}">
             <option value="Term Life Insurance" ${d.policyType === 'Term Life Insurance' ? 'selected' : ''}>${escapeHTML(t.insurance.policyTypes['Term Life Insurance'])}</option>
             <option value="Endowment / Money Back" ${d.policyType === 'Endowment / Money Back' ? 'selected' : ''}>${escapeHTML(t.insurance.policyTypes['Endowment / Money Back'])}</option>
+            <option value="ULIP / Market Linked" ${d.policyType === 'ULIP / Market Linked' ? 'selected' : ''}>${escapeHTML(t.insurance.policyTypes['ULIP / Market Linked'])}</option>
             <option value="Health Insurance" ${d.policyType === 'Health Insurance' ? 'selected' : ''}>${escapeHTML(t.insurance.policyTypes['Health Insurance'])}</option>
+            <option value="Other Policy" ${d.policyType === 'Other Policy' ? 'selected' : ''}>${escapeHTML(t.insurance.policyTypes['Other Policy'])}</option>
           </select>
         </div>
         <div class="asset-field-item" style="grid-column: span 2;">

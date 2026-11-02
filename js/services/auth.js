@@ -218,7 +218,11 @@ export function updateAuthUI(user) {
       if (emailInput && !emailInput.value) emailInput.value = user.email;
       
       const nameInput = document.getElementById('fullName');
-      if (nameInput && !nameInput.value && user.displayName) nameInput.value = user.displayName;
+      const currentState = (typeof getState === 'function') ? getState() : null;
+      const draftName = currentState?.personal?.fullName;
+      if (nameInput && !nameInput.value && !draftName && user.displayName) {
+        nameInput.value = user.displayName;
+      }
 
     } else {
       container.innerHTML = `
@@ -640,6 +644,12 @@ export async function handleSignOut() {
     });
   } catch (e) {}
   resetState(); // Reset local store state (clears personal info, assets, beneficiaries)
+  try {
+    const wizardForm = document.getElementById('willWizardForm');
+    if (wizardForm && typeof wizardForm.reset === 'function') {
+      wizardForm.reset();
+    }
+  } catch (e) {}
   updateAuthUI(null);
   closeAuthModal();
   closeDashboardModal();

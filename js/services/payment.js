@@ -29,8 +29,13 @@ export function initPaymentService() {
       const personal = state.personal || {};
       const customerName = personal.fullName || 'SmartWill Customer';
       const customerEmail = personal.email || 'customer@smartwill.in';
-      const rawPhone = (personal.phone || '9999999999').replace(/\D/g, '');
-      const customerPhone = /^[6-9]\d{9}$/.test(rawPhone) ? rawPhone : '9999999999';
+      let cleanedPhone = (personal.phone || '').replace(/\D/g, '');
+      if (cleanedPhone.length === 12 && cleanedPhone.startsWith('91')) {
+        cleanedPhone = cleanedPhone.slice(2);
+      } else if (cleanedPhone.length === 11 && cleanedPhone.startsWith('0')) {
+        cleanedPhone = cleanedPhone.slice(1);
+      }
+      const customerPhone = /^[6-9]\d{9}$/.test(cleanedPhone) ? cleanedPhone : '9999999999';
       const isNri = (typeof window !== 'undefined' && (sessionStorage.getItem('sw_nri_plan') === 'true' || new URLSearchParams(window.location.search).get('plan') === 'nri')) || Boolean(state?.isNri);
       const plan = isNri ? 'nri' : 'standard';
       const orderPrice = WILL_PRICE_INR || 299; // Growth-first: flat ₹299 for all users
@@ -412,9 +417,10 @@ function waitForAuthThenCheckReturn() {
     setTimeout(() => window.goToStep(Number(targetStep)), 300);
   }
 
-  // Clear the URL param immediately to prevent re-processing on refresh
-  if (orderId) {
-    window.history.replaceState({}, document.title, window.location.pathname);
+  // Clear order_id and download params immediately to prevent re-triggering on reload/auth
+  if (orderId || shouldDownload) {
+    const cleanUrl = window.location.pathname + (window.location.hash || '');
+    window.history.replaceState({}, document.title, cleanUrl);
   }
 
   const handleResolvedUser = async (user) => {
@@ -424,11 +430,18 @@ function waitForAuthThenCheckReturn() {
     } else {
       const isPaid = await checkExistingPaidOrder(user);
       if (isPaid && shouldDownload) {
-        setTimeout(async () => {
-          if (typeof window.generateWillPDF === 'function') {
-            await window.generateWillPDF(getState());
-          }
-        }, 800);
+        const state = (typeof getState === 'function') ? getState() : null;
+        const fullName = (state?.personal?.fullName || '').trim();
+        // Guard against generating blank draft if user signed in at Step 1 with empty state
+        if (fullName && fullName.length > 2) {
+          setTimeout(async () => {
+            if (typeof window.generateWillPDF === 'function') {
+              await window.generateWillPDF(state);
+            }
+          }, 800);
+        } else {
+          logger.info('[Payment] Skipped auto-download: testator name is blank');
+        }
       }
     }
   };
