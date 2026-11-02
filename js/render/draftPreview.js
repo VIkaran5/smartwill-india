@@ -156,15 +156,15 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       : 'I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to all applicable statutory restrictions and reservations under Schedule III of the Indian Succession Act, 1925 \u2014 including Paragraph 1 (restricting disposition of property incapable of alienation inter vivos and preserving non-displaceable statutory maintenance rights), Paragraph 2 (preserving the rule that no interest may be created which could not have been created under Hindu law prior to 1 September 1870), Paragraph 3 (preserving applicable laws of adoption and intestate succession), Paragraph 4 (modifying Section 70 by omitting the words "than by marriage or"; separately, the proviso to Section 57 provides that marriage shall not revoke such Will or codicil), and the statutory interpretation rules of Paragraph 5; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.';
 
   const adoptionStatute = isHinduGroup
-    ? '${adoptionStatute}'
+    ? 'recognized under the Hindu Adoptions and Maintenance Act, 1956 (operating in harmony with the provisions of the Indian Succession Act, 1925)'
     : 'recognized under applicable laws of adoption, guardianship, and succession in India (operating in harmony with the provisions of the Indian Succession Act, 1925)';
 
   const guardianStatuteA = isHinduGroup
-    ? '${guardianStatuteA}'
+    ? 'in respect of her own minor children under Section 6 of the Hindu Minority and Guardianship Act, 1956'
     : 'in respect of her own minor children under the Guardians and Wards Act, 1890 and applicable personal law';
 
   const guardianStatuteC = isHinduGroup
-    ? "${guardianStatuteC}"
+    ? "under Section 8 of the Hindu Minority and Guardianship Act, 1956, all dealings with a minor's immovable property shall strictly comply with Sections 27 to 29 of the Guardians and Wards Act, 1890 and shall require prior court permission where mandated by law"
     : "under applicable guardianship law, all dealings with a minor's immovable property shall strictly comply with Sections 27 to 29 of the Guardians and Wards Act, 1890 and shall require prior court permission where mandated by law";
 
   let html = `
@@ -278,7 +278,11 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
       <div class="clause-block" style="page-break-before: always; break-before: page;">
         <h4 class="clause-title"><span class="clause-tag">SECTION V</span> SCHEDULE OF BEQUEST OF ASSETS &amp; BENEFICIARY ALLOCATIONS</h4>
         <p>
-          I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in the exact proportions set forth below:
+          ${isMuslim
+            ? 'Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925, I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in accordance with the principles of Wasīyyat:'
+            : isChristianParsi
+              ? 'Pursuant to Part VI of the Indian Succession Act, 1925 (including Sections 59, 138, and 139), I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in the exact proportions set forth below:'
+              : 'Pursuant to Section 30 of the Hindu Succession Act, 1956 and Sections 138 and 139 of the Indian Succession Act, 1925, I hereby bequeath, devise, and distribute all my specified movable and immovable assets to the designated beneficiaries in the exact proportions set forth below:'}
         </p>
   `;
 

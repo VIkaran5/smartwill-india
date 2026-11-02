@@ -248,13 +248,29 @@ export async function generateEnglishWillPDF(willData) {
     b.relation.toLowerCase().includes('daughter') ||
     b.relation.toLowerCase().includes('child')
   ));
-  const childrenNames = children.map(c => c.name.trim());
+  const childrenNames = children.map(c => (c.name || '').trim()).filter(Boolean);
   const childrenNeitherNorStr = childrenNames.length > 1 ? childrenNames.join(' nor ') : (childrenNames[0] || 'the children');
+
+  // Asset filtering & conditional rules
+  const assets = willData.assets || [];
+  const hasImmovable = assets.some(a => {
+    const t = (a.type || '').toLowerCase();
+    return t.includes('property') || t.includes('land') || t.includes('flat') || t.includes('house') || t.includes('apartment');
+  });
+  const hasSecurities = assets.some(a => {
+    const t = (a.type || '').toLowerCase();
+    return t.includes('stock') || t.includes('mutual') || t.includes('share') || t.includes('demat') || t.includes('bond') || t.includes('fund');
+  });
+  const nonSpouseBeneficiaries = beneficiaries.filter(b => b && b.relation && !b.relation.toLowerCase().includes('spouse'));
+  const shouldIncludeSpouseResidence = hasImmovable && Boolean(spouse) && nonSpouseBeneficiaries.length > 0;
+  const shouldIncludeSecuritiesRules = hasSecurities && beneficiaries.length > 1;
 
   // Exec details & KYC
   const exec = willData.executor || {};
-  const execName = (exec.name || 'Nominated Executor').trim();
-  const execRel = (exec.relation || 'Legal Representative').trim();
+  const rawExecName = (exec.name || '').trim();
+  const hasExec = Boolean(rawExecName && rawExecName.toLowerCase() !== 'nominated executor');
+  const execName = hasExec ? rawExecName : '';
+  const execRel = (exec.relation || '').trim();
   const execFather = (exec.fatherName || '').trim();
   const execAge = exec.age ? String(exec.age).trim() : '';
   const execAddress = (exec.address || '').trim();
@@ -289,15 +305,39 @@ export async function generateEnglishWillPDF(willData) {
     doc.setTextColor(15, 23, 42);
   }
 
+  let y = 17;
+
+  function ensureSpace(neededHeight) {
+    if (y + neededHeight > pageHeight - 16) {
+      doc.addPage();
+      drawHeader();
+      y = 17;
+    }
+  }
+
   function printWrapped(text, x, yPos, maxWidth, lineHeight, fontSize = 8.3, fontStyle = "normal") {
     doc.setFont("helvetica", fontStyle);
     doc.setFontSize(fontSize);
     const lines = doc.splitTextToSize(text, maxWidth);
-    doc.text(lines, x, yPos);
-    return yPos + (lines.length * lineHeight);
+    let curY = yPos;
+    for (let i = 0; i < lines.length; i++) {
+      if (curY + lineHeight > pageHeight - 16) {
+        doc.addPage();
+        drawHeader();
+        curY = 17;
+      }
+      doc.text(lines[i], x, curY);
+      curY += lineHeight;
+    }
+    return curY;
   }
 
   function drawSectionTitle(tag, title, yPos) {
+    if (yPos + 18 > pageHeight - 16) {
+      doc.addPage();
+      drawHeader();
+      yPos = 17;
+    }
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(133, 93, 20);
@@ -311,9 +351,8 @@ export async function generateEnglishWillPDF(willData) {
     return yPos + 5.5;
   }
 
-  // ── PAGE 1 ──────────────────────────────────────────────
+  // ── START DOCUMENT FLOW ──────────────────────────────────
   drawHeader();
-  let y = 17;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9.5);
@@ -369,19 +408,19 @@ export async function generateEnglishWillPDF(willData) {
   doc.text(preLines, margin + 4, y + 4);
   y += preHeight + 5;
 
-  // Section I
+  // ── SECTION I ────────────────────────────────────────────
   y = drawSectionTitle("SECTION I", "REVOCATION OF ALL FORMER WILLS & CODICILS", y);
   const sec1Text = "I hereby revoke, cancel, and annul all prior Wills, Codicils, Testaments, and testamentary dispositions of every nature whatsoever made by me at any time heretofore, and declare this to be my sole, exclusive, and operative Last Will and Testament.";
   y = printWrapped(sec1Text, margin, y, contentWidth, 3.8, 8.2);
   y += 4;
 
-  // Section II
+  // ── SECTION II ───────────────────────────────────────────
   y = drawSectionTitle("SECTION II", "DECLARATION OF SOUND HEALTH AND TESTAMENTARY CAPACITY", y);
   const sec2Text = "I hereby declare that I am executing this Will in sound disposing mental faculties, memory, and understanding. I fully comprehend and appreciate the nature, extent, and value of all my movable and immovable properties, and the natural claims of those persons who are the objects of my affection and bounty.";
   y = printWrapped(sec2Text, margin, y, contentWidth, 3.8, 8.2);
   y += 4;
 
-  // Section III
+  // ── SECTION III ──────────────────────────────────────────
   y = drawSectionTitle("SECTION III", "DECLARATION OF ABSOLUTE SELF-ACQUIRED PROPERTIES & TITLE", y);
   const sec3Text = isMuslim
     ? "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925 (with execution and attestation safeguards under Section 63), I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein to the extent permitted by applicable law. In accordance with principles of Muslim testamentary law (Wasīyyat) as administered in India, bequests to non-heirs are valid up to one-third (1/3) of the net estate remaining after payment of funeral expenses and enforceable debts, while bequests exceeding one-third or made in favor of legal heirs operate subject to the consent of all other surviving legal heirs following my demise; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced."
@@ -391,171 +430,169 @@ export async function generateEnglishWillPDF(willData) {
   y = printWrapped(sec3Text, margin, y, contentWidth, 3.7, 7.9);
   y += 4;
 
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(7.2);
-  doc.setTextColor(100, 116, 139);
-  doc.text("[ ———— Continued on Page 2 for Executor Appointment & Administrative Powers ———— ]", pageWidth / 2, y, { align: "center" });
-
-  // ── PAGE 2 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
-
+  // ── SECTION IV ───────────────────────────────────────────
+  ensureSpace(40);
   y = drawSectionTitle("SECTION IV", "APPOINTMENT & OPERATIONAL POWERS OF EXECUTOR", y);
-  let execApptText = `I hereby nominate, constitute, and appoint ${execKYC} as the sole Executor of this my Last Will and Testament.`;
-  if (altExecName) {
-    execApptText += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecKYC} as the Alternate Executor of this Will with identical powers and duties.`;
+  if (hasExec) {
+    let execApptText = `I hereby nominate, constitute, and appoint ${execKYC} as the sole Executor of this my Last Will and Testament.`;
+    if (altExecName) {
+      execApptText += ` In the event that ${execName} is unable, unwilling, or predeceases me, I hereby nominate and appoint ${altExecKYC} as the Alternate Executor of this Will with identical powers and duties.`;
+    }
+    y = printWrapped(execApptText, margin, y, contentWidth, 3.8, 8.2);
+    y += 3;
+
+    // Debt Hierarchy Box
+    ensureSpace(35);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.2);
+    doc.setTextColor(15, 23, 42);
+    doc.text("Statutory Debt Settlement Hierarchy (Sections 320 to 325, Indian Succession Act, 1925):", margin, y);
+    y += 3.5;
+
+    const debts = [
+      "(i) Section 320: Funeral and death-bed expenses according to my station in life paid in priority to all debts.",
+      "(ii) Section 321: Expenses of obtaining Probate or Letters of Administration, and judicial administration expenses.",
+      "(iii) Section 322: Wages for services rendered to me within three months next preceding my demise.",
+      "(iv) Section 323: Other enforceable debts paid equally and rateably out of the estate assets.",
+      "(v) Section 325: Debts of every description settled before any legacy or bequest is paid or satisfied."
+    ];
+    debts.forEach(d => {
+      y = printWrapped(d, margin + 2, y, contentWidth - 2, 3.5, 7.8);
+      y += 0.8;
+    });
+    y += 2;
+
+    ensureSpace(35);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.2);
+    doc.text("Administrative Powers Conferred Upon Executor:", margin, y);
+    y += 3.5;
+
+    const powers = [
+      "(a) Possession & Custody: To take possession of all movable and immovable estate, title deeds, bank passbooks, and certificates.",
+      "(b) Representation & Mutation: To represent the estate before all revenue authorities, municipal bodies, banks, and sub-registrars.",
+      "(c) Tax Discharges: To prepare, verify, and file all final Income Tax Returns (ITR) and discharge lawful tax liabilities under the Income-tax Act, 1961 and Income-tax Act, 2025.",
+      "(d) Assent & Transmission: To assent to specific bequests and execute formal deeds of conveyance or transmission.",
+      "(e) Reimbursement of Expenses: To be reimbursed for actual out-of-pocket administration expenses without remuneration.",
+      "(f) Encumbrance Rule & Lender Protection: Encumbered properties pass subject to liabilities without personal recourse against other beneficiaries, preserving all lender mortgage security and statutory remedies.",
+      "(g) Judicial Representation: To apply for Probate or Letters of Administration with Will annexed whenever prudent or required.",
+      "(h) Section 307(2)(i) Liquidation Authority: To sell, mortgage, or lease immovable property strictly to discharge debts or taxes.",
+      "(i) Section 302 High Court Directions: To apply to the High Court for directions upon grant of probate or letters of administration."
+    ];
+    powers.forEach(pwr => {
+      y = printWrapped(pwr, margin + 2, y, contentWidth - 2, 3.4, 7.6);
+      y += 0.6;
+    });
+    y += 3;
+  } else {
+    const noExecText = "Under the provisions of the Indian Succession Act, 1925, I have not nominated a private Executor. My estate shall be administered jointly by my designated beneficiaries or by an administrator appointed by a court of competent jurisdiction under Letters of Administration.";
+    y = printWrapped(noExecText, margin, y, contentWidth, 3.8, 8.2);
+    y += 4;
   }
-  y = printWrapped(execApptText, margin, y, contentWidth, 3.8, 8.2);
-  y += 3;
 
-  // Debt Hierarchy Box
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.2);
-  doc.setTextColor(15, 23, 42);
-  doc.text("Statutory Debt Settlement Hierarchy (Sections 320 to 325, Indian Succession Act, 1925):", margin, y);
-  y += 3.5;
-
-  const debts = [
-    "(i) Section 320: Funeral and death-bed expenses according to my station in life paid in priority to all debts.",
-    "(ii) Section 321: Expenses of obtaining Probate or Letters of Administration, and judicial administration expenses.",
-    "(iii) Section 322: Wages for services rendered to me within three months next preceding my demise.",
-    "(iv) Section 323: Other enforceable debts paid equally and rateably out of the estate assets.",
-    "(v) Section 325: Debts of every description settled before any legacy or bequest is paid or satisfied."
-  ];
-  debts.forEach(d => {
-    y = printWrapped(d, margin + 2, y, contentWidth - 2, 3.5, 7.8);
-    y += 0.8;
-  });
-  y += 2;
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.2);
-  doc.text("Administrative Powers Conferred Upon Executor:", margin, y);
-  y += 3.5;
-
-  const powers = [
-    "(a) Possession & Custody: To take possession of all movable and immovable estate, title deeds, bank passbooks, and certificates.",
-    "(b) Representation & Mutation: To represent the estate before all revenue authorities, municipal bodies, banks, and sub-registrars.",
-    "(c) Tax Discharges: To prepare, verify, and file all final Income Tax Returns (ITR) and discharge lawful tax liabilities.",
-    "(d) Assent & Transmission: To assent to specific bequests and execute formal deeds of conveyance or transmission.",
-    "(e) Reimbursement of Expenses: To be reimbursed for actual out-of-pocket administration expenses without remuneration.",
-    "(f) Encumbrance Rule & Lender Protection: Encumbered properties pass subject to liabilities without personal recourse against other beneficiaries, preserving all lender mortgage security and statutory remedies.",
-    "(g) Judicial Representation: To apply for Probate or Letters of Administration with Will annexed whenever prudent or required.",
-    "(h) Section 307(2)(i) Liquidation Authority: To sell, mortgage, or lease immovable property strictly to discharge debts or taxes.",
-    "(i) Securities Valuation: In-kind distribution using IBBI Registered Valuer standards where market quotation is unavailable.",
-    "(j) Section 302 High Court Directions: To apply to the High Court for directions upon grant of probate or letters of administration."
-  ];
-  powers.forEach(pwr => {
-    y = printWrapped(pwr, margin + 2, y, contentWidth - 2, 3.4, 7.6);
-    y += 0.6;
-  });
-  y += 3;
-
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(7.2);
-  doc.setTextColor(100, 116, 139);
-  doc.text("[ ———— Continued on Page 3 for Asset Bequests & Allocations ———— ]", pageWidth / 2, y, { align: "center" });
-
-  // ── PAGE 3 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
-
+  // ── SECTION V ────────────────────────────────────────────
+  ensureSpace(35);
   y = drawSectionTitle("SECTION V", "SCHEDULE OF BEQUEST OF ASSETS & BENEFICIARY ALLOCATIONS", y);
-  const sec5Preamble = "Pursuant to Section 30 of the Hindu Succession Act, 1956 and Sections 138 and 139 of the Indian Succession Act, 1925, I hereby bequeath my entire right, title, and interest in the following specific properties. Every bequest confers an absolute title, subject only to the residence protections expressly stipulated:";
+
+  const sec5Preamble = isMuslim
+    ? "Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925, I hereby bequeath and dispose of my lawful right, title, and interest in the following properties in accordance with the principles of Wasīyyat. Every bequest confers absolute title, subject only to any express residence protections or conditions stipulated herein:"
+    : isChristianParsi
+      ? "Pursuant to Part VI of the Indian Succession Act, 1925 (including Sections 59, 138, and 139), I hereby bequeath and dispose of my entire right, title, and interest in the following specific properties. Every bequest confers an absolute title, subject only to any express residence protections or conditions stipulated herein:"
+      : "Pursuant to Section 30 of the Hindu Succession Act, 1956 and Sections 138 and 139 of the Indian Succession Act, 1925, I hereby bequeath my entire right, title, and interest in the following specific properties. Every bequest confers an absolute title, subject only to any express residence protections or conditions stipulated herein:";
+
   y = printWrapped(sec5Preamble, margin, y, contentWidth, 3.7, 8.0);
   y += 3.5;
 
-  // Asset 1
-  const a1 = (willData.assets && willData.assets[0]) || {};
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.4);
-  doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #1 [${a1.type || 'Bank Account / FD'}]: ${getAssetDisplay(a1, 'Bank Account / FD')}`, margin, y);
-  y += 4;
-  (a1.allocations || []).forEach(al => {
-    y = printWrapped(formatBeneficiaryShare(al, beneficiaries), margin + 3, y, contentWidth - 3, 3.5, 7.8);
-    y += 0.5;
-  });
-  y += 3;
+  if (assets.length === 0) {
+    y = printWrapped("No specific assets documented. All properties, claims, and estate shall pass in accordance with Section VII (Residuary Estate).", margin, y, contentWidth, 3.8, 8.2);
+    y += 4;
+  } else {
+    assets.forEach((asset, idx) => {
+      const assetType = asset.type || 'Asset';
+      const assetDisplay = getAssetDisplay(asset, assetType);
+      const isAssetImmovable = (assetType.toLowerCase().includes('property') || assetType.toLowerCase().includes('land') || assetType.toLowerCase().includes('flat') || assetType.toLowerCase().includes('house') || assetType.toLowerCase().includes('apartment'));
+      const allocs = (asset.allocations && asset.allocations.length > 0) ? asset.allocations : [];
 
-  // Asset 2 (Flat 402 / Immovable)
-  const a2 = (willData.assets && willData.assets[1]) || {};
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.4);
-  doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #2 [${a2.type || 'Property / Land'}]: ${getAssetDisplay(a2, 'Property / Land')}`, margin, y);
-  y += 4;
-  const a2Allocs = (a2.allocations && a2.allocations.length > 0) ? a2.allocations : (a1.allocations || []);
-  a2Allocs.forEach(al => {
-    y = printWrapped(formatBeneficiaryShare(al, beneficiaries).replace('absolute share', 'undivided ownership share'), margin + 3, y, contentWidth - 3, 3.5, 7.8);
-    y += 0.5;
-  });
-  y += 2.5;
+      ensureSpace(16);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.4);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Asset #${idx + 1} [${assetType}]: ${assetDisplay}`, margin, y);
+      y += 4;
 
-  // Residence Protection Clauses
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.0);
-  doc.setTextColor(133, 93, 20);
-  doc.text("Special Protective Covenants & Lifetime Residence Safeguard for Spouse:", margin, y);
-  y += 3.5;
+      if (allocs.length === 0) {
+        if (beneficiaries.length === 1) {
+          const b = beneficiaries[0];
+          const bStr = formatBeneficiaryShare({ beneficiaryId: b.id, percentage: 100 }, beneficiaries);
+          y = printWrapped(bStr, margin + 3, y, contentWidth - 3, 3.5, 7.8);
+          y += 0.8;
+        } else {
+          y = printWrapped("• 100% share bequeathed equally among designated legal heirs / beneficiaries.", margin + 3, y, contentWidth - 3, 3.5, 7.8);
+          y += 0.8;
+        }
+      } else {
+        allocs.forEach(al => {
+          let formattedShare = formatBeneficiaryShare(al, beneficiaries);
+          if (isAssetImmovable) {
+            formattedShare = formattedShare.replace('absolute share', 'undivided ownership share');
+          }
+          y = printWrapped(formattedShare, margin + 3, y, contentWidth - 3, 3.5, 7.8);
+          y += 0.8;
+        });
+      }
+      y += 2.5;
 
-  const resClauses = [
-    `(i) Undisturbed Exclusive Lifetime Right of Residence: ${spouseDisplayName} is granted an absolute, exclusive, unhindered, and irrevocable lifetime right to reside in, occupy, and enjoy the entirety of the residential flat, free from payment of rent or eviction.`,
-    `(ii) Legal Character, Assent & Protection of Lifetime Residence: Remainder co-owners (${childrenNeitherNorStr}) shall not seek physical partition or separate possession during ${spousePossessive} lifetime. Remainder transfers remain subordinate to this lifetime right. The Executor shall register a Deed of Assent incorporating this covenant under Sections 332-333 ISA.`,
-    `(iii) Property Taxes, Society Dues & Structural Outgoings: Routine utility charges borne by ${spouseName || 'my spouse'}; statutory property taxes, society charges, and structural repairs shared rateably by co-owners.`,
-    `(iv) Substitute Accommodation & Shortfall Funding: If the property is damaged, acquired, or sold by mutual consent, substitute accommodation shall be provided, with any shortfall funded from liquid estate.`,
-    `(v) Voluntary Surrender: This right terminates only upon natural demise or voluntary registered surrender deed.`,
-    `(vi) Non-Recursive Ultimate Devolution: Upon demise of ${spouseName || 'my spouse'}, her remainder share devolves directly upon surviving co-owners without further recursive life interests.`
-  ];
-  resClauses.forEach(rc => {
-    y = printWrapped(rc, margin + 2, y, contentWidth - 2, 3.4, 7.4);
-    y += 0.8;
-  });
+      // Residence Protection (ONLY for immovable property when spouse exists and there are other remainder co-owners)
+      if (isAssetImmovable && shouldIncludeSpouseResidence) {
+        ensureSpace(35);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8.0);
+        doc.setTextColor(133, 93, 20);
+        doc.text("Special Protective Covenants & Lifetime Residence Safeguard for Spouse:", margin, y);
+        y += 3.5;
 
-  // ── PAGE 4 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
+        const resClauses = [
+          `(i) Undisturbed Exclusive Lifetime Right of Residence: ${spouseDisplayName} is granted an absolute, exclusive, unhindered, and irrevocable lifetime right to reside in, occupy, and enjoy the entirety of the residential premises, free from payment of rent or eviction.`,
+          `(ii) Legal Character, Assent & Protection of Lifetime Residence: Remainder co-owners (${childrenNeitherNorStr}) shall not seek physical partition or separate possession during ${spousePossessive} lifetime. Remainder transfers remain subordinate to this lifetime right. The Executor shall register a Deed of Assent incorporating this covenant under Sections 332-333 ISA.`,
+          `(iii) Property Taxes, Society Dues & Structural Outgoings: Routine utility charges borne by ${spouseName || 'my spouse'}; statutory property taxes, society charges, and structural repairs shared rateably by co-owners.`,
+          `(iv) Substitute Accommodation & Shortfall Funding: If the property is damaged, acquired, or sold by mutual consent, substitute accommodation shall be provided, with any shortfall funded from liquid estate.`,
+          `(v) Voluntary Surrender: This right terminates only upon natural demise or voluntary registered surrender deed.`,
+          `(vi) Non-Recursive Ultimate Devolution: Upon demise of ${spouseName || 'my spouse'}, her remainder share devolves directly upon surviving co-owners without further recursive life interests.`
+        ];
+        resClauses.forEach(rc => {
+          y = printWrapped(rc, margin + 2, y, contentWidth - 2, 3.4, 7.4);
+          y += 0.8;
+        });
+        y += 2;
+      }
+    });
+  }
 
-  y = drawSectionTitle("SECTION V (CONTINUED)", "SECURITIES, MUTUAL FUNDS & VALUATION RULES", y);
+  // Securities valuation rules (ONLY when securities exist and there are multiple beneficiaries)
+  if (shouldIncludeSecuritiesRules) {
+    ensureSpace(35);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.2);
+    doc.setTextColor(15, 23, 42);
+    doc.text("Securities Valuation, Transmission, and Equalization Rules:", margin, y);
+    y += 3.5;
 
-  const a3 = (willData.assets && willData.assets[2]) || {};
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.4);
-  doc.setTextColor(15, 23, 42);
-  doc.text(`Asset #3 [${a3.type || 'Mutual Funds / Stocks'}]: ${getAssetDisplay(a3, 'Mutual Funds / Stocks')}`, margin, y);
-  y += 4;
-  const a3Allocs = (a3.allocations && a3.allocations.length > 0) ? a3.allocations : (a1.allocations || []);
-  a3Allocs.forEach(al => {
-    y = printWrapped(formatBeneficiaryShare(al, beneficiaries), margin + 3, y, contentWidth - 3, 3.5, 7.8);
-    y += 0.5;
-  });
-  y += 4;
+    const secRules = [
+      "(a) In-Kind Distribution: Demat securities and mutual funds shall be transferred in specie to the extent feasible, valued using the official closing market quotation on the common distribution date.",
+      "(b) Independent Valuation Safeguard: Where securities lack a reliable market quotation, valuation shall be conducted by an independent Registered Valuer in the IBBI Securities or Financial Assets category.",
+      "(c) Indivisible Lots & Equalization: To prevent forced distress sales, whole shares shall be allocated and fraction differences balanced through cash-balancing adjustments.",
+      "(d) 15-Day Inspection Period: The Executor shall provide certified holding statements to all beneficiaries at least fifteen (15) calendar days prior to execution of transmissions.",
+      "(e) Corporate Actions & Dividends: All interim corporate actions, dividends, and bonus issues declared prior to distribution shall follow the corpus and accrue to respective beneficiaries rateably."
+    ];
+    secRules.forEach(sr => {
+      y = printWrapped(sr, margin + 2, y, contentWidth - 2, 3.5, 7.6);
+      y += 0.8;
+    });
+    y += 2.5;
+  }
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.2);
-  doc.text("Securities Valuation, Transmission, and Equalization Rules:", margin, y);
-  y += 3.5;
-
-  const secRules = [
-    "(a) In-Kind Distribution: Demat securities and mutual funds shall be transferred in specie to the extent feasible, valued using the official closing market quotation on the common distribution date.",
-    "(b) Independent Valuation Safeguard: Where securities lack a reliable market quotation, valuation shall be conducted by an independent Registered Valuer in the IBBI Securities or Financial Assets category.",
-    "(c) Indivisible Lots & Equalization: To prevent forced distress sales, whole shares shall be allocated and fraction differences balanced through cash-balancing adjustments.",
-    "(d) 15-Day Inspection Period: The Executor shall provide certified holding statements to all beneficiaries at least fifteen (15) calendar days prior to execution of transmissions.",
-    "(e) Corporate Actions & Dividends: All interim corporate actions, dividends, and bonus issues declared prior to distribution shall follow the corpus and accrue to respective beneficiaries rateably."
-  ];
-  secRules.forEach(sr => {
-    y = printWrapped(sr, margin + 2, y, contentWidth - 2, 3.6, 7.7);
-    y += 1.2;
-  });
-
-  // ── PAGE 5 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
-
+  // ── SECTION VI ───────────────────────────────────────────
+  ensureSpace(40);
   y = drawSectionTitle("SECTION VI", "NOMINATION OVERRIDE CLAUSE (SUPREME COURT PRECEDENTS)", y);
   const sec6Text1 = "I hereby expressly declare and direct that any nomination registered in respect of any of my bank accounts, Fixed Deposits, Demat accounts, mutual funds, provident funds, gratuity, pensions, or insurance policies is made solely for institutional transmission and procedural discharge under applicable banking, depository, and corporate statutes.";
   y = printWrapped(sec6Text1, margin, y, contentWidth, 3.8, 8.2);
@@ -563,6 +600,7 @@ export async function generateEnglishWillPDF(willData) {
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.2);
+  doc.setTextColor(15, 23, 42);
   doc.text("Authoritative Supreme Court Jurisprudence Applied:", margin, y);
   y += 3.5;
 
@@ -572,21 +610,25 @@ export async function generateEnglishWillPDF(willData) {
     "• Shakti Yezdani v. Jayanand Jayant Salgaonkar (2023 SCC OnLine SC 1679): Provisions of the Companies Act concerning securities nomination do not override testamentary succession. The nominee is merely a custodian to ensure procedural transmission until title is vested in the beneficial owners."
   ];
   precedents.forEach(pr => {
-    y = printWrapped(pr, margin + 2, y, contentWidth - 2, 3.6, 7.7);
-    y += 1.2;
+    y = printWrapped(pr, margin + 2, y, contentWidth - 2, 3.5, 7.6);
+    y += 0.8;
   });
   y += 2;
 
-  const sec6Text2 = "Pursuant to these binding precedents, any nominee receiving estate assets holds the same strictly as a fiduciary trustee and custodian for the beneficial owners designated under this Will. Entire beneficial ownership vests exclusively in the beneficiaries named herein, and financial institutions are directed to transmit assets in accordance with this testamentary instrument.";
+  const soleBen = beneficiaries.length === 1 ? beneficiaries[0] : null;
+  const soleBenName = soleBen ? (soleBen.name || 'my sole designated beneficiary') : '';
+  const sec6Text2 = soleBen
+    ? `Pursuant to these binding precedents, any nominee receiving estate assets holds the same strictly as a fiduciary trustee and custodian for the sole beneficial owner, ${soleBenName}, designated under this Will. Entire beneficial ownership vests exclusively in said beneficiary, and financial institutions are directed to transmit assets in accordance with this testamentary instrument.`
+    : "Pursuant to these binding precedents, any nominee receiving estate assets holds the same strictly as a fiduciary trustee and custodian for the beneficial owners designated under this Will. Entire beneficial ownership vests exclusively in the beneficiaries named herein, and financial institutions are directed to transmit assets in accordance with this testamentary instrument.";
   y = printWrapped(sec6Text2, margin, y, contentWidth, 3.8, 8.0);
+  y += 3.5;
 
-  // ── PAGE 6 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
-
+  // ── SECTION VII ──────────────────────────────────────────
+  ensureSpace(45);
   y = drawSectionTitle("SECTION VII", "RESIDUARY ESTATE & TRUSTEESHIP CLAUSE", y);
-  const sec7Residuary = "Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall be divided rateably among my designated beneficiaries in proportion to their residuary entitlement.";
+  const sec7Residuary = beneficiaries.length === 1
+    ? `Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${beneficiaries[0].name || 'Beneficiary'} (${beneficiaries[0].relation || 'Beneficiary'}), subject to the anti-lapse provision hereunder.`
+    : "Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall be divided rateably among my designated beneficiaries in proportion to their residuary entitlement.";
   y = printWrapped(sec7Residuary, margin, y, contentWidth, 3.8, 8.2);
   y += 3.5;
 
@@ -607,11 +649,17 @@ export async function generateEnglishWillPDF(willData) {
   });
   y += 2;
 
+  // Minority Protection with religion-aware statutes
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.2);
-  doc.text("Minority Protection & Statutory Capacity Separation (HMGA Section 8):", margin, y);
+  doc.text(isHinduGroup ? "Minority Protection & Statutory Capacity Separation (HMGA Section 8):" : "Minority Protection & Statutory Capacity Separation (Guardians and Wards Act, 1890):", margin, y);
   y += 3.5;
-  const minorityText = `If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by ${spouseName || (execName || 'my testamentary trustee')} as Natural Guardian in respect of person and custody, while the testamentary trustee shall hold the bequest corpus under the Will without remuneration, invested prudently in scheduled bank deposits or government securities until age 18. Dealing with minor's immovable property shall strictly comply with Section 8 of the Hindu Minority and Guardianship Act, 1956 and Sections 27 to 29 of the Guardians and Wards Act, 1890 with prior court permission.`;
+
+  const guardianshipStatute = isHinduGroup
+    ? "Section 8 of the Hindu Minority and Guardianship Act, 1956 and Sections 27 to 29 of the Guardians and Wards Act, 1890 with prior court permission where mandated by law."
+    : "Sections 27 to 29 of the Guardians and Wards Act, 1890 and applicable personal law with prior court permission where mandated by law.";
+
+  const minorityText = `If any beneficiary is a minor (under 18) at my demise, their share shall be held in trust by ${spouseName || (execName || 'my testamentary trustee')} as Guardian in respect of person and custody, while the testamentary trustee shall hold the bequest corpus under the Will without remuneration, invested prudently in scheduled bank deposits or government securities until age 18. Dealing with minor's immovable property shall strictly comply with ${guardianshipStatute}`;
   y = printWrapped(minorityText, margin + 2, y, contentWidth - 2, 3.5, 7.6);
   y += 3;
 
@@ -621,11 +669,15 @@ export async function generateEnglishWillPDF(willData) {
   y += 3.5;
   const fallbackText = "In the extraordinary event that all named beneficiaries and lineal descendants fail to survive the survival period, my entire net estate shall devolve upon: (1) Prime Minister's National Relief Fund (PMNRF), New Delhi; failing which (2) PM CARES Fund, New Delhi; failing which (3) Indian Red Cross Society; failing which (4) HelpAge India; to the absolute exclusion of intestacy.";
   y = printWrapped(fallbackText, margin + 2, y, contentWidth - 2, 3.5, 7.6);
+  y += 4;
 
-  // ── PAGE 7 ──────────────────────────────────────────────
-  doc.addPage();
-  drawHeader();
-  y = 17;
+  // ── SECTION VIII & ATTESTATION (UNIFIED SIGNATURE BLOCK) ──
+  // Execution block requires ~115mm (Section VIII + In Witness Whereof + Signature/Thumb + Attestation + 2 Witness boxes)
+  if (y + 115 > pageHeight - 16) {
+    doc.addPage();
+    drawHeader();
+    y = 17;
+  }
 
   y = drawSectionTitle("SECTION VIII", "EXCLUSION OF UNINTENDED HEIRS & THIRD PARTIES", y);
   const sec8Text = "Having fully provided for my beloved family in accordance with my judgment, I declare that no other relative, heir, or third party shall have any right, title, or interest whatsoever in my estate save as expressly bequeathed under this Will, to the maximum extent permitted by law.";
@@ -646,6 +698,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.line(margin, y + 10, margin + 70, y + 10);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.0);
+  doc.setTextColor(15, 23, 42);
   doc.text("Signature / Seal of Testator", margin, y + 14);
   doc.setFont("helvetica", "normal");
   doc.text(`Name: ${safeFullName}`, margin, y + 18);
@@ -702,7 +755,7 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("Residential Address: __________________________", margin + boxW + 10, y + 30);
   doc.text("City / State / PIN: ____________________________", margin + boxW + 10, y + 36);
 
-  // ── FOOTERS ON ALL 7 PAGES ──────────────────────────────
+  // ── FOOTERS ON ALL GENERATED PAGES ──────────────────────────────
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
@@ -726,7 +779,6 @@ export async function generateEnglishWillPDF(willData) {
   await savePdfToDevice(doc, fileName);
   return fileName;
 }
-
 
 export async function generateRegionalWillPDF(willData, lang) {
   const container = document.getElementById('pdfRenderContainer');
