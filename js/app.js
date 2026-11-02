@@ -31,13 +31,16 @@ async function initApp() {
     if (rawRedirectSnapshot) {
       try {
         const snapshot = JSON.parse(rawRedirectSnapshot);
-        if (snapshot && snapshot.state && (Date.now() - snapshot.timestamp < 3600000)) {
+        if (snapshot && snapshot.state && (Date.now() - snapshot.timestamp < 600000)) {
           logger.info('[App] Restoring wizard state after auth redirect to step', snapshot.step);
           updateState(snapshot.state);
           restoredRedirectStep = snapshot.step || snapshot.state.currentStep || 6;
         }
       } catch (err) {
         logger.warn('[App] Failed to parse auth redirect snapshot', err);
+      } finally {
+        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('sw_auth_redirect_snapshot');
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('sw_auth_redirect_snapshot');
       }
     }
 

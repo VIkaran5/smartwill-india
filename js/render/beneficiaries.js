@@ -540,8 +540,11 @@ function bindBeneficiaryRowEvents() {
   // Remove beneficiary button
   document.querySelectorAll('.btn-remove-ben').forEach(el => {
     el.addEventListener('click', (e) => {
-      const id = Number(e.currentTarget.dataset.id || e.target.dataset.id);
-      removeBeneficiary(id);
+      const btn = e.target.closest('.btn-remove-ben') || e.currentTarget;
+      const id = Number(btn?.dataset?.id);
+      if (!isNaN(id)) {
+        removeBeneficiary(id);
+      }
     });
   });
 }

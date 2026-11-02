@@ -155,6 +155,16 @@ export function bindEvents() {
     resetDataBtn.addEventListener('click', () => {
       if (confirm('Are you sure you want to clear all entered details and start fresh?')) {
         const state = resetState();
+        if (typeof resetPaymentState === 'function') resetPaymentState();
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('sw_auth_redirect_snapshot');
+          sessionStorage.removeItem('sw_session_paid_order');
+        }
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('sw_auth_redirect_snapshot');
+          localStorage.removeItem('sw_last_paid_order_id');
+          localStorage.removeItem('sw_is_paid');
+        }
         populatePersonalFields(state);
         renderAssets();
         renderBeneficiaries();
@@ -360,6 +370,7 @@ export function saveCurrentStepInputs() {
     updateState({
       personal: {
         fullName: document.getElementById('fullName')?.value?.trim() || '',
+        fatherName: document.getElementById('fatherName')?.value?.trim() || '',
         dob: document.getElementById('dob')?.value || '',
         gender: document.getElementById('gender')?.value || 'Male',
         religion: document.getElementById('religion')?.value || 'Hindu',
@@ -415,7 +426,7 @@ export function populatePersonalFields(state) {
   }
 
   const personalFields = [
-    'fullName', 'dob', 'gender', 'religion', 'govtIdType', 'govtIdDigits',
+    'fullName', 'fatherName', 'dob', 'gender', 'religion', 'govtIdType', 'govtIdDigits',
     'email', 'addressLine1', 'addressCity', 'addressState', 'addressPincode'
   ];
   personalFields.forEach(id => {

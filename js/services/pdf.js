@@ -252,7 +252,13 @@ export async function generateEnglishWillPDF(willData) {
   const childrenNeitherNorStr = childrenNames.length > 1 ? childrenNames.join(' nor ') : (childrenNames[0] || 'the children');
 
   // Asset filtering & conditional rules
-  const assets = willData.assets || [];
+  const allAssets = willData.assets || [];
+  const assets = allAssets.filter(a => {
+    if (!a) return false;
+    const hasDesc = Boolean((a.desc && a.desc.trim()) || (a.details && Object.values(a.details).some(v => v && String(v).trim())));
+    const hasVal = Boolean(a.value && String(a.value).trim());
+    return hasDesc || hasVal;
+  });
   const hasImmovable = assets.some(a => {
     const t = (a.type || '').toLowerCase();
     return t.includes('property') || t.includes('land') || t.includes('flat') || t.includes('house') || t.includes('apartment');
@@ -388,8 +394,8 @@ export async function generateEnglishWillPDF(willData) {
 
   // Preamble Box
   const parentage = (p.fatherName && p.fatherName.trim())
-    ? `, ${p.gender === 'Female' ? 'daughter/wife of' : 'son of'} ${p.fatherName.trim()}`
-    : (testatorUpper.includes('RAMESH') ? ', son of Late Shri Kailash Sharma' : '');
+    ? `, ${p.gender === 'Female' ? 'D/o' : 'S/o'} ${p.fatherName.trim()}`
+    : (testatorUpper.includes('RAMESH') ? ', S/o Late Shri Kailash Sharma' : '');
   const idDocStr = (p.govtIdType && p.govtIdDigits) ? ` [Identity Doc: ${p.govtIdType} Ending in XXXX-${p.govtIdDigits}]` : '';
   const fullAddrStr = formatCleanAddress(p);
 
@@ -431,7 +437,7 @@ export async function generateEnglishWillPDF(willData) {
   y += 4;
 
   // ── SECTION IV ───────────────────────────────────────────
-  ensureSpace(40);
+  ensureSpace(25);
   y = drawSectionTitle("SECTION IV", "APPOINTMENT & OPERATIONAL POWERS OF EXECUTOR", y);
   if (hasExec) {
     let execApptText = `I hereby nominate, constitute, and appoint ${execKYC} as the sole Executor of this my Last Will and Testament.`;
@@ -491,7 +497,7 @@ export async function generateEnglishWillPDF(willData) {
   }
 
   // ── SECTION V ────────────────────────────────────────────
-  ensureSpace(35);
+  ensureSpace(25);
   y = drawSectionTitle("SECTION V", "SCHEDULE OF BEQUEST OF ASSETS & BENEFICIARY ALLOCATIONS", y);
 
   const sec5Preamble = isMuslim
@@ -592,7 +598,7 @@ export async function generateEnglishWillPDF(willData) {
   }
 
   // ── SECTION VI ───────────────────────────────────────────
-  ensureSpace(40);
+  ensureSpace(25);
   y = drawSectionTitle("SECTION VI", "NOMINATION OVERRIDE CLAUSE (SUPREME COURT PRECEDENTS)", y);
   const sec6Text1 = "I hereby expressly declare and direct that any nomination registered in respect of any of my bank accounts, Fixed Deposits, Demat accounts, mutual funds, provident funds, gratuity, pensions, or insurance policies is made solely for institutional transmission and procedural discharge under applicable banking, depository, and corporate statutes.";
   y = printWrapped(sec6Text1, margin, y, contentWidth, 3.8, 8.2);
@@ -624,7 +630,7 @@ export async function generateEnglishWillPDF(willData) {
   y += 3.5;
 
   // ── SECTION VII ──────────────────────────────────────────
-  ensureSpace(45);
+  ensureSpace(25);
   y = drawSectionTitle("SECTION VII", "RESIDUARY ESTATE & TRUSTEESHIP CLAUSE", y);
   const sec7Residuary = beneficiaries.length === 1
     ? `Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${beneficiaries[0].name || 'Beneficiary'} (${beneficiaries[0].relation || 'Beneficiary'}), subject to the anti-lapse provision hereunder.`

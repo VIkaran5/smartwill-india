@@ -346,11 +346,14 @@ export async function checkExistingPaidOrder(user, allowAutoUnlock = false) {
 
         // Only auto-unlock Step 6 if:
         // 1. Explicit download request from dashboard (?download=1)
-        // 2. The order was paid in this tab session
+        // 2. The order was paid in this tab session AND matches current draft testator
         // 3. Caller explicitly requested auto-unlock
-        // 4. Authenticated owner testing account
-        const isOwner = user && (user.email === 'dasarig438@gmail.com' || user.uid === 'c1WqpPOnsdfAiSYIcuRLfNIn9un1');
-        if (isExplicitDownload || (sessionPaidOrderId && sessionPaidOrderId === orderId) || allowAutoUnlock || isOwner) {
+        const state = (typeof getState === 'function') ? getState() : null;
+        const currentFullName = (state?.personal?.fullName || '').trim().toLowerCase();
+        const orderCustomerName = (orderData.customerName || orderData.name || '').trim().toLowerCase();
+        const isMatchingDraft = !orderCustomerName || !currentFullName || orderCustomerName === currentFullName;
+
+        if (isExplicitDownload || (sessionPaidOrderId && sessionPaidOrderId === orderId && isMatchingDraft) || (allowAutoUnlock && isMatchingDraft)) {
           unlockPostPaymentUI(orderId, true);
         }
         return true;

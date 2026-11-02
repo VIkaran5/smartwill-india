@@ -16,6 +16,7 @@ export function serializeDraft(state) {
 
   const cleanPersonal = {
     fullName: state.personal?.fullName || '',
+    fatherName: state.personal?.fatherName || '',
     dob: state.personal?.dob || '',
     gender: state.personal?.gender || 'Male',
     religion: state.personal?.religion || 'Hindu',

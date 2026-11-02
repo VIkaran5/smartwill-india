@@ -661,8 +661,11 @@ function bindAssetRowEvents() {
   // Delete row listener
   document.querySelectorAll('.btn-remove-row').forEach(el => {
     el.addEventListener('click', (e) => {
-      const id = Number(e.target.dataset.id);
-      removeAsset(id);
+      const btn = e.target.closest('.btn-remove-row') || e.currentTarget;
+      const id = Number(btn?.dataset?.id);
+      if (!isNaN(id)) {
+        removeAsset(id);
+      }
     });
   });
 
