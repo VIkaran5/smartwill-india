@@ -3,6 +3,7 @@ import { getState, initStore, isConsentGiven } from './state/store.js';
 import { renderAssets } from './render/assets.js';
 import { renderBeneficiaries } from './render/beneficiaries.js';
 import { updateStepper, goToStep } from './wizard/stepper.js';
+import { WizardController } from './wizard/controller.js';
 import { validateCurrentStep } from './wizard/validation.js';
 import { initWizardRenderer } from './wizard/renderer.js';
 import { initWizardHistory } from './wizard/history.js';
@@ -22,6 +23,24 @@ async function initApp() {
   try {
     logger.info('Initializing SmartWill Application');
     await initStore();
+
+    // Check for pending mobile auth redirect snapshot to prevent resetting form
+    let restoredRedirectStep = null;
+    const rawRedirectSnapshot = (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('sw_auth_redirect_snapshot') : null) ||
+                                (typeof localStorage !== 'undefined' ? localStorage.getItem('sw_auth_redirect_snapshot') : null);
+    if (rawRedirectSnapshot) {
+      try {
+        const snapshot = JSON.parse(rawRedirectSnapshot);
+        if (snapshot && snapshot.state && (Date.now() - snapshot.timestamp < 3600000)) {
+          logger.info('[App] Restoring wizard state after auth redirect to step', snapshot.step);
+          updateState(snapshot.state);
+          restoredRedirectStep = snapshot.step || snapshot.state.currentStep || 6;
+        }
+      } catch (err) {
+        logger.warn('[App] Failed to parse auth redirect snapshot', err);
+      }
+    }
+
     const state = getState();
     populatePersonalFields(state);
     renderAssets();
@@ -37,6 +56,16 @@ async function initApp() {
     initWizardHistory();
 
     bindEvents();
+
+    // Fast-forward to saved step if returning from mobile auth redirect
+    if (restoredRedirectStep && restoredRedirectStep > 1) {
+      logger.info('[App] Fast-forwarding to step', restoredRedirectStep);
+      setTimeout(() => {
+        WizardController.restoreDraft(restoredRedirectStep);
+        if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('sw_auth_redirect_snapshot');
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('sw_auth_redirect_snapshot');
+      }, 50);
+    }
 
     // Track Wizard Start Event for Drop-off Funnel Analytics
     trackWizardStart();

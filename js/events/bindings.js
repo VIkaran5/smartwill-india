@@ -979,3 +979,5 @@ function setupMobileAndEmailValidation() {
     });
   }
 }
+
+if (typeof window !== 'undefined') { window.saveCurrentStepInputs = saveCurrentStepInputs; }

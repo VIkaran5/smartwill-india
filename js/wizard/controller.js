@@ -48,10 +48,10 @@ export class WizardController {
     const targetStep = result.nextStepNumber;
 
     // Trigger child list rendering before view transition if entering specific steps
-    if (targetStep === 4 && typeof renderAllocations === 'function') {
+    if (targetStep >= 4 && typeof renderAllocations === 'function') {
       try { renderAllocations(); } catch (e) { console.error('Error rendering allocations:', e); }
     }
-    if (targetStep === 5 && typeof renderSummary === 'function') {
+    if (targetStep >= 5 && typeof renderSummary === 'function') {
       try { renderSummary(); } catch (e) { console.error('Error rendering summary:', e); }
     }
 
@@ -151,3 +151,5 @@ export class WizardController {
     }
   }
 }
+
+if (typeof window !== 'undefined') { window.WizardController = WizardController; }

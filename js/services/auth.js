@@ -796,6 +796,32 @@ export async function handleEmailSignIn(email, password) {
   }
 }
 
+
+export function preserveStateBeforeRedirect() {
+  try {
+    if (typeof window !== 'undefined' && typeof window.saveCurrentStepInputs === 'function') {
+      window.saveCurrentStepInputs();
+    }
+    const state = getState();
+    const currentStep = state.currentStep || (document.querySelector('.wizard-step.active')?.id?.replace('step', '')) || 1;
+    const snapshot = {
+      step: Number(currentStep),
+      state: state,
+      timestamp: Date.now()
+    };
+    const serialized = JSON.stringify(snapshot);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem('sw_auth_redirect_snapshot', serialized);
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('sw_auth_redirect_snapshot', serialized);
+    }
+    logger.info(`[Auth] Preserved wizard state at step ${currentStep} before mobile auth redirect`);
+  } catch (e) {
+    logger.warn('[Auth] Could not preserve state before redirect', e);
+  }
+}
+
 export async function handleGoogleSignIn() {
   if (isSubmitting) return;
   if (!firebaseAuth) {
@@ -867,6 +893,7 @@ export async function handleGoogleSignIn() {
           popupErr.code === 'auth/operation-not-supported-in-this-environment'
         ) {
           showToast('info', 'Redirecting to Google... 🔄', 'Opening Google Sign-In. You will be brought back automatically.');
+          preserveStateBeforeRedirect();
           await new Promise(resolve => setTimeout(resolve, 1200));
           await firebaseAuth.signInWithRedirect(provider);
           return; // Page reloads — result handled by getRedirectResult in initAuthService
