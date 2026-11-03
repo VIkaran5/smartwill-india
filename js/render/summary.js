@@ -80,7 +80,8 @@ export function renderSummary() {
     html += `<p><em>${notProvidedStr}</em></p>`;
   } else {
     assets.forEach(asset => {
-      const allocs = asset.allocations || [];
+      const rawAllocs = asset.allocations || [];
+      const allocs = rawAllocs.filter(al => Number(al.percentage) > 0);
       const shareLabel = (t('summary.share') && t('summary.share') !== 'summary.share') ? t('summary.share') : 'Share';
       html += `
         <div style="margin-bottom: 12px; padding: 10px 14px; background: rgba(0,0,0,0.02); border-left: 3px solid var(--primary, #1e3a8a); border-radius: 6px;">

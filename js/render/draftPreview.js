@@ -377,7 +377,8 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
           <ul class="draft-alloc-list">
       `;
 
-      const allocs = asset.allocations || [];
+      const rawAllocs = asset.allocations || [];
+      const allocs = rawAllocs.filter(al => Number(al.percentage) > 0);
       if (allocs.length === 0) {
         html += `<li>• <span class="alloc-badge">100% Share</span> Bequeathed to designated legal heirs in equal parts.</li>`;
       } else {
