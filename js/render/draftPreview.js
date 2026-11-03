@@ -320,7 +320,11 @@ function renderEnglishDraft(p, safeFullName, fullAddress, idStr, execName, execR
         return !b || !b.relation || !b.relation.toLowerCase().includes('spouse');
       });
 
-      const hasSpousalProtection = isImmovable && hasSpouse && (nonSpouseAllocs.length > 0 || hasChildren);
+      const dwellingRegex = /\b(flat|apartment|house|villa|bungalow|dwelling|residence|residential)\b/i;
+      const isResidentialDwelling = isImmovable && (dwellingRegex.test(safeType) || dwellingRegex.test(safeDesc));
+      const spouseShare = spouseAlloc ? (Number(spouseAlloc.percentage) || 0) : 0;
+      const isSpouseSole100 = (spouseShare === 100);
+      const hasSpousalProtection = isResidentialDwelling && hasSpouse && !isSpouseSole100 && (nonSpouseAllocs.length > 0 || hasChildren);
       if (hasSpousalProtection) globalHasSpousalResidence = true;
 
       // Dynamic repair shares breakdown

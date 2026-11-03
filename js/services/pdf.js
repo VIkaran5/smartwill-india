@@ -557,19 +557,10 @@ export async function generateEnglishWillPDF(willData) {
       y += 2.5;
 
       // Residence Protection: Only for residential dwelling properties (Flat, House, Apartment, Villa)
+      const dwellingRegex = /\b(flat|apartment|house|villa|bungalow|dwelling|residence|residential)\b/i;
       const isResidentialDwelling = Boolean(
-        assetType.toLowerCase().includes('flat') ||
-        assetType.toLowerCase().includes('apartment') ||
-        assetType.toLowerCase().includes('house') ||
-        assetType.toLowerCase().includes('villa') ||
-        (asset.desc && (
-          asset.desc.toLowerCase().includes('flat') ||
-          asset.desc.toLowerCase().includes('apartment') ||
-          asset.desc.toLowerCase().includes('house') ||
-          asset.desc.toLowerCase().includes('villa') ||
-          asset.desc.toLowerCase().includes('residence') ||
-          asset.desc.toLowerCase().includes('residential')
-        ))
+        dwellingRegex.test(assetType) ||
+        (asset.desc && dwellingRegex.test(asset.desc))
       );
 
       const spouseAlloc = allocs.find(al => {
@@ -588,7 +579,7 @@ export async function generateEnglishWillPDF(willData) {
           doc.setTextColor(133, 93, 20);
           doc.text("Special Title Affirmation & Peaceful Possession for Spouse:", margin, y);
           y += 3.5;
-          const absClause = `The residential premises above are bequeathed to my spouse, ${spouseDisplayName}, with immediate absolute, separate, and unencumbered ownership and title, to hold, occupy, and enjoy peacefully and exclusively, free from any claims, interference, or partition demands by any other family member or legal heir whatsoever.`;
+          const absClause = `The residential premises above are bequeathed to my spouse, ${spouseName || 'my spouse'}, with immediate absolute, separate, and unencumbered ownership and title, to hold, occupy, and enjoy peacefully and exclusively, free from any claims, interference, or partition demands by any other family member or legal heir whatsoever.`;
           y = printWrapped(absClause, margin + 2, y, contentWidth - 2, 3.4, 7.6);
           y += 2;
         } else if (nonSpouseBeneficiaries.length > 0) {
