@@ -409,14 +409,19 @@ export async function generateEnglishWillPDF(willData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.0);
   doc.setTextColor(15, 23, 42);
-  const preLines = doc.splitTextToSize(preambleText, contentWidth - 11);
-  const preHeight = (preLines.length * 3.8) + 6;
+  const lineHeight = 3.8;
+  const preLines = doc.splitTextToSize(preambleText, contentWidth - 12);
+  const preHeight = (preLines.length * lineHeight) + 6;
   doc.setFillColor(253, 252, 249);
   doc.setDrawColor(226, 232, 240);
   doc.rect(margin, y, contentWidth, preHeight, 'FD');
   doc.setFillColor(133, 93, 20);
   doc.rect(margin, y, 1.5, preHeight, 'F');
-  doc.text(preLines, margin + 5, y + 4.5);
+  let curPreY = y + 4.8;
+  for (let i = 0; i < preLines.length; i++) {
+    doc.text(preLines[i], margin + 5, curPreY);
+    curPreY += lineHeight;
+  }
   y += preHeight + 5;
 
   // ── SECTION I ────────────────────────────────────────────
@@ -437,9 +442,9 @@ export async function generateEnglishWillPDF(willData) {
     ? "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925 (with execution and attestation safeguards under Section 63), I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein to the extent permitted by applicable law. In accordance with principles of Muslim testamentary law (Wasīyyat) as administered in India, bequests to non-heirs are valid up to one-third (1/3) of the net estate remaining after payment of funeral expenses and enforceable debts, while bequests exceeding one-third or made in favor of legal heirs operate subject to the consent of all other surviving legal heirs following my demise; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced."
     : isChristianParsi
       ? (isGoaDomicile
-          ? `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to Part VI of the Indian Succession Act, 1925 and the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016), I declare that the properties bequeathed herein comprise my separate, self-acquired estate and disposable portion (quota disponível) capable of testamentary disposition; and without prejudice to statutory legitime / reserved portions where applicable, this Will shall take effect to the fullest extent permissible under law, with the Executor empowered to present this instrument for registration before the Special Notary or competent court under applicable Goa succession procedures.`
-          : `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to Part VI of the Indian Succession Act, 1925 (applicable to persons professing ${p.religion || 'Christian'} faith in India), I hold full testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein, subject to Sections 59 and 63 (capacity and attestation requirements), Section 105 (anti-lapse provisions), Sections 119 and 131 (vesting and conditional gifts), and all other applicable provisions of Part VI; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced.`)
-      : "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to all applicable statutory restrictions and reservations under Schedule III of the Indian Succession Act, 1925 — including Paragraph 1 (restricting disposition of property incapable of alienation inter vivos and preserving non-displaceable statutory maintenance rights), Paragraph 2 (preserving the rule that no interest may be created which could not have been created under Hindu law prior to 1 September 1870), Paragraph 3 (preserving applicable laws of adoption and intestate succession), Paragraph 4 (modifying Section 70 by omitting the words 'than by marriage or'; separately, the proviso to Section 57 provides that marriage shall not revoke such Will or codicil), and the statutory interpretation rules of Paragraph 5; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.";
+          ? `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Where any property listed in the Schedule is colloquially, historically, or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired ownership and marketable legal title thereto by valid grant, purchase, partition, or deed, and no other coparcener, heir, or claimant possesses any undivided right, share, or interest therein. Pursuant to Part VI of the Indian Succession Act, 1925 and the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016) as amended (including substituted Section 83 under Goa Act 17 of 2023 governing the disposable quota / quota disponivel and legitime protection), I declare that the properties bequeathed herein comprise my separate, self-acquired estate and disposable portion capable of testamentary disposition; and without prejudice to statutory legitime / reserved portions where applicable, this Will shall take effect to the fullest extent permissible under law, with the Executor empowered to present this instrument for registration before the Special Notary under Section 333 of Goa Act 23 of 2016 or competent court under applicable Goa succession procedures.`
+          : `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Where any property listed in the Schedule is colloquially or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired ownership and marketable title thereto, and no other person possesses any coparcenary claim or undivided interest therein. Pursuant to Part VI of the Indian Succession Act, 1925 (applicable to persons professing ${p.religion || 'Christian'} faith in India), I hold full testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein, subject to Sections 59 and 63 (capacity and attestation requirements), Section 105 (anti-lapse provisions), Sections 119 and 131 (vesting and conditional gifts), and all other applicable provisions of Part VI; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced.`)
+      : "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Where any property listed in the Schedule is colloquially or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired title thereto, and no other person possesses any coparcenary claim or undivided interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to all applicable statutory restrictions and reservations under Schedule III of the Indian Succession Act, 1925 — including Paragraph 1 (restricting disposition of property incapable of alienation inter vivos and preserving non-displaceable statutory maintenance rights), Paragraph 2 (preserving the rule that no interest may be created which could not have been created under Hindu law prior to 1 September 1870), Paragraph 3 (preserving applicable laws of adoption and intestate succession), Paragraph 4 (modifying Section 70 by omitting the words 'than by marriage or'; separately, the proviso to Section 57 provides that marriage shall not revoke such Will or codicil), and the statutory interpretation rules of Paragraph 5; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.";
   y = printWrapped(sec3Text, margin, y, contentWidth, 3.7, 7.9);
   y += 4;
 
@@ -634,21 +639,21 @@ export async function generateEnglishWillPDF(willData) {
 
   // ── SECTION VI ───────────────────────────────────────────
   ensureSpace(25);
-  y = drawSectionTitle("SECTION VI", "NOMINATION OVERRIDE CLAUSE (SUPREME COURT PRECEDENTS)", y);
-  const sec6Text1 = "I hereby expressly declare and direct that any nomination registered in respect of any of my bank accounts, Fixed Deposits, Demat accounts, mutual funds, provident funds, gratuity, pensions, or insurance policies is made solely for institutional transmission and procedural discharge under applicable banking, depository, and corporate statutes, subject to the specific provisions of the governing parent statutes.";
+  y = drawSectionTitle("SECTION VI", "INSTITUTIONAL NOMINATIONS & BENEFICIAL OWNERSHIP FRAMEWORK", y);
+  const sec6Text1 = "I hereby expressly clarify and direct the legal and beneficial framework governing institutional nominations across all assets comprising my estate:";
   y = printWrapped(sec6Text1, margin, y, contentWidth, 3.8, 8.2);
-  y += 3.5;
+  y += 3;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.2);
   doc.setTextColor(15, 23, 42);
-  doc.text("Authoritative Supreme Court Jurisprudence Applied:", margin, y);
+  doc.text("Statutory Allocation of Beneficial Title vs Custodial Transmission:", margin, y);
   y += 3.5;
 
   const precedents = [
-    "• Sarbati Devi v. Usha Devi (1984 1 SCC 424): A nominee does not become the absolute owner of the proceeds. A nomination only indicates the hand authorized to receive payment from the institution, and the amount remains subject to the law of succession governing the estate of the deceased.",
-    "• Ram Chander Talwar v. Devender Kumar Talwar (2010 10 SCC 671): Section 45-ZA of the Banking Regulation Act, 1949 does not make the nominee the owner of the deposit. The nominee holds the funds strictly as a trustee for the legal heirs and testamentary beneficiaries.",
-    "• Shakti Yezdani v. Jayanand Jayant Salgaonkar (2023 SCC OnLine SC 1679): Provisions of the Companies Act concerning securities nomination do not override testamentary succession. The nominee is merely a custodian to ensure procedural transmission until title is vested in the beneficial owners."
+    "• Statutory Beneficial Nominees in Life Insurance (Section 39(7), Insurance Act, 1938): In accordance with Section 39(7) of the Insurance Act, 1938 (as amended by Insurance Laws Amendment Act, 2015), where any life insurance policy taken on my life nominates my spouse, child, or parent, such nominees are recognized by statute as 'Beneficial Nominees' entitled to beneficially receive and own the policy proceeds, and the bequests in this Will stand harmonized with and confirm said statutory beneficial entitlement.",
+    "• Custodial Nominees in Banking & Securities (Supreme Court Precedents): Under binding Supreme Court precedents — Sarbati Devi v. Usha Devi (1984 1 SCC 424), Ram Chander Talwar v. Devender Kumar Talwar (2010 10 SCC 671), and Shakti Yezdani v. Jayanand Jayant Salgaonkar (2023 SCC OnLine SC 1679) — nominations in bank accounts, fixed deposits, Demat securities, mutual funds, and shares operate strictly for procedural transmission and discharge. Such nominees hold the funds/securities purely as fiduciary custodians in trust for the testamentary beneficiaries named under this Will.",
+    "• Paramount Operational Direction: All financial institutions, banks, depository participants, and company registrars are directed to transfer and release assets to the beneficial legatees designated in this Will in their specified proportions."
   ];
   precedents.forEach(pr => {
     y = printWrapped(pr, margin + 2, y, contentWidth - 2, 3.5, 7.6);
@@ -659,30 +664,30 @@ export async function generateEnglishWillPDF(willData) {
   const soleBen = beneficiaries.length === 1 ? beneficiaries[0] : null;
   const soleBenName = soleBen ? (soleBen.name || 'my sole designated beneficiary') : '';
   const sec6Text2 = soleBen
-    ? `Pursuant to these binding precedents, any nominee receiving estate assets holds the same strictly as a fiduciary trustee and custodian for the sole beneficial owner, ${soleBenName}, designated under this Will (subject to any non-displaceable statutory scheme provisions). Entire beneficial ownership vests exclusively in said beneficiary, and financial institutions are requested to transmit and release assets in accordance with this testamentary instrument.`
-    : "Pursuant to these binding precedents, any nominee receiving estate assets holds the same strictly as a fiduciary trustee and custodian for the beneficial owners designated under this Will (subject to any non-displaceable statutory scheme provisions). Entire beneficial ownership vests exclusively in the beneficiaries named herein, and financial institutions are requested to transmit and release assets in accordance with this testamentary instrument.";
+    ? `Pursuant to these binding precedents, any nominee receiving estate assets (other than statutory beneficial nominees under Section 39(7) of the Insurance Act, 1938) holds the same strictly as a fiduciary trustee and custodian for the sole beneficial owner, ${soleBenName}, designated under this Will. Entire beneficial ownership vests exclusively in said beneficiary, and financial institutions are requested to transmit and release assets in accordance with this testamentary instrument.`
+    : "Pursuant to these binding precedents, any nominee receiving estate assets (other than statutory beneficial nominees under Section 39(7) of the Insurance Act, 1938) holds the same strictly as a fiduciary trustee and custodian for the beneficial owners designated under this Will. Entire beneficial ownership vests exclusively in the beneficiaries named herein, and financial institutions are requested to transmit and release assets in accordance with this testamentary instrument.";
   y = printWrapped(sec6Text2, margin, y, contentWidth, 3.8, 8.0);
   y += 3.5;
 
-  // ── SECTION VII ──────────────────────────────────────────
+  // ── SECTION VII ──// ── SECTION VII ──────────────────────────────────────────
   ensureSpace(25);
   y = drawSectionTitle("SECTION VII", "RESIDUARY ESTATE & TRUSTEESHIP CLAUSE", y);
   const sec7Residuary = beneficiaries.length === 1
-    ? `Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${beneficiaries[0].name || 'Beneficiary'} (${beneficiaries[0].relation || 'Beneficiary'}), subject to the anti-lapse provision hereunder.`
-    : "Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall be divided rateably among my designated primary adult beneficiaries in equal proportions (or in the ratio of their specific bequests herein), to the complete exclusion of intestacy.";
+    ? `Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${beneficiaries[0].name || 'Beneficiary'} (${beneficiaries[0].relation || 'Beneficiary'}), to the complete exclusion of partial intestacy.`
+    : "Any other property, asset, claim, refund, dividend, or investment belonging to me at my demise not specifically detailed in this Will (comprising my entire residuary estate) shall be divided rateably among my surviving primary adult beneficiaries in equal shares, to the complete exclusion of partial intestacy.";
   y = printWrapped(sec7Residuary, margin, y, contentWidth, 3.8, 8.2);
   y += 3.5;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8.2);
-  doc.text("Survivorship & Anti-Lapse Framework (Statutory Anti-Lapse & Representation):", margin, y);
+  doc.text("Survivorship & Statutory Anti-Lapse Framework (Sections 105 & 109 ISA):", margin, y);
   y += 3.5;
 
   const antiLapseItems = [
-    "(a) 30-Day Survival & Lineal Substitution (Section 109 ISA): If any child or lineal descendant predeceases me or fails to survive me by thirty (30) consecutive calendar days, expressing contrary intention under Section 109 of the Indian Succession Act, 1925, the bequest shall not lapse but shall devolve directly upon their surviving lineal descendants per stirpes. In respect of any other beneficiary who fails to survive said period, their bequest shall devolve upon their designated substitute heirs or accrete rateably as provided hereunder.",
-    "(b) Proportionate Accretion: Failing qualifying lineal descendants, the devolved share shall accrete rateably among remaining surviving named beneficiaries.",
-    "(c) Posthumously Born Descendants: A child conceived before the death of the devolving beneficiary and born alive thereafter qualifies, provided they survive thirty (30) days from live birth.",
-    "(d) Adopted Descendants: Legally adopted descendants recognized under applicable personal law are included within the definition of lineal descendants."
+    "(a) Section 109 ISA (Lineal Descendants Anti-Lapse): Pursuant to Section 109 of the Indian Succession Act, 1925, where a bequest is made to any child or lineal descendant who predeceases me leaving issue surviving me, such bequest shall not lapse but shall take effect as if the death of said legatee had happened immediately after my demise, devolving upon their surviving issue per stirpes.",
+    "(b) Section 105 ISA (Other Beneficiaries & Accretion): Pursuant to Section 105 of the Indian Succession Act, 1925, if any non-lineal beneficiary predeceases me or fails to survive me by thirty (30) days without leaving a specifically named substitute legatee, their lapsed share shall accrete rateably to the surviving primary adult beneficiaries in equal shares.",
+    "(c) 30-Day Survivorship Rule: Every beneficiary must survive me by thirty (30) clear calendar days to acquire a vested testamentary interest; in the event of simultaneous death, older shall be deemed to have predeceased younger.",
+    "(d) Adopted & Conceived Descendants: Legally adopted children and any child conceived before my demise and born alive thereafter qualify fully within the definition of lineal descendants."
   ];
   antiLapseItems.forEach(ai => {
     y = printWrapped(ai, margin + 2, y, contentWidth - 2, 3.5, 7.6);
@@ -797,6 +802,27 @@ export async function generateEnglishWillPDF(willData) {
   doc.text("S/o, D/o, W/o: ________________________________", margin + boxW + 10, y + 24);
   doc.text("Residential Address: __________________________", margin + boxW + 10, y + 30);
   doc.text("City / State / PIN: ____________________________", margin + boxW + 10, y + 36);
+  y += 44;
+
+  if (isGoaDomicile) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.0);
+    doc.setTextColor(133, 93, 20);
+    doc.text("SPECIAL NOTARY ENDORSEMENT BLOCK (SECTION 333, GOA ACT 23 OF 2016)", margin, y);
+    y += 3.5;
+    const goaNote = "Under Section 333 of the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012, this printed Open Will is presented before the Special Notary for official recording in the Book of Open Wills, accompanied by photo-identification and signatures of Testator and two witnesses on each page.";
+    y = printWrapped(goaNote, margin + 2, y, contentWidth - 2, 3.3, 7.2);
+    y += 2;
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineDashPattern([1.5, 1.5], 0);
+    doc.rect(margin, y, contentWidth, 14);
+    doc.setLineDashPattern([], 0);
+    doc.setFontSize(7.0);
+    doc.setTextColor(100, 116, 139);
+    doc.text("Special Notary Registration No: ____________________ Date: ____________ Margao/Panaji, Goa", margin + 4, y + 5);
+    doc.text("Signature & Seal of Special Notary: __________________________________________________", margin + 4, y + 10);
+    y += 18;
+  }
 
   // ── FOOTERS ON ALL GENERATED PAGES ──────────────────────────────
   const totalPages = doc.getNumberOfPages();
