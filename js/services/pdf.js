@@ -403,8 +403,11 @@ export async function generateEnglishWillPDF(willData) {
     ? `, ${p.gender === 'Female' ? 'D/o' : 'S/o'} ${p.fatherName.trim()}`
     : (testatorUpper.includes('RAMESH') ? ', S/o Late Shri Kailash Sharma' : '');
   const idDocStr = (p.govtIdType && p.govtIdDigits) ? ` [Identity Doc: ${p.govtIdType} Ending in XXXX-${p.govtIdDigits}]` : '';
+  const goaJurisdictionStr = isGoaDomicile
+    ? `, Indian citizen, born in Goa, married status, governed under Section 1(4) of the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016)`
+    : '';
 
-  const preambleText = `I, ${testatorUpper}${parentage}${idDocStr}, residing at ${fullAddrStr}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, being of sound disposing mind, memory, and understanding, having read over and fully understood the contents hereof in a language known to me and having approved the same, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed at ${executionPlace}, India.`;
+  const preambleText = `I, ${testatorUpper}${parentage}${idDocStr}, residing at ${fullAddrStr}, born on ${formatIndianDob(p.dob)}${goaJurisdictionStr}, professing ${p.religion || 'Hindu'} faith, being of sound disposing mind, memory, and understanding, having read over and fully understood the contents hereof in a language known to me and having approved the same, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed at ${executionPlace}, India.`;
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.0);
@@ -442,7 +445,7 @@ export async function generateEnglishWillPDF(willData) {
     ? "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Pursuant to testamentary powers recognized under Muslim Personal Law (Shariat) and the Indian Succession Act, 1925 (with execution and attestation safeguards under Section 63), I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein to the extent permitted by applicable law. In accordance with principles of Muslim testamentary law (Wasīyyat) as administered in India, bequests to non-heirs are valid up to one-third (1/3) of the net estate remaining after payment of funeral expenses and enforceable debts, while bequests exceeding one-third or made in favor of legal heirs operate subject to the consent of all other surviving legal heirs following my demise; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced."
     : isChristianParsi
       ? (isGoaDomicile
-          ? `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Where any property listed in the Schedule is colloquially, historically, or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired ownership and marketable legal title thereto by valid grant, purchase, partition, or deed, and no other coparcener, heir, or claimant possesses any undivided right, share, or interest therein. Pursuant to Part VI of the Indian Succession Act, 1925 and the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016) as amended (including substituted Section 83 under Goa Act 17 of 2023 governing the disposable quota / quota disponivel and legitime protection), I declare that the properties bequeathed herein comprise my separate, self-acquired estate and disposable portion capable of testamentary disposition; and without prejudice to statutory legitime / reserved portions where applicable, this Will shall take effect to the fullest extent permissible under law, with the Executor empowered to present this instrument for registration before the Special Notary under Section 333 of Goa Act 23 of 2016 or competent court under applicable Goa succession procedures.`
+          ? `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Where any property listed in the Schedule is colloquially, historically, or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired ownership and marketable legal title thereto by valid grant, purchase, partition, or deed, and no other co-heir or third-party claimant possesses any unpartitioned right, title, or interest therein. Pursuant to Part VI of the Indian Succession Act, 1925 and the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016) as amended by Goa Act 35 of 2023 (substituting Section 83 governing legitime and the disposable quota / quota disponivel, and Section 219 governing disposition of community property and individual moieties), I declare that the testamentary dispositions herein comprise my lawful disposable portion (quota disponivel) and separate estate/moiety capable of testamentary disposition; and without prejudice to statutory legitime / reserved portions of descendants under Section 83 or spousal residential protections under Section 82, this Will shall take effect to the fullest extent permissible under law, with the Executor empowered to present this instrument for registration before the Special Notary under Section 333 of Goa Act 23 of 2016 or competent court under applicable Goa succession procedures.`
           : `I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. Where any property listed in the Schedule is colloquially or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired ownership and marketable title thereto, and no other person possesses any coparcenary claim or undivided interest therein. Pursuant to Part VI of the Indian Succession Act, 1925 (applicable to persons professing ${p.religion || 'Christian'} faith in India), I hold full testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein, subject to Sections 59 and 63 (capacity and attestation requirements), Section 105 (anti-lapse provisions), Sections 119 and 131 (vesting and conditional gifts), and all other applicable provisions of Part VI; without prejudice to genuine third-party ownership or statutory rights that cannot legally be displaced.`)
       : "I hereby declare and affirm that all properties, assets, bank accounts, investments, and estate described in this Will are my absolute, separate, and self-acquired properties, acquired and purchased out of my own personal earnings, resources, and separate investments, held in my sole name and title. None of the properties are ancestral, coparcenary, or Hindu Undivided Family (HUF) properties, and no person or relative has any birthright, coparcenary claim, or joint family interest therein. Where any property listed in the Schedule is colloquially or descriptively styled with the word 'Ancestral' or reflects family heritage, I expressly clarify and affirm that said description is purely sentimental and nomenclature-based; I hold sole, exclusive, unencumbered, absolute self-acquired title thereto, and no other person possesses any coparcenary claim or undivided interest therein. Pursuant to Section 30 of the Hindu Succession Act, 1956 and the Indian Succession Act, 1925, I hold testamentary power to bequeath and dispose of my lawful right, title, and interest in the estate described herein that is lawfully capable of testamentary disposition, subject to all applicable statutory restrictions and reservations under Schedule III of the Indian Succession Act, 1925 — including Paragraph 1 (restricting disposition of property incapable of alienation inter vivos and preserving non-displaceable statutory maintenance rights), Paragraph 2 (preserving the rule that no interest may be created which could not have been created under Hindu law prior to 1 September 1870), Paragraph 3 (preserving applicable laws of adoption and intestate succession), Paragraph 4 (modifying Section 70 by omitting the words 'than by marriage or'; separately, the proviso to Section 57 provides that marriage shall not revoke such Will or codicil), and the statutory interpretation rules of Paragraph 5; and without prejudice to genuine third-party ownership, existing encumbrances, or statutory rights that cannot legally be displaced by testamentary declaration.";
   y = printWrapped(sec3Text, margin, y, contentWidth, 3.7, 7.9);
@@ -464,16 +467,26 @@ export async function generateEnglishWillPDF(willData) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8.2);
     doc.setTextColor(15, 23, 42);
-    doc.text("Statutory Debt Settlement Hierarchy (Sections 320 to 325, Indian Succession Act, 1925):", margin, y);
+    const debtTitle = isGoaDomicile
+      ? "Statutory Debt Settlement Hierarchy (Sections 45 & 46, Goa Succession Act, 2012 & ISA 1925):"
+      : "Statutory Debt Settlement Hierarchy (Sections 320 to 325, Indian Succession Act, 1925):";
+    doc.text(debtTitle, margin, y);
     y += 3.5;
 
-    const debts = [
-      "(i) Section 320: Funeral and death-bed expenses according to my station in life paid in priority to all debts.",
-      "(ii) Section 321: Expenses of obtaining Probate or Letters of Administration, and judicial administration expenses.",
-      "(iii) Section 322: Wages of labourers, artisans, or domestic servants rendered within three months preceding demise, followed by other debts according to statutory priority.",
-      "(iv) Section 323: Other enforceable debts paid equally and rateably out of the estate assets.",
-      "(v) Section 325: Debts of every description settled before any legacy or bequest is paid or satisfied."
-    ];
+    const debts = isGoaDomicile
+      ? [
+          "(i) Section 45 Goa Act: Funeral, death-bed, and medical expenses according to my station in life paid in priority to all debts.",
+          "(ii) Judicial, inventory, and administration expenses incurred in proving and registering this testamentary instrument.",
+          "(iii) Wages of labourers, artisans, or domestic staff rendered within statutory limitation periods.",
+          "(iv) Section 46 Goa Act: All remaining enforceable debts and public taxes discharged rateably out of estate assets prior to the satisfaction or transmission of any legacy or bequest."
+        ]
+      : [
+          "(i) Section 320: Funeral and death-bed expenses according to my station in life paid in priority to all debts.",
+          "(ii) Section 321: Expenses of obtaining Probate or Letters of Administration, and judicial administration expenses.",
+          "(iii) Section 322: Wages of labourers, artisans, or domestic servants rendered within three months preceding demise, followed by other debts according to statutory priority.",
+          "(iv) Section 323: Other enforceable debts paid equally and rateably out of the estate assets.",
+          "(v) Section 325: Debts of every description settled before any legacy or bequest is paid or satisfied."
+        ];
     debts.forEach(d => {
       y = printWrapped(d, margin + 2, y, contentWidth - 2, 3.5, 7.8);
       y += 0.8;
@@ -669,12 +682,15 @@ export async function generateEnglishWillPDF(willData) {
   y = printWrapped(sec6Text2, margin, y, contentWidth, 3.8, 8.0);
   y += 3.5;
 
-  // ── SECTION VII ──// ── SECTION VII ──────────────────────────────────────────
+  // ── SECTION VII ──────────────────────────────────────────
   ensureSpace(25);
   y = drawSectionTitle("SECTION VII", "RESIDUARY ESTATE & TRUSTEESHIP CLAUSE", y);
+  const adultBens = beneficiaries.filter(b => b && b.name && !b.relation?.toLowerCase().includes('trust') && !b.relation?.toLowerCase().includes('charity'));
+  const primaryAdultsStr = adultBens.map(b => b.name).join(', ') || 'my designated primary adult beneficiaries';
+
   const sec7Residuary = beneficiaries.length === 1
     ? `Any other property, asset, claim, refund, or investment belonging to me at my demise not specifically detailed in this Will shall devolve entirely and absolutely upon my sole designated beneficiary, ${beneficiaries[0].name || 'Beneficiary'} (${beneficiaries[0].relation || 'Beneficiary'}), to the complete exclusion of partial intestacy.`
-    : "Any other property, asset, claim, refund, dividend, or investment belonging to me at my demise not specifically detailed in this Will (comprising my entire residuary estate) shall be divided rateably among my surviving primary adult beneficiaries in equal shares, to the complete exclusion of partial intestacy.";
+    : `Any other property, asset, claim, refund, dividend, or investment belonging to me at my demise not specifically detailed in this Will (comprising my entire residuary estate) shall be divided rateably among my surviving primary adult beneficiaries (${primaryAdultsStr}) in equal shares, to the complete exclusion of partial intestacy.`;
   y = printWrapped(sec7Residuary, margin, y, contentWidth, 3.8, 8.2);
   y += 3.5;
 
@@ -686,7 +702,7 @@ export async function generateEnglishWillPDF(willData) {
   const antiLapseItems = [
     "(a) Section 109 ISA (Lineal Descendants Anti-Lapse): Pursuant to Section 109 of the Indian Succession Act, 1925, where a bequest is made to any child or lineal descendant who predeceases me leaving issue surviving me, such bequest shall not lapse but shall take effect as if the death of said legatee had happened immediately after my demise, devolving upon their surviving issue per stirpes.",
     "(b) Section 105 ISA (Other Beneficiaries & Accretion): Pursuant to Section 105 of the Indian Succession Act, 1925, if any non-lineal beneficiary predeceases me or fails to survive me by thirty (30) days without leaving a specifically named substitute legatee, their lapsed share shall accrete rateably to the surviving primary adult beneficiaries in equal shares.",
-    "(c) 30-Day Survivorship Rule: Every beneficiary must survive me by thirty (30) clear calendar days to acquire a vested testamentary interest; in the event of simultaneous death, older shall be deemed to have predeceased younger.",
+    "(c) 30-Day Survivorship & Simultaneous Demise Presumption: Every beneficiary must survive me by thirty (30) clear calendar days to acquire a vested testamentary interest. In the event of simultaneous demise in a common calamity where the exact order of survivorship cannot be established, simultaneous death is presumed pursuant to Section 7 of the Goa Succession Act, 2012 (and Section 21 of the Hindu Succession Act, 1956 where applicable), with no inter-se transmission of property between such simultaneously deceased persons.",
     "(d) Adopted & Conceived Descendants: Legally adopted children and any child conceived before my demise and born alive thereafter qualify fully within the definition of lineal descendants."
   ];
   antiLapseItems.forEach(ai => {
@@ -770,58 +786,67 @@ export async function generateEnglishWillPDF(willData) {
 
   // Witness Boxes Side by Side
   const boxW = (contentWidth - 6) / 2; // ~86mm
-  const boxH = 42;
+  const boxH = 32;
   doc.setDrawColor(148, 163, 184);
   doc.rect(margin, y, boxW, boxH);
   doc.rect(margin + boxW + 6, y, boxW, boxH);
 
   // Witness 1
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.2);
+  doc.setFontSize(8.0);
   doc.setTextColor(133, 93, 20);
-  doc.text("WITNESS 1", margin + 4, y + 5);
+  doc.text("WITNESS 1", margin + 4, y + 4.5);
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.6);
+  doc.setFontSize(7.2);
   doc.setTextColor(15, 23, 42);
-  doc.text("Signature: ____________________________________", margin + 4, y + 12);
-  doc.text("Full Name: ___________________________________", margin + 4, y + 18);
-  doc.text("S/o, D/o, W/o: ________________________________", margin + 4, y + 24);
-  doc.text("Residential Address: __________________________", margin + 4, y + 30);
-  doc.text("City / State / PIN: ____________________________", margin + 4, y + 36);
+  doc.text("Signature: ____________________________________", margin + 4, y + 10);
+  doc.text("Full Name: ___________________________________", margin + 4, y + 15);
+  doc.text("S/o, D/o, W/o: ________________________________", margin + 4, y + 20);
+  doc.text("Residential Address: __________________________", margin + 4, y + 25);
+  doc.text("City / State / PIN: ____________________________", margin + 4, y + 30);
 
   // Witness 2
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.2);
+  doc.setFontSize(8.0);
   doc.setTextColor(133, 93, 20);
-  doc.text("WITNESS 2", margin + boxW + 10, y + 5);
+  doc.text("WITNESS 2", margin + boxW + 10, y + 4.5);
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.6);
+  doc.setFontSize(7.2);
   doc.setTextColor(15, 23, 42);
-  doc.text("Signature: ____________________________________", margin + boxW + 10, y + 12);
-  doc.text("Full Name: ___________________________________", margin + boxW + 10, y + 18);
-  doc.text("S/o, D/o, W/o: ________________________________", margin + boxW + 10, y + 24);
-  doc.text("Residential Address: __________________________", margin + boxW + 10, y + 30);
-  doc.text("City / State / PIN: ____________________________", margin + boxW + 10, y + 36);
-  y += 44;
+  doc.text("Signature: ____________________________________", margin + boxW + 10, y + 10);
+  doc.text("Full Name: ___________________________________", margin + boxW + 10, y + 15);
+  doc.text("S/o, D/o, W/o: ________________________________", margin + boxW + 10, y + 20);
+  doc.text("Residential Address: __________________________", margin + boxW + 10, y + 25);
+  doc.text("City / State / PIN: ____________________________", margin + boxW + 10, y + 30);
+  y += 34;
 
   if (isGoaDomicile) {
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8.0);
+    doc.setFontSize(7.8);
     doc.setTextColor(133, 93, 20);
-    doc.text("SPECIAL NOTARY ENDORSEMENT BLOCK (SECTION 333, GOA ACT 23 OF 2016)", margin, y);
-    y += 3.5;
-    const goaNote = "Under Section 333 of the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012, this printed Open Will is presented before the Special Notary for official recording in the Book of Open Wills, accompanied by photo-identification and signatures of Testator and two witnesses on each page.";
-    y = printWrapped(goaNote, margin + 2, y, contentWidth - 2, 3.3, 7.2);
-    y += 2;
+    doc.text("SPECIAL NOTARY ENDORSEMENT & PHOTOGRAPH (SECTION 333, GOA ACT 23 OF 2016)", margin, y);
+    y += 3.2;
+
+    const notBoxW = contentWidth - 34;
     doc.setDrawColor(148, 163, 184);
     doc.setLineDashPattern([1.5, 1.5], 0);
-    doc.rect(margin, y, contentWidth, 14);
+    doc.rect(margin, y, notBoxW, 23);
+    // Passport photo box on right
+    doc.rect(pageWidth - margin - 30, y, 30, 23);
     doc.setLineDashPattern([], 0);
-    doc.setFontSize(7.0);
+
+    doc.setFontSize(6.8);
     doc.setTextColor(100, 116, 139);
-    doc.text("Special Notary Registration No: ____________________ Date: ____________ Margao/Panaji, Goa", margin + 4, y + 5);
-    doc.text("Signature & Seal of Special Notary: __________________________________________________", margin + 4, y + 10);
-    y += 18;
+    doc.text("Passport Photo", pageWidth - margin - 15, y + 8, { align: "center" });
+    doc.text("of Testator", pageWidth - margin - 15, y + 12, { align: "center" });
+    doc.text("(Special Notary Certified", pageWidth - margin - 15, y + 16, { align: "center" });
+    doc.text("Sec 333(5))", pageWidth - margin - 15, y + 20, { align: "center" });
+
+    doc.text("Presented in person before the Special Notary by Testator and 2 attesting witnesses.", margin + 4, y + 5);
+    doc.text("Special Notary Reg. No: ____________________ Date: ____________ Margao/Panaji, Goa", margin + 4, y + 10);
+    doc.text("Book of Open Wills Entry / Page: ____________________ Vol: ____________", margin + 4, y + 15);
+    doc.text("Seal & Signature of Special Notary, State of Goa: ____________________________", margin + 4, y + 20);
+    y += 25;
   }
 
   // ── FOOTERS ON ALL GENERATED PAGES ──────────────────────────────
