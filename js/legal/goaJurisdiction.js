@@ -221,15 +221,27 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     }
   } else if (context.testatorName && verifiedParties) {
     const tNameLower = context.testatorName.toLowerCase();
-    const parentMatches = (context.parentNames || []).some(pName => pName && vpLower.includes(pName.toLowerCase()));
+    const isSpecialDocMatch = vpLower.includes('property survey record') ||
+      (docType === JURISDICTION_DOCUMENT_TYPES.SPECIAL_MARRIAGE_CERTIFICATE && (vpLower.includes('spouse') || vpLower.includes('married')));
 
-    // Strict testator match
-    if (context.strictTestatorMatch === true && !vpLower.includes(tNameLower) && !parentMatches) {
-      return {
-        isValid: false,
-        blockerCode: "ERR_PARTY_MISMATCH",
-        reason: `Evidence record verified parties '${verifiedParties}' does not match testator '${context.testatorName}' or parents.`
-      };
+    // Strict testator match: MUST match testator directly; parent names cannot substitute
+    if (context.strictTestatorMatch === true) {
+      if (!vpLower.includes(tNameLower) && !isSpecialDocMatch) {
+        return {
+          isValid: false,
+          blockerCode: "ERR_PARTY_MISMATCH",
+          reason: `Evidence record verified parties '${verifiedParties}' does not match testator '${context.testatorName}'. Parent records cannot establish testator's own legal status.`
+        };
+      }
+    } else {
+      const parentMatches = (context.parentNames || []).some(pName => pName && vpLower.includes(pName.toLowerCase()));
+      if (!vpLower.includes(tNameLower) && !isSpecialDocMatch && !parentMatches) {
+        return {
+          isValid: false,
+          blockerCode: "ERR_PARTY_MISMATCH",
+          reason: `Evidence record verified parties '${verifiedParties}' does not match testator '${context.testatorName}' or parents.`
+        };
+      }
     }
   }
 
@@ -256,11 +268,11 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
       reason: "Document hash matches empty-file SHA-256 (e3b0c442...). Zero-byte files cannot serve as legal evidence."
     };
   }
-  if (docHash === ALL_ZEROS_SHA256) {
+  if (docHash === ALL_ZEROS_SHA256 || /^([0-9a-f])\1{63}$/i.test(docHash)) {
     return {
       isValid: false,
       blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
-      reason: "Document hash is all zeros, representing an uncomputed or forged hash."
+      reason: "Document hash is trivial or all identical characters, representing an uncomputed or forged hash."
     };
   }
 
@@ -272,7 +284,18 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
-  if (record.computedHash && record.computedHash.trim().toLowerCase() !== docHash) {
+  // MANDATORY SERVER COMPUTED HASH COMPARISON:
+  // Cannot be bypassed by omitting computedHash. Computed file bytes hash must match documentHash.
+  const computedHash = (record.computedHash || '').trim().toLowerCase();
+  if (!computedHash || !SHA256_HEX_REGEX.test(computedHash)) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Missing or invalid computed server document bytes SHA-256 hash. Document hash must be verified against recomputed bytes."
+    };
+  }
+
+  if (computedHash !== docHash) {
     return {
       isValid: false,
       blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
@@ -405,9 +428,29 @@ export function classifyGoaJurisdiction(p = {}) {
 
   const rawAddr = `${p.addressLine1 || ''} ${p.addressLine2 || ''} ${p.addressCity || ''} ${p.addressState || ''}`.toLowerCase();
   const isGoaResident = rawAddr.includes('goa') || rawAddr.includes('margao') || rawAddr.includes('panaji') || rawAddr.includes('vasco') || rawAddr.includes('mapusa');
+  const hasGoaAncestralConnection = Boolean(p.hasGoaAncestryClaim || p.hasGoaProperty);
+  const hasGoaNexus = isGoaResident ||
+    hasGoaAncestralConnection ||
+    p.pre1961PortugueseRegime === true ||
+    p.parentsPortugueseRegime !== undefined ||
+    p.parentsCivilCode1867 !== undefined ||
+    p.parentsRestOfIndiaGoverned !== undefined ||
+    Boolean(p.statutoryElectionClauseD || p.statutoryElectionGoa || p.tenYearResidencyClaim || p.marriageToGoanClaim || p.isAdopted) ||
+    Boolean(p.clauseAEvidence || p.clauseBEvidence || p.clauseCEvidence || p.clauseDEvidence || p.clauseEEvidence || p.clauseFEvidence || p.clauseGEvidence);
 
   const testatorPob = (p.pob || p.placeOfBirth || '').trim().toLowerCase();
-  const isTestatorBornGoa = testatorPob.includes('goa') || testatorPob.includes('margao') || testatorPob.includes('panaji') || testatorPob.includes('vasco') || testatorPob.includes('mapusa');
+  if (hasGoaNexus && !testatorPob) {
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Place of birth is required to evaluate applicability of the Goa Succession Act, 2016 under Section 1(4). Missing place of birth prevents statutory classification.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Section 1(4) Birthplace Unconfirmed",
+      applicableAct: "Unconfirmed",
+      reasons: ["Place of birth is mandatory to determine jurisdiction under Section 1(4)."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
+  const isTestatorBornGoa = testatorPob ? (testatorPob.includes('goa') || testatorPob.includes('margao') || testatorPob.includes('panaji') || testatorPob.includes('vasco') || testatorPob.includes('mapusa')) : false;
 
   // Daman and Diu Check: Daman & Diu succession matters are governed by their own local succession regime
   // and are NOT automatically governed by Goa Act 23 of 2016.
@@ -805,13 +848,20 @@ export function classifyGoaJurisdiction(p = {}) {
       // CRITICAL REVISION 7 FIX: Negative Boolean cannot establish rest-of-India status!
       // Must require verified documentary evidence of parents' rest-of-India status under Section 1(4)(d).
       const parentsRoiRecord = p.parentsRestOfIndiaEvidence || p.clauseDEvidence?.parentsEvidence || jurEv.parentsRestOfIndia;
+      const parentRoiContext = {
+        requiredSubject: 'PARENTS',
+        testatorName: p.fullName,
+        parentNames,
+        strictSubjectMatch: true
+      };
       const parentsRoiCheck = validateJurisdictionEvidence(parentsRoiRecord, [
         JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
         JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-      ]);
+      ], parentRoiContext);
 
       if (!parentsRoiCheck.isValid) {
-        blockers.push(`ERR_GOA_JURISDICTION_UNCONFIRMED: For a testator born in Goa, negative subjection to the Portuguese Civil Code cannot be established by a self-entered Boolean. Documentary evidence establishing parents' rest-of-India legal regime is mandatory. ${parentsRoiCheck.reason}`);
+        const blockerCode = parentsRoiCheck.blockerCode === 'ERR_PARTY_MISMATCH' ? 'ERR_PARTY_MISMATCH' : 'ERR_GOA_JURISDICTION_UNCONFIRMED';
+        blockers.push(`${blockerCode}: For a testator born in Goa, negative subjection to the Portuguese Civil Code cannot be established by a self-entered Boolean. Documentary evidence establishing parents' rest-of-India legal regime is mandatory. ${parentsRoiCheck.reason}`);
         return {
           status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
           statutoryClause: "Section 1(4)(d) Parents' Rest-of-India Evidence Required",
@@ -958,59 +1008,47 @@ export function classifyGoaJurisdiction(p = {}) {
   // Therefore, parental succession regime must be affirmatively declared and established.
   // Missing parental status or a bare negative Boolean without rest-of-India origin cannot rule out Section 1(4)(c).
   const isTestatorBornOutsideGoa = Boolean(testatorPob) && !isTestatorBornGoa;
-  const hasGoaAncestralConnection = Boolean(p.hasGoaAncestryClaim || p.hasGoaProperty);
 
   if (isTestatorBornOutsideGoa || hasGoaAncestralConnection) {
-    if (parentsStatusUnrecorded) {
-      blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Testator born outside Goa (or declaring Goa ancestral nexus), but parental succession status is unrecorded. Section 1(4)(c) applicability cannot be ruled out without affirmative parental regime declaration.");
+    // Under Section 1(4)(c), any person born outside Goa to parents governed by the Portuguese Civil Code of 1867
+    // is governed by the Goa Succession Act unless an affirmative opt-out was executed before the Special Notary.
+    // Self-entered booleans (e.g. parentsCivilCode1867: false, parentsPortugueseRegime: false, parentsRestOfIndiaGoverned: true)
+    // CANNOT establish rest-of-India governing law or rule out Section 1(4)(c).
+    // Affirmative verified documentary evidence of parents' rest-of-India regime is strictly mandatory.
+    const parentsRoiRecord = p.parentsRestOfIndiaEvidence || jurEv.parentsRestOfIndia;
+    if (!parentsRoiRecord) {
+      blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: For a testator born outside Goa (or declaring Goa ancestral nexus), parental succession status cannot be established by self-entered Booleans (parentsPortugueseRegime: false / parentsCivilCode1867: false / parentsRestOfIndiaGoverned: true). Documentary evidence establishing parents' rest-of-India civil origin or domicile is mandatory under Section 1(4)(c).");
       return {
         status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
         statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
         applicableAct: "Unconfirmed",
-        reasons: ["Parental civil code status must be affirmatively declared under Section 1(4)(c)."],
+        reasons: ["Documentary proof of parents' rest-of-India civil origin or domicile is mandatory to rule out Section 1(4)(c)."],
         blockers,
         canGenerateWill: false
       };
     }
 
-    if (claimsParentsRestOfIndia) {
-      // REVISION 9 FIX: Self-entered boolean (parentsRestOfIndiaGoverned: true / parentsPortugueseRegime: false)
-      // CANNOT establish rest-of-India governing regime under Section 1(4)(c) without verified documentary evidence!
-      const parentsRoiRecord = p.parentsRestOfIndiaEvidence || jurEv.parentsRestOfIndia;
-      if (!parentsRoiRecord) {
-        blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: For a testator born outside Goa (or claiming Goa ancestral nexus), a self-entered Boolean (parentsRestOfIndiaGoverned: true / parentsPortugueseRegime: false) is legally insufficient. Documentary evidence establishing parents' rest-of-India governing law is mandatory under Section 1(4)(c).");
-        return {
-          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-          statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
-          applicableAct: "Unconfirmed",
-          reasons: ["Documentary proof of parents' rest-of-India civil origin or domicile is mandatory to rule out Section 1(4)(c)."],
-          blockers,
-          canGenerateWill: false
-        };
-      }
+    const parentRoiContext = {
+      requiredSubject: 'PARENTS',
+      testatorName: p.fullName,
+      parentNames,
+      strictSubjectMatch: true
+    };
+    const parentsRoiCheck = validateJurisdictionEvidence(parentsRoiRecord, [
+      JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
+      JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
+    ], parentRoiContext);
 
-      const parentRoiContext = {
-        requiredSubject: 'PARENTS',
-        testatorName: p.fullName,
-        parentNames,
-        strictSubjectMatch: true
+    if (!parentsRoiCheck.isValid) {
+      blockers.push(`${parentsRoiCheck.blockerCode || 'ERR_GOA_JURISDICTION_UNCONFIRMED'}: Parents' rest-of-India evidence under Section 1(4)(c) is invalid or unverified. ${parentsRoiCheck.reason}`);
+      return {
+        status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+        statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
+        applicableAct: "Unconfirmed",
+        reasons: ["Documentary proof of parents' rest-of-India legal regime is unverified."],
+        blockers,
+        canGenerateWill: false
       };
-      const parentsRoiCheck = validateJurisdictionEvidence(parentsRoiRecord, [
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-      ], parentRoiContext);
-
-      if (!parentsRoiCheck.isValid) {
-        blockers.push(`${parentsRoiCheck.blockerCode || 'ERR_GOA_JURISDICTION_UNCONFIRMED'}: Parents' rest-of-India evidence under Section 1(4)(c) is invalid or unverified. ${parentsRoiCheck.reason}`);
-        return {
-          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-          statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
-          applicableAct: "Unconfirmed",
-          reasons: ["Documentary proof of parents' rest-of-India legal regime is unverified."],
-          blockers,
-          canGenerateWill: false
-        };
-      }
     }
   }
 
