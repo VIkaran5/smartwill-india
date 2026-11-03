@@ -51,11 +51,20 @@ export function calculateDraftReadinessIndex(willData = {}) {
   if (willData.beneficiaries && willData.beneficiaries.length > 0) scoreB += 10;
 
   // Pillar C: Title & Asset Evidence (20 pts)
+  // CRITICAL: A mere typed registration number string NEVER awards title points.
+  // Requires verified primary registered title deed type.
   if (assets.length > 0) {
     let titleVerifiedCount = 0;
     assets.forEach(a => {
       const details = a.details || {};
-      if (details.registrationNumber || a.titleDocType === 'REGISTERED_SALE_DEED' || a.titleDocType === 'REGISTERED_PARTITION_DEED') {
+      const docType = details.titleDocType || a.titleDocType;
+      const hasVerifiedDeed = docType === 'REGISTERED_SALE_DEED' ||
+        docType === 'REGISTERED_PARTITION_DEED' ||
+        docType === 'FINAL_INVENTORY_DECREE' ||
+        docType === 'GOVERNMENT_GRANT' ||
+        docType === 'REGISTERED_GIFT_DEED';
+
+      if (hasVerifiedDeed) {
         titleVerifiedCount++;
       }
     });
@@ -65,8 +74,10 @@ export function calculateDraftReadinessIndex(willData = {}) {
 
   // Pillar D: Formatting & Section 333 Compliance (15 pts)
   if (isGoa) {
-    if (p.motherName && p.occupation && p.maritalStatus) scoreD += 10;
-    scoreD += 5; // Section 333 double-spaced engine active
+    if (p.motherName && p.occupation && p.maritalStatus && p.age) scoreD += 10;
+    if (willData.witnesses && willData.witnesses.length >= 2 && willData.witnesses.every(w => w.name && (w.address || w.idProof))) {
+      scoreD += 5; // Creditworthy witnesses with verified particulars
+    }
   } else {
     scoreD += 15; // Standard Indian Succession Act formatting
   }
@@ -78,7 +89,16 @@ export function calculateDraftReadinessIndex(willData = {}) {
 
   let totalScore = scoreA + scoreB + scoreC + scoreD + scoreE;
 
-  // Enforce Blocker Rule: If any mandatory blocker exists, cap score at 75 and set status to INCOMPLETE
+  // Enforce Advocate Verification Gate for 96+ Score
+  // Under the forensic standard, 96-100 (VERIFIED EXECUTION DRAFT) is strictly blocked
+  // without documented independent advocate review sign-off.
+  const advocate = willData.advocateReviewSignOff || willData.advocateReview || {};
+  const hasDocumentedAdvocateReview = Boolean(
+    advocate.advocateName &&
+    advocate.enrollmentNumber &&
+    advocate.reviewDate
+  );
+
   let statusBadge = DRAFT_STATUS_BANDS.INCOMPLETE;
 
   if (audit.totalBlockersCount > 0) {
@@ -86,7 +106,13 @@ export function calculateDraftReadinessIndex(willData = {}) {
     statusBadge = DRAFT_STATUS_BANDS.INCOMPLETE;
   } else {
     if (totalScore >= 96) {
-      statusBadge = DRAFT_STATUS_BANDS.VERIFIED_EXECUTION_DRAFT;
+      if (hasDocumentedAdvocateReview) {
+        statusBadge = DRAFT_STATUS_BANDS.VERIFIED_EXECUTION_DRAFT;
+      } else {
+        // Without advocate sign-off, cap at 85/100 and designate Ready for Notary Presentation
+        totalScore = Math.min(totalScore, 85);
+        statusBadge = DRAFT_STATUS_BANDS.READY_FOR_NOTARY_REVIEW;
+      }
     } else if (totalScore >= 80) {
       statusBadge = DRAFT_STATUS_BANDS.READY_FOR_NOTARY_REVIEW;
     } else {
@@ -94,9 +120,15 @@ export function calculateDraftReadinessIndex(willData = {}) {
     }
   }
 
-  // Check if actual notarial execution details are entered (post-execution)
+  // Post-execution: Authenticated Special Notary Verification Record
   const notaryData = willData.specialNotaryExecution || {};
-  if (notaryData.registrationNumber && notaryData.bookVolume && notaryData.executionDate) {
+  if (
+    notaryData.isNotaryAuthenticated &&
+    notaryData.registrationNumber &&
+    notaryData.bookVolume &&
+    notaryData.executionDate &&
+    notaryData.notaryName
+  ) {
     statusBadge = DRAFT_STATUS_BANDS.NOTARIAL_EXECUTION_COMPLETED;
   }
 

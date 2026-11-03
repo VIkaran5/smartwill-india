@@ -88,19 +88,21 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
       });
     }
 
-    // Gate 4: Matrimonial Moiety Violation (Section 219)
+    // Gate 4: Section 219 Statutory Nullity for Specific Community Asset Bequest
     if (isGoa) {
       const mat = evaluateAssetMatrimonialOwnership(asset, willData.matrimonial || {});
       const allocs = asset.allocations || [];
-      let totalAllocPct = 0;
-      allocs.forEach(al => { totalAllocPct += (Number(al.percentage) || 0); });
+      const hasSpecificAllocations = allocs.length > 0;
 
-      if (mat.isCommunity && totalAllocPct > 50) {
-        // If testator purports to bequeath 100% of community property without spouse consent
-        warnings.push({
-          code: "WARN_COMMUNITY_MOIETY",
-          clause: `Section V — Asset #${idx + 1}`,
-          description: `Testator has allocated ${totalAllocPct}% of community asset. Under Section 219, testamentary disposition is legally restricted to testator's 50% moiety (meação).`
+      if (mat.isDispositionProhibited && hasSpecificAllocations) {
+        blockers.push({
+          code: "ERR_SECTION219_PROHIBITED_DISPOSITION",
+          page: `Page ${Math.min(3 + idx, 5)}`,
+          clause: `Section V — Asset #${idx + 1} (${asset.desc || asset.type || 'Community Asset'})`,
+          errorDescription: "Under Section 219 of Goa Act 23 of 2016, disposition of a specific, determined asset of the marital community prior to partition is NULL AND VOID. It cannot be bequeathed to third parties without an applicable statutory exception.",
+          applicableStatute: "Section 219, Goa Succession Act, 2012 (Goa Act 23 of 2016)",
+          requiredCorrection: "Provide registered partition allotment deed, proof of separate asset, bequest exclusively to spouse, or registered Special Notary spouse consent.",
+          preventsGeneration: true
         });
       }
     }

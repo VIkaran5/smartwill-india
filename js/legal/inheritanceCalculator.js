@@ -85,8 +85,15 @@ export function calculateGoaInheritance(willData = {}) {
     };
   }
 
-  // 2. Calculate Enforceable Debts of the Estate (Section 45(3))
+  // 2. Calculate Enforceable Debts of the Estate (Section 45(3) of Goa Act 23 of 2016)
   let totalDebts = 0;
+  const debtsDeclared = Array.isArray(debts) && debts.length > 0;
+  const noDebtsExplicitlyDeclared = Boolean(willData.hasNoEnforceableDebtsDeclared || willData.noDebtsDeclared);
+
+  if (!debtsDeclared && !noDebtsExplicitlyDeclared) {
+    warnings.push("Explicit Debt Declaration Recommended: No enforceable debts declared. Affirmative confirmation that estate has zero enforceable debts is recommended under Section 45.");
+  }
+
   debts.forEach(d => {
     const val = Number(d.amount);
     if (!isNaN(val) && val > 0) {
@@ -95,15 +102,29 @@ export function calculateGoaInheritance(willData = {}) {
   });
 
   // 3. Section 89(1) & (2): Value of ALL Assets Gifted during Lifetime
-  // CRUCIAL: Section 89 base adds ALL lifetime gifts, not merely collatable gifts.
+  // Evaluated at the time of opening of inheritance (Section 89(2)).
+  // Statutory Exception: Gifted property that perished without the fault of the donee is excluded.
   let totalAllLifetimeGifts = 0;
-  let descendantCollationAdvancements = 0; // Collation under Sections 90-97
-  let thirdPartyLifetimeGifts = 0;         // Subject to reduction under Sections 98-105
+  let descendantCollationAdvancements = 0; // Collation under Sections 90-109
+  let thirdPartyLifetimeGifts = 0;         // Subject to reduction under Sections 110-121
+  const giftsDeclared = Array.isArray(lifetimeGifts) && lifetimeGifts.length > 0;
+  const noGiftsExplicitlyDeclared = Boolean(willData.hasNoLifetimeGiftsDeclared || willData.noGiftsDeclared);
+
+  if (!giftsDeclared && !noGiftsExplicitlyDeclared) {
+    warnings.push("Explicit Lifetime Gift Declaration Recommended: No lifetime gifts declared. Affirmative confirmation that testator made no lifetime gifts is recommended under Section 89.");
+  }
 
   lifetimeGifts.forEach(g => {
-    const val = Number(g.value);
-    if (!isNaN(val) && val > 0) {
-      totalAllLifetimeGifts += val; // Section 89(1) mandate: ALL lifetime gifts
+    // Section 89(2) Exception: Property perished without fault of the donee is excluded
+    if (g.hasPerishedWithoutFault || g.perishedFortuitously) {
+      warnings.push(`Section 89(2) Exemption: Gift of ${g.desc || 'property'} excluded from computation base because it perished fortuitously without donee's fault.`);
+      return;
+    }
+
+    // Section 89(2): Value of gifted asset at opening of inheritance
+    const rawVal = Number(g.valueAtOpeningOfInheritance || g.value);
+    if (!isNaN(rawVal) && rawVal > 0) {
+      totalAllLifetimeGifts += rawVal;
 
       const isDescendant = g.isForcedHeir ||
         g.recipientRelation?.toLowerCase().includes('child') ||
@@ -111,43 +132,72 @@ export function calculateGoaInheritance(willData = {}) {
         g.recipientRelation?.toLowerCase().includes('daughter');
 
       if (isDescendant) {
-        descendantCollationAdvancements += val; // Sections 90-97
+        descendantCollationAdvancements += rawVal; // Sections 90-109 Collation
       } else {
-        thirdPartyLifetimeGifts += val; // Sections 98-105
+        thirdPartyLifetimeGifts += rawVal; // Sections 110-121 Reduction
       }
     }
   });
 
   // 4. Section 89 Statutory Base Formula:
   // Base = (Assets at Death - Enforceable Debts) + ALL Lifetime Gifts
-  const netAssetsAtDeath = Math.max(0, testatorMoietyAssetValue - totalDebts);
-  const section89ComputationBase = netAssetsAtDeath + totalAllLifetimeGifts;
+  const netAssetsAtDeath = testatorMoietyAssetValue - totalDebts;
+  if (netAssetsAtDeath < 0) {
+    blockers.push(`ESTATE DEFICIENCY DETECTED: Enforceable estate debts (₹${totalDebts.toLocaleString('en-IN')}) exceed the testator's moiety asset value (₹${testatorMoietyAssetValue.toLocaleString('en-IN')}) by ₹${Math.abs(netAssetsAtDeath).toLocaleString('en-IN')}. Under Section 45, estate is insolvent.`);
+  }
 
-  // 5. Section 83 Forced Share Hierarchy (Goa Amendment Act 35 of 2023)
-  const descendants = beneficiaries.filter(b => b && b.relation && (
+  const section89ComputationBase = Math.max(0, netAssetsAtDeath) + totalAllLifetimeGifts;
+
+  // 5. Section 83 Forced Share Hierarchy (Substituted by Goa Amendment Act 35 of 2023)
+  // CRITICAL: Determine forced heirs from complete family structure (independent of Will beneficiaries)
+  // to prevent intentionally omitted heirs from escaping forced legitime.
+  const family = willData.familyStructure || {};
+  const familyChildren = Array.isArray(family.children) ? family.children : [];
+  const familyDescendants = Array.isArray(family.descendants) ? family.descendants : [];
+  const familyParents = Array.isArray(family.parents) ? family.parents : [];
+  const familyOtherAscendants = Array.isArray(family.otherAscendants) ? family.otherAscendants : [];
+
+  const beneficiaryDescendants = beneficiaries.filter(b => b && b.relation && (
     b.relation.toLowerCase().includes('son') ||
     b.relation.toLowerCase().includes('daughter') ||
-    b.relation.toLowerCase().includes('child')
+    b.relation.toLowerCase().includes('child') ||
+    b.relation.toLowerCase().includes('grandchild')
   ));
-  const hasSpouse = beneficiaries.some(b => b && b.relation && b.relation.toLowerCase().includes('spouse'));
-  const hasParents = beneficiaries.some(b => b && b.relation && (b.relation.toLowerCase().includes('father') || b.relation.toLowerCase().includes('mother')));
 
-  let legitimeRatio = 0.50; // Default 50% when descendants survive
+  const hasDescendants = (familyChildren.length > 0) || (familyDescendants.length > 0) || (beneficiaryDescendants.length > 0);
+  const hasSpouse = Boolean(family.hasSurvivingSpouse || family.spouse || beneficiaries.some(b => b && b.relation && b.relation.toLowerCase().includes('spouse')));
+  const hasParents = (familyParents.length > 0) || beneficiaries.some(b => {
+    if (!b || !b.relation) return false;
+    const r = b.relation.toLowerCase();
+    return (r === 'father' || r === 'mother') ||
+      (r.includes('father') && !r.includes('grandfather') && !r.includes('forefather')) ||
+      (r.includes('mother') && !r.includes('grandmother'));
+  });
+  const hasOtherAscendants = (familyOtherAscendants.length > 0) ||
+    Boolean(family.hasOtherAscendants) ||
+    beneficiaries.some(b => b && b.relation && (b.relation.toLowerCase().includes('grandparent') || b.relation.toLowerCase().includes('grandfather') || b.relation.toLowerCase().includes('grandmother') || b.relation.toLowerCase().includes('ascendant')));
+
+  let legitimeRatio = 0.50;
   let legitimeDescription = "Descendants survive: Statutory legitime is 50% of the Section 89 computation base.";
   let disposableRatio = 0.50;
 
-  if (descendants.length > 0) {
+  if (hasDescendants) {
     legitimeRatio = 0.50;
     disposableRatio = 0.50;
-    legitimeDescription = `Descendants (${descendants.length} surviving) receive 50% collective forced legitime under substituted Section 83. Disposable quota is 50%.`;
+    legitimeDescription = "Descendants survive: Collective forced legitime is 50% of the Section 89 computation base under substituted Section 83. Disposable quota is 50%.";
   } else if (hasSpouse) {
     legitimeRatio = 1.00;
     disposableRatio = 0.00;
-    legitimeDescription = "No descendants; Spouse survives: Legitime constitutes the entire inheritance (100%) under substituted Section 83.";
+    legitimeDescription = "No descendants; Spouse survives: Legitime constitutes the entire inheritance (100%) under substituted Section 83. Disposable quota is 0%.";
   } else if (hasParents) {
     legitimeRatio = 1.00;
     disposableRatio = 0.00;
-    legitimeDescription = "No descendants or spouse; Parents survive: Legitime constitutes the entire inheritance (100%) under substituted Section 83.";
+    legitimeDescription = "No descendants or spouse; Parents survive: Legitime constitutes the entire inheritance (100%) under substituted Section 83. Disposable quota is 0%.";
+  } else if (hasOtherAscendants) {
+    // Section 83(d): Other ascendants survive
+    legitimeRatio = 1 / 3;
+    disposableRatio = 2 / 3;
+    legitimeDescription = "No descendants, spouse, or parents; Other ascendants survive: Legitime is one-third (1/3) of the Section 89 computation base under substituted Section 83(d). Disposable quota is two-thirds (2/3).";
   } else {
     legitimeRatio = 0.00;
     disposableRatio = 1.00;
@@ -175,7 +225,7 @@ export function calculateGoaInheritance(willData = {}) {
   const isCompliant = excess <= 0 || (disposableRatio === 0.50 && Math.abs(excess) < 1.0); // Allow rounding cents
 
   if (!isCompliant && disposableRatio < 1.0) {
-    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 BREACH): Total testamentary bequests (₹${totalBequestValue.toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${statutoryDisposableQuota.toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to reduction under Sections 98 onwards.`);
+    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 BREACH): Total testamentary bequests (₹${totalBequestValue.toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${statutoryDisposableQuota.toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to statutory reduction under Sections 110 to 121 (Section 111 legacies reduced first pro-rata; Section 113 inter vivos gifts reduced in reverse chronological order).`);
   }
 
   return {

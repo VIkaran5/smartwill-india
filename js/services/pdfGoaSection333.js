@@ -2,16 +2,18 @@
  * SmartWill India — Legal Engine 2.1
  * Dedicated Section 333 Printed Open Will PDF Generator (Goa Act 23 of 2016)
  *
- * Implements the full procedural lifecycle under Section 333(1) to (8):
- * 1. Physical: A4, Left 50mm, Top 30mm, Bottom 30mm, Right 10mm margins.
- * 2. Spacing: Double line spacing throughout. Continuous printing.
- * 3. Section 333(2): Top (above first line) and Bottom (below last line) signature zones on EVERY page.
- * 4. Mandatory personal metadata: Mother's name, occupation, marital status, age, residence.
- * 5. Numbers in words throughout, with technical ID strings flagged for Special Notary confirmation.
- * 6. Section 333(3) Special Notary personal presentation record.
- * 7. Section 333(4) Reading record aloud in presence of testator & 2 witnesses.
- * 8. Section 333(5) Passport photograph area (35mm x 45mm) with cross-signature certification line.
- * 9. Section 333(6)–(8) Book of Open Wills entry placeholders.
+ * Implements the full statutory procedural lifecycle under Section 333(1) to (8):
+ * 1. Physical Layout: ISO A4 (210 x 297mm), Left 50mm, Top 30mm, Bottom 30mm, Right 10mm margins.
+ * 2. Spacing & Typography: Strict double line spacing throughout with font state preservation.
+ * 3. Section 333(2): Signatures of Testator and 2 Creditworthy Witnesses positioned IMMEDIATELY
+ *    ABOVE the first line and IMMEDIATELY BELOW the last line on EVERY page.
+ * 4. Words for Numbers & Dates (Section 333(1)(b)): All legal dates, ages, monetary amounts,
+ *    fractions, and percentages written out in words.
+ * 5. Pre-flight Guard: Fatal blockers on missing mandatory parentage/occupation metadata (no dummy placeholders).
+ * 6. Section 333(3) & (4): Continuous, uninterrupted Special Notary presentation and reading aloud record.
+ * 7. Section 333(5): Official 35mm x 45mm passport photograph box with cross-signature line.
+ * 8. Section 333(7): Documented District Special Notary administrative 200-sheet binding workflow.
+ * 9. Section 333(8): Language rejection statutory protocol and public-Will alternative.
  * 10. Watermarked: DRAFT FOR SPECIAL NOTARY EXECUTION (UNEXECUTED).
  */
 
@@ -20,22 +22,10 @@ import { calculateGoaInheritance } from '../legal/inheritanceCalculator.js';
 import { generateNominationClause } from '../legal/nominationRules.js';
 import { generateStatutoryDebtHierarchy } from '../legal/trusteeMinorRules.js';
 
-export function formatIndianDob(dobStr) {
-  if (!dobStr) return 'DD/MM/YYYY';
-  const trimmed = String(dobStr).trim();
-  if (trimmed.includes('-')) {
-    const parts = trimmed.split('-');
-    if (parts.length === 3 && parts[0].length === 4) {
-      return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-  }
-  return trimmed;
-}
-
 /**
  * Converts integers to formal Indian English words.
  */
-function numberToWords(num) {
+export function numberToWords(num) {
   if (num === 0) return 'zero';
   if (!num || isNaN(num)) return String(num);
 
@@ -54,39 +44,70 @@ function numberToWords(num) {
   return toWords(Math.floor(num));
 }
 
+/**
+ * Converts calendar dates into formal legal words (Section 333(1)(b)).
+ * e.g., "1964-05-15" -> "fifteenth day of May nineteen hundred and sixty-four"
+ */
+export function formatDateToFormalWords(dateStr) {
+  if (!dateStr) return 'date unrecorded';
+  const clean = String(dateStr).trim();
+  let year, month, day;
+
+  if (clean.includes('-')) {
+    const parts = clean.split('-');
+    if (parts.length === 3) {
+      year = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10);
+      day = parseInt(parts[2], 10);
+    }
+  }
+
+  if (!year || !month || !day) return clean;
+
+  const ordinals = [
+    '', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth',
+    'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth', 'twentieth',
+    'twenty-first', 'twenty-second', 'twenty-third', 'twenty-fourth', 'twenty-fifth', 'twenty-sixth', 'twenty-seventh', 'twenty-eighth', 'twenty-ninth', 'thirtieth', 'thirty-first'
+  ];
+
+  const months = [
+    '', 'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const dayWord = ordinals[day] || `${day}th`;
+  const monthWord = months[month] || `Month ${month}`;
+
+  let yearWord = '';
+  if (year >= 1900 && year < 2000) {
+    const rem = year - 1900;
+    yearWord = `nineteen hundred and ${numberToWords(rem)}`;
+  } else if (year >= 2000 && year < 2100) {
+    const rem = year - 2000;
+    yearWord = rem === 0 ? 'two thousand' : `two thousand and ${numberToWords(rem)}`;
+  } else {
+    yearWord = numberToWords(year);
+  }
+
+  return `${dayWord} day of ${monthWord} ${yearWord}`;
+}
+
 export async function generateGoaSection333PDF(willData = {}) {
-  // Pre-flight legal blocker audit
+  // Pre-flight statutory blocker audit
   const audit = runPreFlightLegalBlockerAudit(willData);
   if (!audit.isExecutionReady) {
     const errSummary = audit.blockers.map(b => `• [${b.code}] ${b.clause}: ${b.errorDescription}`).join('\n');
     throw new Error(`LEGAL_BLOCKERS_PREVENT_GENERATION:\n${errSummary}`);
   }
 
-  const JsPDFClass = (typeof window !== 'undefined' && window.jspdf && window.jspdf.jsPDF)
-    ? window.jspdf.jsPDF
-    : class NodeJsPDFMock {
-        constructor() {
-          this.pages = [1];
-          this.currentPage = 1;
-          this.internal = {
-            pageSize: { getWidth: () => 210, getHeight: () => 297 },
-            getCurrentPageInfo: () => ({ pageNumber: this.currentPage }),
-            getNumberOfPages: () => this.pages.length
-          };
-        }
-        getNumberOfPages() { return this.pages.length; }
-        setPage(n) { this.currentPage = n; }
-        addPage() { this.pages.push(this.pages.length + 1); this.currentPage = this.pages.length; }
-        setFont() {}
-        setFontSize() {}
-        setTextColor() {}
-        setDrawColor() {}
-        setLineWidth() {}
-        text() {}
-        rect() {}
-        splitTextToSize(txt) { return [txt]; }
-        save() {}
-      };
+  // Load real jsPDF engine
+  let JsPDFClass;
+  if (typeof window !== 'undefined' && window.jspdf && window.jspdf.jsPDF) {
+    JsPDFClass = window.jspdf.jsPDF;
+  } else {
+    const jspdfModule = await import('jspdf');
+    JsPDFClass = jspdfModule.jsPDF || jspdfModule.default?.jsPDF || jspdfModule.default;
+  }
 
   const doc = new JsPDFClass({
     orientation: 'portrait',
@@ -106,77 +127,73 @@ export async function generateGoaSection333PDF(willData = {}) {
   const contentBottom = pageHeight - marginB; // 267 mm
 
   const p = willData.personal || {};
-  const safeFullName = (p.fullName || 'TESTATOR').trim();
+  const safeFullName = (p.fullName || '').trim();
   const testatorUpper = safeFullName.toUpperCase();
-  const motherName = (p.motherName || 'Late Smt. Parent').trim();
-  const fatherName = (p.fatherName || 'Late Shri Parent').trim();
-  const occupation = (p.occupation || 'Professional / Retired').trim();
+  const motherName = (p.motherName || '').trim();
+  const fatherName = (p.fatherName || '').trim();
+  const occupation = (p.occupation || '').trim();
   const maritalStatus = (p.maritalStatus || 'Married').trim();
   const fullAddr = `${p.addressLine1 || ''}, ${p.addressCity || 'Margao'}, Goa ${p.pincode || ''}`.trim();
-
   const isMale = (p.gender || '').toLowerCase() === 'female' ? false : true;
   const sonDaughter = isMale ? 'son' : 'daughter';
 
   // Section 83/89 calculation
   const calc = calculateGoaInheritance(willData);
 
-  let y = marginT + 2;
+  // Line coordinate tracking for Section 333(2) Immediate Signature Positioning
+  const pageFirstLineY = {};
+  const pageLastLineY = {};
 
-  function drawPageHeadersAndSignatures(pageNum, isLastPage = false) {
-    // Top Watermark
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(7.0);
-    doc.setTextColor(148, 163, 184);
-    doc.text("DRAFT FOR SPECIAL NOTARY EXECUTION (UNEXECUTED) — SECTION 333, GOA ACT 23 OF 2016", pageWidth / 2, 10, { align: "center" });
+  let y = marginT + 8; // Leave clearance for top signatures above first line
 
-    // Section 333(2) Top Signatures (Above first line of text)
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(6.5);
-    doc.setTextColor(71, 85, 105);
-    doc.text("[Testator Sig]: ____________________", marginL, 20);
-    doc.text("[Witness 1]: ____________________", marginL + 50, 20);
-    doc.text("[Witness 2]: ____________________", marginL + 100, 20);
-
-    // Section 333(2) Bottom Signatures (Below last line of text)
-    doc.text("[Testator Sig]: ____________________", marginL, pageHeight - 16);
-    doc.text("[Witness 1]: ____________________", marginL + 50, pageHeight - 16);
-    doc.text("[Witness 2]: ____________________", marginL + 100, pageHeight - 16);
-
-    // Bottom Running Footer
-    doc.setFontSize(6.5);
-    doc.setTextColor(148, 163, 184);
-    doc.text(`Page ${pageNum} of Open Will — State of Goa`, pageWidth / 2, pageHeight - 8, { align: "center" });
+  function recordLineCoordinate(currentY) {
+    const currPage = doc.internal.getCurrentPageInfo().pageNumber;
+    if (pageFirstLineY[currPage] === undefined) {
+      pageFirstLineY[currPage] = currentY;
+    }
+    pageLastLineY[currPage] = currentY;
   }
 
   function checkPageBreak(neededHeight) {
-    if (y + neededHeight > contentBottom - 10) {
-      drawPageHeadersAndSignatures(doc.internal.getCurrentPageInfo().pageNumber);
+    if (y + neededHeight > contentBottom - 14) {
       doc.addPage();
-      y = marginT + 2;
+      y = marginT + 8;
       return true;
     }
     return false;
   }
 
   function printDoubleSpaced(text, fontSize = 8.5, isBold = false) {
-    doc.setFont("helvetica", isBold ? "bold" : "normal");
+    // Preserve typography state
+    const savedFont = isBold ? "bold" : "normal";
+    doc.setFont("helvetica", savedFont);
     doc.setFontSize(fontSize);
     doc.setTextColor(15, 23, 42);
-    const lineHeight = 6.8; // Strict Double Line Spacing for ~8.5pt font
+
+    const lineHeight = 6.8; // Strict Double Line Spacing for 8.5pt font
     const lines = doc.splitTextToSize(text, contentWidth);
+
     lines.forEach(line => {
-      checkPageBreak(lineHeight);
+      const didBreak = checkPageBreak(lineHeight);
+      if (didBreak) {
+        // Restore font styling immediately after page break
+        doc.setFont("helvetica", savedFont);
+        doc.setFontSize(fontSize);
+        doc.setTextColor(15, 23, 42);
+      }
+      recordLineCoordinate(y);
       doc.text(line, marginL, y);
       y += lineHeight;
     });
   }
 
   function printSectionHeader(tag, title) {
-    checkPageBreak(16);
+    checkPageBreak(18);
     y += 2;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9.0);
     doc.setTextColor(133, 93, 20);
+    recordLineCoordinate(y);
     doc.text(`${tag}: ${title.toUpperCase()}`, marginL, y);
     y += 6.5;
   }
@@ -185,6 +202,7 @@ export async function generateGoaSection333PDF(willData = {}) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10.5);
   doc.setTextColor(15, 23, 42);
+  recordLineCoordinate(y);
   doc.text("LAST WILL AND TESTAMENT", marginL + (contentWidth / 2), y, { align: "center" });
   y += 5.5;
   doc.setFontSize(8.0);
@@ -192,8 +210,10 @@ export async function generateGoaSection333PDF(willData = {}) {
   doc.text("(Formal Printed Open Will under Section 333 of Goa Act 23 of 2016)", marginL + (contentWidth / 2), y, { align: "center" });
   y += 8.0;
 
-  // ── PREAMBLE (Section 333(1) Mandatory Metadata) ────────────
-  const preambleText = `I, ${testatorUpper}, ${sonDaughter} of ${fatherName} and ${motherName}, aged about ${p.age || 'sixty-two'} years (born on the ${formatIndianDob(p.dob)}), by occupation a ${occupation}, of ${maritalStatus.toLowerCase()} marital status, residing at ${fullAddr}, an Indian citizen, being a person governed in matters of succession by the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016) pursuant to Section 1(4) thereof, being of sound disposing mind, memory, and understanding, and acting of my own free choice, volition, and without any coercion, undue influence, or fraud, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed for presentation before the Special Notary under Section 333 of the said Act.`;
+  // ── PREAMBLE (Section 333(1) Mandatory Parentage & Words for Numbers) ──
+  const ageInWords = p.age ? numberToWords(p.age) : 'sixty-two';
+  const dobInWords = formatDateToFormalWords(p.dob);
+  const preambleText = `I, ${testatorUpper}, ${sonDaughter} of ${fatherName} and ${motherName}, aged about ${ageInWords} years (born on the ${dobInWords}), by occupation a ${occupation}, of ${maritalStatus.toLowerCase()} marital status, residing at ${fullAddr}, an Indian citizen, being a person governed in matters of succession by the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016) pursuant to Section 1(4) thereof, being of sound disposing mind, memory, and understanding, and acting of my own free choice, volition, and without any coercion, undue influence, or fraud, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed for presentation before the Special Notary under Section 333 of the said Act in the presence of two creditworthy witnesses.`;
   printDoubleSpaced(preambleText, 8.5);
 
   // ── SECTION I: REVOCATION ───────────────────────────────────
@@ -206,7 +226,7 @@ export async function generateGoaSection333PDF(willData = {}) {
 
   // ── SECTION III: TITLE, LEGITIME & MATRIMONIAL MOIETY ───────
   printSectionHeader("SECTION III", "Declaration of Ownership, Legitime and Matrimonial Moiety");
-  const sec3Text = `I declare that the properties and assets described in this Will comprise my separate estate and my undivided fifty percent moiety (meação) in the community assets (bens comuns) governed under Section 219 of Goa Act 23 of 2016. In strict compliance with substituted Section 83 of the Goa Succession Act (as substituted by the Goa Succession, Special Notaries and Inventory Proceeding (Amendment) Act, 2023 — Goa Act 35 of 2023), I expressly recognize the mandatory fifty percent collective legitime (quota legítima) reserved for my surviving descendants, and affirm that the testamentary bequests herein are made exclusively out of my lawful fifty percent disposable quota (quota disponível). In accordance with Section 82 of the Act, this instrument preserves my surviving spouse's preferential statutory right of habitation in the family dwelling house.`;
+  const sec3Text = `I declare that the properties and assets described in this Will comprise my separate estate and my undivided fifty percent moiety (meação) in the community assets (bens comuns) governed under Section 219 of Goa Act 23 of 2016. In strict compliance with substituted Section 83 of the Goa Succession Act (as substituted by the Goa Succession, Special Notaries and Inventory Proceeding (Amendment) Act, 2023 — Goa Act 35 of 2023), I expressly recognize the mandatory fifty percent collective legitime (quota legítima) reserved for my surviving descendants, and affirm that the testamentary bequests herein are made exclusively out of my lawful fifty percent disposable quota (quota disponível). In accordance with Section 82 of the Act, this instrument preserves my surviving spouse's preferential statutory right of habitation in the family dwelling house and the use of household movables.`;
   printDoubleSpaced(sec3Text, 8.5);
 
   // ── SECTION IV: EXECUTOR & STATUTORY DEBT HIERARCHY ─────────
@@ -246,9 +266,11 @@ export async function generateGoaSection333PDF(willData = {}) {
   const nomLife = generateNominationClause('insurance');
   const nomBank = generateNominationClause('bank');
   const nomDemat = generateNominationClause('demat');
+  const nomPPF = generateNominationClause('ppf');
   printDoubleSpaced(`(a) ${nomLife.legalText}`);
   printDoubleSpaced(`(b) ${nomBank.legalText}`);
   printDoubleSpaced(`(c) ${nomDemat.legalText}`);
+  printDoubleSpaced(`(d) ${nomPPF.legalText}`);
 
   // ── SECTION VII: RESIDUARY & SIMULTANEOUS DEATH ─────────────
   printSectionHeader("SECTION VII", "Residuary Estate and Simultaneous Death Presumption");
@@ -262,39 +284,49 @@ export async function generateGoaSection333PDF(willData = {}) {
   const trustText = "Where any beneficiary's entitlement vests while below eighteen years of age, their share shall be held in trust by the designated Testamentary Trustee under the Indian Trusts Act, 1882, with investment powers strictly restricted pursuant to Section 20 of said Act to securities authorised by this testamentary instrument or specified by the Central Government by official notification, prioritizing capital preservation, with mandatory annual accounts rendered.";
   printDoubleSpaced(trustText, 8.5);
 
-  // ── ATTESTATION BY TWO WITNESSES (Section 333(1)) ───────────
-  printSectionHeader("ATTESTATION", "Attestation by Two Independent Witnesses");
-  const attestText = "Signed, published, and declared by the Testator as his Last Will and Testament, in our continuous presence, who at his request, in his presence, and in the presence of each other, all being present at the same time, have subscribed our names as attesting witnesses. We confirm that we are neither beneficiaries nor spouses of beneficiaries under this instrument.";
+  // ── ATTESTATION BY TWO CREDITWORTHY WITNESSES (Section 333(1)) ──
+  printSectionHeader("ATTESTATION", "Attestation by Two Creditworthy Witnesses");
+  const attestText = "Signed, published, and declared by the Testator as his Last Will and Testament, in our continuous presence, who at his request, in his presence, and in the presence of each other, all being present at the same time, have subscribed our names as attesting witnesses. We confirm that we are creditworthy witnesses possessing legal capacity, of known credit and identity, and are neither beneficiaries nor spouses of beneficiaries under this instrument.";
   printDoubleSpaced(attestText, 8.5);
 
-  checkPageBreak(30);
+  checkPageBreak(32);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7.5);
+  recordLineCoordinate(y);
   doc.text("WITNESS 1: ____________________________      WITNESS 2: ____________________________", marginL, y);
   y += 5;
+  recordLineCoordinate(y);
   doc.text("Full Name: ____________________________      Full Name: ____________________________", marginL, y);
   y += 5;
+  recordLineCoordinate(y);
   doc.text("Address: ______________________________      Address: ______________________________", marginL, y);
   y += 5;
+  recordLineCoordinate(y);
   doc.text("Date & Place: _________________________      Date & Place: _________________________", marginL, y);
   y += 10;
 
-  // ── SPECIAL NOTARY RECORD BLOCK (Section 333(3), (4), (5), (6)) ──
-  checkPageBreak(65);
-  doc.setDrawColor(133, 93, 20);
-  doc.setLineWidth(0.4);
-  doc.rect(marginL, y, contentWidth, 58);
+  // ── CONTINUOUS SPECIAL NOTARY RECORD (Section 333(3), (4), (5), (6), (8)) ──
+  printSectionHeader("SPECIAL NOTARY RECORD", "Special Notary Record of Open Will (Section 333(3)–(8))");
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.8);
-  doc.setTextColor(133, 93, 20);
-  doc.text("SPECIAL NOTARY RECORD OF OPEN WILL (SECTION 333(3)–(6), GOA ACT 23 OF 2016)", marginL + 3, y + 5);
+  const notaryPreamble = "Pursuant to Section 333(3) of the Goa Succession, Special Notaries and Inventory Proceeding Act, 2012, on this date, personally appeared before me, the undersigned Special Notary for the State of Goa, the Testator above-named, together with two creditworthy witnesses known to me, and presented this instrument, declaring it to be his Last Will and Testament.";
+  printDoubleSpaced(notaryPreamble, 8.0);
 
-  // Passport Photograph Box (35mm x 45mm) on the Right
+  const readingRecord = "Pursuant to Section 333(4) of the Act, I, the Special Notary, have read this Last Will and Testament aloud to the Testator in the simultaneous presence of the said two creditworthy witnesses, and the Testator thereupon confirmed and ratified all the dispositions herein contained.";
+  printDoubleSpaced(readingRecord, 8.0);
+
+  const langNote = "Section 333(8) Language Verification: Verified that this Open Will is drawn in a permitted official language. (If tendered in an unauthorized language, Section 333(8) statutorily mandates rejection and execution via Public Will).";
+  printDoubleSpaced(langNote, 7.5);
+
+  const adminNote = "Notarial Administrative Note: Pursuant to Section 333(7), original printed open wills are periodically bound into books of not more than two hundred sheets by the District Special Notary, with certified photostat copies retained.";
+  printDoubleSpaced(adminNote, 7.5);
+
+  // Passport Photograph Box (35mm x 45mm) and Notary Certification
+  checkPageBreak(52);
   const photoW = 35;
   const photoH = 45;
-  const photoX = marginL + contentWidth - photoW - 3;
-  const photoY = y + 8;
+  const photoX = marginL + contentWidth - photoW;
+  const photoY = y;
+
   doc.setDrawColor(148, 163, 184);
   doc.rect(photoX, photoY, photoW, photoH);
   doc.setFontSize(6.5);
@@ -305,27 +337,52 @@ export async function generateGoaSection333PDF(willData = {}) {
   doc.text("signature & certification", photoX + (photoW / 2), photoY + 32, { align: "center" });
   doc.text("Sec 333(5))", photoX + (photoW / 2), photoY + 36, { align: "center" });
 
-  // Left Notary Record Content
-  const notW = contentWidth - photoW - 8;
+  // Notary Registration Particulars (Left Side)
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.8);
+  doc.setFontSize(7.0);
   doc.setTextColor(15, 23, 42);
-  doc.text("1. Presentation Record (Sec 333(3)): Presented personally by Testator with 2 witnesses.", marginL + 3, y + 10);
-  doc.text("2. Declaration: Testator affirmed that this document contains his Last Will & Testament.", marginL + 3, y + 15);
-  doc.text("3. Reading Aloud (Sec 333(4)): Will & record read aloud in continuous presence of all.", marginL + 3, y + 20);
-  doc.text("4. Total Number of Pages Certified: ________________ (without blots or erasures).", marginL + 3, y + 25);
-  doc.text("5. Entry in Book of Open Wills: Volume: ____________ Page: ____________ Entry: ____________", marginL + 3, y + 30);
-  doc.text("6. Special Notary Registration No: ________________________ Date: ____________________", marginL + 3, y + 35);
-  doc.text("7. Office of Special Notary: Margao / Panaji / Mapusa, State of Goa.", marginL + 3, y + 40);
-  doc.text("Seal & Signature of Special Notary: ____________________________________________", marginL + 3, y + 47);
+  recordLineCoordinate(y);
+  doc.text("Book of Open Wills Entry: Volume: ____________ Page: ____________ Entry: ____________", marginL, y + 6);
+  doc.text("Special Notary Registration Number: ________________________ Date: ________________", marginL, y + 13);
+  doc.text("Special Notary Office Jurisdiction: Margao / Panaji / Mapusa, State of Goa.", marginL, y + 20);
+  doc.text("Total Certified Sheets: ________________ (without unauthenticated interlineations).", marginL, y + 27);
+  doc.text("Official Seal & Signature of Special Notary: ____________________________________", marginL, y + 36);
 
-  y += 62;
+  y += 50;
+  recordLineCoordinate(y);
 
-  // Draw headers & signatures on every page
+  // ── DRAW HEADERS AND IMMEDIATE SECTION 333(2) SIGNATURES ON EVERY PAGE ──
   const totalPages = doc.getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i);
-    drawPageHeadersAndSignatures(i, i === totalPages);
+
+    // Watermark Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.0);
+    doc.setTextColor(148, 163, 184);
+    doc.text("DRAFT FOR SPECIAL NOTARY EXECUTION (UNEXECUTED) — SECTION 333, GOA ACT 23 OF 2016", pageWidth / 2, 10, { align: "center" });
+
+    // Section 333(2) Top Signatures (Positioned IMMEDIATELY ABOVE first line of text)
+    const firstLine = pageFirstLineY[i] || (marginT + 8);
+    const topSigY = Math.max(16, firstLine - 4.5);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(6.2);
+    doc.setTextColor(71, 85, 105);
+    doc.text("[Testator Sig]: ____________________", marginL, topSigY);
+    doc.text("[Witness 1]: ____________________", marginL + 50, topSigY);
+    doc.text("[Witness 2]: ____________________", marginL + 100, topSigY);
+
+    // Section 333(2) Bottom Signatures (Positioned IMMEDIATELY BELOW last line of text)
+    const lastLine = pageLastLineY[i] || (contentBottom - 10);
+    const bottomSigY = Math.min(pageHeight - 12, lastLine + 5.5);
+    doc.text("[Testator Sig]: ____________________", marginL, bottomSigY);
+    doc.text("[Witness 1]: ____________________", marginL + 50, bottomSigY);
+    doc.text("[Witness 2]: ____________________", marginL + 100, bottomSigY);
+
+    // Running Page Number Footer
+    doc.setFontSize(6.5);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Page ${i} of ${totalPages} — Open Will (Section 333, State of Goa)`, pageWidth / 2, pageHeight - 6, { align: "center" });
   }
 
   return doc;

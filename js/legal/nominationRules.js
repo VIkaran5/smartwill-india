@@ -42,12 +42,40 @@ export function generateNominationClause(assetType = '', options = {}) {
     };
   }
 
-  // 4. Statutory Retirement & Social Security (EPF, PPF, Gratuity)
-  if (t.includes('epf') || t.includes('pf') || t.includes('provident') || t.includes('gratuity') || t.includes('pension')) {
+  // 4. Public Provident Fund (PPF) - Separate from EPF
+  if (t.includes('ppf') || t.includes('public provident')) {
     return {
-      category: "STATUTORY_BENEFITS",
-      governingStatute: "Employees' Provident Funds Scheme, 1952 & Payment of Gratuity Act, 1972",
-      legalText: "Statutory Retirement Benefits & Social Security: In respect of my Provident Fund (EPF/PPF), Gratuity, and statutory retirement entitlements, nominations shall operate in accordance with the mandatory statutory definitions of 'family' under the Employees' Provident Funds Scheme, 1952 and the Payment of Gratuity Act, 1972, with surplus or unencumbered testamentary dispositions harmonized with this Will to the extent legally permissible."
+      category: "PUBLIC_PROVIDENT_FUND",
+      governingStatute: "Government Savings Promotion Act, 1873 & Public Provident Fund Scheme, 2019",
+      legalRule: "Paragraph 14 of Public Provident Fund Scheme, 2019",
+      legalText: "Public Provident Fund (PPF): Governed by the Government Savings Promotion Act, 1873 and the Public Provident Fund Scheme, 2019. Under Paragraph 14 of the PPF Scheme, 2019, on the death of the account holder, the account shall be closed and the balance deposited paid to the nominee or legal heir in accordance with statutory procedures, and the beneficial rights under this Will shall govern the entitlement of such proceeds."
+    };
+  }
+
+  // 5. Employees' Provident Fund (EPF)
+  if (t.includes('epf') || (t.includes('provident') && !t.includes('public')) || t.includes('employees provident')) {
+    return {
+      category: "EMPLOYEES_PROVIDENT_FUND",
+      governingStatute: "Employees' Provident Funds and Miscellaneous Provisions Act, 1952 & EPF Scheme, 1952",
+      legalText: "Employees' Provident Fund (EPF): Nominations operate strictly subject to the definition of 'family' under the Employees' Provident Funds Scheme, 1952. Testamentary dispositions of EPF accumulations are valid only to the extent permitted by the statutory scheme."
+    };
+  }
+
+  // 6. Gratuity
+  if (t.includes('gratuity')) {
+    return {
+      category: "PAYMENT_OF_GRATUITY",
+      governingStatute: "Payment of Gratuity Act, 1972 (Section 6)",
+      legalText: "Gratuity Entitlements: Under Section 6 of the Payment of Gratuity Act, 1972, nomination must be in favour of one or more members of the employee's statutory 'family' where a family exists. Dispositions herein stand harmonized with said statutory mandate."
+    };
+  }
+
+  // 7. Pensions
+  if (t.includes('pension')) {
+    return {
+      category: "PENSION_AND_FAMILY_PENSION",
+      governingStatute: "Central Civil Services (Pension) Rules / Applicable State Pension Rules",
+      legalText: "Pensions and Family Pension: Statutory family pensions devolve by operation of governing statutory service pension rules, and any commuted pension arrears shall be received for the estate as provided under this Will."
     };
   }
 

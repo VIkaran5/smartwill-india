@@ -18,7 +18,8 @@ export const PERSONAL_LAW_REGIMES = {
   CHRISTIAN_CIVIL: "CHRISTIAN_CIVIL",
   MUSLIM_SUNNI: "MUSLIM_SUNNI",
   MUSLIM_SHIA: "MUSLIM_SHIA",
-  HINDU: "HINDU"
+  HINDU: "HINDU",
+  LEGAL_REVIEW_REQUIRED: "LEGAL_REVIEW_REQUIRED"
 };
 
 /**
@@ -45,10 +46,28 @@ export function resolvePersonalLawRegime(willData = {}) {
     };
   }
 
-  const religionLower = (p.religion || 'Hindu').trim().toLowerCase();
+  // Mandatory Gate: Unknown or missing religion must NEVER silently default to Hindu
+  if (!p.religion || !p.religion.trim()) {
+    return {
+      regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+      isGoa: false,
+      isParsi: false,
+      isChristian: false,
+      isMuslim: false,
+      isHindu: false,
+      requiresLegalReview: true,
+      statuteCitation: "Personal Law Unconfirmed — Qualified Legal Review Required",
+      statutoryCrest: "LEGAL REVIEW REQUIRED — RELIGIOUS / CIVIL REGIME UNRECORDED",
+      reasons: ["Personal law regime cannot be established without an explicit religious declaration or civil marriage registration under the Special Marriage Act."],
+      jurisdiction
+    };
+  }
+
+  const religionLower = p.religion.trim().toLowerCase();
   const subSect = (p.sect || p.subSect || '').trim().toLowerCase();
 
   // 2. Parsi Pathway
+  // Distinctly separates testamentary succession under Part VI from intestacy provisions (Sections 50–56)
   if (religionLower.includes('parsi') || religionLower.includes('zoroastrian')) {
     return {
       regime: PERSONAL_LAW_REGIMES.PARSI,
@@ -57,17 +76,21 @@ export function resolvePersonalLawRegime(willData = {}) {
       isChristian: false,
       isMuslim: false,
       isHindu: false,
-      statuteCitation: "Indian Succession Act, 1925 (Sections 50–56 & Part VI with Parsi Testamentary Scope under Sections 57 & 58)",
+      statuteCitation: "Indian Succession Act, 1925 (Part VI Testamentary Succession with Parsi Scope under Sections 57 & 58; Sections 50–56 apply to Intestacy)",
       statutoryCrest: "GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 (PARSI TESTAMENTARY SUCCESSION & PART VI)",
       jurisdiction
     };
   }
 
-  // 3. Muslim Pathway (Sunni vs Shia distinction)
+  // 3. Muslim Pathway (Sunni vs Shia distinction with mandatory school verification)
   if (religionLower.includes('muslim') || religionLower.includes('islam')) {
-    const isShia = subSect.includes('shia') || subSect.includes('ithna') || subSect.includes('ismaili') || subSect.includes('bohra');
+    const isExplicitShia = subSect.includes('shia') || subSect.includes('ithna');
+    const isIsmailiOrBohra = subSect.includes('ismaili') || subSect.includes('bohra');
+    const isShia = isExplicitShia || isIsmailiOrBohra;
     const regime = isShia ? PERSONAL_LAW_REGIMES.MUSLIM_SHIA : PERSONAL_LAW_REGIMES.MUSLIM_SUNNI;
-    const sectName = isShia ? 'Shia (Ithna-Ashari)' : 'Sunni (Hanafi/Shafi)';
+    const sectName = isIsmailiOrBohra
+      ? 'Shia (Ismaili / Dawoodi Bohra — Independent Legal Verification Required)'
+      : (isShia ? 'Shia (Ithna-Ashari)' : 'Sunni (Hanafi / Shafi / Maliki / Hanbali)');
 
     return {
       regime,
@@ -78,11 +101,12 @@ export function resolvePersonalLawRegime(willData = {}) {
       isShia,
       isHindu: false,
       sectName,
-      statuteCitation: `Muslim Personal Law (Shariat) Application Act, 1937 (${sectName} Testamentary Law / Wasīyyat)`,
-      statutoryCrest: `GOVERNED BY MUSLIM PERSONAL LAW (SHARIAT) — ${sectName.toUpperCase()} SUCCESSION`,
+      requiresExpertLegalReview: true, // School-specific Wasīyyat rules require advocate verification
+      statuteCitation: `Muslim Personal Law (Shariat) Application Act, 1937 (${sectName} Wasīyyat Law)`,
+      statutoryCrest: `GOVERNED BY MUSLIM PERSONAL LAW (SHARIAT) — ${sectName.toUpperCase()}`,
       wasīyyatRules: isShia
-        ? "Bequests up to one-third (1/3) of the net estate are valid whether in favor of an heir or non-heir without requiring consent; bequests exceeding one-third require post-demise consent of legal heirs."
-        : "Bequests to non-heirs are valid up to one-third (1/3) of the net estate; bequests to legal heirs or bequests exceeding one-third operate strictly subject to the consent (express or implied) of all other surviving legal heirs following demise.",
+        ? "Shia (Ithna-Ashari) Wasīyyat: Bequests up to one-third (1/3) of the net estate are valid to heirs or non-heirs without requiring consent; bequests exceeding 1/3 require consent of legal heirs. (Ismaili / Bohra schools require independent qualified legal review)."
+        : "Sunni Wasīyyat: Bequests to non-heirs are valid up to one-third (1/3) of the net estate; bequests to legal heirs or exceeding 1/3 operate strictly subject to the consent of all surviving legal heirs following demise.",
       jurisdiction
     };
   }
@@ -112,6 +136,7 @@ export function resolvePersonalLawRegime(willData = {}) {
     isHindu: true,
     statuteCitation: "Hindu Succession Act, 1956 (Section 30) read with Indian Succession Act, 1925 (Schedule III)",
     statutoryCrest: "GOVERNED BY THE HINDU SUCCESSION ACT, 1956 & INDIAN SUCCESSION ACT, 1925 (SCHEDULE III)",
+    coparcenaryNotice: "Testamentary power extends to testator's undivided coparcenary interest in Mitakshara coparcenary property pursuant to Section 30 of the Hindu Succession Act, 1956.",
     jurisdiction
   };
 }

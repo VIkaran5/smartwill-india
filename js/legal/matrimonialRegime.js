@@ -76,19 +76,28 @@ export function evaluateAssetMatrimonialOwnership(asset = {}, matrimonialInfo = 
       isCommunity: false,
       applicableException: SECTION_219_EXCEPTIONS.ALLOTTED_IN_PARTITION,
       restrictions: ["Section 219(a) Exception: Asset was partitioned and specifically allotted to the testator."],
-      section219Applies: false
+      section219Applies: false,
+      isDispositionProhibited: false
     };
   }
 
-  // ── STATUTORY EXCEPTION 2: Section 219(b) Asset does not form part of community (separate asset) ──
-  if (isInherited && hasIncommunicabilityClause) {
+  // ── STATUTORY EXCEPTION 2: Section 219(b) Asset does not legally form part of the community ──
+  // Broader than express exclusion: includes assets excluded by law or contract from the community
+  const isSeparatePropertyByLaw = Boolean(
+    asset.isSeparateProperty ||
+    (isInherited && hasIncommunicabilityClause) ||
+    asset.legalExclusionFromCommunity
+  );
+
+  if (isSeparatePropertyByLaw) {
     return {
-      legalClass: "SEPARATE_INCOMMUNICABLE_ASSET",
+      legalClass: "SEPARATE_ASSET_OUTSIDE_COMMUNITY",
       disposablePercentage: Number(asset.ownershipPercentage) || 100,
       isCommunity: false,
       applicableException: SECTION_219_EXCEPTIONS.NOT_PART_OF_COMMUNITY,
-      restrictions: ["Section 219(b) Exception: Asset is separate property (bens próprios) excluded by express incommunicability clause."],
-      section219Applies: false
+      restrictions: ["Section 219(b) Exception: Asset does not legally form part of the community under the applicable matrimonial regime."],
+      section219Applies: false,
+      isDispositionProhibited: false
     };
   }
 
@@ -99,8 +108,9 @@ export function evaluateAssetMatrimonialOwnership(asset = {}, matrimonialInfo = 
       disposablePercentage: 100,
       isCommunity: true,
       applicableException: SECTION_219_EXCEPTIONS.DISPOSITION_IN_FAVOR_OF_SPOUSE,
-      restrictions: ["Section 219(c) Exception: Disposition of community asset made by one spouse in favour of the other spouse."],
-      section219Applies: false
+      restrictions: ["Section 219(c) Exception: Disposition of specific community asset is made exclusively in favour of the surviving spouse."],
+      section219Applies: false,
+      isDispositionProhibited: false
     };
   }
 
@@ -111,21 +121,24 @@ export function evaluateAssetMatrimonialOwnership(asset = {}, matrimonialInfo = 
       disposablePercentage: 100,
       isCommunity: true,
       applicableException: SECTION_219_EXCEPTIONS.SPOUSE_NOTARIAL_CONSENT,
-      restrictions: ["Section 219(d) Exception: Other spouse consented to disposition in a document drawn by Special Notary."],
-      section219Applies: false
+      restrictions: ["Section 219(d) Exception: Non-disposing spouse consented to the disposition in a document drawn by a Special Notary."],
+      section219Applies: false,
+      isDispositionProhibited: false
     };
   }
 
-  // ── DEFAULT RULE (Section 219): Community Acquest without Exception ──
-  // Under Section 219 general rule: specific community asset cannot be disposed of before partition.
-  // Testator's testamentary disposition is limited to their undivided 50% moiety (meação) in value.
-  restrictions.push("Section 219 General Restriction: Constitutes community property (bens comuns). Disposition of specific physical asset prior to partition is restricted; disposition is legally confined to the testator's undivided 50% moiety (meação).");
+  // ── NULLITY RULE (Section 219 Main Injunction): Specific Community Asset without Exception ──
+  // Under Section 219, a testamentary disposition of a specific, determined asset of the community
+  // prior to partition is NULL AND VOID unless one of the four statutory exceptions applies.
+  // The testator cannot bequeath a specific parcel or flat to third parties prior to partition.
+  restrictions.push("Section 219 Statutory Prohibition: Disposition of a specific and determined asset of the community of property prior to partition is NULL AND VOID unless allotted in partition, legally excluded from community, made solely to spouse, or consented by spouse before a Special Notary.");
   return {
-    legalClass: "COMMUNITY_ACQUEST",
-    disposablePercentage: 50,
+    legalClass: "COMMUNITY_SPECIFIC_ASSET_RESTRICTED",
+    disposablePercentage: 0, // Cannot dispose of specific parcel prior to partition
     isCommunity: true,
     applicableException: null,
     restrictions,
-    section219Applies: true
+    section219Applies: true,
+    isDispositionProhibited: true
   };
 }

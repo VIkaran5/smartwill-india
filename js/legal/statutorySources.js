@@ -27,9 +27,9 @@ export const STATUTORY_SOURCES = {
       CREDITOR_LEGATEE_PRIORITY: "Section 46: Priority of inheritance creditors over legatees, and legatees over personal creditors of heirs",
       SPOUSAL_RESIDENCE: "Section 82: Preferential right of habitation in family dwelling house and use of household movables",
       LEGITIME: "Section 83 (as substituted by Goa Act 35 of 2023)",
-      CALCULATION_BASE: "Section 89: Net assets at death (Assets - Debts) + Value of ALL assets gifted during lifetime",
-      COLLATION: "Sections 90 to 97: Collation of advancements by descendants into the legitime pool",
-      REDUCTION: "Sections 98 to 105: Reduction of inofficious testamentary dispositions and lifetime gifts",
+      CALCULATION_BASE: "Section 89: Net assets at death (Assets - Debts) + Value of ALL assets gifted during lifetime evaluated at opening of inheritance (Section 89(2))",
+      COLLATION: "Sections 90 to 109: Collation of advancements by descendants into the legitime pool",
+      REDUCTION: "Sections 110 to 121: Reduction of legacies and inter vivos gifts impairing the legitime (Section 111 legacies first; Section 113 inter vivos gifts reverse order; Section 114 pro-rata)",
       COMMUNITY_PROPERTY_DISPOSITION: "Section 219: Prohibition on disposing of specific community assets, with 4 statutory exceptions",
       SPECIFIC_INHERITANCE_DISPOSITION: "Section 220: Disposition of specific unpartitioned inheritance assets void",
       PRINTED_OPEN_WILL: "Section 333(1)–(8): Printed Open Will statutory formalities, margins, signatures, and Special Notary record"
