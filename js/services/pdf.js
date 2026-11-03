@@ -20,6 +20,8 @@ import { logger } from './logger.js';
 import { escapeHTML } from '../utils/sanitizer.js';
 import { computeAssetDesc } from '../render/assets.js';
 import { getAuthHeaders, resetPaymentState } from './payment.js';
+import { classifyGoaJurisdiction, JURISDICTION_STATUS } from '../legal/goaJurisdiction.js';
+import { generateGoaSection333PDF } from './pdfGoaSection333.js';
 
 export async function generateWillPDF(willData) {
   // ── Security Check (VULN-001): Server-Side Payment Verification ──
@@ -198,6 +200,15 @@ function formatCleanAddress(p) {
 }
 
 export async function generateEnglishWillPDF(willData) {
+  const pData = willData.personal || {};
+  const jur = classifyGoaJurisdiction(pData);
+  if (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE) {
+    const goaDoc = await generateGoaSection333PDF(willData);
+    const safeFullName = (pData.fullName || 'Draft').trim();
+    const fileName = `SmartWill_${safeFullName.replace(/\s+/g, '_')}_Goa_Section333_Open_Will.pdf`;
+    await savePdfToDevice(goaDoc, fileName);
+    return fileName;
+  }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({
     orientation: 'portrait',
