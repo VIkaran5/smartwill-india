@@ -70,6 +70,26 @@ const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/i;
 const BAR_ENROLLMENT_REGEX = /^[A-Z]{1,4}\/\d+\/\d{4}$/i;
 
 /**
+ * Strict ISO 8601 Calendar Date Validator (YYYY-MM-DD).
+ * Prevents JavaScript normalization quirks (e.g. 2020-02-31 turning into 2020-03-02)
+ * and invalid date strings from silently passing comparisons.
+ *
+ * @param {string} dateStr
+ * @returns {boolean}
+ */
+export function isValidIsoDate(dateStr) {
+  if (!dateStr || typeof dateStr !== 'string') return false;
+  const trimmed = dateStr.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return false;
+  const d = new Date(trimmed + 'T00:00:00Z');
+  if (isNaN(d.getTime())) return false;
+  const parts = trimmed.split('-').map(Number);
+  return d.getUTCFullYear() === parts[0] &&
+         (d.getUTCMonth() + 1) === parts[1] &&
+         d.getUTCDate() === parts[2];
+}
+
+/**
  * Validates whether an evidentiary record satisfies rigorous forensic standards.
  * Standalone Boolean flags are strictly barred from establishing jurisdiction.
  * Cryptographic hash confirms binary file integrity; legal authenticity is certified by authenticated advocate credentials.
@@ -88,7 +108,7 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
-  // 1. Immutable Document Storage Identifier
+  // 1. Immutable Document Storage Identifier & Trusted Storage Verification
   const storageId = (record.documentStorageId || record.storageKey || record.uploadId || '').toString().trim();
   const invalidStorageIds = ['mock', 'fake', 'test', 'string', 'null', 'undefined', 'invalid', 'dummy'];
   if (!storageId || invalidStorageIds.includes(storageId.toLowerCase())) {
@@ -96,6 +116,13 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
       isValid: false,
       blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
       reason: "Missing or invalid uploaded document storage identifier (documentStorageId / storageKey). Document must be uploaded to secure repository."
+    };
+  }
+  if (record.storageVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: `Document storage identifier '${storageId}' has not been resolved against a verified uploaded file in the secure repository.`
     };
   }
 
@@ -146,7 +173,7 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
-  // 6. Verified Parties & Facts with Subject Matching
+  // 6. Verified Parties & Facts with Subject-Specific Matching
   const verifiedParties = (record.verifiedParties || record.verifiedSubject || record.subjectName || '').trim();
   if (!verifiedParties && !record.verifiedFacts) {
     return {
@@ -156,13 +183,47 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
-  // Subject matching against context
-  if (context.testatorName && verifiedParties) {
+  const vpLower = verifiedParties.toLowerCase();
+
+  // Subject-specific matching: Distinguishes parental records from testator records
+  if (context.requiredSubject === 'PARENTS') {
+    const parentNames = (context.parentNames || []).filter(Boolean);
+    const tNameLower = (context.testatorName || '').toLowerCase();
+
+    // 1. If parental names are explicitly provided in context, enforce strict matching
+    if (parentNames.length > 0) {
+      const parentMatches = parentNames.some(pName => pName && vpLower.includes(pName.toLowerCase()));
+      if (!parentMatches) {
+        return {
+          isValid: false,
+          blockerCode: "ERR_PARTY_MISMATCH",
+          reason: `Evidence record verified parties '${verifiedParties}' does not match required parental subjects (${parentNames.join(', ')}). Testator's own record cannot satisfy parental legal regime verification.`
+        };
+      }
+    } else {
+      // 2. If parental names not provided in context, ensure document is not merely the testator's personal record
+      if (tNameLower && vpLower.includes(tNameLower) && !vpLower.includes('parent') && !vpLower.includes('father') && !vpLower.includes('mother')) {
+        return {
+          isValid: false,
+          blockerCode: "ERR_PARTY_MISMATCH",
+          reason: `Evidence record verified parties '${verifiedParties}' appears to be testator's personal record. Parental legal regime verification requires document issued in parents' name.`
+        };
+      }
+    }
+  } else if (context.requiredSubject === 'TESTATOR') {
+    const tNameLower = (context.testatorName || '').toLowerCase();
+    if (tNameLower && !vpLower.includes(tNameLower)) {
+      return {
+        isValid: false,
+        blockerCode: "ERR_PARTY_MISMATCH",
+        reason: `Evidence record verified parties '${verifiedParties}' does not match testator '${context.testatorName}'.`
+      };
+    }
+  } else if (context.testatorName && verifiedParties) {
     const tNameLower = context.testatorName.toLowerCase();
-    const vpLower = verifiedParties.toLowerCase();
     const parentMatches = (context.parentNames || []).some(pName => pName && vpLower.includes(pName.toLowerCase()));
 
-    // In production or when strictTestatorMatch is active
+    // Strict testator match
     if (context.strictTestatorMatch === true && !vpLower.includes(tNameLower) && !parentMatches) {
       return {
         isValid: false,
@@ -172,7 +233,7 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     }
   }
 
-  // 7. Strict Cryptographic File Hash Validation
+  // 7. Strict Cryptographic File Hash & Server Byte Verification
   const docHash = (record.documentHash || record.sha256 || '').trim().toLowerCase();
   if (!docHash) {
     return {
@@ -203,7 +264,23 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
-  // 8. Authenticated Reviewer Credentials & Role
+  if (record.documentBytesSha256Verified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Document file bytes SHA-256 integrity has not been verified against actual uploaded file on secure server."
+    };
+  }
+
+  if (record.computedHash && record.computedHash.trim().toLowerCase() !== docHash) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Document hash does not match computed SHA-256 hash of server document bytes."
+    };
+  }
+
+  // 8. Authenticated Reviewer Credentials, Enrolment & Authoritative Verification
   const verifier = (record.verifiedBy || '').trim();
   if (!verifier) {
     return {
@@ -239,6 +316,22 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
+  if (record.reviewerVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Verifying reviewer identity has not been authenticated by secure server audit system."
+    };
+  }
+
+  if (record.credentialVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: `Reviewer credentials or Bar enrollment '${enrollmentNo}' has not been authoritatively authenticated against the Bar Council registry.`
+    };
+  }
+
   // 9. Tamper-Resistant Verification Status & Audit Record
   if (record.verificationStatus !== 'VERIFIED') {
     return {
@@ -266,11 +359,34 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     };
   }
 
+  // 10. Statutory Fact Substantive Check
+  if (record.statutoryFactEstablished === false) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Verified record does not establish the claimed statutory fact or civil code subjection."
+    };
+  }
+
+  // 11. Server Synchronization & Final Authenticated State Check
+  // Fail-Closed: Never return isValid: true if server synchronization is pending or uncompleted!
+  if (record.verificationPendingServerSync === true || record.serverVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_PENDING_SERVER_SYNC",
+      metadataFormatVerified: true,
+      verificationPendingServerSync: Boolean(record.verificationPendingServerSync),
+      integrityVerified: false,
+      reason: "Evidence verification pending server synchronization. Document bytes must be verified against server repository."
+    };
+  }
+
   return {
     isValid: true,
     blockerCode: null,
     metadataFormatVerified: true,
-    verificationPendingServerSync: true,
+    verificationPendingServerSync: false,
+    serverVerified: true,
     integrityVerified: true,
     reason: "Documentary evidence authenticated by authorized legal reviewer. Cryptographic hash confirms file integrity."
   };
@@ -452,13 +568,19 @@ export function classifyGoaJurisdiction(p = {}) {
   // ── Clause (b): Born in Goa to parents governed by the Civil Code ──
   if (isTestatorBornGoa && claimsParentsPortuguese) {
     const clauseBRecord = p.clauseBEvidence || p.parentsCivilCodeEvidence || jurEv.clauseB;
+    const parentVerificationContext = {
+      requiredSubject: 'PARENTS',
+      testatorName: p.fullName,
+      parentNames,
+      strictSubjectMatch: true
+    };
     const clauseBCheck = validateJurisdictionEvidence(clauseBRecord, [
       JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
       JURISDICTION_DOCUMENT_TYPES.PORTUGUESE_BIRTH_REGISTRATION_ASSENTO
-    ]);
+    ], parentVerificationContext);
 
     if (!clauseBCheck.isValid) {
-      blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(b) requires verified civil registration records establishing parents were governed by the Portuguese Civil Code of 1867. ${clauseBCheck.reason}`);
+      blockers.push(`${clauseBCheck.blockerCode || 'ERR_GOA_EVIDENCE_UNVERIFIED'}: Section 1(4)(b) requires verified civil registration records establishing parents were governed by the Portuguese Civil Code of 1867. ${clauseBCheck.reason}`);
       return {
         status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
         statutoryClause: "Section 1(4)(b) Verification Required",
@@ -483,13 +605,19 @@ export function classifyGoaJurisdiction(p = {}) {
   // ── Clause (c): Born outside Goa to parents governed by the Code, subject to statutory opt-out ──
   if (!isTestatorBornGoa && claimsParentsPortuguese) {
     const clauseBRecord = p.clauseBEvidence || p.parentsCivilCodeEvidence || jurEv.clauseB;
+    const parentVerificationContext = {
+      requiredSubject: 'PARENTS',
+      testatorName: p.fullName,
+      parentNames,
+      strictSubjectMatch: true
+    };
     const clauseBCheck = validateJurisdictionEvidence(clauseBRecord, [
       JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
       JURISDICTION_DOCUMENT_TYPES.PORTUGUESE_BIRTH_REGISTRATION_ASSENTO
-    ]);
+    ], parentVerificationContext);
 
     if (!clauseBCheck.isValid) {
-      blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(c) requires verified civil registration records establishing parents were governed by the Portuguese Civil Code of 1867. ${clauseBCheck.reason}`);
+      blockers.push(`${clauseBCheck.blockerCode || 'ERR_GOA_EVIDENCE_UNVERIFIED'}: Section 1(4)(c) requires verified civil registration records establishing parents were governed by the Portuguese Civil Code of 1867. ${clauseBCheck.reason}`);
       return {
         status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
         statutoryClause: "Section 1(4)(c) Parental Verification Required",
@@ -518,26 +646,57 @@ export function classifyGoaJurisdiction(p = {}) {
         };
       }
 
-      // Validate 3-year deadline:
-      const declDate = new Date(optOutRecord.issueDate || optOutRecord.registrationDate || p.optOutDeclarationDate);
-      let deadlineDate = null;
-
-      if (p.dob) {
-        const majorityDate = new Date(p.dob);
-        majorityDate.setFullYear(majorityDate.getFullYear() + 18);
-        deadlineDate = new Date(majorityDate);
-        deadlineDate.setFullYear(deadlineDate.getFullYear() + 3);
+      // Validate 3-year deadline with strict date validation:
+      if (!isValidIsoDate(p.dob)) {
+        blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(c) statutory opt-out deadline validation requires a valid date of birth (YYYY-MM-DD). Missing or invalid date of birth blocks opt-out clearance.");
+        return {
+          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+          statutoryClause: "Section 1(4)(c) Opt-Out DOB Mandatory",
+          applicableAct: "Unconfirmed",
+          reasons: ["Valid date of birth is mandatory to determine the 3-year statutory opt-out window after majority."],
+          blockers,
+          canGenerateWill: false
+        };
       }
 
+      const optOutDateStr = (optOutRecord.issueDate || optOutRecord.registrationDate || optOutRecord.statutoryDate || p.optOutDeclarationDate || '').toString().trim();
+      if (!isValidIsoDate(optOutDateStr)) {
+        blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(c) statutory opt-out requires a valid registration date (YYYY-MM-DD). Missing or invalid opt-out date blocks clearance.");
+        return {
+          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+          statutoryClause: "Section 1(4)(c) Opt-Out Date Mandatory",
+          applicableAct: "Unconfirmed",
+          reasons: ["Valid opt-out registration date is mandatory to evaluate statutory compliance."],
+          blockers,
+          canGenerateWill: false
+        };
+      }
+
+      const declDate = new Date(optOutDateStr);
+      const majorityPlus3 = new Date(p.dob);
+      majorityPlus3.setFullYear(majorityPlus3.getFullYear() + 21); // 18 + 3 = 21 years
+      let deadlineDate = majorityPlus3;
+
       if (p.dateOfArrivalInGoa) {
+        if (!isValidIsoDate(p.dateOfArrivalInGoa)) {
+          blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(c) arrival date format is invalid.");
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4)(c) Invalid Arrival Date",
+            applicableAct: "Unconfirmed",
+            reasons: ["Arrival date must be a valid ISO date."],
+            blockers,
+            canGenerateWill: false
+          };
+        }
         const arrivalDeadline = new Date(p.dateOfArrivalInGoa);
         arrivalDeadline.setFullYear(arrivalDeadline.getFullYear() + 3);
-        if (!deadlineDate || arrivalDeadline > deadlineDate) {
+        if (arrivalDeadline > deadlineDate) {
           deadlineDate = arrivalDeadline;
         }
       }
 
-      if (!deadlineDate || declDate > deadlineDate) {
+      if (declDate > deadlineDate) {
         blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Opt-out declaration was executed after the statutory 3-year limitation window under Section 1(4)(c). Status undetermined pending judicial determination.");
         return {
           status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
@@ -717,21 +876,44 @@ export function classifyGoaJurisdiction(p = {}) {
         }
 
         // Section 1(4)(d) Statutory Deadline: Election must be executed within 3 years of attaining majority (age 21)
-        if (p.dob) {
-          const electionDate = new Date(electionRecord.issueDate || electionRecord.registrationDate || electionRecord.statutoryDate || p.electionDate);
-          const majorityPlus3 = new Date(p.dob);
-          majorityPlus3.setFullYear(majorityPlus3.getFullYear() + 21); // 18 + 3 = 21 years
-          if (electionDate > majorityPlus3) {
-            blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(d) statutory election must be executed within 3 years of attaining majority (before age 21). Late election leaves Goa Act applicability unconfirmed.");
-            return {
-              status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-              statutoryClause: "Section 1(4)(d) Election Deadline Expired",
-              applicableAct: "Unconfirmed",
-              reasons: ["Statutory election before Special Notary was executed after statutory 3-year deadline following majority."],
-              blockers,
-              canGenerateWill: false
-            };
-          }
+        if (!isValidIsoDate(p.dob)) {
+          blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(d) statutory election deadline validation requires a valid date of birth (YYYY-MM-DD). Missing or invalid date of birth blocks election clearance.");
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4)(d) Election DOB Mandatory",
+            applicableAct: "Unconfirmed",
+            reasons: ["Valid date of birth is mandatory to determine the 3-year statutory election window after majority."],
+            blockers,
+            canGenerateWill: false
+          };
+        }
+
+        const electDateStr = (electionRecord.issueDate || electionRecord.registrationDate || electionRecord.statutoryDate || p.electionDate || '').toString().trim();
+        if (!isValidIsoDate(electDateStr)) {
+          blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(d) statutory election requires a valid registration date (YYYY-MM-DD). Missing or invalid election date blocks election clearance.");
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4)(d) Election Date Mandatory",
+            applicableAct: "Unconfirmed",
+            reasons: ["Valid election registration date is mandatory to evaluate statutory compliance."],
+            blockers,
+            canGenerateWill: false
+          };
+        }
+
+        const electionDate = new Date(electDateStr);
+        const majorityPlus3 = new Date(p.dob);
+        majorityPlus3.setFullYear(majorityPlus3.getFullYear() + 21); // 18 + 3 = 21 years
+        if (electionDate > majorityPlus3) {
+          blockers.push("ERR_GOA_ELECTION_DEADLINE_EXPIRED: Section 1(4)(d) statutory election must be executed within 3 years of attaining majority (before age 21). Late election leaves Goa Act applicability unconfirmed.");
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4)(d) Election Deadline Expired",
+            applicableAct: "Unconfirmed",
+            reasons: ["Statutory election before Special Notary was executed after statutory 3-year deadline following majority."],
+            blockers,
+            canGenerateWill: false
+          };
         }
 
         reasons.push("Section 1(4)(d): Testator born in Goa to rest-of-India parents, satisfying permanent residence requirement and having declared verified statutory election before Special Notary.");
@@ -791,16 +973,44 @@ export function classifyGoaJurisdiction(p = {}) {
       };
     }
 
-    if (p.parentsPortugueseRegime === false && !p.parentsRestOfIndiaGoverned && !p.parentsGovernedByRestOfIndiaLaw && !p.parentsRestOfIndiaEvidence) {
-      blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: A bare negative assertion (parentsPortugueseRegime: false) without affirmative declaration or evidence of rest-of-India governing law is insufficient to rule out Section 1(4)(c).");
-      return {
-        status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-        statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
-        applicableAct: "Unconfirmed",
-        reasons: ["Affirmative rest-of-India parental succession status is mandatory to rule out Section 1(4)(c)."],
-        blockers,
-        canGenerateWill: false
+    if (claimsParentsRestOfIndia) {
+      // REVISION 9 FIX: Self-entered boolean (parentsRestOfIndiaGoverned: true / parentsPortugueseRegime: false)
+      // CANNOT establish rest-of-India governing regime under Section 1(4)(c) without verified documentary evidence!
+      const parentsRoiRecord = p.parentsRestOfIndiaEvidence || jurEv.parentsRestOfIndia;
+      if (!parentsRoiRecord) {
+        blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: For a testator born outside Goa (or claiming Goa ancestral nexus), a self-entered Boolean (parentsRestOfIndiaGoverned: true / parentsPortugueseRegime: false) is legally insufficient. Documentary evidence establishing parents' rest-of-India governing law is mandatory under Section 1(4)(c).");
+        return {
+          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+          statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
+          applicableAct: "Unconfirmed",
+          reasons: ["Documentary proof of parents' rest-of-India civil origin or domicile is mandatory to rule out Section 1(4)(c)."],
+          blockers,
+          canGenerateWill: false
+        };
+      }
+
+      const parentRoiContext = {
+        requiredSubject: 'PARENTS',
+        testatorName: p.fullName,
+        parentNames,
+        strictSubjectMatch: true
       };
+      const parentsRoiCheck = validateJurisdictionEvidence(parentsRoiRecord, [
+        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
+        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
+      ], parentRoiContext);
+
+      if (!parentsRoiCheck.isValid) {
+        blockers.push(`${parentsRoiCheck.blockerCode || 'ERR_GOA_JURISDICTION_UNCONFIRMED'}: Parents' rest-of-India evidence under Section 1(4)(c) is invalid or unverified. ${parentsRoiCheck.reason}`);
+        return {
+          status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+          statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
+          applicableAct: "Unconfirmed",
+          reasons: ["Documentary proof of parents' rest-of-India legal regime is unverified."],
+          blockers,
+          canGenerateWill: false
+        };
+      }
     }
   }
 

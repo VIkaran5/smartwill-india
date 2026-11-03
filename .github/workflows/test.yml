@@ -1,0 +1,37 @@
+name: SmartWill India — Legal Engine CI
+
+on:
+  push:
+    branches:
+      - main
+      - legal-engine-2.1.3-stage1
+  pull_request:
+    branches:
+      - main
+      - legal-engine-2.1.3-stage1
+
+jobs:
+  test:
+    name: Statutory Regression & Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run Stage 1 Legal Engine Test Suite
+        run: npx vitest run tests/unit/legalEngine2_1.test.js
+
+      - name: Run Full Repository Regression Suite
+        run: npx vitest run
+
+      - name: Run Production Build
+        run: npm run build

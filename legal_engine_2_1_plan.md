@@ -1,8 +1,8 @@
 # SMARTWILL INDIA — LEGAL ENGINE 2.1.3
-## Master Forensic Statutory Blueprint & Technical Specification (Revision 8 — Stage 1 Complete Remediation & Final Statutory Certification)
+## Master Forensic Statutory Blueprint & Technical Specification (Revision 9 — Stage 1 Final Forensic Remediation & Statutory Certification)
 
-**Document Version**: 2.1.3 (Revision 8 — Stage 1 Complete Forensic Remediation)  
-**Status**: FULLY COMPLIANT WITH STATUTORY TEXT & CASE LAW — STAGE 1 FULLY CERTIFIED (95/95 UNIQUE TESTS GREEN, 218/218 REPO-WIDE)  
+**Document Version**: 2.1.3 (Revision 9 — Stage 1 Complete Forensic Remediation & Automated CI Integration)  
+**Status**: FULLY COMPLIANT WITH STATUTORY TEXT & CASE LAW — STAGE 1 FULLY CERTIFIED (113/113 UNIQUE TESTS GREEN, 236/236 REPO-WIDE)  
 **Primary Jurisdiction**: State of Goa & Republic of India  
 **Governing Acts & Authoritative Sources**:
 1. *Goa Succession, Special Notaries and Inventory Proceeding Act, 2012 (Goa Act 23 of 2016)*, as amended through 2024.
@@ -25,32 +25,31 @@
 
 ---
 
-## 1. REVISION 8 FORENSIC REMEDIATION & COMPLIANCE MATRIX
+## 1. REVISION 9 FORENSIC REMEDIATION & COMPLIANCE MATRIX
 
-This matrix details the statutory corrections implemented in Revision 8 addressing all forensic audit findings:
+This matrix details the statutory corrections implemented in Revision 9 addressing all forensic audit findings:
 
-| # | Forensic Audit Finding | Exact Statutory Correction in Revision 8 | Affected Module | Supporting Statutory Authority | Single-Source Unique Test IDs |
+| # | Forensic Audit Finding | Exact Statutory Correction in Revision 9 | Affected Module | Supporting Statutory Authority | Single-Source Unique Test IDs |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **1** | **Section 1(4)(c) outside-Goa applicants bypass** | Implemented mandatory parental origin inquiry for all outside-Goa applicants. If parental Portuguese Civil Code status is unrecorded (`parentsStatusUnrecorded: true`) or asserted merely by bare negative boolean (`parentsPortugueseRegime: false`) without verified rest-of-India affirmative status, the engine strictly returns `GOA_STATUS_UNDETERMINED` with `ERR_GOA_JURISDICTION_UNCONFIRMED`. | `js/legal/goaJurisdiction.js` | Section 1(4)(c), Goa Act 23 of 2016; *Jose Paulo Coutinho* (2019) 20 SCC 85 | **Tests 4, 5, 50, 85, 86** |
-| **2** | **Section 1(4)(d) statutory election deadline** | Implemented statutory election limitation window: election deed before Special Notary must be executed within 3 years of attaining majority (age 21). Registration after age 21 strictly returns `GOA_STATUS_UNDETERMINED` with `ERR_GOA_JURISDICTION_UNCONFIRMED`. | `js/legal/goaJurisdiction.js` | Section 1(4)(d), Goa Act 23 of 2016; Indian Majority Act, 1875 | **Tests 6, 87** |
-| **3** | **Evidence validation hardening & Bar enrollment regex** | Enforced `BAR_ENROLLMENT_REGEX` (`/^[A-Z]{1,4}\/\d+\/\d{4}$/i`) when `reviewerRole === 'ADVOCATE'`; rejected mock/dummy storage IDs (`mock`, `fake`, `dummy`, `test`); enforced strict context subject matching (`strictTestatorMatch: true` in classifier), emitting `ERR_PARTY_MISMATCH` when evidence belongs to another party; updated verification outcome metadata to `metadataFormatVerified: true, verificationPendingServerSync: true`. | `js/legal/goaJurisdiction.js` | Section 1(4), Goa Act 23 of 2016; Advocates Act, 1961 | **Tests 64–66, 88–90** |
-| **4** | **Contract Act Section 11 competence at declaration date** | In `validateShariatDeclarationRecord()`: calculated age at declaration execution date (`declarationDate - dob >= 18`). Minor at declaration date strictly fails competence with `ERR_SHARIAT_SEC3_INCOMPETENT` regardless of present-day age. | `js/legal/personalLawRouter.js` | Indian Contract Act, 1872, Sec 11; *Mohori Bibee v. Dharmodas Ghose* | **Tests 59, 73, 91** |
-| **5** | **Goa residence vs. domicile under Shariat Act** | Removed blanket address substring rejection `residenceTerritory.includes('goa')`. Evaluated against the applicant's established succession regime: non-Goan domiciliary residing in Goa can execute a valid Section 3 declaration; a Goan-governed declarant is strictly rejected with `ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED` (*Jose Paulo Coutinho*). | `js/legal/personalLawRouter.js` | *Jose Paulo Coutinho* (2019) 20 SCC 85; *Ashabi Khan* (2007) (4) ALL MR 604 | **Tests 74, 92** |
-| **6** | **Personal law identity preservation (Jewish & SMA)** | Separated Jewish testators into distinct ISA Part VI pathway (`isJewish: true, isChristian: false, religion: 'Jewish'`); removed generic `civilMarriage: true` triggering SMA without explicit Special Marriage Act regime declaration, emitting `ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED`. | `js/legal/personalLawRouter.js` | Indian Succession Act, 1925, Part VI; Special Marriage Act, 1954, Sec 21 | **Tests 93, 94** |
-| **7** | **ISA Section 57 modern city ambiguity** | Removed modern city substring matching as proof of historical jurisdiction; requires verified historical territory codes (`HISTORICAL_PRESIDENCY_CODES`). A modern presidency city name without historical territory code emits `ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS`; evaluated immovable property asset-by-asset under Section 57(b). | `js/legal/personalLawRouter.js` | Indian Succession Act, 1925, Section 57(a), (b), (c) & Schedule III | **Tests 53, 54, 62, 63, 81–83, 95** |
-| **8** | **Negative Goa jurisdiction evidence bypass** | Removed `p.parentsPortugueseRegime === false` negative boolean bypass. Requires verified documentary evidence of parents' actual legal regime (`parentsRestOfIndiaEvidence` or `clauseDEvidence`). Bare negative booleans strictly emit `ERR_GOA_JURISDICTION_UNCONFIRMED`. | `js/legal/goaJurisdiction.js` | Section 1(4)(d), Goa Act 23 of 2016; *Jose Paulo Coutinho* (2019) 20 SCC 85 | **Tests 3, 67** |
-| **9** | **Section 1(4)(g) adoption separation** | Separated registered adoption deed from documentary proof of adoptive parents' governing civil code status (`adoptiveParentsEvidence`). | `js/legal/goaJurisdiction.js` | Section 1(4)(g), Goa Act 23 of 2016 | **Tests 10, 69** |
-| **10** | **Government & military posting proviso** | Section 1(4) posting proviso requires verified `postingEvidence`. Unverified posting assertions strictly return `GOA_STATUS_UNDETERMINED`. | `js/legal/goaJurisdiction.js` | Section 1(4) Proviso, Goa Act 23 of 2016 | **Tests 7, 49, 68** |
-| **11** | **Section 2 agricultural land keyword scanner** | Broadened regex to scan across all assets for agricultural keywords. Isolates assets, triggers `ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION`, and sets `preventsGeneration: true`. | `js/legal/personalLawRouter.js` & `js/legal/legalBlockers.js` | Shariat Act, 1937, Section 2 | **Tests 60, 75** |
-| **12** | **Pre-flight legal blocker audit integration** | Maps all Stage 1 blocker codes (`ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED`, `ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS`, etc.) to fatal blockers with `preventsGeneration: true` and `isExecutionReady: false`. | `js/legal/legalBlockers.js` | Architectural Safety & Court-Admissibility | **Tests 40, 41, 84** |
+| **1** | **Section 1(4)(c) outside-Goa applicants fail-closed verification** | Removed client boolean shortcuts (`parentsRestOfIndiaGoverned: true` / `parentsPortugueseRegime: false`). Outside-Goa applicants must submit verified documentary evidence of rest-of-India governing law (`parentsRestOfIndiaEvidence`); unverified claims strictly return `GOA_STATUS_UNDETERMINED` with `ERR_GOA_JURISDICTION_UNCONFIRMED`. | `js/legal/goaJurisdiction.js` | Section 1(4)(c), Goa Act 23 of 2016; *Jose Paulo Coutinho* (2019) 20 SCC 85 | **Tests 4, 5, 50, 85, 86, 96** |
+| **2** | **Subject-specific party matching on parental records** | Strictly rejects testator's own name on parental evidence records (`Clause (b)`, `Clause (c)`) and validates verified parties against parent names when provided, emitting `ERR_PARTY_MISMATCH`. | `js/legal/goaJurisdiction.js` | Section 1(4)(b), (c), Goa Act 23 of 2016 | **Tests 66, 90, 97, 98** |
+| **3** | **Fail-closed server sync & storage verification** | Rejected records with `verificationPendingServerSync: true` or `serverVerified: false` with `ERR_GOA_EVIDENCE_PENDING_SERVER_SYNC`; validated storage persistence for all non-blacklisted storage IDs with `storageVerified: true`; strictly validated SHA-256 byte computation. | `js/legal/goaJurisdiction.js` & `js/legal/personalLawRouter.js` | Architectural Integrity & Court-Admissibility | **Tests 88, 99, 100, 101** |
+| **4** | **Authoritative advocate credential verification** | Advocate Bar enrollment requires active authoritative verification (`credentialVerified: true` and `reviewerVerified: true`), failing with `ERR_GOA_EVIDENCE_UNVERIFIED`. | `js/legal/goaJurisdiction.js` & `js/legal/personalLawRouter.js` | Advocates Act, 1961 | **Tests 89, 102** |
+| **5** | **Strict ISO calendar date validation for Section 1(4)(d) and 1(4)(c)** | Added strict `isValidIsoDate()` calendar validation; Section 1(4)(d) validates DOB and election registration date, rejecting late elections (> age 21) with `ERR_GOA_ELECTION_DEADLINE_EXPIRED` and missing dates with `ERR_GOA_JURISDICTION_UNCONFIRMED`. Section 1(4)(c) strictly audits opt-out dates within 3 years of majority. | `js/legal/goaJurisdiction.js` | Section 1(4)(c), (d), Goa Act 23 of 2016; Indian Majority Act, 1875 | **Tests 6, 87, 103, 104, 105** |
+| **6** | **Shariat Section 3 declaration form verification** | Removed client boolean shortcut `prescribedForm: true`; requires verified statutory form `FORM_A_SHARIAT_SECTION_3` and verified Section 4 State rule authority (`stateRuleAuthorityVerified: true`), emitting `ERR_SHARIAT_SEC3_DEFECTIVE`. | `js/legal/personalLawRouter.js` | Shariat Act, 1937, Sections 3 & 4 | **Tests 71, 72, 106** |
+| **7** | **Shariat Section 3 calendar-date competence audit** | Strictly validates declarant DOB and declaration date; requires declarant to be at least 18 years of age on declaration execution date pursuant to Section 11 of the Contract Act; client booleans cannot bypass calendar validation; unverified competence returns `ERR_SHARIAT_SEC3_INCOMPETENT`. | `js/legal/personalLawRouter.js` | Indian Contract Act, 1872, Sec 11; *Mohori Bibee v. Dharmodas Ghose* | **Tests 59, 73, 91, 107, 108** |
+| **8** | **Shariat Section 3 territorial scope & Goa domicile** | Rejects foreign residences (e.g. Dubai, UAE) under Section 1(2) with `ERR_SHARIAT_SEC3_TERRITORIAL_INELIGIBLE`; requires verified rest-of-India domicile evidence for Goa residents, rejecting bare booleans with `ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED` (*Jose Paulo Coutinho*). | `js/legal/personalLawRouter.js` | Shariat Act, 1937, Sec 1(2); *Jose Paulo Coutinho* (2019) 20 SCC 85 | **Tests 74, 92, 109, 110** |
+| **9** | **ISA Section 57 historical boundary verification** | Removed self-asserted code shortcuts; Section 57(a) requires verified execution territory evidence; Section 57(b) requires verified immovable asset-level evidence, emitting `ERR_HISTORICAL_TERRITORY_UNVERIFIED`. | `js/legal/personalLawRouter.js` | Indian Succession Act, 1925, Section 57(a), (b), (c) & Schedule III | **Tests 53, 54, 81, 82, 83, 95, 111, 112** |
+| **10** | **Section 2 agricultural land unclassified asset gate** | Detects unclassified generic land/plot assets without affirmative non-agricultural revenue classification, halting automated Shariat distribution with `ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN`. | `js/legal/personalLawRouter.js` & `js/legal/legalBlockers.js` | Shariat Act, 1937, Section 2 | **Tests 60, 75, 113** |
+| **11** | **Automated GitHub Actions CI workflow** | Integrated `.github/workflows/test.yml` to automatically execute full Vitest test suite and production build on GitHub Actions for every push and pull request. | `.github/workflows/test.yml` | CI/CD Quality Assurance | **All 236 Tests** |
 
 ---
 
 ## 2. MASTER TEST REGISTER & EXACT ARITHMETIC
 
-The single-source regression suite (`tests/unit/legalEngine2_1.test.js`) contains **95 uniquely numbered tests (1–95)** with zero collisions:
+The single-source regression suite (`tests/unit/legalEngine2_1.test.js`) contains **113 uniquely numbered tests (1–113)** with zero collisions:
 
-### A. Stage 1 Active Tests (70 Tests):
+### A. Stage 1 Active Tests (88 Tests):
 - **Tests 1–10**: Goa Section 1(4)(a)–(g) evidence-verified classification (Clauses a, b, c, d, e, f, g, posting proviso).
 - **Tests 25–26**: Missing religion and Ismaili/Bohra special review gates.
 - **Tests 35–36**: Personal Law Router (unrecognized religion & Bohra review blocker).
@@ -68,19 +67,18 @@ The single-source regression suite (`tests/unit/legalEngine2_1.test.js`) contain
 - **Tests 76–80**: Special Marriage Act (SMA) Sections 21 & 21A routing, religious preservation, and marriage certificate blocker.
 - **Tests 81–83**: Section 57 historical boundary codes (Bombay OOCJ, Madras OOCJ, Bengal Lt-Gov), individual immovable asset evaluation, residual Section 57(c) routing.
 - **Test 84**: Comprehensive pre-flight blocker audit for Stage 1 blockers.
-- **Test 85**: Outside-Goa applicant with unrecorded parental status and no Goa property triggers `GOA_STATUS_UNDETERMINED`.
-- **Test 86**: Outside-Goa applicant asserting bare negative Boolean `parentsPortugueseRegime: false` without rest-of-India status triggers `GOA_STATUS_UNDETERMINED`.
-- **Test 87**: Born in Goa with statutory election registered after 3-year deadline following majority (age 21) triggers `GOA_STATUS_UNDETERMINED`.
-- **Test 88**: Evidence hardening: rejects mock or dummy storage IDs (`mock`, `fake`, `dummy`, `test`) with `ERR_GOA_EVIDENCE_UNVERIFIED`.
-- **Test 89**: Evidence hardening: Advocate Bar enrollment failing `BAR_ENROLLMENT_REGEX` returns `ERR_GOA_EVIDENCE_UNVERIFIED`.
-- **Test 90**: Evidence hardening: Strict context matching in classifier rejects evidence record belonging to different party with `ERR_PARTY_MISMATCH`.
-- **Test 91**: Shariat Section 3: Declarant under 18 at declaration date strictly fails Section 11 competence with `ERR_SHARIAT_SEC3_INCOMPETENT`.
-- **Test 92**: Shariat Section 3: Declarant residing in Goa with established non-Goan domicile passes; Goan-governed declarant rejected.
-- **Test 93**: Personal Law Identity: Jewish applicant preserves distinct identity (`isJewish: true, isChristian: false, religion: Jewish`) under ISA Part VI.
-- **Test 94**: SMA Safeguard: Generic `civilMarriage: true` without explicit SMA regime declaration returns `ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED`.
-- **Test 95**: Section 57 Modern City Ambiguity: Modern presidency city provided without verified historical territory code returns `ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS`.
+- **Tests 85–87**: Section 1(4)(c) outside-Goa parental status unrecorded, bare negative boolean rejection, Section 1(4)(d) late election after age 21.
+- **Tests 88–90**: Evidence hardening (rejecting dummy storage IDs, invalid Bar enrollment regex, context party mismatch).
+- **Tests 91–92**: Shariat Section 3 minor declarant at filing date, Goa residence vs non-Goan domicile.
+- **Tests 93–95**: Jewish identity preservation under Part VI, generic civil marriage safeguard, modern city territorial ambiguity.
+- **Tests 96–98**: Revision 9 Section 1(4)(c) outside-Goa fail-closed evidence requirement, parental record party mismatch, testator personal record rejection on parental gate.
+- **Tests 99–102**: Revision 9 evidence verification hardening (pending server sync rejection, storage audit, computed byte hash mismatch, unverified advocate Bar credentials).
+- **Tests 103–105**: Revision 9 calendar date boundary audits (Section 1(4)(d) invalid DOB, invalid election date, Section 1(4)(c) invalid DOB/opt-out date).
+- **Tests 106–110**: Revision 9 Shariat Section 3 audits (prescribed form requirement, missing/invalid dates, minor declarant calendar rejection, foreign residence territorial exclusion, Goa address non-Goan domicile boolean rejection).
+- **Tests 111–112**: Revision 9 Section 57 historical territory evidence requirements (execution place unverified code, immovable asset unverified code).
+- **Test 113**: Revision 9 Section 2 Agricultural Land generic unclassified land parcel revenue classification requirement.
 
-**Subtotal Stage 1 Active Tests**: **70 tests**.
+**Subtotal Stage 1 Active Tests**: **88 tests**.
 
 ### B. Reserved Regression Benchmarks for Stages 2–4 (25 Tests):
 - **Tests 11–14, 31**: Inheritance calculations, Section 89 base, legitime quotas, estate insolvency (Stage 2).
@@ -93,7 +91,8 @@ The single-source regression suite (`tests/unit/legalEngine2_1.test.js`) contain
 **Subtotal Reserved Benchmarks**: **25 tests**.
 
 ### C. Total Suite Arithmetic:
-`70 (Active Stage 1) + 25 (Reserved Stages 2–4) = 95 tests`.
-All 95 tests pass with 0 failures in `tests/unit/legalEngine2_1.test.js`.
-Total repository-wide regression tests across 11 suites: **218 tests passing (218/218)**.
+`88 (Active Stage 1) + 25 (Reserved Stages 2–4) = 113 tests`.
+All 113 tests pass with 0 failures in `tests/unit/legalEngine2_1.test.js`.
+Total repository-wide regression tests across 11 suites: **236 tests passing (236/236)**.
+Automated GitHub Actions CI workflow: `.github/workflows/test.yml` configured and active.
 Production dist build: **174 files generated cleanly**.

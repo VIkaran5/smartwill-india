@@ -23,7 +23,8 @@ import {
   JURISDICTION_STATUS,
   validateJurisdictionEvidence,
   JURISDICTION_DOCUMENT_TYPES,
-  AUTHORIZED_REVIEWER_ROLES
+  AUTHORIZED_REVIEWER_ROLES,
+  isValidIsoDate
 } from './goaJurisdiction.js';
 
 export const PERSONAL_LAW_REGIMES = {
@@ -80,17 +81,25 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  // 1. Immutable Document Storage Identifier
+  // 1. Immutable Document Storage Identifier & Trusted Storage Verification
   const storageId = (record.documentStorageId || record.storageKey || record.uploadId || '').toString().trim();
-  if (!storageId) {
+  const invalidStorageIds = ['mock', 'fake', 'test', 'string', 'null', 'undefined', 'invalid', 'dummy'];
+  if (!storageId || invalidStorageIds.includes(storageId.toLowerCase())) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-      reason: "Missing uploaded document storage identifier (documentStorageId / storageKey). Declaration document must be uploaded to secure repository."
+      reason: "Missing or invalid uploaded document storage identifier (documentStorageId / storageKey). Declaration document must be uploaded to secure repository."
+    };
+  }
+  if (record.storageVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: `Declaration document storage identifier '${storageId}' has not been resolved against a verified uploaded file in the secure repository.`
     };
   }
 
-  // 2. Primary Reference / Registration Number
+  // 2. Primary Reference / Registration Number & Strict Date Validation
   const filingRef = (record.filingReference || record.documentRef || record.registrationNumber || '').toString().trim();
   if (!filingRef) {
     return {
@@ -100,15 +109,15 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  if (!record.declarationDate) {
+  if (!isValidIsoDate(record.declarationDate)) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-      reason: "Missing statutory declaration filing date."
+      reason: "Missing or invalid statutory declaration filing date (valid YYYY-MM-DD required)."
     };
   }
 
-  // 3. Prescribed Statutory Authority
+  // 3. Prescribed Statutory Authority & Section 4 State Rule Verification
   const authority = (record.prescribedAuthority || '').trim().toUpperCase();
   if (!authority) {
     return {
@@ -125,55 +134,82 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
       reason: `Prescribed authority '${record.prescribedAuthority}' is not a recognized Section 3 authority (must be District Magistrate, Collector, ADM, or SDM).`
     };
   }
-
-  // 4. Prescribed Statutory Form
-  const isPrescribedForm = record.prescribedForm === true || record.formType === 'FORM_A_SHARIAT_SECTION_3';
-  if (!isPrescribedForm) {
+  if (record.stateRuleAuthorityVerified !== true) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-      reason: "Declaration was not executed in the prescribed statutory form (FORM_A_SHARIAT_SECTION_3)."
+      reason: `Prescribed authority '${record.prescribedAuthority}' has not been verified under applicable State rules pursuant to Section 4 of the Shariat Act, 1937.`
+    };
+  }
+
+  // 4. Prescribed Statutory Form (Naked boolean prescribedForm: true is strictly rejected)
+  const hasValidFormType = record.formType === 'FORM_A_SHARIAT_SECTION_3';
+  if (!hasValidFormType || record.prescribedFormDefective === true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Declaration was not executed in the prescribed statutory form (FORM_A_SHARIAT_SECTION_3). A self-entered Boolean alone cannot establish compliance."
     };
   }
 
   // 5. Contract Act Section 11 Competence (Age >= 18 AT DECLARATION DATE, Sound Mind, No Disqualification)
-  // Naked boolean contractCompetent: true alone is insufficient without verified competence facts
-  let isAdult = false;
-  const declTime = new Date(record.declarationDate).getTime();
-  if (personal.dob && !isNaN(declTime)) {
-    const dobTime = new Date(personal.dob).getTime();
-    const ageAtDeclYears = (declTime - dobTime) / (365.25 * 24 * 60 * 60 * 1000);
-    if (ageAtDeclYears >= 18) {
-      isAdult = true;
-    }
-  } else if (typeof record.ageAtDeclaration === 'number' && record.ageAtDeclaration >= 18) {
-    isAdult = true;
-  } else if (record.ageConfirmed18Plus === true || record.isAdult === true) {
-    isAdult = true;
-  } else if (typeof personal.age === 'number' && personal.age >= 18 && !personal.dob) {
-    isAdult = true;
-  }
+  // Calendar-date arithmetic: DOB and Declaration Date are mandatory; boolean shortcuts are strictly barred.
+  const hasValidDob = isValidIsoDate(personal.dob);
+  const hasValidAge = personal.age !== undefined && !isNaN(Number(personal.age));
 
-  const isSoundMind = record.soundMindConfirmed === true || record.competenceFactsVerified === true;
-  const isNotDisqualified = record.notDisqualifiedConfirmed === true || record.competenceFactsVerified === true;
-  const competenceEstablished = isAdult && isSoundMind && isNotDisqualified && (record.contractCompetent === true || personal.contractCompetent === true);
-
-  if (!competenceEstablished) {
+  if (hasValidAge && Number(personal.age) < 18) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
-      reason: "Declarant competence under Section 11 of the Indian Contract Act, 1872 is unverified or false. Declarant must be at least 18 years of age on the statutory declaration date, of sound mind, and not disqualified."
+      reason: "Declarant was under 18 years of age on the statutory declaration date. Declarant must be at least 18 years of age on the statutory declaration date pursuant to Section 11 of the Indian Contract Act, 1872."
     };
   }
 
-  // 6. Residence and Governing Regime Scope
-  // Under Shariat Act Section 1(2), the Act extends to the whole of India (post-2019).
-  // However, under Jose Paulo Coutinho (2019) 20 SCC 85 & Ashabi Khan (2007) (4) ALL MR 604,
-  // Goa civil succession law governs Goan domiciles as special and local law.
-  // Shariat Section 3 declaration is ineffective to alter Goan succession for a Goan-governed person.
-  const isEstablishedNonGoan = personal.governingSuccessionRegime === 'INDIAN_SUCCESSION_ACT' ||
-    personal.isGoanDomicile === false ||
-    personal.parentsRestOfIndiaGoverned === true;
+  if (!hasValidDob && !hasValidAge) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Missing or invalid date of birth (valid YYYY-MM-DD required) for Section 11 competence audit."
+    };
+  }
+
+  if (hasValidDob) {
+    const declDate = new Date(record.declarationDate);
+    const dobDate = new Date(personal.dob);
+    const majority18Date = new Date(dobDate);
+    majority18Date.setFullYear(majority18Date.getFullYear() + 18);
+
+    if (declDate < majority18Date) {
+      return {
+        isValid: false,
+        blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
+        reason: "Declarant was under 18 years of age on the statutory declaration date. Declarant must be at least 18 years of age on the statutory declaration date pursuant to Section 11 of the Indian Contract Act, 1872."
+      };
+    }
+  }
+
+  if (record.competenceVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
+      reason: "Declarant competence facts (age 18+ on declaration date, sound mind, not disqualified) have not been authoritatively verified by legal counsel."
+    };
+  }
+
+  // 6. Residence Territory and Statutory Scope (Section 1(2) & Section 3)
+  // Check Foreign Residence Exclusion: Shariat Act Section 3 applies only to residents of India.
+  const addressCountry = (personal.addressCountry || record.residenceCountry || '').trim().toLowerCase();
+  const rawAddr = `${personal.addressLine1 || ''} ${personal.addressLine2 || ''} ${personal.addressCity || ''} ${personal.addressState || ''} ${record.residenceTerritory || ''}`.toLowerCase();
+  const foreignTerritories = ['dubai', 'uae', 'united arab emirates', 'london', 'uk', 'united kingdom', 'usa', 'united states', 'canada', 'singapore', 'kuwait', 'saudi arabia', 'qatar', 'oman'];
+  const isForeignResidence = (addressCountry && addressCountry !== 'india') || foreignTerritories.some(c => rawAddr.includes(c));
+
+  if (isForeignResidence) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_TERRITORIAL_INELIGIBLE",
+      reason: "Shariat Act Section 3 requires the declarant to be a resident of the territory to which the Act extends (India). Declarant residing outside India is ineligible to execute a Section 3 declaration."
+    };
+  }
 
   const residenceTerritory = (record.residenceTerritory || personal.addressState || '').trim().toLowerCase();
   if (!residenceTerritory && !personal.addressState) {
@@ -184,14 +220,27 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  if ((residenceTerritory.includes('goa') && !isEstablishedNonGoan) ||
-      personal.governingSuccessionRegime === PERSONAL_LAW_REGIMES.GOA_UCC ||
-      personal.isGoaGoverned === true) {
-    return {
-      isValid: false,
-      blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
-      reason: "Declarant resides in Goa and/or is governed by Goa civil succession law as special and local law (Jose Paulo Coutinho (2019) 20 SCC 85); Shariat Act Section 3 declaration is ineffective to alter Goan succession."
-    };
+  // Goa Residence & Non-Goan Domicile Verification:
+  // Under Jose Paulo Coutinho (2019) 20 SCC 85 & Ashabi Khan (2007) (4) ALL MR 604,
+  // Goa civil succession law governs Goan domiciles as special and local law.
+  // Bare booleans (isGoanDomicile: false / parentsRestOfIndiaGoverned: true) are strictly insufficient!
+  const isGoaResident = rawAddr.includes('goa') || residenceTerritory.includes('goa');
+  if (isGoaResident) {
+    const domicileEvidence = record.domicileEvidence || personal.parentsRestOfIndiaEvidence || personal.domicileEvidence;
+    const isRoiDomicileVerified = Boolean(
+      domicileEvidence &&
+      domicileEvidence.serverVerified === true &&
+      (domicileEvidence.verificationStatus === 'VERIFIED' || domicileEvidence.isValid === true) &&
+      domicileEvidence.statutoryFactEstablished !== false
+    );
+
+    if (!isRoiDomicileVerified) {
+      return {
+        isValid: false,
+        blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
+        reason: "Declarant resides in Goa; non-Goan domicile cannot be established by client booleans. Goa civil succession law governs Goan domiciles as special and local law (Jose Paulo Coutinho (2019) 20 SCC 85). Verified documentary proof of rest-of-India domicile is mandatory."
+      };
+    }
   }
 
   // 7. Minor Children & Descendant Coverage Check (Section 3(1))
@@ -204,7 +253,7 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  // 8. Strict Cryptographic File Hash Validation
+  // 8. Strict Cryptographic File Hash & Server Byte Verification
   const docHash = (record.documentHash || record.sha256 || '').trim().toLowerCase();
   if (!docHash) {
     return {
@@ -235,7 +284,23 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  // 9. Section 3(2) Appeal status
+  if (record.documentBytesSha256Verified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Declaration file bytes SHA-256 integrity has not been verified against actual uploaded file on secure server."
+    };
+  }
+
+  if (record.computedHash && record.computedHash.trim().toLowerCase() !== docHash) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Declaration hash does not match computed SHA-256 hash of server document bytes."
+    };
+  }
+
+  // 9. Section 3(2) Appeal Status & Order Verification
   if (record.appealFiled === true) {
     if (record.appealStatus === 'REFUSED') {
       return {
@@ -244,11 +309,11 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
         reason: "Declaration registration was refused and the statutory appeal under Section 3(2) was dismissed or refused."
       };
     }
-    if (record.appealStatus !== 'ALLOWED') {
+    if (record.appealStatus !== 'ALLOWED' || record.appealOrderVerified !== true) {
       return {
         isValid: false,
         blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-        reason: "Statutory appeal under Section 3(2) is pending or unconfirmed."
+        reason: "Statutory appeal under Section 3(2) is pending or appeal order is unverified."
       };
     }
   }
@@ -289,6 +354,14 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
+  if (record.reviewerVerified !== true || record.credentialVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Verifying advocate credentials or identity have not been authoritatively authenticated."
+    };
+  }
+
   if (!record.verificationDate) {
     return {
       isValid: false,
@@ -306,9 +379,20 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
+  // 11. Final Server Synchronization & Verification State
+  if (record.verificationPendingServerSync === true || record.serverVerified !== true) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_PENDING_SERVER_SYNC",
+      reason: "Declaration evidence verification pending server synchronization. Document bytes must be verified against server repository."
+    };
+  }
+
   return {
     isValid: true,
     blockerCode: null,
+    serverVerified: true,
+    integrityVerified: true,
     reason: "Section 3 declaration record fully authenticated by qualified advocate."
   };
 }
@@ -568,13 +652,32 @@ export function resolvePersonalLawRegime(willData = {}) {
 
     // Asset-Level Check: Agricultural Land Exclusion under Section 2 of Shariat Act, 1937
     // Broad scan covering agricultural, paddy, orchard, cashew, plantation, farm, khasra, etc.
+    // AND unclassified land/plot assets whose revenue character is uncertain.
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
-    const agriculturalAssets = assetsList.filter(a => {
-      if (a.isAgriculturalLand === true) return true;
-      const combined = `${a.type || ''} ${a.desc || ''} ${a.name || ''} ${a.details || ''} ${a.assetType || ''} ${a.landType || ''}`;
-      return AGRICULTURAL_KEYWORD_REGEX.test(combined);
+    const confirmedAgriculturalAssets = [];
+    const uncertainLandAssets = [];
+
+    assetsList.forEach(a => {
+      const combined = `${a.type || ''} ${a.desc || ''} ${a.name || ''} ${a.details || ''} ${a.assetType || ''} ${a.landType || ''}`.toLowerCase();
+      const isExplicitAgri = a.isAgriculturalLand === true || AGRICULTURAL_KEYWORD_REGEX.test(combined);
+      const isGenericLand = a.type === 'Land' || a.type === 'Plot' || a.type === 'Land Parcel' ||
+        a.type === 'Real Estate' || combined.includes('land') || combined.includes('plot');
+
+      const revClass = (a.revenueClassification || a.landClassification || '').trim().toUpperCase();
+
+      if (isExplicitAgri || revClass === 'AGRICULTURAL') {
+        confirmedAgriculturalAssets.push(a);
+      } else if (isGenericLand) {
+        if (revClass === 'NON_AGRICULTURAL' || revClass === 'COMMERCIAL' || revClass === 'RESIDENTIAL') {
+          // Confirmed non-agricultural by verified revenue classification
+        } else {
+          // Unclassified / uncertain land asset
+          uncertainLandAssets.push(a);
+        }
+      }
     });
-    const hasAgri = agriculturalAssets.length > 0 || Boolean(p.hasAgriculturalLand || p.involvesAgriculturalLand);
+
+    const hasAgri = confirmedAgriculturalAssets.length > 0 || Boolean(p.hasAgriculturalLand || p.involvesAgriculturalLand);
 
     if (hasAgri) {
       return {
@@ -584,7 +687,7 @@ export function resolvePersonalLawRegime(willData = {}) {
         isChristian: false,
         isMuslim: true,
         isHindu: false,
-        agriculturalAssets,
+        agriculturalAssets: confirmedAgriculturalAssets,
         requiresLegalReview: true,
         statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Agricultural Land Exclusion)",
         statutoryCrest: "LEGAL REVIEW REQUIRED — AGRICULTURAL LAND EXCLUDED UNDER SECTION 2",
@@ -595,6 +698,30 @@ export function resolvePersonalLawRegime(willData = {}) {
         ],
         blockers: [
           "ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION: Questions relating to agricultural land are expressly excluded from Section 2 of the Shariat Act, 1937 and are governed by state tenancy/land ceiling laws. Agricultural assets cannot be distributed under automated Shariat testamentary rules and require separate specialist advocate review."
+        ],
+        jurisdiction
+      };
+    }
+
+    if (uncertainLandAssets.length > 0) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: true,
+        isHindu: false,
+        uncertainLandAssets,
+        requiresLegalReview: true,
+        statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Land Classification Uncertain)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — UNRECORDED LAND REVENUE CLASSIFICATION",
+        reasons: [
+          "One or more land or plot assets lack confirmed non-agricultural revenue classification.",
+          "Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from personal law succession.",
+          "Unclassified land assets cannot be presumed non-agricultural without revenue authority records."
+        ],
+        blockers: [
+          `ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN: Asset '${uncertainLandAssets[0].desc || uncertainLandAssets[0].name || uncertainLandAssets[0].type}' is a land/plot asset whose revenue/agricultural classification is unrecorded or uncertain. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from personal law; unclassified land assets require specialist revenue advocate review before testamentary distribution.`
         ],
         jurisdiction
       };
@@ -831,12 +958,40 @@ export function resolvePersonalLawRegime(willData = {}) {
       };
     }
 
+    // Fail-Closed: User-entered historical territory code alone cannot establish Section 57(a) jurisdiction without verified documentary evidence!
+    if (isHistoricalPresidencyExec) {
+      const execHistEvidence = p.historicalTerritoryEvidence || p.territorialEvidence;
+      const isExecTerritoryVerified = Boolean(
+        execHistEvidence &&
+        execHistEvidence.serverVerified === true &&
+        (execHistEvidence.verificationStatus === 'VERIFIED' || execHistEvidence.isValid === true) &&
+        execHistEvidence.statutoryFactEstablished !== false
+      );
+
+      if (!isExecTerritoryVerified) {
+        return {
+          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+          isGoa: false,
+          isParsi: false,
+          isChristian: false,
+          isMuslim: false,
+          isHindu: true,
+          requiresLegalReview: true,
+          statuteCitation: "Indian Succession Act, 1925 Section 57(a) (Territorial Evidence Unverified)",
+          statutoryCrest: "LEGAL REVIEW REQUIRED — HISTORICAL TERRITORY CODE UNVERIFIED",
+          reasons: ["Historical presidency territory code was supplied for will execution place without verified documentary evidence establishing that execution occurred within statutory boundaries."],
+          blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Historical presidency territory code for will execution place requires verified documentary proof. User-entered code alone cannot establish statutory jurisdiction."],
+          jurisdiction
+        };
+      }
+    }
+
     const hasPresidencyExecution = isHistoricalPresidencyExec;
 
     // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
     // Evaluate each immovable asset individually (never rely on bare boolean or modern city name without historical code)
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
-    const immovableAssets = assetsList.filter(a => a.isImmovable === true || a.type === 'Real Estate' || a.type === 'Land' || a.type === 'House');
+    const immovableAssets = assetsList.filter(a => a.isImmovable === true || a.immovableProperty === true || a.immovable === true || a.type === 'Real Estate' || a.type === 'Land' || a.type === 'House' || (typeof a.type === 'string' && (a.type.toLowerCase().includes('flat') || a.type.toLowerCase().includes('house') || a.type.toLowerCase().includes('real estate') || a.type.toLowerCase().includes('land') || a.type.toLowerCase().includes('shop') || a.type.toLowerCase().includes('property') || a.type.toLowerCase().includes('plot'))));
 
     // Check individual immovable assets for modern presidency city without historical code:
     const ambiguousImmovable = immovableAssets.find(a => {
@@ -877,14 +1032,75 @@ export function resolvePersonalLawRegime(willData = {}) {
       };
     }
 
-    const presidencyImmovableAssets = immovableAssets.filter(a => {
+    // Fail-Closed: Check if any individual immovable asset claims a historical territory code without verified evidence
+    const unverifiedHistoricalAsset = immovableAssets.find(a => {
       const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
-      return code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+      const claimsCode = code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
         code === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
         code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
+      if (!claimsCode) return false;
+      const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
+      const isEvVerified = Boolean(
+        ev &&
+        ev.serverVerified === true &&
+        (ev.verificationStatus === 'VERIFIED' || ev.isValid === true) &&
+        ev.statutoryFactEstablished !== false
+      );
+      return !isEvVerified;
     });
 
-    const hasPresidencyImmovables = presidencyImmovableAssets.length > 0 || hasPersonalHistCode;
+    if (unverifiedHistoricalAsset) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: false,
+        isHindu: true,
+        requiresLegalReview: true,
+        statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Asset Territorial Evidence Unverified)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET HISTORICAL TERRITORY UNVERIFIED",
+        reasons: ["Immovable asset claims historical presidency territory jurisdiction without verified documentary evidence."],
+        blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Immovable asset historical territory code requires verified documentary evidence. Self-asserted code alone cannot establish Section 57(b) jurisdiction."],
+        jurisdiction
+      };
+    }
+
+    // Fail-Closed: Legacy shortcut check: personal.immovablePropertyHistoricalCode alone without verified asset-level record is prohibited!
+    if (hasPersonalHistCode) {
+      const hasVerifiedAsset = immovableAssets.some(a => {
+        const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
+        return ev && ev.serverVerified === true && (ev.verificationStatus === 'VERIFIED' || ev.isValid === true);
+      });
+      if (!hasVerifiedAsset) {
+        return {
+          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+          isGoa: false,
+          isParsi: false,
+          isChristian: false,
+          isMuslim: false,
+          isHindu: true,
+          requiresLegalReview: true,
+          statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Personal Property Code Unverified)",
+          statutoryCrest: "LEGAL REVIEW REQUIRED — IMMOVABLE PROPERTY CODE UNVERIFIED AT ASSET LEVEL",
+          reasons: ["Legacy personal-level immovable property code provided without asset-specific verified documentary evidence."],
+          blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Legacy personal-level property historical code cannot bypass asset-level documentary verification under Section 57(b)."],
+          jurisdiction
+        };
+      }
+    }
+
+    const presidencyImmovableAssets = immovableAssets.filter(a => {
+      const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
+      const claimsCode = code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+        code === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+        code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
+      if (!claimsCode) return false;
+      const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
+      return ev && ev.serverVerified === true && (ev.verificationStatus === 'VERIFIED' || ev.isValid === true);
+    });
+
+    const hasPresidencyImmovables = presidencyImmovableAssets.length > 0;
 
     let section57Clause = null;
     let scheduleIIIApplicable = false;
