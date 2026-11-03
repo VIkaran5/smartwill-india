@@ -407,17 +407,17 @@ export async function generateEnglishWillPDF(willData) {
 
   const preambleText = `I, ${testatorUpper}${parentage}${idDocStr}, residing at ${fullAddrStr}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, being of sound disposing mind, memory, and understanding, having read over and fully understood the contents hereof in a language known to me and having approved the same, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed at ${executionPlace}, India.`;
 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8.0);
+  doc.setTextColor(15, 23, 42);
+  const preLines = doc.splitTextToSize(preambleText, contentWidth - 11);
+  const preHeight = (preLines.length * 3.8) + 6;
   doc.setFillColor(253, 252, 249);
   doc.setDrawColor(226, 232, 240);
-  const preLines = doc.splitTextToSize(preambleText, contentWidth - 8);
-  const preHeight = (preLines.length * 3.8) + 5;
   doc.rect(margin, y, contentWidth, preHeight, 'FD');
   doc.setFillColor(133, 93, 20);
   doc.rect(margin, y, 1.5, preHeight, 'F');
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.2);
-  doc.setTextColor(15, 23, 42);
-  doc.text(preLines, margin + 4, y + 4);
+  doc.text(preLines, margin + 5, y + 4.5);
   y += preHeight + 5;
 
   // ── SECTION I ────────────────────────────────────────────
