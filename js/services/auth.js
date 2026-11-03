@@ -834,6 +834,8 @@ export function preserveStateBeforeRedirect() {
 
 export async function handleGoogleSignIn() {
   if (isSubmitting) return;
+  // Upfront snapshot: ensure inputs and wizard step are securely preserved before opening any auth popup/redirect
+  preserveStateBeforeRedirect();
   if (!firebaseAuth) {
     showToast('error', 'Auth Error', 'Authentication service unavailable.');
     return;
@@ -938,6 +940,11 @@ export async function handleGoogleSignIn() {
  * Saves user data to Firestore and shows the welcome toast.
  */
 async function handleGoogleSignInSuccess(user) {
+  try {
+    localStorage.setItem('sw_last_activity_time', Date.now().toString());
+    localStorage.removeItem('sw_locked_time');
+  } catch (_) {}
+
   if (firebaseDb && user) {
     await firebaseDb.collection('users').doc(user.uid).set({
       fullName: user.displayName || '',
@@ -948,6 +955,17 @@ async function handleGoogleSignInSuccess(user) {
   }
   showToast('success', 'Google Sign-In Success! 🎉', `Welcome back, ${user.displayName || user.email}!`);
   closeAuthModal();
+
+  // If user signed in while in wizard, ensure they stay on their current step
+  try {
+    const rawSnapshot = sessionStorage.getItem('sw_auth_redirect_snapshot') || localStorage.getItem('sw_auth_redirect_snapshot');
+    if (rawSnapshot) {
+      const parsed = JSON.parse(rawSnapshot);
+      if (parsed && parsed.step && parsed.step > 1 && window.goToStep) {
+        setTimeout(() => window.goToStep(Number(parsed.step)), 150);
+      }
+    }
+  } catch (_) {}
 }
 
 function syncUserWillData(user) {

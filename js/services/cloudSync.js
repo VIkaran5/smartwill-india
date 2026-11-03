@@ -79,13 +79,34 @@ export function initUserSync(user) {
     
     const localTime = localSerialized ? (localSerialized.updatedAtClient || 0) : 0;
 
-    // Conflict Resolution: Newest Timestamp Wins
+    const hasLocalData = Boolean(
+      (localState?.personal?.fullName && localState.personal.fullName.trim()) ||
+      (localState?.assets && localState.assets.length > 0) ||
+      (localState?.beneficiaries && localState.beneficiaries.length > 0)
+    );
+    const hasRemoteData = Boolean(
+      (migratedRemote?.personal?.fullName && migratedRemote.personal.fullName.trim()) ||
+      (migratedRemote?.assets && migratedRemote.assets.length > 0) ||
+      (migratedRemote?.beneficiaries && migratedRemote.beneficiaries.length > 0)
+    );
+
+    // Safeguard 1: If local draft has populated user data while cloud draft is empty/blank,
+    // never wipe local data with an empty cloud document — upload local draft to cloud instead!
+    if (hasLocalData && !hasRemoteData) {
+      logger.info('[CloudSync] Local draft has populated data but cloud draft is empty. Uploading local draft to cloud...');
+      onLocalStateChanged();
+      return;
+    }
+
+    // Conflict Resolution: Newest Timestamp Wins (with step preservation)
     if (remoteTime > localTime && remoteData.contentHash !== lastSyncedHash) {
       logger.info('Applying newer remote draft from cloud...');
       isApplyingRemoteUpdate = true;
       try {
+        // Safeguard 2: Never downgrade currentStep if user is already at a higher wizard step locally
+        const targetStep = Math.max(Number(localState?.currentStep || 1), Number(migratedRemote.currentStep || 1));
         updateState({
-          currentStep: migratedRemote.currentStep || 1,
+          currentStep: targetStep,
           personal: migratedRemote.personal || {},
           assets: migratedRemote.assets || [],
           beneficiaries: migratedRemote.beneficiaries || [],

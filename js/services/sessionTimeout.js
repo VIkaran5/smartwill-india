@@ -159,7 +159,6 @@ export function startSessionGuardian(user) {
 
   isGuardianActive = true;
 
-  // Restore last activity from localStorage or initialize
   const now = Date.now();
   let storedTime = null;
   try {
@@ -169,12 +168,16 @@ export function startSessionGuardian(user) {
     }
   } catch (_) {}
 
-  // If user was inactive while away and elapsed time already exceeded timeout:
-  if (storedTime && (now - storedTime >= IDLE_TIMEOUT_MS)) {
+  // Safety rule: Payment steps (Step 5 & Step 6) must NEVER be auto-locked
+  if (isPaymentStepActive()) {
+    lastActivityTime = now;
+    try {
+      localStorage.setItem(STORAGE_KEY_LAST_ACTIVITY, now.toString());
+      localStorage.removeItem(STORAGE_KEY_LOCKED);
+    } catch (_) {}
+  } else if (storedTime && (now - storedTime >= IDLE_TIMEOUT_MS)) {
     return executeSessionLock();
-  }
-
-  if (storedTime && storedTime <= now && (now - storedTime < IDLE_TIMEOUT_MS)) {
+  } else if (storedTime && storedTime <= now && (now - storedTime < IDLE_TIMEOUT_MS)) {
     lastActivityTime = storedTime;
   } else {
     lastActivityTime = now;
@@ -457,9 +460,7 @@ export async function executeSessionLock(isSilent = false) {
   // instead of window.firebaseAuth which was never assigned on window.
   try {
     if (typeof window !== 'undefined') {
-      if (typeof window.handleSignOut === 'function') {
-        await window.handleSignOut();
-      } else if (typeof firebase !== 'undefined' && firebase.auth) {
+      if (typeof firebase !== 'undefined' && firebase.auth) {
         await firebase.auth().signOut();
       } else if (window.firebaseAuth && typeof window.firebaseAuth.signOut === 'function') {
         await window.firebaseAuth.signOut();
