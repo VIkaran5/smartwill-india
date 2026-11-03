@@ -136,17 +136,21 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  // 5. Contract Act Section 11 Competence (Age >= 18, Sound Mind, No Disqualification)
+  // 5. Contract Act Section 11 Competence (Age >= 18 AT DECLARATION DATE, Sound Mind, No Disqualification)
   // Naked boolean contractCompetent: true alone is insufficient without verified competence facts
   let isAdult = false;
-  if (personal.dob) {
-    const ageDiff = Date.now() - new Date(personal.dob).getTime();
-    const ageDate = new Date(ageDiff);
-    const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
-    if (calculatedAge >= 18) isAdult = true;
-  } else if (typeof personal.age === 'number' && personal.age >= 18) {
+  const declTime = new Date(record.declarationDate).getTime();
+  if (personal.dob && !isNaN(declTime)) {
+    const dobTime = new Date(personal.dob).getTime();
+    const ageAtDeclYears = (declTime - dobTime) / (365.25 * 24 * 60 * 60 * 1000);
+    if (ageAtDeclYears >= 18) {
+      isAdult = true;
+    }
+  } else if (typeof record.ageAtDeclaration === 'number' && record.ageAtDeclaration >= 18) {
     isAdult = true;
   } else if (record.ageConfirmed18Plus === true || record.isAdult === true) {
+    isAdult = true;
+  } else if (typeof personal.age === 'number' && personal.age >= 18 && !personal.dob) {
     isAdult = true;
   }
 
@@ -158,27 +162,35 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
-      reason: "Declarant competence under Section 11 of the Indian Contract Act, 1872 is unverified or false. Must verify age >= 18, sound mind, and absence of legal disqualification."
+      reason: "Declarant competence under Section 11 of the Indian Contract Act, 1872 is unverified or false. Declarant must be at least 18 years of age on the statutory declaration date, of sound mind, and not disqualified."
     };
   }
 
-  // 6. Residence in territory to which Shariat Act extends
-  // Under Shariat Act Section 1(2), the Act extends to the whole of India (as amended post-2019).
+  // 6. Residence and Governing Regime Scope
+  // Under Shariat Act Section 1(2), the Act extends to the whole of India (post-2019).
   // However, under Jose Paulo Coutinho (2019) 20 SCC 85 & Ashabi Khan (2007) (4) ALL MR 604,
   // Goa civil succession law governs Goan domiciles as special and local law.
+  // Shariat Section 3 declaration is ineffective to alter Goan succession for a Goan-governed person.
+  const isEstablishedNonGoan = personal.governingSuccessionRegime === 'INDIAN_SUCCESSION_ACT' ||
+    personal.isGoanDomicile === false ||
+    personal.parentsRestOfIndiaGoverned === true;
+
   const residenceTerritory = (record.residenceTerritory || personal.addressState || '').trim().toLowerCase();
-  if (!residenceTerritory) {
+  if (!residenceTerritory && !personal.addressState) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
       reason: "Declarant residence territory must be affirmatively recorded."
     };
   }
-  if (residenceTerritory.includes('goa')) {
+
+  if ((residenceTerritory.includes('goa') && !isEstablishedNonGoan) ||
+      personal.governingSuccessionRegime === PERSONAL_LAW_REGIMES.GOA_UCC ||
+      personal.isGoaGoverned === true) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
-      reason: "Declarant resides in Goa where Goa succession law applies as special and local law (Jose Paulo Coutinho (2019) 20 SCC 85); Shariat Act Section 3 declaration is ineffective to alter Goan succession."
+      reason: "Declarant resides in Goa and/or is governed by Goa civil succession law as special and local law (Jose Paulo Coutinho (2019) 20 SCC 85); Shariat Act Section 3 declaration is ineffective to alter Goan succession."
     };
   }
 
@@ -366,9 +378,26 @@ export function resolvePersonalLawRegime(willData = {}) {
   // Only positively established GOA_NOT_APPLICABLE cases proceed to rest-of-India personal law routing.
 
   // 2A. Special Marriage Act, 1954 (Sections 21 & 21A) Priority Routing
+  // Generic civil marriage cannot automatically activate SMA Section 21 without explicit regime declaration
+  if (p.civilMarriage === true && p.marriageRegime !== 'SPECIAL_MARRIAGE_ACT_1954' && p.marriageAct !== 'SPECIAL_MARRIAGE_ACT' && p.isSpecialMarriageAct !== true) {
+    return {
+      regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+      isGoa: false,
+      isParsi: false,
+      isChristian: false,
+      isMuslim: false,
+      isHindu: false,
+      requiresLegalReview: true,
+      statuteCitation: "Civil Marriage Statutory Regime Unconfirmed — Advocate Review Required",
+      statutoryCrest: "LEGAL REVIEW REQUIRED — CIVIL MARRIAGE REGIME UNCONFIRMED",
+      reasons: ["Generic civil marriage assertion without explicit declaration of Special Marriage Act, 1954 regime leaves governing succession law unconfirmed."],
+      blockers: ["ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED: Generic civil marriage declared without explicit Special Marriage Act, 1954 regime verification. Automated succession routing barred."],
+      jurisdiction
+    };
+  }
+
   const isSMA = p.marriageRegime === 'SPECIAL_MARRIAGE_ACT_1954' ||
     p.isSpecialMarriageAct === true ||
-    p.civilMarriage === true ||
     p.marriageAct === 'SPECIAL_MARRIAGE_ACT';
 
   if (isSMA) {
@@ -648,16 +677,38 @@ export function resolvePersonalLawRegime(willData = {}) {
     };
   }
 
-  // 2D. Christian & Civil Marriage Pathway (Indian Succession Act Part VI — Sections 59, 63, 105, 109, 119)
-  if (religionLower.includes('christian') || religionLower.includes('jewish')) {
+  // 2D-1. Jewish Pathway (Indian Succession Act, 1925 Part VI)
+  if (religionLower.includes('jewish') || religionLower.includes('judaism')) {
+    return {
+      regime: PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL,
+      governingSuccessionRegime: "INDIAN_SUCCESSION_ACT_PART_VI_JEWISH",
+      isGoa: false,
+      isParsi: false,
+      isChristian: false,
+      isJewish: true,
+      isMuslim: false,
+      isHindu: false,
+      religion: p.religion || "Jewish",
+      statuteCitation: "Indian Succession Act, 1925 (Part VI Testamentary Succession — Sections 59, 63, 105, 109, 119 applicable to Jewish Testators)",
+      statutoryCrest: "GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 (PART VI — JEWISH SUCCESSION)",
+      reasons: ["Testamentary succession of Jewish persons in India is governed by Part VI of the Indian Succession Act, 1925, preserving distinct religious identity."],
+      blockers: [],
+      jurisdiction
+    };
+  }
+
+  // 2D-2. Christian & Civil Marriage Pathway (Indian Succession Act Part VI — Sections 59, 63, 105, 109, 119)
+  if (religionLower.includes('christian')) {
     return {
       regime: PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL,
       governingSuccessionRegime: "INDIAN_SUCCESSION_ACT_PART_VI",
       isGoa: false,
       isParsi: false,
       isChristian: true,
+      isJewish: false,
       isMuslim: false,
       isHindu: false,
+      religion: p.religion || "Christian",
       statuteCitation: "Indian Succession Act, 1925 (Part VI Testamentary Succession — Sections 59, 63, 105, 109, 119)",
       statutoryCrest: "GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 (PART VI)",
       reasons: ["Testamentary succession of Christians is governed by Part VI of the Indian Succession Act, 1925."],
@@ -758,34 +809,82 @@ export function resolvePersonalLawRegime(willData = {}) {
       execPlaceCode === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
 
     const execPlace = (p.willExecutionPlace || p.placeOfExecution || '').trim().toLowerCase();
-    const matchesPresidencyTown = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
-      execPlace === t || execPlace.startsWith(t + ',') || execPlace.startsWith(t + ' ')
+    const matchesModernPresidencyCity = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
+      execPlace === t || execPlace.startsWith(t + ',') || execPlace.startsWith(t + ' ') || execPlace.includes(t)
     );
-    const hasPresidencyExecution = isHistoricalPresidencyExec || (matchesPresidencyTown && !p.isTerritoryAmbiguous);
+
+    // If modern presidency city is provided without verified historical territory code, emit ambiguity blocker
+    if (matchesModernPresidencyCity && !isHistoricalPresidencyExec) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: false,
+        isHindu: true,
+        requiresLegalReview: true,
+        statuteCitation: "Indian Succession Act, 1925 Section 57(a) (Territorial Ambiguity)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — MODERN PRESIDENCY CITY REQUIRES HISTORICAL CODE",
+        reasons: ["Will execution place references a modern city historically linked to a presidency town without verified historical territory code (OOCJ / 1870 Bengal boundary). Independent advocate review is mandatory."],
+        blockers: ["ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS: Modern presidency city provided without verified historical territory code. Historical boundary limits cannot be assumed."],
+        jurisdiction
+      };
+    }
+
+    const hasPresidencyExecution = isHistoricalPresidencyExec;
 
     // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
-    // Evaluate each immovable asset individually (never rely on bare boolean hasPresidencyTownImmovable)
+    // Evaluate each immovable asset individually (never rely on bare boolean or modern city name without historical code)
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
     const immovableAssets = assetsList.filter(a => a.isImmovable === true || a.type === 'Real Estate' || a.type === 'Land' || a.type === 'House');
-    const presidencyImmovableAssets = immovableAssets.filter(a => {
+
+    // Check individual immovable assets for modern presidency city without historical code:
+    const ambiguousImmovable = immovableAssets.find(a => {
       const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
       if (code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
           code === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
           code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR) {
-        return true;
+        return false;
       }
-      const loc = (a.location || a.city || a.addressCity || a.state || '').trim().toLowerCase();
-      return ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t => loc === t || loc.startsWith(t + ',') || loc.includes(t));
+      const loc = `${a.location || ''} ${a.city || ''} ${a.addressCity || ''} ${a.state || ''} ${a.desc || ''}`.toLowerCase();
+      return ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t => loc.includes(t));
     });
 
     const immovLoc = (p.immovablePropertyLocation || '').trim().toLowerCase();
-    const hasPresidencyLocation = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
-      immovLoc === t || immovLoc.startsWith(t + ',') || immovLoc.startsWith(t + ' ') || immovLoc.includes(t)
-    ) || p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
-         p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
-         p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
+    const personalHistCode = (p.immovablePropertyHistoricalCode || '').trim().toUpperCase();
+    const hasPersonalHistCode = personalHistCode === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+      personalHistCode === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+      personalHistCode === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
 
-    const hasPresidencyImmovables = presidencyImmovableAssets.length > 0 || hasPresidencyLocation;
+    const matchesModernImmovLocation = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
+      immovLoc === t || immovLoc.startsWith(t + ',') || immovLoc.startsWith(t + ' ') || immovLoc.includes(t)
+    );
+
+    if (ambiguousImmovable || (matchesModernImmovLocation && !hasPersonalHistCode)) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: false,
+        isHindu: true,
+        requiresLegalReview: true,
+        statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Territorial Ambiguity)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — IMMOVABLE PROPERTY HISTORICAL JURISDICTION UNVERIFIED",
+        reasons: ["Immovable asset references a modern city historically linked to a presidency town without verified historical territory code. Independent advocate review is mandatory."],
+        blockers: ["ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS: Immovable asset located in modern presidency city without verified historical territory code. Historical boundary limits cannot be assumed."],
+        jurisdiction
+      };
+    }
+
+    const presidencyImmovableAssets = immovableAssets.filter(a => {
+      const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
+      return code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+        code === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+        code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
+    });
+
+    const hasPresidencyImmovables = presidencyImmovableAssets.length > 0 || hasPersonalHistCode;
 
     let section57Clause = null;
     let scheduleIIIApplicable = false;

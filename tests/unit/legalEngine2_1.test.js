@@ -944,6 +944,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       personal: {
         fullName: 'Alex Doe',
         pob: 'Bengaluru',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
         religion: 'Agnostic'
       }
     };
@@ -1129,6 +1131,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsRestOfIndiaGoverned: true,
         religion: 'Hindu',
         willExecutionPlace: 'Kolkata, West Bengal',
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR,
         willExecutionDate: '2026-05-10'
       }
     };
@@ -1145,6 +1148,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         religion: 'Hindu',
         willExecutionPlace: 'Patna, Bihar',
         immovablePropertyLocation: 'Mumbai, Maharashtra',
+        immovablePropertyHistoricalCode: HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ,
         willExecutionDate: '2026-05-10'
       }
     };
@@ -1162,6 +1166,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsRestOfIndiaGoverned: true,
         religion: 'Hindu',
         willExecutionPlace: 'Chennai',
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ,
         willExecutionDate: '2026-01-10'
       }
     });
@@ -1177,6 +1182,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         religion: 'Hindu',
         willExecutionPlace: 'Pune',
         immovablePropertyLocation: 'Mumbai',
+        immovablePropertyHistoricalCode: HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ,
         willExecutionDate: '2026-01-10'
       }
     });
@@ -1399,6 +1405,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       personal: {
         religion: 'Hindu',
         willExecutionPlace: 'Calcutta',
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR,
         willExecutionDate: '1870-09-01'
       }
     });
@@ -1890,6 +1897,191 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const auditSMA = runPreFlightLegalBlockerAudit(willBlockedSMA);
     expect(auditSMA.isExecutionReady).toBe(false);
     expect(auditSMA.blockers.some(b => b.code === "ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED" && b.preventsGeneration)).toBe(true);
+  });
+
+  // ── REVISION 8 FORENSIC REMEDIATION TESTS (85–95) ──
+
+  it('85. Stage 1 Revision 8 Section 1(4)(c): Outside-Goa applicant with unrecorded parental status and no Goa property triggers GOA_STATUS_UNDETERMINED', () => {
+    const res = classifyGoaJurisdiction({
+      fullName: 'Vikram Seth',
+      pob: 'Lucknow, Uttar Pradesh',
+      religion: 'Hindu'
+      // No parental regime declared; parentsStatusUnrecorded: true
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.statutoryClause).toBe('Section 1(4)(c) Parental Origin Inquiry');
+    expect(res.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
+    expect(res.canGenerateWill).toBe(false);
+  });
+
+  it('86. Stage 1 Revision 8 Section 1(4)(c): Outside-Goa applicant asserting bare negative Boolean parentsPortugueseRegime: false without rest-of-India affirmative status triggers GOA_STATUS_UNDETERMINED', () => {
+    const res = classifyGoaJurisdiction({
+      fullName: 'Anil Kapoor',
+      pob: 'Chandigarh',
+      parentsPortugueseRegime: false,
+      // No parentsRestOfIndiaGoverned: true or parentsRestOfIndiaEvidence
+      religion: 'Hindu'
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.statutoryClause).toBe('Section 1(4)(c) Parental Origin Inquiry');
+    expect(res.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
+    expect(res.canGenerateWill).toBe(false);
+  });
+
+  it('87. Stage 1 Revision 8 Section 1(4)(d): Born in Goa with statutory election registered after 3-year deadline following majority (age 21) triggers GOA_STATUS_UNDETERMINED', () => {
+    const resLateElection = classifyGoaJurisdiction({
+      fullName: 'Rajesh Gupta',
+      pob: 'Margao, Goa',
+      dob: '1990-01-01', // Majority on 2008-01-01; statutory election deadline on 2011-01-01 (age 21)
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+      statutoryElectionClauseD: true,
+      clauseDEvidence: {
+        ...sampleClauseDEvidence,
+        registrationDate: '2015-05-20' // Executed 4+ years late (at age 25)!
+      },
+      permanentResidenceEvidence: sampleResidenceEvidence
+    });
+    expect(resLateElection.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resLateElection.statutoryClause).toBe('Section 1(4)(d) Election Deadline Expired');
+    expect(resLateElection.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
+    expect(resLateElection.canGenerateWill).toBe(false);
+  });
+
+  it('88. Stage 1 Revision 8 Evidence Hardening: Reject dummy or mock storage IDs with ERR_GOA_EVIDENCE_UNVERIFIED', () => {
+    const mockEvidence = {
+      ...sampleClauseAEvidence,
+      documentStorageId: 'mock'
+    };
+    const res = validateJurisdictionEvidence(mockEvidence, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe('ERR_GOA_EVIDENCE_UNVERIFIED');
+    expect(res.reason).toContain('invalid uploaded document storage identifier');
+  });
+
+  it('89. Stage 1 Revision 8 Evidence Hardening: Advocate Bar enrollment failing BAR_ENROLLMENT_REGEX returns ERR_GOA_EVIDENCE_UNVERIFIED', () => {
+    const invalidBarEvidence = {
+      ...sampleClauseAEvidence,
+      enrollmentNumber: 'ADVOCATE-12345-INVALID'
+    };
+    const res = validateJurisdictionEvidence(invalidBarEvidence, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe('ERR_GOA_EVIDENCE_UNVERIFIED');
+    expect(res.reason).toContain('does not match statutory Bar Council format');
+  });
+
+  it('90. Stage 1 Revision 8 Evidence Hardening: Strict context matching in classifier rejects evidence record belonging to different party with ERR_PARTY_MISMATCH', () => {
+    const res = classifyGoaJurisdiction({
+      fullName: 'Suresh Prabhu', // Testator name differs from sampleClauseAEvidence verifiedParties ('António Fernandes')
+      pob: 'Panaji, Goa',
+      dob: '1955-01-01',
+      clauseAEvidence: sampleClauseAEvidence
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.blockers[0]).toContain('ERR_PARTY_MISMATCH');
+    expect(res.canGenerateWill).toBe(false);
+  });
+
+  it('91. Stage 1 Revision 8 Shariat Section 3: Declarant under 18 at declaration date strictly fails Section 11 competence with ERR_SHARIAT_SEC3_INCOMPETENT', () => {
+    const minorAtFilingRecord = {
+      ...sampleShariatDeclarationRecord,
+      declarationDate: '2020-05-15'
+    };
+    // Declarant born 2004-06-01 was only 15 years 11 months on declaration date (2020-05-15)
+    const personalData = {
+      dob: '2004-06-01',
+      contractCompetent: true,
+      addressState: 'Uttar Pradesh'
+    };
+    const res = validateShariatDeclarationRecord(minorAtFilingRecord, personalData);
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe('ERR_SHARIAT_SEC3_INCOMPETENT');
+    expect(res.reason).toContain('at least 18 years of age on the statutory declaration date');
+  });
+
+  it('92. Stage 1 Revision 8 Shariat Section 3: Declarant residing in Goa with established non-Goan domicile passes; Goan-governed declarant rejected', () => {
+    const declWithGoaAddr = {
+      ...sampleShariatDeclarationRecord,
+      residenceTerritory: 'Goa'
+    };
+    // Case A: Declarant resides in Goa but has established rest-of-India succession status (non-Goan domicile)
+    const nonGoanDomiciliary = {
+      dob: '1980-01-01',
+      contractCompetent: true,
+      parentsRestOfIndiaGoverned: true,
+      isGoanDomicile: false
+    };
+    const resNonGoan = validateShariatDeclarationRecord(declWithGoaAddr, nonGoanDomiciliary);
+    expect(resNonGoan.isValid).toBe(true);
+
+    // Case B: Declarant is governed by Goa succession law (Jose Paulo Coutinho special and local law)
+    const goanGoverned = {
+      dob: '1980-01-01',
+      contractCompetent: true,
+      governingSuccessionRegime: PERSONAL_LAW_REGIMES.GOA_UCC
+    };
+    const resGoan = validateShariatDeclarationRecord(declWithGoaAddr, goanGoverned);
+    expect(resGoan.isValid).toBe(false);
+    expect(resGoan.blockerCode).toBe('ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED');
+    expect(resGoan.reason).toContain('Jose Paulo Coutinho');
+  });
+
+  it('93. Stage 1 Revision 8 Personal Law Identity: Jewish applicant preserves distinct identity (isJewish: true, isChristian: false, religion: Jewish) under ISA Part VI', () => {
+    const willData = {
+      personal: {
+        fullName: 'Ezekiel Isaac Malekar',
+        pob: 'New Delhi',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Jewish'
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
+    expect(res.isJewish).toBe(true);
+    expect(res.isChristian).toBe(false);
+    expect(res.religion).toBe('Jewish');
+    expect(res.statuteCitation).toContain('Part VI Testamentary Succession');
+    expect(res.statuteCitation).toContain('Jewish Testators');
+  });
+
+  it('94. Stage 1 Revision 8 SMA Safeguard: Generic civilMarriage: true without explicit SMA regime declaration returns ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED', () => {
+    const willData = {
+      personal: {
+        fullName: 'Sameer Sen',
+        pob: 'Kolkata, West Bengal',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Hindu',
+        civilMarriage: true // Bare generic assertion without marriageRegime: 'SPECIAL_MARRIAGE_ACT_1954'
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.requiresLegalReview).toBe(true);
+    expect(res.blockers[0]).toContain('ERR_CIVIL_MARRIAGE_REGIME_UNCONFIRMED');
+  });
+
+  it('95. Stage 1 Revision 8 Section 57 Modern City Ambiguity: Modern presidency city provided without verified historical territory code returns ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS', () => {
+    const willData = {
+      personal: {
+        fullName: 'Siddharth Mukherjee',
+        pob: 'Kolkata, West Bengal',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Hindu',
+        willExecutionPlace: 'Kolkata', // Modern city name without historical territory code
+        willExecutionDate: '2026-05-15'
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.requiresLegalReview).toBe(true);
+    expect(res.blockers[0]).toContain('ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS');
   });
 
 });
