@@ -188,10 +188,12 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   it('14. Estate Insolvency: Debts exceeding assets triggers fatal estate deficiency blocker', () => {
     const willData = {
       assets: [{ id: 1, type: 'Bank Account', value: 500000 }],
-      debts: [{ id: 'd1', amount: 800000 }] // Debts exceed assets
+      debts: [{ id: 'd1', amount: 800000 }], // Debts exceed assets
+      hasNoLifetimeGiftsDeclared: true
     };
     const calc = calculateGoaInheritance(willData);
-    expect(calc.blockers[0]).toContain('ESTATE DEFICIENCY DETECTED');
+    expect(calc.status).toBe(CALCULATION_STATUS.ESTATE_INSOLVENT);
+    expect(calc.blockers.some(b => b.includes('ESTATE DEFICIENCY DETECTED'))).toBe(true);
   });
 
   // ── SECTION 219 MATRIMONIAL NULLITY & 4 EXCEPTIONS TESTS ──
@@ -209,7 +211,12 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   });
 
   it('16. Section 219(a) Exception: Asset allotted to spouse in partition allows disposition', () => {
-    const asset = { desc: 'Partitioned Plot Sy #12', hasRegisteredPartitionDeed: true };
+    const asset = {
+      desc: 'Partitioned Plot Sy #12',
+      hasRegisteredPartitionDeed: true,
+      isAllottedToTestator: true,
+      partitionDetails: { registrationNumber: 'PART-881/2018', isAllottedToTestator: true }
+    };
     const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
     const res = evaluateAssetMatrimonialOwnership(asset, mat);
     expect(res.applicableException).toBe(SECTION_219_EXCEPTIONS.ALLOTTED_IN_PARTITION);
@@ -237,7 +244,16 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   });
 
   it('19. Section 219(d) Exception: Consented by other spouse in Special Notary document', () => {
-    const asset = { desc: 'Community Land Plot', hasSpouseNotarialConsent: true };
+    const asset = {
+      desc: 'Community Land Plot',
+      hasSpouseNotarialConsent: true,
+      spouseConsentDetails: {
+        isSpecialNotaryDocument: true,
+        specialNotaryOffice: 'Margao',
+        registrationNumber: 'CONS-456/2021',
+        isVerified: true
+      }
+    };
     const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
     const res = evaluateAssetMatrimonialOwnership(asset, mat);
     expect(res.applicableException).toBe(SECTION_219_EXCEPTIONS.SPOUSE_NOTARIAL_CONSENT);
@@ -320,6 +336,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         motherName: "Maria D'Souza",
         occupation: "Medical Doctor (Retired)",
         maritalStatus: "Married",
+        gender: "Male",
         age: 62,
         dob: "1964-05-15",
         pob: "Margao, Goa",
@@ -338,7 +355,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
           desc: "Flat 402, Borda Heights",
           value: 6000000,
           titleDocType: "REGISTERED_SALE_DEED",
-          details: { titleDocType: "REGISTERED_SALE_DEED", registrationNumber: "REG-892/2012" },
+          isDocumentVerified: true,
+          details: {
+            titleDocType: "REGISTERED_SALE_DEED",
+            registrationNumber: "REG-892/2012",
+            subRegistrarOffice: "Margao",
+            isDocumentVerified: true
+          },
           allocations: [{ beneficiaryId: "b1", percentage: 50 }]
         }
       ],
@@ -382,6 +405,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         motherName: "Maria D'Souza",
         occupation: "Medical Doctor",
         maritalStatus: "Married",
+        gender: "Male",
         age: 62,
         dob: "1964-05-15",
         pob: "Margao, Goa",
@@ -401,6 +425,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
           desc: "Flat 402, Borda Heights",
           value: 6000000,
           titleDocType: "REGISTERED_SALE_DEED",
+          isDocumentVerified: true,
+          details: {
+            titleDocType: "REGISTERED_SALE_DEED",
+            registrationNumber: "REG-892/2012",
+            subRegistrarOffice: "Margao",
+            isDocumentVerified: true
+          },
           allocations: [{ beneficiaryId: "b1", percentage: 50 }]
         }
       ],
@@ -429,6 +460,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         motherName: "Maria D'Souza",
         occupation: "Medical Doctor",
         maritalStatus: "Married",
+        gender: "Male",
         age: 62,
         dob: "1964-05-15",
         pob: "Margao, Goa",
@@ -448,6 +480,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
           desc: "Flat 402, Borda Heights",
           value: 6000000,
           titleDocType: "REGISTERED_SALE_DEED",
+          isDocumentVerified: true,
+          details: {
+            titleDocType: "REGISTERED_SALE_DEED",
+            registrationNumber: "REG-892/2012",
+            subRegistrarOffice: "Margao",
+            isDocumentVerified: true
+          },
           allocations: [{ beneficiaryId: "b1", percentage: 50 }]
         }
       ],
@@ -462,7 +501,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       advocateReviewSignOff: {
         advocateName: "Advocate Francis Xavier Pereira",
         enrollmentNumber: "MAH/1234/2005",
-        reviewDate: "2026-11-03"
+        reviewDate: "2026-11-03",
+        isAuthenticVerification: true
       }
     };
 
@@ -485,6 +525,175 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.statusBadge).toBe(DRAFT_STATUS_BANDS.INCOMPLETE);
     expect(res.score).toBeLessThanOrEqual(75);
     expect(res.audit.totalBlockersCount).toBeGreaterThan(0);
+  });
+
+  // ── ADVANCED STATUTORY EDGE CASE REGRESSION TESTS (P0 FORENSIC COMPLETION) ──
+
+  it('31. Sections 110–121 Reduction Schedule: Computes exact rupee pro-rata reduction of legacies and reverse chronological reduction of gifts', () => {
+    const willData = {
+      assets: [
+        {
+          id: 1,
+          type: "Land",
+          value: 4000000,
+          allocations: [{ beneficiaryId: "b1", percentage: 100, beneficiaryName: "Friend Alpha" }]
+        }
+      ],
+      debts: [],
+      hasNoEnforceableDebtsDeclared: true,
+      lifetimeGifts: [
+        {
+          id: "g1",
+          desc: "Gift of Gold to Cousin",
+          value: 1000000,
+          date: "2022-01-10",
+          recipientRelation: "Cousin" // Third party
+        },
+        {
+          id: "g2",
+          desc: "Gift of Shares to Trust",
+          value: 1000000,
+          date: "2024-06-15",
+          recipientRelation: "Trust" // More recent third party gift
+        }
+      ],
+      beneficiaries: [
+        { id: "b1", name: "Friend Alpha", relation: "Friend" },
+        { id: "b_son", name: "Raj", relation: "Son" }
+      ],
+      familyStructure: {
+        children: [{ name: "Raj" }] // Descendants survive -> 50% legitime, 50% disposable quota
+      }
+    };
+
+    // Computation Base = 4,000,000 (assets) + 2,000,000 (gifts) = 6,000,000
+    // Disposable quota (50%) = 3,000,000
+    // Total dispositions subject to quota = 4,000,000 (legacy) + 2,000,000 (third-party gifts) = 6,000,000
+    // Excess = 6,000,000 - 3,000,000 = 3,000,000 inofficious breach!
+    const calc = calculateGoaInheritance(willData);
+    expect(calc.status).toBe(CALCULATION_STATUS.INOFFICIOUS_BREACH);
+    expect(calc.reductionSchedule).toBeDefined();
+
+    // Section 111 & 112: Legacies reduced first pro-rata
+    // Total legacy value = 4,000,000. Excess = 3,000,000.
+    // Legacy absorbs entire 3,000,000 reduction!
+    expect(calc.reductionSchedule.totalReductionFromLegacies).toBe(3000000);
+    expect(calc.reductionSchedule.legacies[0].reductionAmount).toBe(3000000);
+    expect(calc.reductionSchedule.legacies[0].netValueAfterReduction).toBe(1000000);
+  });
+
+  it('32. Section 219 Negative: Partition deed without verified allotment to testator is rejected', () => {
+    const asset = {
+      desc: "Unallotted Family Parcel Sy #50",
+      hasRegisteredPartitionDeed: true,
+      isAllottedToTestator: false // Mentioned in deed, but not allotted to this spouse!
+    };
+    const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
+    const res = evaluateAssetMatrimonialOwnership(asset, mat);
+    expect(res.section219Applies).toBe(true);
+    expect(res.isDispositionProhibited).toBe(true);
+    expect(res.restrictions.some(r => r.includes('Section 219(a) Non-Compliance'))).toBe(true);
+  });
+
+  it('33. Section 219 Negative: Naked spouse consent boolean without Special Notary deed is rejected', () => {
+    const asset = {
+      desc: "Community Plot Sy #90",
+      hasSpouseNotarialConsent: true // Naked boolean only!
+    };
+    const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
+    const res = evaluateAssetMatrimonialOwnership(asset, mat);
+    expect(res.isDispositionProhibited).toBe(true);
+    expect(res.restrictions.some(r => r.includes('Section 219(d) Non-Compliance'))).toBe(true);
+  });
+
+  it('34. Title Verification Negative: Primary title deed selected without document verification is rejected', () => {
+    const asset = {
+      type: "Residential Plot",
+      desc: "Plot Sy #100",
+      titleDocType: TITLE_DOCUMENT_TYPES.REGISTERED_SALE_DEED,
+      isDocumentVerified: false // Unverified selection!
+    };
+    const res = verifyPropertyTitle(asset);
+    expect(res.isValidTitle).toBe(false);
+    expect(res.statusText).toBe("ROOT TITLE DOCUMENT UNVERIFIED");
+    expect(res.blockers[0]).toContain("UNVERIFIED ROOT TITLE RECORD");
+  });
+
+  it('35. Personal Law Router: Unrecognized religion returns LEGAL_REVIEW_REQUIRED (never defaults to Hindu)', () => {
+    const res = resolvePersonalLawRegime({ personal: { fullName: "Test User", religion: "Atheist" } });
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.requiresLegalReview).toBe(true);
+    expect(res.isHindu).toBe(false);
+  });
+
+  it('36. Personal Law Router: Ismaili/Bohra returns fatal review blocker', () => {
+    const res = resolvePersonalLawRegime({ personal: { religion: "Muslim", sect: "Bohra" } });
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.blockers[0]).toContain("ISMAILI_BOHRA_SPECIAL_REVIEW_REQUIRED");
+  });
+
+  it('37. PDF Generator Preflight: Missing mandatory age or executor throws fatal pre-flight error', async () => {
+    const incompleteData = {
+      personal: {
+        fullName: "Dr. Joseph",
+        fatherName: "Antonio",
+        motherName: "Maria",
+        occupation: "Doctor",
+        maritalStatus: "Married",
+        gender: "Male",
+        dob: "1964-05-15",
+        pob: "Margao, Goa",
+        parentsPortugueseRegime: true,
+        addressLine1: "Borda",
+        addressCity: "Margao",
+        addressState: "Goa",
+        pincode: "403601"
+        // Missing age!
+      },
+      executor: { name: "Advocate Pereira" }
+    };
+    await expect(generateGoaSection333PDF(incompleteData)).rejects.toThrow("PREFLIGHT_ERROR");
+  });
+
+  it('38. PDF Generator Preflight: Non-Goa jurisdiction throws fatal error preventing generation', async () => {
+    const restOfIndiaData = {
+      personal: {
+        fullName: "Ramesh Sharma",
+        fatherName: "Suresh Sharma",
+        motherName: "Shanti Sharma",
+        occupation: "Engineer",
+        maritalStatus: "Married",
+        gender: "Male",
+        age: 45,
+        dob: "1980-01-01",
+        pob: "Delhi",
+        addressLine1: "Sector 14",
+        addressCity: "Delhi",
+        addressState: "Delhi",
+        pincode: "110001"
+      },
+      executor: { name: "Advocate Verma" }
+    };
+    await expect(generateGoaSection333PDF(restOfIndiaData)).rejects.toThrow("CANNOT_GENERATE_GOA_SECTION_333_PDF");
+  });
+
+  it('39. Readiness Index: Fatal legal blockers prevent NOTARIAL_EXECUTION_COMPLETED status even with notary fields filled', () => {
+    const profileWithNotaryAndBlockers = {
+      personal: {
+        fullName: "Dr. Joseph"
+        // Missing mandatory parentage and address -> triggers fatal audit blockers!
+      },
+      specialNotaryExecution: {
+        isNotaryAuthenticated: true,
+        registrationNumber: "NOT-999/2026",
+        bookVolume: "Vol 4",
+        executionDate: "2026-11-03",
+        notaryName: "Advocate Notary"
+      }
+    };
+    const res = calculateDraftReadinessIndex(profileWithNotaryAndBlockers);
+    expect(res.statusBadge).toBe(DRAFT_STATUS_BANDS.INCOMPLETE);
+    expect(res.statusBadge).not.toBe(DRAFT_STATUS_BANDS.NOTARIAL_EXECUTION_COMPLETED);
   });
 
 });

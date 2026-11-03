@@ -49,8 +49,10 @@ export function classifyGoaJurisdiction(p = {}) {
   const isTestatorBornGoa = testatorPob.includes('goa') || testatorPob.includes('margao') || testatorPob.includes('panaji') || testatorPob.includes('vasco') || testatorPob.includes('mapusa');
 
   // Parents' 1867 Civil Code status: Requires affirmative verification, not mere birthplace
-  const parentsPortugueseRegime = Boolean(p.parentsPortugueseRegime || p.parentsCivilCode1867 || (p.fatherPortugueseRegime && p.motherPortugueseRegime));
-  
+  const parentsPortugueseRegime = p.parentsPortugueseRegime === true || p.parentsCivilCode1867 === true || (p.fatherPortugueseRegime === true && p.motherPortugueseRegime === true);
+  const parentsRestOfIndiaGoverned = p.parentsRestOfIndiaGoverned === true || p.parentsGovernedByRestOfIndiaLaw === true;
+  const parentsStatusUnrecorded = (p.parentsPortugueseRegime === undefined && p.parentsCivilCode1867 === undefined && p.parentsRestOfIndiaGoverned === undefined);
+
   // Clause (a): Proof of personal subjection to 1867 Civil Code prior to 20 Dec 1961
   const pre1961TestatorRegime = Boolean(p.pre1961PortugueseRegime || p.governedByCivilCode1867);
   const bornBefore1961InGoa = Boolean(p.dob && new Date(p.dob) < new Date('1961-12-20') && isTestatorBornGoa);
@@ -66,12 +68,35 @@ export function classifyGoaJurisdiction(p = {}) {
   const isConsularOrMilitaryPosting = Boolean(p.isConsularOrDiplomaticPosting || p.isTemporaryMilitaryPosting || p.isGovernmentPosting);
   const permanentResidenceGoaSatisfied = Boolean(p.permanentResidenceGoaSatisfied) && !isConsularOrMilitaryPosting;
 
-  // Clause (c) Opt-Out: Must be executed before Special Notary within the statutory 3-year periods
-  const hasOptedOutUnderClauseC = Boolean(
-    (p.statutoryOptOutClauseC || p.statutoryOptOutGoa) &&
-    p.optOutBeforeSpecialNotary &&
-    p.optOutWithinThreeYearPeriod
-  );
+  // Clause (c) Opt-Out: Calculated from actual statutory dates:
+  // Must be executed before the Special Notary within three years from attaining majority or from the date of arrival in Goa.
+  let hasValidClauseCOptOut = false;
+  if (p.optOutDeclarationDate && p.optOutBeforeSpecialNotary) {
+    const declDate = new Date(p.optOutDeclarationDate);
+    let deadlineDate = null;
+
+    if (p.dob) {
+      const majorityDate = new Date(p.dob);
+      majorityDate.setFullYear(majorityDate.getFullYear() + 18);
+      deadlineDate = new Date(majorityDate);
+      deadlineDate.setFullYear(deadlineDate.getFullYear() + 3);
+    }
+
+    if (p.dateOfArrivalInGoa) {
+      const arrivalDeadline = new Date(p.dateOfArrivalInGoa);
+      arrivalDeadline.setFullYear(arrivalDeadline.getFullYear() + 3);
+      if (!deadlineDate || arrivalDeadline > deadlineDate) {
+        deadlineDate = arrivalDeadline;
+      }
+    }
+
+    if (deadlineDate && declDate <= deadlineDate) {
+      hasValidClauseCOptOut = true;
+    }
+  } else if (p.statutoryOptOutClauseC && p.optOutBeforeSpecialNotary && p.optOutWithinThreeYearPeriod) {
+    // Verified attestation fallback
+    hasValidClauseCOptOut = true;
+  }
 
   // ── Clause (g): Adopted by parents governed by the specified Code or Act ──
   if (isAdopted) {
@@ -109,7 +134,7 @@ export function classifyGoaJurisdiction(p = {}) {
       blockers: [],
       canGenerateWill: true
     };
-  } else if (bornBefore1961InGoa && p.parentsPortugueseRegime === undefined) {
+  } else if (bornBefore1961InGoa) {
     // Born in Goa before 1961, but no affirmative proof of Portuguese Civil Code subjection
     blockers.push("Section 1(4)(a) Unverified: Birth in Goa prior to 20 December 1961 does not automatically establish subjection to the Portuguese Civil Code of 1867. Documentary verification of civil registration under the 1867 Code is required.");
     return {
@@ -137,7 +162,7 @@ export function classifyGoaJurisdiction(p = {}) {
 
   // ── Clause (c): Born outside Goa to parents governed by the Code, subject to statutory opt-out ──
   if (!isTestatorBornGoa && parentsPortugueseRegime) {
-    if (hasOptedOutUnderClauseC) {
+    if (hasValidClauseCOptOut) {
       reasons.push("Section 1(4)(c) Opt-Out: Testator born outside Goa executed a statutory declaration opting out before the Special Notary within the prescribed three-year statutory deadline.");
       return {
         status: JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE,
@@ -148,7 +173,7 @@ export function classifyGoaJurisdiction(p = {}) {
         canGenerateWill: true
       };
     }
-    reasons.push("Section 1(4)(c): Testator born outside Goa to parents governed by the Portuguese Civil Code without an executed statutory opt-out before the Special Notary.");
+    reasons.push("Section 1(4)(c): Testator born outside Goa to parents governed by the Portuguese Civil Code without an executed statutory opt-out before the Special Notary within the three-year window.");
     return {
       status: JURISDICTION_STATUS.GOA_ACT_APPLICABLE,
       statutoryClause: GOA_SECTION_1_4_CLAUSES.CLAUSE_C,
@@ -186,9 +211,22 @@ export function classifyGoaJurisdiction(p = {}) {
   }
 
   // ── Clause (d): Born in Goa to rest-of-India parents, with permanent residence and election ──
-  if (isTestatorBornGoa && !parentsPortugueseRegime) {
+  // CRITICAL FIX: Missing/unrecorded parental status must NEVER be silently treated as non-Portuguese!
+  if (isTestatorBornGoa && parentsStatusUnrecorded) {
+    blockers.push("Section 1(4) Parental Status Unverified: Testator born in Goa, but parents' legal regime (Portuguese Civil Code vs. rest-of-India personal laws) is unrecorded. Cannot route to Indian Succession Act or Goa Act without verification.");
+    return {
+      status: JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED,
+      statutoryClause: "Section 1(4) Parental Regime Unconfirmed",
+      applicableAct: "Unconfirmed",
+      reasons: ["Documentary evidence establishing whether parents were governed by the Portuguese Civil Code or rest-of-India personal laws is mandatory."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
+
+  if (isTestatorBornGoa && (parentsRestOfIndiaGoverned || p.parentsPortugueseRegime === false)) {
     if (isConsularOrMilitaryPosting) {
-      reasons.push("Section 1(4) Proviso: Government service, diplomatic posting, or armed forces assignment in Goa does not constitute permanent residence under Clause (d). Governed by personal law under Jose Paulo Coutinho (2020) 17 SCC 159.");
+      reasons.push("Section 1(4) Proviso: Government service, diplomatic posting, or armed forces assignment in Goa does not constitute permanent residence under Clause (d). Governed by personal law under Jose Paulo Coutinho (2019) SCC OnLine SC 1190 / (2020) 17 SCC 159.");
       return {
         status: JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE,
         statutoryClause: "Indian Succession Act (Proviso: Posting Excluded from Permanent Residence)",
@@ -210,7 +248,7 @@ export function classifyGoaJurisdiction(p = {}) {
         canGenerateWill: true
       };
     } else {
-      reasons.push("Section 1(4)(d) Incomplete: Testator born in Goa to non-Goan parents, but statutory election or permanent residence requirement is unrecorded. Governed by their personal law pursuant to Jose Paulo Coutinho (2020) 17 SCC 159.");
+      reasons.push("Section 1(4)(d) Incomplete: Testator born in Goa to rest-of-India parents, but statutory election or permanent residence requirement is unrecorded. Governed by their personal law pursuant to Jose Paulo Coutinho (2019) SCC OnLine SC 1190 / (2020) 17 SCC 159.");
       return {
         status: JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE,
         statutoryClause: "Indian Succession Act (Non-Electing Section 1(4)(d))",

@@ -83,6 +83,29 @@ export function verifyPropertyTitle(asset = {}, options = {}) {
     };
   }
 
+  // Check 1C: Document Verification Gate (ChatGPT Forensic Finding)
+  // Selecting a deed type alone without documentary verification cannot establish marketable title.
+  const isDocumentVerified = Boolean(
+    asset.isDocumentVerified === true ||
+    details.isDocumentVerified === true ||
+    asset.titleVerificationRecord?.isVerified === true ||
+    details.titleVerificationRecord?.isVerified === true ||
+    (details.registrationNumber && (details.subRegistrarOffice || details.registrationYear || details.registrationDate)) ||
+    (asset.registrationNumber && (asset.subRegistrarOffice || asset.registrationYear || asset.registrationDate))
+  );
+
+  if (!isDocumentVerified) {
+    blockers.push(`UNVERIFIED ROOT TITLE RECORD: While primary deed type '${docType}' is designated, the document has not been verified against registered records or certified copy (isDocumentVerified is unconfirmed). A mere dropdown or text selection without documentary verification cannot establish marketable title.`);
+    return {
+      isValidTitle: false,
+      isCorroborativeOnly: false,
+      isPartitioned: hasRegisteredPartition,
+      canBequestSpecificAsset: false,
+      statusText: "ROOT TITLE DOCUMENT UNVERIFIED",
+      blockers
+    };
+  }
+
   // Check 2: Inherited / Ancestral asset under Goa Act (Sections 16 & 220)
   if (isGoa && isInheritedOrAncestral) {
     if (!hasRegisteredPartition) {

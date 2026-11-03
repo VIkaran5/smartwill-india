@@ -121,14 +121,24 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
         requiredCorrection: "Enter estimated market values for all assets and declare outstanding debts.",
         preventsGeneration: true
       });
+    } else if (calc.status === CALCULATION_STATUS.ESTATE_INSOLVENT) {
+      blockers.push({
+        code: "ERR_ESTATE_INSOLVENT",
+        page: "Page 2",
+        clause: "Section IV — Estate Liabilities & Debts",
+        errorDescription: calc.blockers[0] || "Enforceable debts exceed total testator estate value. Under Section 45, estate is insolvent.",
+        applicableStatute: "Section 45, Goa Succession Act, 2012 (Goa Act 23 of 2016)",
+        requiredCorrection: "Settle or re-evaluate estate liabilities before testamentary disposition; creditors have priority over all bequests.",
+        preventsGeneration: true
+      });
     } else if (calc.status === CALCULATION_STATUS.INOFFICIOUS_BREACH) {
       blockers.push({
         code: "ERR_LEGITIME_BREACH",
         page: "Page 2",
         clause: "Section III & Section V — Bequest Schedule",
         errorDescription: calc.blockers[0] || "Total testamentary bequests exceed the statutory disposable quota (quota disponível).",
-        applicableStatute: "Section 83 (Goa Act 35 of 2023) & Section 98 (Reduction)",
-        requiredCorrection: "Reduce testamentary bequests to within the 50% disposable quota to protect descendants' legitime.",
+        applicableStatute: "Section 83 (Goa Act 35 of 2023) & Sections 110–121 (Statutory Reduction)",
+        requiredCorrection: "Reduce testamentary bequests to within the statutory disposable quota pursuant to Section 111 & 112 reduction schedule.",
         preventsGeneration: true
       });
     }

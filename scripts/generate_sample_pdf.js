@@ -10,6 +10,7 @@ async function run() {
       motherName: "Maria D'Souza",
       occupation: "Medical Doctor (Retired)",
       maritalStatus: "Married",
+      gender: "Male",
       age: 62,
       dob: "1964-05-15",
       pob: "Margao, Goa",
@@ -28,7 +29,13 @@ async function run() {
         desc: "Flat 402, Borda Heights",
         value: 6000000,
         titleDocType: "REGISTERED_SALE_DEED",
-        details: { titleDocType: "REGISTERED_SALE_DEED", registrationNumber: "REG-892/2012" },
+        isDocumentVerified: true,
+        details: {
+          titleDocType: "REGISTERED_SALE_DEED",
+          registrationNumber: "REG-892/2012",
+          subRegistrarOffice: "Margao",
+          isDocumentVerified: true
+        },
         allocations: [{ beneficiaryId: "b1", percentage: 50 }]
       }
     ],
@@ -54,6 +61,13 @@ async function run() {
   const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
   const outPath = path.resolve('SmartWill_Dr_Joseph_Patrick_DSouza_Fernandes_Goa_Section333_Open_Will.pdf');
   fs.writeFileSync(outPath, pdfBuffer);
+
+  const artifactPath = 'C:\\Users\\dasar\\.gemini\\antigravity\\brain\\b1408bca-de71-4e67-91c9-ec8f70902b42\\SmartWill_Dr_Joseph_Patrick_DSouza_Fernandes_Goa_Section333_Open_Will.pdf';
+  try {
+    fs.writeFileSync(artifactPath, pdfBuffer);
+  } catch (e) {
+    // optional copy
+  }
 
   const numPages = doc.getNumberOfPages();
   const widthMm = doc.internal.pageSize.getWidth();

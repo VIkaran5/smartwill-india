@@ -5,8 +5,8 @@
  * Implements strict statutory calculation under:
  * - Section 89(1) & (2): Calculation base includes net assets at death (assets - debts)
  *   PLUS the value of ALL assets gifted during the testator's lifetime.
- * - Sections 90 to 97: Collation (Colação) of advancements by descendants into the legitime pool.
- * - Sections 98 to 105: Reduction of inofficious testamentary bequests and lifetime gifts.
+ * - Sections 90 to 109: Collation (Colação) of advancements by descendants into the legitime pool.
+ * - Sections 110 to 121: Reduction of inofficious testamentary bequests and lifetime gifts (Redução das Liberalidades Inoficiosas).
  * - Substituted Section 83 under Goa Amendment Act 35 of 2023:
  *   - Descendants survive: 50% Legitime (Quota Legítima), 50% Disposable Quota (Quota Disponível).
  *   - Spouse only: 100% Legitime.
@@ -19,6 +19,7 @@ import { evaluateAssetMatrimonialOwnership } from './matrimonialRegime.js';
 export const CALCULATION_STATUS = {
   COMPLIANT: "COMPLIANT",
   INOFFICIOUS_BREACH: "INOFFICIOUS_BREACH",
+  ESTATE_INSOLVENT: "ESTATE_INSOLVENT",
   INCOMPLETE: "INCOMPLETE"
 };
 
@@ -88,10 +89,10 @@ export function calculateGoaInheritance(willData = {}) {
   // 2. Calculate Enforceable Debts of the Estate (Section 45(3) of Goa Act 23 of 2016)
   let totalDebts = 0;
   const debtsDeclared = Array.isArray(debts) && debts.length > 0;
-  const noDebtsExplicitlyDeclared = Boolean(willData.hasNoEnforceableDebtsDeclared || willData.noDebtsDeclared);
+  const noDebtsExplicitlyDeclared = Boolean(willData.hasNoEnforceableDebtsDeclared || willData.noDebtsDeclared || willData.hasNoEnforceableDebts);
 
   if (!debtsDeclared && !noDebtsExplicitlyDeclared) {
-    warnings.push("Explicit Debt Declaration Recommended: No enforceable debts declared. Affirmative confirmation that estate has zero enforceable debts is recommended under Section 45.");
+    blockers.push("MANDATORY STATUTORY DECLARATION REQUIRED: Under Section 45 & Section 89 of Goa Act 23 of 2016, the estate base cannot be computed without an affirmative debt declaration (either specify enforceable debts or explicitly declare zero enforceable debts).");
   }
 
   debts.forEach(d => {
@@ -108,13 +109,15 @@ export function calculateGoaInheritance(willData = {}) {
   let descendantCollationAdvancements = 0; // Collation under Sections 90-109
   let thirdPartyLifetimeGifts = 0;         // Subject to reduction under Sections 110-121
   const giftsDeclared = Array.isArray(lifetimeGifts) && lifetimeGifts.length > 0;
-  const noGiftsExplicitlyDeclared = Boolean(willData.hasNoLifetimeGiftsDeclared || willData.noGiftsDeclared);
+  const noGiftsExplicitlyDeclared = Boolean(willData.hasNoLifetimeGiftsDeclared || willData.noGiftsDeclared || willData.hasNoLifetimeGifts);
 
   if (!giftsDeclared && !noGiftsExplicitlyDeclared) {
-    warnings.push("Explicit Lifetime Gift Declaration Recommended: No lifetime gifts declared. Affirmative confirmation that testator made no lifetime gifts is recommended under Section 89.");
+    blockers.push("MANDATORY STATUTORY DECLARATION REQUIRED: Under Section 89 of Goa Act 23 of 2016, the computation base includes all assets gifted during the testator's lifetime. An affirmative gift declaration (either specify lifetime gifts or explicitly declare zero lifetime gifts) is mandatory.");
   }
 
-  lifetimeGifts.forEach(g => {
+  const processedLifetimeGifts = [];
+
+  lifetimeGifts.forEach((g, idx) => {
     // Section 89(2) Exception: Property perished without fault of the donee is excluded
     if (g.hasPerishedWithoutFault || g.perishedFortuitously) {
       warnings.push(`Section 89(2) Exemption: Gift of ${g.desc || 'property'} excluded from computation base because it perished fortuitously without donee's fault.`);
@@ -131,19 +134,46 @@ export function calculateGoaInheritance(willData = {}) {
         g.recipientRelation?.toLowerCase().includes('son') ||
         g.recipientRelation?.toLowerCase().includes('daughter');
 
-      if (isDescendant) {
+      const isExemptFromCollation = Boolean(g.dispensationFromCollation || g.isExemptFromCollation);
+
+      if (isDescendant && !isExemptFromCollation) {
         descendantCollationAdvancements += rawVal; // Sections 90-109 Collation
       } else {
         thirdPartyLifetimeGifts += rawVal; // Sections 110-121 Reduction
       }
+
+      processedLifetimeGifts.push({
+        id: g.id || `gift_${idx + 1}`,
+        desc: g.desc || 'Lifetime Gift',
+        date: g.date || 'Unspecified Date',
+        value: rawVal,
+        isDescendant,
+        isSubjectToCollation: isDescendant && !isExemptFromCollation,
+        isSubjectToReduction: !isDescendant || isExemptFromCollation
+      });
     }
   });
 
   // 4. Section 89 Statutory Base Formula:
   // Base = (Assets at Death - Enforceable Debts) + ALL Lifetime Gifts
   const netAssetsAtDeath = testatorMoietyAssetValue - totalDebts;
-  if (netAssetsAtDeath < 0) {
+  const isEstateInsolvent = netAssetsAtDeath < 0;
+
+  if (isEstateInsolvent) {
     blockers.push(`ESTATE DEFICIENCY DETECTED: Enforceable estate debts (₹${totalDebts.toLocaleString('en-IN')}) exceed the testator's moiety asset value (₹${testatorMoietyAssetValue.toLocaleString('en-IN')}) by ₹${Math.abs(netAssetsAtDeath).toLocaleString('en-IN')}. Under Section 45, estate is insolvent.`);
+    return {
+      status: CALCULATION_STATUS.ESTATE_INSOLVENT,
+      statusMessage: "ESTATE INSOLVENT: Debts exceed asset value",
+      section89ComputationBase: 0,
+      statutoryLegitimeValue: 0,
+      statutoryDisposableQuota: 0,
+      totalDebts,
+      testatorMoietyAssetValue,
+      netAssetsAtDeath,
+      totalAllLifetimeGifts,
+      blockers,
+      warnings
+    };
   }
 
   const section89ComputationBase = Math.max(0, netAssetsAtDeath) + totalAllLifetimeGifts;
@@ -208,24 +238,125 @@ export function calculateGoaInheritance(willData = {}) {
   const statutoryDisposableQuota = section89ComputationBase * disposableRatio;
 
   // 6. Test Testamentary Bequests against Statutory Disposable Quota
+  // All assets must be fully accounted for (specific allocations + residuary/default allocations)
   let totalBequestValue = 0;
-  assets.forEach(a => {
+  const itemizedBequests = [];
+
+  assets.forEach((a, idx) => {
     const rawVal = Number(a.value) || 0;
     const ownership = evaluateAssetMatrimonialOwnership(a, matrimonialInfo);
     const testatorAssetVal = rawVal * (ownership.disposablePercentage / 100);
 
     const allocs = a.allocations || [];
-    allocs.forEach(al => {
-      const pct = Number(al.percentage) || 0;
-      totalBequestValue += (testatorAssetVal * (pct / 100));
-    });
+    if (allocs.length === 0) {
+      totalBequestValue += testatorAssetVal;
+      itemizedBequests.push({
+        assetId: a.id || idx,
+        desc: a.desc || a.type || `Asset ${idx + 1}`,
+        bequestValue: testatorAssetVal,
+        percentage: 100,
+        beneficiary: "Designated Heir / Residuary"
+      });
+    } else {
+      let sumPct = 0;
+      allocs.forEach(al => {
+        const pct = Number(al.percentage) || 0;
+        const val = testatorAssetVal * (pct / 100);
+        totalBequestValue += val;
+        itemizedBequests.push({
+          assetId: a.id || idx,
+          desc: a.desc || a.type || `Asset ${idx + 1}`,
+          bequestValue: val,
+          percentage: pct,
+          beneficiary: al.beneficiaryName || al.beneficiaryId || "Beneficiary"
+        });
+      });
+    }
   });
 
-  const excess = totalBequestValue - statutoryDisposableQuota;
+  // Dispositions impairing legitime = (Total testamentary bequests + Third-party lifetime gifts)
+  // Collation gifts to descendants are hotchpot additions to the legitime pool under Sections 90–109.
+  const totalDispositionsSubjectToQuota = totalBequestValue + thirdPartyLifetimeGifts;
+  const excess = totalDispositionsSubjectToQuota - statutoryDisposableQuota;
   const isCompliant = excess <= 0 || (disposableRatio === 0.50 && Math.abs(excess) < 1.0); // Allow rounding cents
 
+  // 7. Sections 110 to 121 Executable Reduction Schedule
+  let reductionSchedule = null;
+
   if (!isCompliant && disposableRatio < 1.0) {
-    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 BREACH): Total testamentary bequests (₹${totalBequestValue.toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${statutoryDisposableQuota.toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to statutory reduction under Sections 110 to 121 (Section 111 legacies reduced first pro-rata; Section 113 inter vivos gifts reduced in reverse chronological order).`);
+    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 & SECTION 110 BREACH): Total dispositions subject to quota (₹${Math.round(totalDispositionsSubjectToQuota).toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${Math.round(statutoryDisposableQuota).toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to statutory reduction under Sections 110 to 121 (Section 111 legacies reduced first pro-rata; Section 113 inter vivos gifts reduced in reverse chronological order).`);
+
+    let remainingExcessToReduce = excess;
+
+    // Step 1 (Section 111 & 112): Reduce testamentary bequests / legacies pro-rata first
+    const totalReductionFromLegacies = Math.min(totalBequestValue, remainingExcessToReduce);
+    remainingExcessToReduce -= totalReductionFromLegacies;
+
+    const legacyReductionRatio = totalBequestValue > 0 ? (totalReductionFromLegacies / totalBequestValue) : 0;
+    const reducedLegacies = itemizedBequests.map(b => {
+      const redAmount = b.bequestValue * legacyReductionRatio;
+      return {
+        assetId: b.assetId,
+        desc: b.desc,
+        beneficiary: b.beneficiary,
+        originalValue: b.bequestValue,
+        reductionAmount: redAmount,
+        netValueAfterReduction: b.bequestValue - redAmount,
+        reductionPercentage: legacyReductionRatio * 100,
+        statutorySection: "Section 111 & 112 (Pro-Rata Reduction of Legacies)"
+      };
+    });
+
+    // Step 2 (Section 111, 113, 114): If legacies are exhausted, reduce inter vivos gifts
+    // in reverse chronological order (most recent gift reduced first)
+    const reductionFromGifts = [];
+    let totalReductionFromGifts = 0;
+
+    if (remainingExcessToReduce > 0) {
+      const giftsForReduction = processedLifetimeGifts
+        .filter(g => g.isSubjectToReduction)
+        .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+      for (const gift of giftsForReduction) {
+        if (remainingExcessToReduce <= 0) {
+          reductionFromGifts.push({
+            id: gift.id,
+            desc: gift.desc,
+            date: gift.date,
+            originalValue: gift.value,
+            reductionAmount: 0,
+            netValueAfterReduction: gift.value,
+            isReduced: false,
+            statutorySection: "Section 113"
+          });
+        } else {
+          const redAmt = Math.min(gift.value, remainingExcessToReduce);
+          remainingExcessToReduce -= redAmt;
+          totalReductionFromGifts += redAmt;
+          reductionFromGifts.push({
+            id: gift.id,
+            desc: gift.desc,
+            date: gift.date,
+            originalValue: gift.value,
+            reductionAmount: redAmt,
+            netValueAfterReduction: gift.value - redAmt,
+            isReduced: true,
+            statutorySection: "Section 113 (Reverse Chronological Reduction of Inter Vivos Gifts)"
+          });
+        }
+      }
+    }
+
+    reductionSchedule = {
+      excess,
+      statutoryDisposableQuota,
+      totalDispositionsSubjectToQuota,
+      totalReductionFromLegacies,
+      totalReductionFromGifts,
+      unabsorbedExcess: remainingExcessToReduce,
+      legacies: reducedLegacies,
+      lifetimeGifts: reductionFromGifts
+    };
   }
 
   return {
@@ -235,9 +366,12 @@ export function calculateGoaInheritance(willData = {}) {
     statutoryLegitimeValue,
     statutoryDisposableQuota,
     totalBequestValue,
+    totalDispositionsSubjectToQuota,
     excessOrShortfall: excess,
+    reductionSchedule,
     legitimeDescription,
     itemizedAssets,
+    itemizedBequests,
     totalDebts,
     totalAllLifetimeGifts,
     descendantCollationAdvancements,

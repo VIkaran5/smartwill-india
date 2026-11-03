@@ -86,11 +86,29 @@ export function resolvePersonalLawRegime(willData = {}) {
   if (religionLower.includes('muslim') || religionLower.includes('islam')) {
     const isExplicitShia = subSect.includes('shia') || subSect.includes('ithna');
     const isIsmailiOrBohra = subSect.includes('ismaili') || subSect.includes('bohra');
-    const isShia = isExplicitShia || isIsmailiOrBohra;
+
+    if (isIsmailiOrBohra) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: true,
+        isShia: true,
+        isHindu: false,
+        sectName: "Shia (Ismaili / Dawoodi Bohra)",
+        requiresExpertLegalReview: true,
+        statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Ismaili / Dawoodi Bohra Customary & Special Succession Rules)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — ISMAILI / DAWOODI BOHRA SUCCESSION LAW",
+        reasons: ["Ismaili and Dawoodi Bohra communities possess distinct customary and personal succession rules distinct from general Ithna-Ashari principles, requiring qualified advocate review before execution."],
+        blockers: ["ISMAILI_BOHRA_SPECIAL_REVIEW_REQUIRED: Ismaili / Dawoodi Bohra testamentary rules require independent advocate certification."],
+        jurisdiction
+      };
+    }
+
+    const isShia = isExplicitShia;
     const regime = isShia ? PERSONAL_LAW_REGIMES.MUSLIM_SHIA : PERSONAL_LAW_REGIMES.MUSLIM_SUNNI;
-    const sectName = isIsmailiOrBohra
-      ? 'Shia (Ismaili / Dawoodi Bohra — Independent Legal Verification Required)'
-      : (isShia ? 'Shia (Ithna-Ashari)' : 'Sunni (Hanafi / Shafi / Maliki / Hanbali)');
+    const sectName = isShia ? 'Shia (Ithna-Ashari)' : 'Sunni (Hanafi / Shafi / Maliki / Hanbali)';
 
     return {
       regime,
@@ -105,7 +123,7 @@ export function resolvePersonalLawRegime(willData = {}) {
       statuteCitation: `Muslim Personal Law (Shariat) Application Act, 1937 (${sectName} Wasīyyat Law)`,
       statutoryCrest: `GOVERNED BY MUSLIM PERSONAL LAW (SHARIAT) — ${sectName.toUpperCase()}`,
       wasīyyatRules: isShia
-        ? "Shia (Ithna-Ashari) Wasīyyat: Bequests up to one-third (1/3) of the net estate are valid to heirs or non-heirs without requiring consent; bequests exceeding 1/3 require consent of legal heirs. (Ismaili / Bohra schools require independent qualified legal review)."
+        ? "Shia (Ithna-Ashari) Wasīyyat: Bequests up to one-third (1/3) of the net estate are valid to heirs or non-heirs without requiring consent; bequests exceeding 1/3 require consent of legal heirs."
         : "Sunni Wasīyyat: Bequests to non-heirs are valid up to one-third (1/3) of the net estate; bequests to legal heirs or exceeding 1/3 operate strictly subject to the consent of all surviving legal heirs following demise.",
       jurisdiction
     };
@@ -127,16 +145,40 @@ export function resolvePersonalLawRegime(willData = {}) {
   }
 
   // 5. Hindu, Buddhist, Jain, Sikh Pathway
+  const isHinduBuddhistJainSikh = religionLower.includes('hindu') ||
+    religionLower.includes('buddhist') ||
+    religionLower.includes('buddhism') ||
+    religionLower.includes('jain') ||
+    religionLower.includes('sikh');
+
+  if (isHinduBuddhistJainSikh) {
+    return {
+      regime: PERSONAL_LAW_REGIMES.HINDU,
+      isGoa: false,
+      isParsi: false,
+      isChristian: false,
+      isMuslim: false,
+      isHindu: true,
+      statuteCitation: "Hindu Succession Act, 1956 (Section 30) read with Indian Succession Act, 1925 (Schedule III)",
+      statutoryCrest: "GOVERNED BY THE HINDU SUCCESSION ACT, 1956 & INDIAN SUCCESSION ACT, 1925 (SCHEDULE III)",
+      coparcenaryNotice: "Testamentary power extends to testator's undivided coparcenary interest in Mitakshara coparcenary property pursuant to Section 30 of the Hindu Succession Act, 1956.",
+      jurisdiction
+    };
+  }
+
+  // Unrecognized Non-Empty Religion: Must NEVER silently default to Hindu!
   return {
-    regime: PERSONAL_LAW_REGIMES.HINDU,
+    regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
     isGoa: false,
     isParsi: false,
     isChristian: false,
     isMuslim: false,
-    isHindu: true,
-    statuteCitation: "Hindu Succession Act, 1956 (Section 30) read with Indian Succession Act, 1925 (Schedule III)",
-    statutoryCrest: "GOVERNED BY THE HINDU SUCCESSION ACT, 1956 & INDIAN SUCCESSION ACT, 1925 (SCHEDULE III)",
-    coparcenaryNotice: "Testamentary power extends to testator's undivided coparcenary interest in Mitakshara coparcenary property pursuant to Section 30 of the Hindu Succession Act, 1956.",
+    isHindu: false,
+    requiresLegalReview: true,
+    statuteCitation: `Unrecognized Personal Law (${p.religion}) — Advocate Review Required`,
+    statutoryCrest: "LEGAL REVIEW REQUIRED — UNRECOGNIZED PERSONAL LAW REGIME",
+    reasons: [`The declared religion/tradition '${p.religion}' does not correspond to an automated statutory succession pathway. Independent legal review by an advocate is required to establish testamentary rules.`],
+    blockers: [`UNRECOGNIZED_PERSONAL_LAW: Religious declaration '${p.religion}' requires legal review.`],
     jurisdiction
   };
 }

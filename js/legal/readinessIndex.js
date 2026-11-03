@@ -91,12 +91,13 @@ export function calculateDraftReadinessIndex(willData = {}) {
 
   // Enforce Advocate Verification Gate for 96+ Score
   // Under the forensic standard, 96-100 (VERIFIED EXECUTION DRAFT) is strictly blocked
-  // without documented independent advocate review sign-off.
+  // without authenticated independent advocate review sign-off.
   const advocate = willData.advocateReviewSignOff || willData.advocateReview || {};
   const hasDocumentedAdvocateReview = Boolean(
     advocate.advocateName &&
     advocate.enrollmentNumber &&
-    advocate.reviewDate
+    advocate.reviewDate &&
+    (advocate.isAuthenticVerification === true || advocate.isBarCouncilVerified === true || advocate.isVerified === true)
   );
 
   let statusBadge = DRAFT_STATUS_BANDS.INCOMPLETE;
@@ -121,8 +122,10 @@ export function calculateDraftReadinessIndex(willData = {}) {
   }
 
   // Post-execution: Authenticated Special Notary Verification Record
+  // CRITICAL STATUTORY SAFEGUARD: Cannot be marked completed if fatal legal blockers exist!
   const notaryData = willData.specialNotaryExecution || {};
   if (
+    audit.totalBlockersCount === 0 &&
     notaryData.isNotaryAuthenticated &&
     notaryData.registrationNumber &&
     notaryData.bookVolume &&
@@ -134,6 +137,7 @@ export function calculateDraftReadinessIndex(willData = {}) {
 
   return {
     score: totalScore,
+    scoreType: "Draft Checklist Score (Pre-Notarial Self-Assessment)",
     statusBadge,
     isExecutionReady: audit.isExecutionReady,
     pillars: {

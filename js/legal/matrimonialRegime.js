@@ -61,24 +61,38 @@ export function evaluateAssetMatrimonialOwnership(asset = {}, matrimonialInfo = 
 
   const isInherited = Boolean(asset.isInherited || (asset.desc && asset.desc.toLowerCase().includes('ancestral')) || asset.inheritanceStatus);
   const hasIncommunicabilityClause = Boolean(asset.hasIncommunicabilityClause);
-  const hasPartitionDeed = Boolean(asset.hasRegisteredPartitionDeed || (asset.details && asset.details.hasPartitionDeed));
-  const hasSpouseNotarialConsent = Boolean(asset.hasSpouseNotarialConsent || matrimonialInfo.spouseConsentsBySpecialNotaryDeed);
+
+  // Evidence-backed Partition Allotment (Section 219(a))
+  // A mere registered partition deed is insufficient unless the specific asset is affirmatively allotted to the disposing testator.
+  const partitionDetails = asset.partitionDetails || asset.partitionAllotmentDetails || asset.details?.partitionDetails || {};
+  const isAllottedToTestator = asset.isAllottedToTestator === true || asset.details?.isAllottedToTestator === true || partitionDetails.isAllottedToTestator === true;
+  const hasPartitionDeed = Boolean(asset.hasRegisteredPartitionDeed || (asset.details && asset.details.hasPartitionDeed) || partitionDetails.registrationNumber);
+
+  // Evidence-backed Notarial Consent (Section 219(d))
+  // Requires verified Special Notary document record, not a mere naked boolean
+  const consentRecord = asset.spouseConsentDetails || matrimonialInfo.spouseConsentDeed || matrimonialInfo.spouseConsentRecord || {};
+  const hasVerifiedNotarialConsent = Boolean(
+    (asset.hasSpouseNotarialConsent || matrimonialInfo.spouseConsentsBySpecialNotaryDeed) &&
+    (consentRecord.isSpecialNotaryDocument || consentRecord.specialNotaryOffice || consentRecord.registrationNumber || consentRecord.notaryOffice || consentRecord.isVerified === true)
+  );
 
   // Check if bequest is made 100% in favor of the surviving spouse
   const allocs = asset.allocations || [];
   const isSolelyBequeathedToSpouse = allocs.length === 1 && Boolean(allocs[0].isSpouse || (allocs[0].relation && allocs[0].relation.toLowerCase().includes('spouse')));
 
   // ── STATUTORY EXCEPTION 1: Section 219(a) Allotted in partition ──
-  if (hasPartitionDeed) {
+  if (hasPartitionDeed && isAllottedToTestator) {
     return {
       legalClass: "PARTITIONED_SPECIFIC_ALLOTMENT",
       disposablePercentage: 100,
       isCommunity: false,
       applicableException: SECTION_219_EXCEPTIONS.ALLOTTED_IN_PARTITION,
-      restrictions: ["Section 219(a) Exception: Asset was partitioned and specifically allotted to the testator."],
+      restrictions: ["Section 219(a) Exception: Asset was partitioned and specifically allotted to the disposing testator under registered partition deed or final decree."],
       section219Applies: false,
       isDispositionProhibited: false
     };
+  } else if (hasPartitionDeed && !isAllottedToTestator) {
+    restrictions.push("Section 219(a) Non-Compliance: Although a partition deed is referenced, documentary allotment of this specific asset exclusively to the testator is unverified. Under Section 219, disposition remains prohibited.");
   }
 
   // ── STATUTORY EXCEPTION 2: Section 219(b) Asset does not legally form part of the community ──
@@ -115,16 +129,18 @@ export function evaluateAssetMatrimonialOwnership(asset = {}, matrimonialInfo = 
   }
 
   // ── STATUTORY EXCEPTION 4: Section 219(d) Consented by other spouse in Special Notary document ──
-  if (hasSpouseNotarialConsent) {
+  if (hasVerifiedNotarialConsent) {
     return {
       legalClass: "COMMUNITY_ASSET_NOTARIAL_CONSENT",
       disposablePercentage: 100,
       isCommunity: true,
       applicableException: SECTION_219_EXCEPTIONS.SPOUSE_NOTARIAL_CONSENT,
-      restrictions: ["Section 219(d) Exception: Non-disposing spouse consented to the disposition in a document drawn by a Special Notary."],
+      restrictions: ["Section 219(d) Exception: Non-disposing spouse consented to the disposition in a verified document drawn by a Special Notary."],
       section219Applies: false,
       isDispositionProhibited: false
     };
+  } else if (asset.hasSpouseNotarialConsent || matrimonialInfo.spouseConsentsBySpecialNotaryDeed) {
+    restrictions.push("Section 219(d) Non-Compliance: Spouse consent under Section 219(d) strictly requires execution in a document drawn by a Special Notary. Unverified declarations or informal non-notarial consent are null and void.");
   }
 
   // ── NULLITY RULE (Section 219 Main Injunction): Specific Community Asset without Exception ──
