@@ -27,6 +27,12 @@ import {
   isValidIsoDate
 } from './goaJurisdiction.js';
 
+import {
+  validateEvidenceRecordAgainstServer,
+  VALID_LAND_CLASSIFICATION_DOC_TYPES,
+  VALID_PROPERTY_TERRITORY_DOC_TYPES
+} from '../services/evidenceVerificationService.js';
+
 export const PERSONAL_LAW_REGIMES = {
   GOA_UCC: "GOA_UCC",
   PARSI: "PARSI",
@@ -78,6 +84,23 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
       isValid: false,
       blockerCode: "ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED",
       reason: "Missing Section 3 declaration record. Shariat testamentary succession cannot be activated without verified filing."
+    };
+  }
+
+  // Authoritative Backend Evidence Verification Check:
+  // Strictly rejects client-supplied booleans, unverified storage keys, cross-user reuse, and stale versions
+  const serverContext = {
+    userId: personal.userId || personal.uid || (personal.user && personal.user.uid),
+    willId: personal.willId || personal.id,
+    testatorName: personal.fullName,
+    requiredSubject: 'TESTATOR'
+  };
+  const serverCheck = validateEvidenceRecordAgainstServer(record, serverContext);
+  if (!serverCheck.isValid) {
+    return {
+      isValid: false,
+      blockerCode: serverCheck.blockerCode || "ERR_UNTRUSTED_CLIENT_EVIDENCE",
+      reason: serverCheck.reason
     };
   }
 
@@ -240,11 +263,12 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  if (record.competenceVerified !== true) {
+  // Contractual competence verified through server legal review ticket
+  if (!serverCheck.ticket || serverCheck.ticket.statutoryFactEstablished !== true || record.competenceVerified === false) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
-      reason: "Declarant competence facts (age 18+ on declaration date, sound mind, not disqualified) have not been authoritatively verified by legal counsel."
+      reason: "Declarant competence facts (age 18+ on declaration date, sound mind, not disqualified) have not been authoritatively verified by legal counsel through backend audit."
     };
   }
 
@@ -408,6 +432,7 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     blockerCode: null,
     serverVerified: true,
     integrityVerified: true,
+    ticket: serverCheck.ticket,
     reason: "Section 3 declaration record fully authenticated by qualified advocate."
   };
 }
@@ -668,6 +693,26 @@ export function resolvePersonalLawRegime(willData = {}) {
     // Asset-Level Check: Agricultural Land Exclusion under Section 2 of Shariat Act, 1937
     // Broad scan covering agricultural, paddy, orchard, cashew, plantation, farm, khasra, etc.
     // AND unclassified land/plot assets whose revenue character is uncertain.
+    if (!Array.isArray(willData.assets)) {
+      const hasNegativeDeclaration = willData.noAssets === true || p.noAssets === true || willData.noImmovableProperty === true;
+      if (!hasNegativeDeclaration) {
+        return {
+          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+          isGoa: false,
+          isParsi: false,
+          isChristian: false,
+          isMuslim: true,
+          isHindu: false,
+          requiresLegalReview: true,
+          statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Asset Inventory Required)",
+          statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
+          reasons: ["Asset inventory is missing or unrecorded. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from testamentary succession; asset completeness must be verified."],
+          blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete asset inventory (or explicit negative declaration) is mandatory under Section 2 of Shariat Act, 1937 to verify exclusion of agricultural land."],
+          jurisdiction
+        };
+      }
+    }
+
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
     const confirmedAgriculturalAssets = [];
     const uncertainLandAssets = [];
@@ -686,20 +731,25 @@ export function resolvePersonalLawRegime(willData = {}) {
         // Generic land/plot: Must have verified documentary evidence (e.g. NA Sanad, conversion order, zone certificate)
         // to be accepted as non-agricultural. A bare string (e.g. revenueClassification: 'NON_AGRICULTURAL')
         // CANNOT bypass agricultural land uncertainty!
+        // Generic civil records are strictly excluded; only statutory land classification documents are accepted.
         const revEv = a.classificationEvidence || a.revenueEvidence || a.revenueRecord;
-        const revCheck = revEv ? validateJurisdictionEvidence(revEv, [
-          'REVENUE_SANAD_NON_AGRICULTURAL',
-          'CONVERSION_CERTIFICATE',
-          'TOWN_PLANNING_ZONE_CERTIFICATE',
-          'NA_CONVERSION_ORDER',
-          JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD
-        ], { testatorName: p.fullName }) : { isValid: false };
+        const parcelId = a.surveyNumber || a.khasraNumber || a.ctsNumber || a.plotNumber;
+        const revCheck = revEv ? validateJurisdictionEvidence(revEv, VALID_LAND_CLASSIFICATION_DOC_TYPES, {
+          userId: p.userId || p.uid || (p.user && p.user.uid),
+          willId: p.willId || p.id,
+          testatorName: p.fullName,
+          parcelId
+        }) : { isValid: false, blockerCode: "ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN", reason: "Missing revenue classification evidence." };
 
         if ((revClass === 'NON_AGRICULTURAL' || revClass === 'COMMERCIAL' || revClass === 'RESIDENTIAL') && revCheck.isValid) {
           // Confirmed non-agricultural by verified documentary revenue classification evidence
         } else {
           // Unclassified or unverified land asset
-          uncertainLandAssets.push(a);
+          uncertainLandAssets.push({
+            asset: a,
+            blockerCode: revCheck.blockerCode || 'ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN',
+            reason: revCheck.reason
+          });
         }
       }
     });
@@ -731,6 +781,14 @@ export function resolvePersonalLawRegime(willData = {}) {
     }
 
     if (uncertainLandAssets.length > 0) {
+      const firstUncertain = uncertainLandAssets[0];
+      const blockerCode = firstUncertain.blockerCode === 'ERR_PARCEL_MISMATCH'
+        ? 'ERR_PARCEL_MISMATCH'
+        : (firstUncertain.blockerCode === 'ERR_INVALID_EVIDENCE_TYPE'
+            ? 'ERR_INVALID_EVIDENCE_TYPE'
+            : 'ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN');
+      const errorMsg = firstUncertain.reason || `Asset '${firstUncertain.asset.desc || firstUncertain.asset.name || firstUncertain.asset.type}' is a land/plot asset whose revenue/agricultural classification is unrecorded or uncertain. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from personal law; unclassified land assets require specialist revenue advocate review before testamentary distribution.`;
+
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -740,15 +798,15 @@ export function resolvePersonalLawRegime(willData = {}) {
         isHindu: false,
         uncertainLandAssets,
         requiresLegalReview: true,
-        statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Land Classification Uncertain)",
+        statuteCitation: `Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 — ${blockerCode})`,
         statutoryCrest: "LEGAL REVIEW REQUIRED — UNRECORDED LAND REVENUE CLASSIFICATION",
         reasons: [
-          "One or more land or plot assets lack confirmed non-agricultural revenue classification.",
+          errorMsg,
           "Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from personal law succession.",
           "Unclassified land assets cannot be presumed non-agricultural without revenue authority records."
         ],
         blockers: [
-          `ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN: Asset '${uncertainLandAssets[0].desc || uncertainLandAssets[0].name || uncertainLandAssets[0].type}' is a land/plot asset whose revenue/agricultural classification is unrecorded or uncertain. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from personal law; unclassified land assets require specialist revenue advocate review before testamentary distribution.`
+          `${blockerCode}: ${errorMsg}`
         ],
         jurisdiction
       };
@@ -957,8 +1015,11 @@ export function resolvePersonalLawRegime(willData = {}) {
 
     // Territorial Identification under Section 57(a) and (b):
     // Clause (a): Made on/after 1 Sept 1870 within historical Bengal LT-Governor territory or High Court OOCJ at Madras/Bombay
-    const execPlace = (p.willExecutionPlace || p.placeOfExecution || p.historicalTerritoryCode || '').trim().toLowerCase();
-    if (!execPlace) {
+    const rawExecPlace = (p.willExecutionPlace || p.placeOfExecution || p.historicalTerritoryCode || '').trim();
+    const invalidExecPlaces = ['unknown', 'n/a', 'not applicable', 'none', 'null', 'undefined', 'test'];
+    const execPlace = rawExecPlace.toLowerCase();
+
+    if (!execPlace || invalidExecPlaces.includes(execPlace) || execPlace.length < 3) {
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -969,7 +1030,7 @@ export function resolvePersonalLawRegime(willData = {}) {
         requiresLegalReview: true,
         statuteCitation: "Indian Succession Act, 1925 Section 57 (Execution Place Required)",
         statutoryCrest: "LEGAL REVIEW REQUIRED — WILL EXECUTION PLACE MANDATORY",
-        reasons: ["Place of will execution is mandatory to evaluate Section 57 territorial jurisdiction under the Indian Succession Act, 1925. Cannot infer or bypass execution location."],
+        reasons: ["Place of will execution is mandatory to evaluate Section 57 territorial jurisdiction under the Indian Succession Act, 1925. Cannot infer, bypass, or use placeholder execution location."],
         blockers: ["ERR_WILL_EXECUTION_PLACE_REQUIRED: Place of will execution is mandatory to determine Section 57 territorial jurisdiction under the Indian Succession Act, 1925."],
         jurisdiction
       };
@@ -1007,8 +1068,13 @@ export function resolvePersonalLawRegime(willData = {}) {
       const execHistEvidence = p.historicalTerritoryEvidence || p.territorialEvidence;
       const execHistCheck = execHistEvidence ? validateJurisdictionEvidence(execHistEvidence, [
         JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-      ], { testatorName: p.fullName }) : { isValid: false, reason: "Missing historical territory evidence." };
+        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
+        ...VALID_PROPERTY_TERRITORY_DOC_TYPES
+      ], {
+        userId: p.userId || p.uid || (p.user && p.user.uid),
+        willId: p.willId || p.id,
+        testatorName: p.fullName
+      }) : { isValid: false, reason: "Missing historical territory evidence." };
 
       if (!execHistCheck.isValid) {
         return {
@@ -1031,6 +1097,27 @@ export function resolvePersonalLawRegime(willData = {}) {
     const hasPresidencyExecution = isHistoricalPresidencyExec;
 
     // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
+    // Mandatory Asset Inventory Gate for Section 57(b) Immovable Property Verification:
+    if (!Array.isArray(willData.assets)) {
+      const hasNegativeDeclaration = willData.noImmovableProperty === true || p.noImmovableProperty === true || willData.noAssets === true || p.noAssets === true;
+      if (!hasNegativeDeclaration) {
+        return {
+          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+          isGoa: false,
+          isParsi: false,
+          isChristian: false,
+          isMuslim: false,
+          isHindu: true,
+          requiresLegalReview: true,
+          statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Asset Inventory Required)",
+          statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
+          reasons: ["Asset inventory is missing or unrecorded. Immovable property situated within historical presidency towns must be affirmatively identified under Section 57(b); asset completeness must be verified."],
+          blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete immovable property inventory (or affirmative negative declaration) is mandatory to evaluate Section 57(b) territorial jurisdiction."],
+          jurisdiction
+        };
+      }
+    }
+
     // Broad, non-dropping immovable property inventory check covering apartments, flats, villas, shops, units, land, houses, etc.
     const IMMOVABLE_TERMS = [
       'real estate', 'land', 'plot', 'house', 'flat', 'apartment', 'villa', 'penthouse',
@@ -1086,6 +1173,7 @@ export function resolvePersonalLawRegime(willData = {}) {
     }
 
     // Fail-Closed: Check if any individual immovable asset claims a historical territory code without verified evidence
+    let parcelMismatchError = null;
     const unverifiedHistoricalAsset = immovableAssets.find(a => {
       const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
       const claimsCode = code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
@@ -1093,14 +1181,26 @@ export function resolvePersonalLawRegime(willData = {}) {
         code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
       if (!claimsCode) return false;
       const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
-      const evCheck = ev ? validateJurisdictionEvidence(ev, [
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-      ], { testatorName: p.fullName }) : { isValid: false };
-      return !evCheck.isValid;
+      const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
+      const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+        userId: p.userId || p.uid || (p.user && p.user.uid),
+        willId: p.willId || p.id,
+        testatorName: p.fullName,
+        parcelId
+      }) : { isValid: false, blockerCode: "ERR_HISTORICAL_TERRITORY_UNVERIFIED", reason: "Missing historical territory evidence." };
+
+      if (!evCheck.isValid) {
+        if (evCheck.blockerCode === 'ERR_PARCEL_MISMATCH') {
+          parcelMismatchError = evCheck.reason;
+        }
+        return true;
+      }
+      return false;
     });
 
     if (unverifiedHistoricalAsset) {
+      const blockerCode = parcelMismatchError ? "ERR_PARCEL_MISMATCH" : "ERR_HISTORICAL_TERRITORY_UNVERIFIED";
+      const errorMsg = parcelMismatchError || "Immovable asset historical territory code requires verified documentary property survey/CTS evidence. Generic civil or domicile records cannot establish Section 57(b) jurisdiction.";
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -1109,10 +1209,10 @@ export function resolvePersonalLawRegime(willData = {}) {
         isMuslim: false,
         isHindu: true,
         requiresLegalReview: true,
-        statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Asset Territorial Evidence Unverified)",
+        statuteCitation: `Indian Succession Act, 1925 Section 57(b) (${blockerCode})`,
         statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET HISTORICAL TERRITORY UNVERIFIED",
-        reasons: ["Immovable asset claims historical presidency territory jurisdiction without verified documentary evidence."],
-        blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Immovable asset historical territory code requires verified documentary evidence. Self-asserted code alone cannot establish Section 57(b) jurisdiction."],
+        reasons: [errorMsg],
+        blockers: [`${blockerCode}: ${errorMsg}`],
         jurisdiction
       };
     }
@@ -1121,10 +1221,13 @@ export function resolvePersonalLawRegime(willData = {}) {
     if (hasPersonalHistCode) {
       const hasVerifiedAsset = immovableAssets.some(a => {
         const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
-        const evCheck = ev ? validateJurisdictionEvidence(ev, [
-          JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-          JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-        ], { testatorName: p.fullName }) : { isValid: false };
+        const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
+        const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+          userId: p.userId || p.uid || (p.user && p.user.uid),
+          willId: p.willId || p.id,
+          testatorName: p.fullName,
+          parcelId
+        }) : { isValid: false };
         return evCheck.isValid;
       });
       if (!hasVerifiedAsset) {
@@ -1139,7 +1242,7 @@ export function resolvePersonalLawRegime(willData = {}) {
           statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Personal Property Code Unverified)",
           statutoryCrest: "LEGAL REVIEW REQUIRED — IMMOVABLE PROPERTY CODE UNVERIFIED AT ASSET LEVEL",
           reasons: ["Legacy personal-level immovable property code provided without asset-specific verified documentary evidence."],
-          blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Legacy personal-level property historical code cannot bypass asset-level documentary verification under Section 57(b)."],
+          blockers: ["ERR_HISTORICAL_TERRITORY_UNVERIFIED: Legacy personal-level property historical code cannot bypass asset-level documentary verification under Section 57(b). Valid property survey, registered title deed, or CTS property card required."],
           jurisdiction
         };
       }
@@ -1152,10 +1255,13 @@ export function resolvePersonalLawRegime(willData = {}) {
         code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
       if (!claimsCode) return false;
       const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
-      const evCheck = ev ? validateJurisdictionEvidence(ev, [
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-      ], { testatorName: p.fullName }) : { isValid: false };
+      const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
+      const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+        userId: p.userId || p.uid || (p.user && p.user.uid),
+        willId: p.willId || p.id,
+        testatorName: p.fullName,
+        parcelId
+      }) : { isValid: false };
       return evCheck.isValid;
     });
 

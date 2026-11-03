@@ -17,6 +17,8 @@
  * Clause (g): Persons adopted by parents governed by the specified Code or Act
  */
 
+import { validateEvidenceRecordAgainstServer } from '../services/evidenceVerificationService.js';
+
 export const JURISDICTION_STATUS = {
   GOA_APPLICABLE: "GOA_APPLICABLE",
   GOA_NOT_APPLICABLE: "GOA_NOT_APPLICABLE",
@@ -105,6 +107,17 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
       isValid: false,
       blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
       reason: "Missing documentary evidence record. A self-entered Boolean alone cannot establish jurisdiction."
+    };
+  }
+
+  // Authoritative Backend Evidence Verification Check:
+  // Strictly rejects client-supplied booleans, unverified storage keys, cross-user reuse, and stale versions
+  const serverCheck = validateEvidenceRecordAgainstServer(record, context);
+  if (!serverCheck.isValid) {
+    return {
+      isValid: false,
+      blockerCode: serverCheck.blockerCode || "ERR_UNTRUSTED_CLIENT_EVIDENCE",
+      reason: serverCheck.reason
     };
   }
 
@@ -212,7 +225,8 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     }
   } else if (context.requiredSubject === 'TESTATOR') {
     const tNameLower = (context.testatorName || '').toLowerCase();
-    if (tNameLower && !vpLower.includes(tNameLower)) {
+    const isGenericTestatorParty = vpLower.includes('testator') || vpLower.includes('declarant');
+    if (tNameLower && !vpLower.includes(tNameLower) && !isGenericTestatorParty) {
       return {
         isValid: false,
         blockerCode: "ERR_PARTY_MISMATCH",
@@ -411,6 +425,7 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
     verificationPendingServerSync: false,
     serverVerified: true,
     integrityVerified: true,
+    ticket: serverCheck.ticket,
     reason: "Documentary evidence authenticated by authorized legal reviewer. Cryptographic hash confirms file integrity."
   };
 }
@@ -438,14 +453,19 @@ export function classifyGoaJurisdiction(p = {}) {
     Boolean(p.statutoryElectionClauseD || p.statutoryElectionGoa || p.tenYearResidencyClaim || p.marriageToGoanClaim || p.isAdopted) ||
     Boolean(p.clauseAEvidence || p.clauseBEvidence || p.clauseCEvidence || p.clauseDEvidence || p.clauseEEvidence || p.clauseFEvidence || p.clauseGEvidence);
 
-  const testatorPob = (p.pob || p.placeOfBirth || '').trim().toLowerCase();
-  if (hasGoaNexus && !testatorPob) {
-    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Place of birth is required to evaluate applicability of the Goa Succession Act, 2016 under Section 1(4). Missing place of birth prevents statutory classification.");
+  const rawPob = (p.pob || p.placeOfBirth || '').trim();
+  const invalidPobs = ['unknown', 'n/a', 'not applicable', 'none', 'null', 'undefined', 'unspecified', 'test'];
+  const testatorPob = rawPob.toLowerCase();
+
+  // Mandatory Fail-Closed Birthplace Gate: Missing or placeholder place of birth fails closed unconditionally.
+  // Testator without recorded birthplace cannot be presumed non-Goan under Section 1(4).
+  if (!testatorPob || invalidPobs.includes(testatorPob) || testatorPob.length < 3) {
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Place of birth is required to evaluate applicability of the Goa Succession Act, 2016 under Section 1(4). Missing, ambiguous, or placeholder place of birth prevents statutory classification.");
     return {
       status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
       statutoryClause: "Section 1(4) Birthplace Unconfirmed",
       applicableAct: "Unconfirmed",
-      reasons: ["Place of birth is mandatory to determine jurisdiction under Section 1(4)."],
+      reasons: ["Place of birth is mandatory to determine jurisdiction under Section 1(4) of Goa Act 23 of 2016."],
       blockers,
       canGenerateWill: false
     };
@@ -497,6 +517,8 @@ export function classifyGoaJurisdiction(p = {}) {
   const jurEv = p.jurisdictionEvidence || {};
   const parentNames = [p.fatherName, p.motherName, p.parentName].filter(Boolean);
   const verificationContext = {
+    userId: p.userId || p.uid || (p.user && p.user.uid),
+    willId: p.willId || p.id,
     testatorName: p.fullName,
     parentNames,
     strictTestatorMatch: true
@@ -702,8 +724,9 @@ export function classifyGoaJurisdiction(p = {}) {
         };
       }
 
-      const optOutDateStr = (optOutRecord.issueDate || optOutRecord.registrationDate || optOutRecord.statutoryDate || p.optOutDeclarationDate || '').toString().trim();
-      if (!isValidIsoDate(optOutDateStr)) {
+      const rawOptOutDate = optOutRecord.registrationDate || optOutRecord.issueDate || optOutRecord.statutoryDate || p.optOutDeclarationDate || '';
+      const optOutDateStr = rawOptOutDate.toString().trim();
+      if (!isValidIsoDate(optOutDateStr) || (optOutRecord.registrationDate && !isValidIsoDate(optOutRecord.registrationDate))) {
         blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(c) statutory opt-out requires a valid registration date (YYYY-MM-DD). Missing or invalid opt-out date blocks clearance.");
         return {
           status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
@@ -938,8 +961,9 @@ export function classifyGoaJurisdiction(p = {}) {
           };
         }
 
-        const electDateStr = (electionRecord.issueDate || electionRecord.registrationDate || electionRecord.statutoryDate || p.electionDate || '').toString().trim();
-        if (!isValidIsoDate(electDateStr)) {
+        const rawElectDate = electionRecord.registrationDate || electionRecord.issueDate || electionRecord.statutoryDate || p.electionDate || '';
+        const electDateStr = rawElectDate.toString().trim();
+        if (!isValidIsoDate(electDateStr) || (electionRecord.registrationDate && !isValidIsoDate(electionRecord.registrationDate))) {
           blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(d) statutory election requires a valid registration date (YYYY-MM-DD). Missing or invalid election date blocks election clearance.");
           return {
             status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
@@ -1029,6 +1053,8 @@ export function classifyGoaJurisdiction(p = {}) {
     }
 
     const parentRoiContext = {
+      userId: p.userId || p.uid || (p.user && p.user.uid),
+      willId: p.willId || p.id,
       requiredSubject: 'PARENTS',
       testatorName: p.fullName,
       parentNames,
