@@ -2,11 +2,16 @@
  * SmartWill India — Legal Engine 2.1
  * Section 83 & Section 89 Estate Valuation, Collation & Legitime Calculator
  *
- * Implements mathematical and statutory calculation under:
- * - Goa Act 23 of 2016 Section 89 (Computation Base)
- * - Sections 90 to 97 (Collation of Lifetime Gifts to Forced Heirs)
- * - Sections 98 to 105 (Reduction of Inofficious Dispositions)
- * - Substituted Section 83 under Goa Amendment Act 35 of 2023 (Forced Shares)
+ * Implements strict statutory calculation under:
+ * - Section 89(1) & (2): Calculation base includes net assets at death (assets - debts)
+ *   PLUS the value of ALL assets gifted during the testator's lifetime.
+ * - Sections 90 to 97: Collation (Colação) of advancements by descendants into the legitime pool.
+ * - Sections 98 to 105: Reduction of inofficious testamentary bequests and lifetime gifts.
+ * - Substituted Section 83 under Goa Amendment Act 35 of 2023:
+ *   - Descendants survive: 50% Legitime (Quota Legítima), 50% Disposable Quota (Quota Disponível).
+ *   - Spouse only: 100% Legitime.
+ *   - Parents only: 100% Legitime.
+ *   - Other ascendants: 1/3rd Legitime, 2/3rds Disposable Quota.
  */
 
 import { evaluateAssetMatrimonialOwnership } from './matrimonialRegime.js';
@@ -41,7 +46,7 @@ export function calculateGoaInheritance(willData = {}) {
     };
   }
 
-  // 1. Calculate Assets at Death with Matrimonial Moiety Adjustments
+  // 1. Calculate Assets at Death with Matrimonial Ownership Adjustments
   let grossAssetValue = 0;
   let testatorMoietyAssetValue = 0;
   let hasUnvaluedAsset = false;
@@ -71,7 +76,7 @@ export function calculateGoaInheritance(willData = {}) {
   });
 
   if (hasUnvaluedAsset) {
-    blockers.push("INHERITANCE CALCULATION INCOMPLETE: Every asset must have an estimated valuation to compute Section 89 estate base and Section 83 legitime.");
+    blockers.push("INHERITANCE CALCULATION INCOMPLETE: Every asset must have an estimated market valuation to compute Section 89 estate base and Section 83 legitime.");
     return {
       status: CALCULATION_STATUS.INCOMPLETE,
       statusMessage: "INHERITANCE CALCULATION INCOMPLETE",
@@ -80,7 +85,7 @@ export function calculateGoaInheritance(willData = {}) {
     };
   }
 
-  // 2. Calculate Enforceable Debts (Sections 45 & 46)
+  // 2. Calculate Enforceable Debts of the Estate (Section 45(3))
   let totalDebts = 0;
   debts.forEach(d => {
     const val = Number(d.amount);
@@ -89,27 +94,34 @@ export function calculateGoaInheritance(willData = {}) {
     }
   });
 
-  // 3. Calculate Collation of Lifetime Gifts (Sections 90 onwards)
-  let totalDescendantGiftsCollation = 0;
-  let totalThirdPartyGifts = 0;
+  // 3. Section 89(1) & (2): Value of ALL Assets Gifted during Lifetime
+  // CRUCIAL: Section 89 base adds ALL lifetime gifts, not merely collatable gifts.
+  let totalAllLifetimeGifts = 0;
+  let descendantCollationAdvancements = 0; // Collation under Sections 90-97
+  let thirdPartyLifetimeGifts = 0;         // Subject to reduction under Sections 98-105
 
   lifetimeGifts.forEach(g => {
     const val = Number(g.value);
     if (!isNaN(val) && val > 0) {
-      if (g.isForcedHeir || g.recipientRelation?.toLowerCase().includes('child') || g.recipientRelation?.toLowerCase().includes('son') || g.recipientRelation?.toLowerCase().includes('daughter')) {
-        totalDescendantGiftsCollation += val; // Colação under Section 90
+      totalAllLifetimeGifts += val; // Section 89(1) mandate: ALL lifetime gifts
+
+      const isDescendant = g.isForcedHeir ||
+        g.recipientRelation?.toLowerCase().includes('child') ||
+        g.recipientRelation?.toLowerCase().includes('son') ||
+        g.recipientRelation?.toLowerCase().includes('daughter');
+
+      if (isDescendant) {
+        descendantCollationAdvancements += val; // Sections 90-97
       } else {
-        totalThirdPartyGifts += val; // Added to gross base under Sec 89
+        thirdPartyLifetimeGifts += val; // Sections 98-105
       }
     }
   });
 
-  const totalCollatableGifts = totalDescendantGiftsCollation + totalThirdPartyGifts;
-
-  // 4. Section 89 Computation Base Formula:
-  // Gross Base = Net Estate at Death (Assets - Debts) + Collatable Lifetime Gifts
+  // 4. Section 89 Statutory Base Formula:
+  // Base = (Assets at Death - Enforceable Debts) + ALL Lifetime Gifts
   const netAssetsAtDeath = Math.max(0, testatorMoietyAssetValue - totalDebts);
-  const section89ComputationBase = netAssetsAtDeath + totalCollatableGifts;
+  const section89ComputationBase = netAssetsAtDeath + totalAllLifetimeGifts;
 
   // 5. Section 83 Forced Share Hierarchy (Goa Amendment Act 35 of 2023)
   const descendants = beneficiaries.filter(b => b && b.relation && (
@@ -145,7 +157,7 @@ export function calculateGoaInheritance(willData = {}) {
   const statutoryLegitimeValue = section89ComputationBase * legitimeRatio;
   const statutoryDisposableQuota = section89ComputationBase * disposableRatio;
 
-  // 6. Test Testamentary Bequests against Disposable Quota
+  // 6. Test Testamentary Bequests against Statutory Disposable Quota
   let totalBequestValue = 0;
   assets.forEach(a => {
     const rawVal = Number(a.value) || 0;
@@ -163,7 +175,7 @@ export function calculateGoaInheritance(willData = {}) {
   const isCompliant = excess <= 0 || (disposableRatio === 0.50 && Math.abs(excess) < 1.0); // Allow rounding cents
 
   if (!isCompliant && disposableRatio < 1.0) {
-    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 BREACH): Total testamentary dispositions (₹${totalBequestValue.toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${statutoryDisposableQuota.toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to reduction under Sections 98 onwards.`);
+    blockers.push(`INOFFICIOUS DISPOSITION (SECTION 83 BREACH): Total testamentary bequests (₹${totalBequestValue.toLocaleString('en-IN')}) exceed the statutory disposable quota of ₹${statutoryDisposableQuota.toLocaleString('en-IN')} by ₹${Math.round(excess).toLocaleString('en-IN')}. Subject to reduction under Sections 98 onwards.`);
   }
 
   return {
@@ -177,7 +189,9 @@ export function calculateGoaInheritance(willData = {}) {
     legitimeDescription,
     itemizedAssets,
     totalDebts,
-    totalCollatableGifts,
+    totalAllLifetimeGifts,
+    descendantCollationAdvancements,
+    thirdPartyLifetimeGifts,
     blockers,
     warnings
   };

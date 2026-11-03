@@ -210,9 +210,9 @@ export async function generateGoaSection333PDF(willData = {}) {
   printDoubleSpaced(sec3Text, 8.5);
 
   // ── SECTION IV: EXECUTOR & STATUTORY DEBT HIERARCHY ─────────
-  printSectionHeader("SECTION IV", "Appointment of Executor and Statutory Debt Priority");
+  printSectionHeader("SECTION IV", "Appointment of Executor and Charges on Inheritance");
   const execName = (willData.executor && willData.executor.name) || 'Advocate Francis Xavier Pereira';
-  const execText = `I hereby nominate, constitute, and appoint ${execName} as the sole Executor of this my Last Will and Testament, conferring full authority to represent my estate and assent to bequests. In accordance with Sections 45 and 46 of Goa Act 23 of 2016, my Executor shall discharge all legitimate liabilities in statutory priority: first, funeral and deathbed medical expenses; second, judicial and inventory expenses; third, employee wages within limitation periods; and fourth, all remaining debts paid rateably prior to the distribution of any legacy.`;
+  const execText = `I hereby nominate, constitute, and appoint ${execName} as the sole Executor of this my Last Will and Testament, conferring full authority to represent my estate, manage assets, and assent to bequests. In accordance with Section 45 of Goa Act 23 of 2016, my estate answers for the charges on inheritance in statutory order: first, funeral and last-rites expenses according to my station in life; second, executorship and management burdens, including notarial, inventory, and judicial administration expenses; and third, enforceable debts of the deceased. Pursuant to Section 46 of the said Act, inheritance creditors hold absolute statutory priority over all legatees, and all enforceable debts of my estate shall be satisfied in full prior to the delivery or satisfaction of any bequest under this Will.`;
   printDoubleSpaced(execText, 8.5);
 
   // ── SECTION V: BEQUEST OF ASSETS ────────────────────────────
@@ -259,7 +259,7 @@ export async function generateGoaSection333PDF(willData = {}) {
 
   // ── SECTION VIII: MINOR TESTAMENTARY TRUST ──────────────────
   printSectionHeader("SECTION VIII", "Testamentary Trust for Minor Beneficiaries");
-  const trustText = "Where any beneficiary's entitlement vests while below eighteen years of age, their share shall be held in trust by the designated Testamentary Trustee under the Indian Trusts Act, 1882, with investment powers strictly restricted pursuant to Section 20 of said Act to non-speculative Scheduled Bank fixed deposits and sovereign Government securities, with mandatory annual accounts rendered.";
+  const trustText = "Where any beneficiary's entitlement vests while below eighteen years of age, their share shall be held in trust by the designated Testamentary Trustee under the Indian Trusts Act, 1882, with investment powers strictly restricted pursuant to Section 20 of said Act to securities authorised by this testamentary instrument or specified by the Central Government by official notification, prioritizing capital preservation, with mandatory annual accounts rendered.";
   printDoubleSpaced(trustText, 8.5);
 
   // ── ATTESTATION BY TWO WITNESSES (Section 333(1)) ───────────
