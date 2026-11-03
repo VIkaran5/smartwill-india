@@ -7,6 +7,7 @@
  */
 
 import { classifyGoaJurisdiction, JURISDICTION_STATUS } from './goaJurisdiction.js';
+import { resolvePersonalLawRegime, PERSONAL_LAW_REGIMES } from './personalLawRouter.js';
 import { calculateGoaInheritance, CALCULATION_STATUS } from './inheritanceCalculator.js';
 import { verifyPropertyTitle } from './titleVerification.js';
 import { validateResiduaryAllocations } from './residuaryValidator.js';
@@ -20,18 +21,41 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
 
   // Gate 1: Jurisdiction Classification (Section 1(4))
   const jur = classifyGoaJurisdiction(p);
-  const isGoa = (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+  const isGoa = (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE || jur.status === JURISDICTION_STATUS.GOA_APPLICABLE);
 
-  if (jur.status === JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED) {
+  if (jur.status === JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED || jur.status === JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED) {
     blockers.push({
-      code: "ERR_JURISDICTION_UNRESOLVED",
+      code: "ERR_GOA_JURISDICTION_UNCONFIRMED",
       page: "Page 1",
       clause: "Preamble & Jurisdiction Selection",
-      errorDescription: "Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime.",
+      errorDescription: (jur.blockers && jur.blockers[0]) || "Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime.",
       applicableStatute: "Section 1(4), Goa Succession Act, 2012",
       requiredCorrection: "Record testator's verified place of birth, parents' birthplace, and 1867 Civil Code personal law status.",
       preventsGeneration: true
     });
+  }
+
+  // Gate 1B: Central Personal Law & Shariat Audit Gate
+  const pl = resolvePersonalLawRegime(willData);
+  if (pl.regime === PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED || (pl.blockers && pl.blockers.length > 0)) {
+    const primaryBlocker = (pl.blockers && pl.blockers[0]) || "Personal law regime requires legal review";
+    let blockerCode = "ERR_PERSONAL_LAW_REVIEW_REQUIRED";
+    if (primaryBlocker.includes("ERR_GOA_JURISDICTION_UNCONFIRMED")) blockerCode = "ERR_GOA_JURISDICTION_UNCONFIRMED";
+    else if (primaryBlocker.includes("ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED")) blockerCode = "ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED";
+    else if (primaryBlocker.includes("ISMAILI_BOHRA_SPECIAL_REVIEW")) blockerCode = "ERR_ISMAILI_BOHRA_SPECIAL_REVIEW";
+    else if (primaryBlocker.includes("UNRECOGNIZED_PERSONAL_LAW")) blockerCode = "ERR_UNRECOGNIZED_PERSONAL_LAW";
+
+    if (!blockers.some(b => b.code === blockerCode)) {
+      blockers.push({
+        code: blockerCode,
+        page: "Page 1",
+        clause: "Preamble & Personal Law Routing",
+        errorDescription: primaryBlocker,
+        applicableStatute: pl.statuteCitation || "Applicable Personal Law / Indian Succession Act, 1925",
+        requiredCorrection: "Obtain qualified advocate verification of personal law and testamentary authority.",
+        preventsGeneration: true
+      });
+    }
   }
 
   // Gate 2: Section 333 Mandatory Personal Metadata (for Goa Wills)

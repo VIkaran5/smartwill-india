@@ -18,9 +18,13 @@
  */
 
 export const JURISDICTION_STATUS = {
-  GOA_ACT_APPLICABLE: "GOA_ACT_APPLICABLE",
-  INDIAN_SUCCESSION_ACT_APPLICABLE: "INDIAN_SUCCESSION_ACT_APPLICABLE",
-  LEGAL_REVIEW_REQUIRED: "LEGAL_REVIEW_REQUIRED"
+  GOA_APPLICABLE: "GOA_APPLICABLE",
+  GOA_NOT_APPLICABLE: "GOA_NOT_APPLICABLE",
+  GOA_STATUS_UNDETERMINED: "GOA_STATUS_UNDETERMINED",
+  // Backwards compatibility aliases
+  GOA_ACT_APPLICABLE: "GOA_APPLICABLE",
+  INDIAN_SUCCESSION_ACT_APPLICABLE: "GOA_NOT_APPLICABLE",
+  LEGAL_REVIEW_REQUIRED: "GOA_STATUS_UNDETERMINED"
 };
 
 export const GOA_SECTION_1_4_CLAUSES = {
@@ -47,6 +51,48 @@ export function classifyGoaJurisdiction(p = {}) {
 
   const testatorPob = (p.pob || p.placeOfBirth || '').trim().toLowerCase();
   const isTestatorBornGoa = testatorPob.includes('goa') || testatorPob.includes('margao') || testatorPob.includes('panaji') || testatorPob.includes('vasco') || testatorPob.includes('mapusa');
+
+  // Daman and Diu Check: Daman & Diu succession matters are governed by their own local succession regime
+  // and are NOT automatically governed by Goa Act 23 of 2016.
+  const isDamanOrDiu = rawAddr.includes('daman') || rawAddr.includes('diu') || testatorPob.includes('daman') || testatorPob.includes('diu') || Boolean(p.isDamanOrDiuConnection);
+  if (isDamanOrDiu) {
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Daman and Diu succession matters are governed by their own local/inherited succession regime and are not automatically governed by Goa Act 23 of 2016. Specialist advocate review is required.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Daman and Diu Separate Succession Regime",
+      applicableAct: "Unconfirmed (Daman & Diu Local Law)",
+      reasons: ["Daman and Diu are outside the automatic territorial routing of Goa Act 23 of 2016."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
+
+  // Spurious / Unsupported claims check:
+  // Ten-year residency is NOT a Section 1(4) qualification route
+  if (p.tenYearResidencyClaim === true) {
+    blockers.push("ERR_INVALID_JURISDICTION_CRITERIA: Ten-year residency is not a valid statutory category under Section 1(4) of Goa Act 23 of 2016.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Invalid Jurisdiction Claim (Ten-Year Residency)",
+      applicableAct: "Unconfirmed",
+      reasons: ["Section 1(4) does not recognise mere duration of residency as a standalone qualification route."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
+
+  // Marriage of non-Goan to Goan is NOT a Section 1(4) qualification route
+  if (p.marriageToGoanClaim === true) {
+    blockers.push("ERR_INVALID_JURISDICTION_CRITERIA: Marriage to a person governed by the Portuguese Civil Code is not an independent qualification route under Section 1(4) of Goa Act 23 of 2016.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Invalid Jurisdiction Claim (Marriage to Goan)",
+      applicableAct: "Unconfirmed",
+      reasons: ["Marriage is governed under matrimonial conflict-of-laws principles and does not by itself confer Section 1(4) applicability."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
 
   // Parents' 1867 Civil Code status: Requires affirmative verification, not mere birthplace
   const parentsPortugueseRegime = p.parentsPortugueseRegime === true || p.parentsCivilCode1867 === true || (p.fatherPortugueseRegime === true && p.motherPortugueseRegime === true);
@@ -136,9 +182,9 @@ export function classifyGoaJurisdiction(p = {}) {
     };
   } else if (bornBefore1961InGoa) {
     // Born in Goa before 1961, but no affirmative proof of Portuguese Civil Code subjection
-    blockers.push("Section 1(4)(a) Unverified: Birth in Goa prior to 20 December 1961 does not automatically establish subjection to the Portuguese Civil Code of 1867. Documentary verification of civil registration under the 1867 Code is required.");
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Birth in Goa prior to 20 December 1961 does not automatically establish subjection to the Portuguese Civil Code of 1867. Documentary verification of civil registration under the 1867 Code is required.");
     return {
-      status: JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED,
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
       statutoryClause: "Section 1(4)(a) Verification Required",
       applicableAct: "Unconfirmed",
       reasons: ["Historical civil registration under the Portuguese Civil Code of 1867 must be independently verified by an advocate."],
@@ -213,9 +259,9 @@ export function classifyGoaJurisdiction(p = {}) {
   // ── Clause (d): Born in Goa to rest-of-India parents, with permanent residence and election ──
   // CRITICAL FIX: Missing/unrecorded parental status must NEVER be silently treated as non-Portuguese!
   if (isTestatorBornGoa && parentsStatusUnrecorded) {
-    blockers.push("Section 1(4) Parental Status Unverified: Testator born in Goa, but parents' legal regime (Portuguese Civil Code vs. rest-of-India personal laws) is unrecorded. Cannot route to Indian Succession Act or Goa Act without verification.");
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Testator born in Goa, but parents' legal regime (Portuguese Civil Code vs. rest-of-India personal laws) is unrecorded. Cannot route to Indian Succession Act or Goa Act without verification.");
     return {
-      status: JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED,
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
       statutoryClause: "Section 1(4) Parental Regime Unconfirmed",
       applicableAct: "Unconfirmed",
       reasons: ["Documentary evidence establishing whether parents were governed by the Portuguese Civil Code or rest-of-India personal laws is mandatory."],
@@ -262,9 +308,9 @@ export function classifyGoaJurisdiction(p = {}) {
 
   // Ambiguity Gate: Goa resident with unrecorded birthplace or parentage
   if (isGoaResident) {
-    blockers.push("Section 1(4) Verification Required: Residence or domicile in Goa alone does not establish legal regime. Affirmative documentary proof of parents' legal status or statutory declaration is mandatory.");
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Residence or domicile in Goa alone does not establish legal regime under Section 1(4). Affirmative documentary proof of parents' legal status or statutory declaration is mandatory.");
     return {
-      status: JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED,
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
       statutoryClause: "Section 1(4) Verification Required",
       applicableAct: "Unconfirmed",
       reasons: ["Current residence in Goa alone is legally insufficient to establish Section 1(4) applicability."],
@@ -275,9 +321,9 @@ export function classifyGoaJurisdiction(p = {}) {
 
   // Unknown personal law gate: If personal law data is completely absent, trigger legal review
   if (!p.religion && !p.personalLaw && !p.applicablePersonalLaw) {
-    blockers.push("Personal Law Unrecorded: Succession regime cannot be inferred without declaring personal law or ancestral civil code subjection.");
+    blockers.push("ERR_PERSONAL_LAW_UNRECORDED: Succession regime cannot be inferred without declaring personal law or ancestral civil code subjection.");
     return {
-      status: JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED,
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
       statutoryClause: "Personal Law Unconfirmed",
       applicableAct: "Unconfirmed",
       reasons: ["Personal law and ancestral succession origin must be declared."],
