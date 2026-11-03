@@ -403,7 +403,6 @@ export async function generateEnglishWillPDF(willData) {
     ? `, ${p.gender === 'Female' ? 'D/o' : 'S/o'} ${p.fatherName.trim()}`
     : (testatorUpper.includes('RAMESH') ? ', S/o Late Shri Kailash Sharma' : '');
   const idDocStr = (p.govtIdType && p.govtIdDigits) ? ` [Identity Doc: ${p.govtIdType} Ending in XXXX-${p.govtIdDigits}]` : '';
-  const fullAddrStr = formatCleanAddress(p);
 
   const preambleText = `I, ${testatorUpper}${parentage}${idDocStr}, residing at ${fullAddrStr}, born on ${formatIndianDob(p.dob)}, professing ${p.religion || 'Hindu'} faith, being of sound disposing mind, memory, and understanding, having read over and fully understood the contents hereof in a language known to me and having approved the same, and acting of my own free choice, volition, and without any coercion, undue influence, fraud, or misrepresentation from any person whatsoever, do hereby make, publish, and declare this writing to be my Last Will and Testament, executed at ${executionPlace}, India.`;
 
