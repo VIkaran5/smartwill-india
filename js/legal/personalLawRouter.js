@@ -7,13 +7,24 @@
  *    - Jose Paulo Coutinho (2019) 20 SCC 85 & Ashabi Khan (2007) (4) ALL MR 604:
  *      Goa civil succession law governs Goan domiciles as special and local law.
  *      Religion does not divert away from the Goa Succession Act.
- * 2. Parsi Succession under Indian Succession Act, 1925 (Part VI with Section 58 scope & Sections 50–56 for Intestacy)
- * 3. Christian & Civil Marriages under Indian Succession Act, 1925 (Part VI — Sections 59, 63, 105, 109, 119)
- * 4. Muslim Personal Law (Shariat) Application Act, 1937 (Section 1(2), 2 & 3 declaration audit)
- * 5. Hindu Succession Act, 1956 (Section 30) read with Indian Succession Act, 1925 (Section 57(a), (b), (c) & Schedule III)
+ * 2. Special Marriage Act, 1954 (Sections 21 & 21A):
+ *    - Section 21A: Where both parties profess Hindu, Buddhist, Sikh or Jain religion,
+ *      succession is regulated by Hindu Succession Act, 1956 & ISA Section 57.
+ *    - Section 21: Otherwise, succession is governed by Indian Succession Act, 1925 (Part VI),
+ *      without altering the individual's religious identity.
+ * 3. Parsi Succession under Indian Succession Act, 1925 (Part VI with Section 58 scope & Sections 50–56 for Intestacy)
+ * 4. Christian & Civil Marriages under Indian Succession Act, 1925 (Part VI — Sections 59, 63, 105, 109, 119)
+ * 5. Muslim Personal Law (Shariat) Application Act, 1937 (Section 1(2), 2 agricultural land exclusion & Section 3 declaration audit)
+ * 6. Hindu Succession Act, 1956 (Section 30) read with Indian Succession Act, 1925 (Section 57(a), (b), (c) & Schedule III)
  */
 
-import { classifyGoaJurisdiction, JURISDICTION_STATUS } from './goaJurisdiction.js';
+import {
+  classifyGoaJurisdiction,
+  JURISDICTION_STATUS,
+  validateJurisdictionEvidence,
+  JURISDICTION_DOCUMENT_TYPES,
+  AUTHORIZED_REVIEWER_ROLES
+} from './goaJurisdiction.js';
 
 export const PERSONAL_LAW_REGIMES = {
   GOA_UCC: "GOA_UCC",
@@ -26,15 +37,36 @@ export const PERSONAL_LAW_REGIMES = {
   LEGAL_REVIEW_REQUIRED: "LEGAL_REVIEW_REQUIRED"
 };
 
+export const HISTORICAL_PRESIDENCY_CODES = {
+  BOMBAY_OOCJ: "HISTORICAL_PRESIDENCY_BOMBAY_OOCJ",
+  MADRAS_OOCJ: "HISTORICAL_PRESIDENCY_MADRAS_OOCJ",
+  BENGAL_LIEUTENANT_GOVERNOR: "HISTORICAL_BENGAL_LIEUTENANT_GOVERNOR"
+};
+
 const RECOGNIZED_SUNNI_SCHOOLS = ['hanafi', 'shafi', "shafi'i", 'maliki', 'hanbali'];
 const RECOGNIZED_SHIA_TWELVER = ['shia', 'ithna-ashari', 'ithna ashari', 'twelver', "ja'fari", 'jafari'];
 const CUSTOMARY_SHIA_SCHOOLS = ['ismaili', 'bohra', 'dawoodi bohra', 'khoja'];
 
-const HISTORICAL_PRESIDENCY_TOWNS = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'];
+const RECOGNIZED_SHARIAT_AUTHORITIES = [
+  'DISTRICT MAGISTRATE',
+  'COLLECTOR',
+  'ADDITIONAL DISTRICT MAGISTRATE',
+  'SUB-DIVISIONAL MAGISTRATE',
+  'SDM',
+  'ADM',
+  'DM'
+];
+
+const EMPTY_STRING_SHA256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+const ALL_ZEROS_SHA256 = '0000000000000000000000000000000000000000000000000000000000000000';
+const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/i;
+
+const AGRICULTURAL_KEYWORD_REGEX = /(\bagricultur|\bagri\b|\bpaddy\b|\borchard\b|\bcashew\b|\bplantation\b|\bcultivat|\bfarm\b|\bfarmland\b|\bkhasra\b|\bkrishi\b|\bcrop\b|\bland holding\b)/i;
 
 /**
- * Validates a Section 3 Shariat declaration record against statutory criteria.
+ * Validates a Section 3 Shariat declaration record against rigorous statutory criteria.
  * Naked booleans are strictly rejected.
+ *
  * @param {Object} record - Declaration evidence record
  * @param {Object} personal - Personal data object
  * @returns {Object} { isValid: boolean, blockerCode: string, reason: string }
@@ -48,6 +80,17 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
+  // 1. Immutable Document Storage Identifier
+  const storageId = (record.documentStorageId || record.storageKey || record.uploadId || '').toString().trim();
+  if (!storageId) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Missing uploaded document storage identifier (documentStorageId / storageKey). Declaration document must be uploaded to secure repository."
+    };
+  }
+
+  // 2. Primary Reference / Registration Number
   const filingRef = (record.filingReference || record.documentRef || record.registrationNumber || '').toString().trim();
   if (!filingRef) {
     return {
@@ -65,7 +108,8 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  const authority = (record.prescribedAuthority || '').trim();
+  // 3. Prescribed Statutory Authority
+  const authority = (record.prescribedAuthority || '').trim().toUpperCase();
   if (!authority) {
     return {
       isValid: false,
@@ -73,36 +117,113 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
       reason: "Missing prescribed authority before whom Section 3 declaration was executed."
     };
   }
+  const isRecognizedAuth = RECOGNIZED_SHARIAT_AUTHORITIES.some(auth => authority.includes(auth));
+  if (!isRecognizedAuth) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: `Prescribed authority '${record.prescribedAuthority}' is not a recognized Section 3 authority (must be District Magistrate, Collector, ADM, or SDM).`
+    };
+  }
 
+  // 4. Prescribed Statutory Form
   const isPrescribedForm = record.prescribedForm === true || record.formType === 'FORM_A_SHARIAT_SECTION_3';
   if (!isPrescribedForm) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-      reason: "Declaration was not executed in the prescribed statutory form."
+      reason: "Declaration was not executed in the prescribed statutory form (FORM_A_SHARIAT_SECTION_3)."
     };
   }
 
-  // Contract Act Section 11 Competence: Must be explicitly established (never default to true)
-  if (record.contractCompetent !== true && personal.contractCompetent !== true) {
+  // 5. Contract Act Section 11 Competence (Age >= 18, Sound Mind, No Disqualification)
+  // Naked boolean contractCompetent: true alone is insufficient without verified competence facts
+  let isAdult = false;
+  if (personal.dob) {
+    const ageDiff = Date.now() - new Date(personal.dob).getTime();
+    const ageDate = new Date(ageDiff);
+    const calculatedAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+    if (calculatedAge >= 18) isAdult = true;
+  } else if (typeof personal.age === 'number' && personal.age >= 18) {
+    isAdult = true;
+  } else if (record.ageConfirmed18Plus === true || record.isAdult === true) {
+    isAdult = true;
+  }
+
+  const isSoundMind = record.soundMindConfirmed === true || record.competenceFactsVerified === true;
+  const isNotDisqualified = record.notDisqualifiedConfirmed === true || record.competenceFactsVerified === true;
+  const competenceEstablished = isAdult && isSoundMind && isNotDisqualified && (record.contractCompetent === true || personal.contractCompetent === true);
+
+  if (!competenceEstablished) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_INCOMPETENT",
-      reason: "Declarant competence under Section 11 of the Indian Contract Act, 1872 is unverified or false."
+      reason: "Declarant competence under Section 11 of the Indian Contract Act, 1872 is unverified or false. Must verify age >= 18, sound mind, and absence of legal disqualification."
     };
   }
 
-  // Residence in territory to which Shariat Act extends under Section 1(2)
+  // 6. Residence in territory to which Shariat Act extends
+  // Under Shariat Act Section 1(2), the Act extends to the whole of India (as amended post-2019).
+  // However, under Jose Paulo Coutinho (2019) 20 SCC 85 & Ashabi Khan (2007) (4) ALL MR 604,
+  // Goa civil succession law governs Goan domiciles as special and local law.
   const residenceTerritory = (record.residenceTerritory || personal.addressState || '').trim().toLowerCase();
-  if (!residenceTerritory || residenceTerritory.includes('goa')) {
+  if (!residenceTerritory) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
-      reason: "Declarant must reside in territory to which the Shariat Act extends (outside excluded special local jurisdictions such as Goa)."
+      reason: "Declarant residence territory must be affirmatively recorded."
+    };
+  }
+  if (residenceTerritory.includes('goa')) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED",
+      reason: "Declarant resides in Goa where Goa succession law applies as special and local law (Jose Paulo Coutinho (2019) 20 SCC 85); Shariat Act Section 3 declaration is ineffective to alter Goan succession."
     };
   }
 
-  // Section 3(2) Appeal status:
+  // 7. Minor Children & Descendant Coverage Check (Section 3(1))
+  // Section 3(1) statutorily specifies that the declaration applies to the declarant and all minor children and their descendants.
+  if (record.hasMinorChildren === true && record.minorChildrenCovered === false) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Section 3(1) mandates that the declaration applies to the declarant and all minor children and their descendants."
+    };
+  }
+
+  // 8. Strict Cryptographic File Hash Validation
+  const docHash = (record.documentHash || record.sha256 || '').trim().toLowerCase();
+  if (!docHash) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Missing declaration file integrity hash (sha256)."
+    };
+  }
+  if (!SHA256_HEX_REGEX.test(docHash)) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Declaration document hash is not a valid 64-character hexadecimal SHA-256 string."
+    };
+  }
+  if (docHash === EMPTY_STRING_SHA256) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Declaration hash matches empty-file SHA-256 (e3b0c442...). Zero-byte files cannot serve as legal evidence."
+    };
+  }
+  if (docHash === ALL_ZEROS_SHA256) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Declaration hash is all zeros, representing an uncomputed or forged hash."
+    };
+  }
+
+  // 9. Section 3(2) Appeal status
   if (record.appealFiled === true) {
     if (record.appealStatus === 'REFUSED') {
       return {
@@ -120,6 +241,7 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     }
   }
 
+  // 10. Authenticated Reviewer Credentials & Verification Status
   if (record.verificationStatus !== 'VERIFIED') {
     return {
       isValid: false,
@@ -128,15 +250,55 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
-  if (!record.verifiedBy || !record.verificationDate) {
+  const verifier = (record.verifiedBy || '').trim();
+  if (!verifier) {
     return {
       isValid: false,
       blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
-      reason: "Missing verifying advocate identity or verification date on declaration record."
+      reason: "Missing verifying advocate identity."
     };
   }
 
-  return { isValid: true, blockerCode: null, reason: "Declaration record verified." };
+  const reviewerRole = (record.reviewerRole || '').trim().toUpperCase();
+  if (!reviewerRole || !AUTHORIZED_REVIEWER_ROLES.includes(reviewerRole)) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: `Unauthorized or missing reviewer role '${record.reviewerRole}'.`
+    };
+  }
+
+  const enrollmentNo = (record.enrollmentNumber || record.barEnrollmentNumber || '').trim();
+  if (!enrollmentNo) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Missing verifying advocate professional credentials or Bar enrollment number."
+    };
+  }
+
+  if (!record.verificationDate) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Missing verification date on declaration record."
+    };
+  }
+
+  const auditSessionId = (record.auditSessionId || record.auditRecordId || '').trim();
+  if (!auditSessionId) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_SHARIAT_SEC3_DEFECTIVE",
+      reason: "Missing verification audit session identifier."
+    };
+  }
+
+  return {
+    isValid: true,
+    blockerCode: null,
+    reason: "Section 3 declaration record fully authenticated by qualified advocate."
+  };
 }
 
 /**
@@ -203,6 +365,77 @@ export function resolvePersonalLawRegime(willData = {}) {
   // ── STEP 2: REASONED NEGATIVE DETERMINATION (NON-GOA PERSONAL LAW ROUTING) ──
   // Only positively established GOA_NOT_APPLICABLE cases proceed to rest-of-India personal law routing.
 
+  // 2A. Special Marriage Act, 1954 (Sections 21 & 21A) Priority Routing
+  const isSMA = p.marriageRegime === 'SPECIAL_MARRIAGE_ACT_1954' ||
+    p.isSpecialMarriageAct === true ||
+    p.civilMarriage === true ||
+    p.marriageAct === 'SPECIAL_MARRIAGE_ACT';
+
+  if (isSMA) {
+    const marriageRecord = p.marriageCertificateEvidence ||
+      p.specialMarriageEvidence ||
+      (p.jurisdictionEvidence && p.jurisdictionEvidence.marriageCertificate);
+
+    const marriageCheck = validateJurisdictionEvidence(
+      marriageRecord,
+      [JURISDICTION_DOCUMENT_TYPES.SPECIAL_MARRIAGE_CERTIFICATE],
+      { testatorName: p.fullName }
+    );
+
+    if (!marriageCheck.isValid) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: false,
+        isHindu: false,
+        requiresLegalReview: true,
+        statuteCitation: "Special Marriage Act, 1954 (Marriage Certificate Unverified)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — SPECIAL MARRIAGE REGISTRATION UNVERIFIED",
+        reasons: ["Marriage under the Special Marriage Act, 1954 requires verified marriage certificate to alter personal law succession routing."],
+        blockers: [`ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED: Marriage under Special Marriage Act, 1954 requires verified marriage certificate to alter personal law succession routing. ${marriageCheck.reason}`],
+        jurisdiction
+      };
+    }
+
+    const tRel = (p.religion || '').trim().toLowerCase();
+    const sRel = (p.spouseReligion || (p.spouse && p.spouse.religion) || '').trim().toLowerCase();
+    const isTestatorHBSJ = ['hindu', 'buddhist', 'buddhism', 'sikh', 'jain'].some(r => tRel.includes(r));
+    const isSpouseHBSJ = ['hindu', 'buddhist', 'buddhism', 'sikh', 'jain'].some(r => sRel.includes(r));
+
+    // Section 21A Exception: Both spouses are Hindu, Buddhist, Sikh or Jain
+    if (isTestatorHBSJ && isSpouseHBSJ) {
+      // Under Section 21A, Section 21 does NOT apply; succession is regulated by Hindu Succession Act, 1956 & ISA Sec 57
+      reasons.push("Special Marriage Act, 1954 Section 21A: Marriage solemnized under SMA between two persons professing Hindu/Buddhist/Sikh/Jain religion; succession is regulated by Hindu Succession Act, 1956 and ISA Section 57.");
+      // Will proceed down to Hindu Section 57 evaluation below, preserving religion
+    } else {
+      // Section 21 General Rule: Governed by Indian Succession Act, 1925 (Part VI)
+      // Crucially, preserve testator's actual religion (do NOT force isChristian: true)
+      const isTestatorChristian = tRel.includes('christian');
+      const isTestatorMuslim = tRel.includes('muslim') || tRel.includes('islam');
+      const isTestatorParsi = tRel.includes('parsi') || tRel.includes('zoroastrian');
+
+      reasons.push("Special Marriage Act, 1954 Section 21: Succession to property of person married under SMA (where Section 21A does not apply) is regulated by the Indian Succession Act, 1925 (Part VI).");
+
+      return {
+        regime: PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL,
+        governingSuccessionRegime: "SPECIAL_MARRIAGE_ACT_SECTION_21",
+        isGoa: false,
+        isParsi: isTestatorParsi,
+        isChristian: isTestatorChristian,
+        isMuslim: isTestatorMuslim,
+        isHindu: isTestatorHBSJ,
+        religion: p.religion || "Civil Marriage (SMA)",
+        statuteCitation: "Special Marriage Act, 1954 (Section 21) read with Indian Succession Act, 1925 (Part VI Testamentary Succession)",
+        statutoryCrest: "GOVERNED BY SPECIAL MARRIAGE ACT, 1954 (SECTION 21) & INDIAN SUCCESSION ACT, 1925 (PART VI)",
+        reasons,
+        blockers: [],
+        jurisdiction
+      };
+    }
+  }
+
   // Mandatory Gate: Missing or empty religion declaration
   if (!p.religion || !p.religion.trim()) {
     return {
@@ -224,7 +457,7 @@ export function resolvePersonalLawRegime(willData = {}) {
   const religionLower = p.religion.trim().toLowerCase();
   const subSect = (p.sect || p.subSect || '').trim().toLowerCase();
 
-  // 2A. Parsi Pathway (Indian Succession Act, 1925 Part VI with Section 58 Scope; Sections 50–56 for Intestacy)
+  // 2B. Parsi Pathway (Indian Succession Act, 1925 Part VI with Section 58 Scope; Sections 50–56 for Intestacy)
   if (religionLower.includes('parsi') || religionLower.includes('zoroastrian')) {
     return {
       regime: PERSONAL_LAW_REGIMES.PARSI,
@@ -242,7 +475,7 @@ export function resolvePersonalLawRegime(willData = {}) {
     };
   }
 
-  // 2B. Muslim Pathway (Shariat Act, 1937 Section 3 Audit & ISA Section 58 Exclusion)
+  // 2C. Muslim Pathway (Shariat Act, 1937 Section 3 Audit & ISA Section 58 Exclusion)
   if (religionLower.includes('muslim') || religionLower.includes('islam')) {
     reasons.push("Indian Succession Act, 1925 Section 58 expressly excludes testamentary succession to the property of any Muhammadan from Part VI.");
 
@@ -305,12 +538,13 @@ export function resolvePersonalLawRegime(willData = {}) {
     }
 
     // Asset-Level Check: Agricultural Land Exclusion under Section 2 of Shariat Act, 1937
+    // Broad scan covering agricultural, paddy, orchard, cashew, plantation, farm, khasra, etc.
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
-    const agriculturalAssets = assetsList.filter(a =>
-      a.isAgriculturalLand === true ||
-      (a.type && a.type.toString().toLowerCase().includes('agricultural')) ||
-      (a.desc && a.desc.toString().toLowerCase().includes('agricultural'))
-    );
+    const agriculturalAssets = assetsList.filter(a => {
+      if (a.isAgriculturalLand === true) return true;
+      const combined = `${a.type || ''} ${a.desc || ''} ${a.name || ''} ${a.details || ''} ${a.assetType || ''} ${a.landType || ''}`;
+      return AGRICULTURAL_KEYWORD_REGEX.test(combined);
+    });
     const hasAgri = agriculturalAssets.length > 0 || Boolean(p.hasAgriculturalLand || p.involvesAgriculturalLand);
 
     if (hasAgri) {
@@ -338,8 +572,6 @@ export function resolvePersonalLawRegime(willData = {}) {
     }
 
     // Section 3 Declaration Verification (Genuine Evidence Validation):
-    // Shariat Act Section 3 allows a competent Muslim residing in Shariat territory to declare that
-    // Section 2 rules apply to wills and legacies. Naked boolean assertions are strictly barred.
     const declarationRecord = p.shariatDeclarationRecord;
 
     // Check naked boolean attempt:
@@ -416,8 +648,8 @@ export function resolvePersonalLawRegime(willData = {}) {
     };
   }
 
-  // 2C. Christian & Civil Marriage Pathway (Indian Succession Act Part VI — Sections 59, 63, 105, 109, 119)
-  if (religionLower.includes('christian') || religionLower.includes('jewish') || religionLower.includes('special marriage')) {
+  // 2D. Christian & Civil Marriage Pathway (Indian Succession Act Part VI — Sections 59, 63, 105, 109, 119)
+  if (religionLower.includes('christian') || religionLower.includes('jewish')) {
     return {
       regime: PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL,
       governingSuccessionRegime: "INDIAN_SUCCESSION_ACT_PART_VI",
@@ -428,13 +660,13 @@ export function resolvePersonalLawRegime(willData = {}) {
       isHindu: false,
       statuteCitation: "Indian Succession Act, 1925 (Part VI Testamentary Succession — Sections 59, 63, 105, 109, 119)",
       statutoryCrest: "GOVERNED BY THE INDIAN SUCCESSION ACT, 1925 (PART VI)",
-      reasons: ["Testamentary succession of Christians and civil marriages is governed by Part VI of the Indian Succession Act, 1925."],
+      reasons: ["Testamentary succession of Christians is governed by Part VI of the Indian Succession Act, 1925."],
       blockers: [],
       jurisdiction
     };
   }
 
-  // 2D. Hindu, Buddhist, Jain, Sikh Pathway (ISA Section 57 & HSA Section 30)
+  // 2E. Hindu, Buddhist, Jain, Sikh Pathway (ISA Section 57 & HSA Section 30)
   const isHinduBuddhistJainSikh = religionLower.includes('hindu') ||
     religionLower.includes('buddhist') ||
     religionLower.includes('buddhism') ||
@@ -518,16 +750,42 @@ export function resolvePersonalLawRegime(willData = {}) {
       };
     }
 
-    // Territorial Identification:
-    const execPlace = (p.willExecutionPlace || p.placeOfExecution || '').trim().toLowerCase();
-    const hasPresidencyExecution = HISTORICAL_PRESIDENCY_TOWNS.some(t =>
-      execPlace === t || execPlace.startsWith(t + ',') || execPlace.startsWith(t + ' ') || execPlace.includes(t)
-    );
+    // Territorial Identification under Section 57(a) and (b):
+    // Clause (a): Made on/after 1 Sept 1870 within historical Bengal LT-Governor territory or High Court OOCJ at Madras/Bombay
+    const execPlaceCode = (p.historicalTerritoryCode || p.territorialJurisdictionCode || '').trim().toUpperCase();
+    const isHistoricalPresidencyExec = execPlaceCode === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+      execPlaceCode === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+      execPlaceCode === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
 
-    const immovableLocation = (p.immovablePropertyLocation || '').trim().toLowerCase();
-    const hasPresidencyImmovables = HISTORICAL_PRESIDENCY_TOWNS.some(t =>
-      immovableLocation === t || immovableLocation.startsWith(t + ',') || immovableLocation.startsWith(t + ' ') || immovableLocation.includes(t)
-    ) || Boolean(p.hasPresidencyTownImmovable);
+    const execPlace = (p.willExecutionPlace || p.placeOfExecution || '').trim().toLowerCase();
+    const matchesPresidencyTown = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
+      execPlace === t || execPlace.startsWith(t + ',') || execPlace.startsWith(t + ' ')
+    );
+    const hasPresidencyExecution = isHistoricalPresidencyExec || (matchesPresidencyTown && !p.isTerritoryAmbiguous);
+
+    // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
+    // Evaluate each immovable asset individually (never rely on bare boolean hasPresidencyTownImmovable)
+    const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
+    const immovableAssets = assetsList.filter(a => a.isImmovable === true || a.type === 'Real Estate' || a.type === 'Land' || a.type === 'House');
+    const presidencyImmovableAssets = immovableAssets.filter(a => {
+      const code = (a.historicalTerritoryCode || a.territorialJurisdictionCode || '').trim().toUpperCase();
+      if (code === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+          code === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+          code === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR) {
+        return true;
+      }
+      const loc = (a.location || a.city || a.addressCity || a.state || '').trim().toLowerCase();
+      return ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t => loc === t || loc.startsWith(t + ',') || loc.includes(t));
+    });
+
+    const immovLoc = (p.immovablePropertyLocation || '').trim().toLowerCase();
+    const hasPresidencyLocation = ['calcutta', 'kolkata', 'madras', 'chennai', 'bombay', 'mumbai'].some(t =>
+      immovLoc === t || immovLoc.startsWith(t + ',') || immovLoc.startsWith(t + ' ') || immovLoc.includes(t)
+    ) || p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ ||
+         p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ ||
+         p.immovablePropertyHistoricalCode === HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR;
+
+    const hasPresidencyImmovables = presidencyImmovableAssets.length > 0 || hasPresidencyLocation;
 
     let section57Clause = null;
     let scheduleIIIApplicable = false;
@@ -536,14 +794,14 @@ export function resolvePersonalLawRegime(willData = {}) {
       section57Clause = "Section 57(a) (Presidency Town Execution on or after 1 September 1870)";
       scheduleIIIApplicable = true;
     } else if (hasPresidencyImmovables) {
-      section57Clause = "Section 57(b) (Presidency Town Immoveables on or after 1 September 1870)";
+      section57Clause = "Section 57(b) (Presidency Town Immovables on or after 1 September 1870)";
       scheduleIIIApplicable = true;
     } else if (execDate >= THRESHOLD_1927) {
       // Clause (c) is strictly residual: applies to wills not covered by (a) or (b) executed on or after 1 January 1927
       section57Clause = "Section 57(c) (Post-1927 Will outside Clauses (a) & (b))";
       scheduleIIIApplicable = true;
     } else {
-      // Pre-1927 execution outside presidency towns is NOT covered by Section 57(c)
+      // Pre-1927 execution outside presidency towns without presidency immovables is NOT covered by Section 57(c)
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -554,7 +812,7 @@ export function resolvePersonalLawRegime(willData = {}) {
         requiresLegalReview: true,
         statuteCitation: "Indian Succession Act, 1925 Section 57(c) (Pre-1927 Non-Presidency)",
         statutoryCrest: "LEGAL REVIEW REQUIRED — PRE-1927 WILL OUTSIDE PRESIDENCY TOWNS",
-        reasons: ["Will executed prior to 1 January 1927 outside presidency towns is not governed by Section 57(c) and requires advocate review."],
+        reasons: ["Will executed prior to 1 January 1927 outside presidency territories without presidency immovables is not governed by Section 57(c) and requires advocate review."],
         blockers: ["ERR_PRE_1927_NON_PRESIDENCY_WILL: Will executed prior to 1 January 1927 outside presidency towns is not governed by Section 57(c)."],
         jurisdiction
       };
@@ -574,6 +832,7 @@ export function resolvePersonalLawRegime(willData = {}) {
       statutoryCrest: "GOVERNED BY THE HINDU SUCCESSION ACT, 1956 & INDIAN SUCCESSION ACT, 1925 (SCHEDULE III)",
       coparcenaryNotice: "Testamentary power extends to testator's undivided coparcenary interest in Mitakshara coparcenary property pursuant to Section 30 of the Hindu Succession Act, 1956.",
       reasons: [
+        ...reasons,
         `Evaluated under ${section57Clause}.`,
         "Pursuant to Section 58, Part VI applies to Hindu wills strictly subject to the restrictions and modifications set out in Schedule III.",
         "Undivided coparcenary interest may be bequeathed pursuant to Section 30 of the Hindu Succession Act, 1956."

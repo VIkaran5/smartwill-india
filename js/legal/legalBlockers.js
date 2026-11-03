@@ -24,47 +24,59 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
   const isGoa = (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE || jur.status === JURISDICTION_STATUS.GOA_APPLICABLE);
 
   if (jur.status === JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED || jur.status === JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED) {
-    const jurBlocker = (jur.blockers && jur.blockers[0]) || "Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime.";
-    let jurCode = "ERR_GOA_JURISDICTION_UNCONFIRMED";
-    const jurCodeMatch = jurBlocker.match(/^(ERR_[A-Z0-9_]+)/);
-    if (jurCodeMatch) {
-      jurCode = jurCodeMatch[1];
-    }
-    blockers.push({
-      code: jurCode,
-      page: "Page 1",
-      clause: "Preamble & Jurisdiction Selection",
-      errorDescription: jurBlocker,
-      applicableStatute: "Section 1(4), Goa Succession Act, 2012",
-      requiredCorrection: "Record testator's verified place of birth, parents' birthplace, and civil code personal law status with documentary proof.",
-      preventsGeneration: true
+    const jurBlockersList = (jur.blockers && jur.blockers.length > 0)
+      ? jur.blockers
+      : ["ERR_GOA_JURISDICTION_UNCONFIRMED: Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime."];
+
+    jurBlockersList.forEach(jurBlocker => {
+      let jurCode = "ERR_GOA_JURISDICTION_UNCONFIRMED";
+      const jurCodeMatch = jurBlocker.match(/^(ERR_[A-Z0-9_]+)/);
+      if (jurCodeMatch) {
+        jurCode = jurCodeMatch[1];
+      }
+      if (!blockers.some(b => b.code === jurCode && b.errorDescription === jurBlocker)) {
+        blockers.push({
+          code: jurCode,
+          page: "Page 1",
+          clause: "Preamble & Jurisdiction Selection",
+          errorDescription: jurBlocker,
+          applicableStatute: "Section 1(4), Goa Succession Act, 2012",
+          requiredCorrection: "Record testator's verified place of birth, parents' birthplace, and civil code personal law status with documentary proof.",
+          preventsGeneration: true
+        });
+      }
     });
   }
 
   // Gate 1B: Central Personal Law & Shariat Audit Gate
   const pl = resolvePersonalLawRegime(willData);
   if (pl.regime === PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED || (pl.blockers && pl.blockers.length > 0)) {
-    const primaryBlocker = (pl.blockers && pl.blockers[0]) || "Personal law regime requires legal review";
-    let blockerCode = "ERR_PERSONAL_LAW_REVIEW_REQUIRED";
-    const codeMatch = primaryBlocker.match(/^(ERR_[A-Z0-9_]+|UNRECOGNIZED_PERSONAL_LAW)/);
-    if (codeMatch) {
-      blockerCode = codeMatch[1];
-    }
-    if (primaryBlocker.includes("ISMAILI_BOHRA_SPECIAL_REVIEW")) {
-      blockerCode = "ERR_ISMAILI_BOHRA_SPECIAL_REVIEW";
-    }
+    const plBlockersList = (pl.blockers && pl.blockers.length > 0)
+      ? pl.blockers
+      : ["ERR_PERSONAL_LAW_REVIEW_REQUIRED: Personal law regime requires legal review"];
 
-    if (!blockers.some(b => b.code === blockerCode)) {
-      blockers.push({
-        code: blockerCode,
-        page: "Page 1",
-        clause: "Preamble & Personal Law Routing",
-        errorDescription: primaryBlocker,
-        applicableStatute: pl.statuteCitation || "Applicable Personal Law / Indian Succession Act, 1925",
-        requiredCorrection: "Obtain qualified advocate verification of personal law and testamentary authority.",
-        preventsGeneration: true
-      });
-    }
+    plBlockersList.forEach(primaryBlocker => {
+      let blockerCode = "ERR_PERSONAL_LAW_REVIEW_REQUIRED";
+      const codeMatch = primaryBlocker.match(/^(ERR_[A-Z0-9_]+|UNRECOGNIZED_PERSONAL_LAW)/);
+      if (codeMatch) {
+        blockerCode = codeMatch[1];
+      }
+      if (primaryBlocker.includes("ISMAILI_BOHRA_SPECIAL_REVIEW")) {
+        blockerCode = "ERR_ISMAILI_BOHRA_SPECIAL_REVIEW";
+      }
+
+      if (!blockers.some(b => b.code === blockerCode && b.errorDescription === primaryBlocker)) {
+        blockers.push({
+          code: blockerCode,
+          page: "Page 1",
+          clause: "Preamble & Personal Law Routing",
+          errorDescription: primaryBlocker,
+          applicableStatute: pl.statuteCitation || "Applicable Personal Law / Indian Succession Act, 1925",
+          requiredCorrection: "Obtain qualified advocate verification of personal law and testamentary authority.",
+          preventsGeneration: true
+        });
+      }
+    });
   }
 
   // Gate 2: Section 333 Mandatory Personal Metadata (for Goa Wills)

@@ -14,23 +14,33 @@ import { generateMinorTrustClauses, generateStatutoryDebtHierarchy } from '../..
 import { validateResiduaryAllocations } from '../../js/legal/residuaryValidator.js';
 import { runPreFlightLegalBlockerAudit } from '../../js/legal/legalBlockers.js';
 import { calculateDraftReadinessIndex, DRAFT_STATUS_BANDS } from '../../js/legal/readinessIndex.js';
-import { resolvePersonalLawRegime, PERSONAL_LAW_REGIMES, validateShariatDeclarationRecord } from '../../js/legal/personalLawRouter.js';
+import {
+  resolvePersonalLawRegime,
+  PERSONAL_LAW_REGIMES,
+  validateShariatDeclarationRecord,
+  HISTORICAL_PRESIDENCY_CODES
+} from '../../js/legal/personalLawRouter.js';
 import { generateGoaSection333PDF, formatDateToFormalWords } from '../../js/services/pdfGoaSection333.js';
 
-// Standard verified evidence fixtures for test suite
+// Standard verified evidence fixtures for test suite with forensic authentication
 const sampleClauseAEvidence = {
+  documentStorageId: "DOC-STORE-GOA-1959-882",
   documentRef: "REG-CIVIL-1959/882",
   documentType: JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD,
   issuingAuthority: "Conservatória do Registo Civil de Salcete (Margao)",
   registrationDate: "1959-06-12",
   verifiedParties: "Testator António Fernandes",
-  documentHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  documentHash: "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90",
   verificationStatus: "VERIFIED",
   verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "GOA/123/2005",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-991",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseBEvidence = {
+  documentStorageId: "DOC-STORE-GOA-1960-451",
   documentRef: "ASSENTO-1960/451",
   documentType: JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
   issuingAuthority: "Conservatória do Registo Civil de Ilhas (Panaji)",
@@ -39,10 +49,14 @@ const sampleClauseBEvidence = {
   documentHash: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
   verificationStatus: "VERIFIED",
   verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "GOA/123/2005",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-992",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseCEvidence = {
+  documentStorageId: "DOC-STORE-GOA-1980-021",
   documentRef: "NOT-OPTOUT-1980/21",
   documentType: JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_OPT_OUT_DEED,
   issuingAuthority: "Special Notary Office of Margao",
@@ -50,11 +64,15 @@ const sampleClauseCEvidence = {
   verifiedParties: "Declarant Francis Fernandes",
   documentHash: "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592",
   verificationStatus: "VERIFIED",
-  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verifiedBy: "Special Notary Office of Margao",
+  reviewerRole: "SPECIAL_NOTARY",
+  enrollmentNumber: "NOTARY/GOA/1980/12",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-993",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseDEvidence = {
+  documentStorageId: "DOC-STORE-GOA-2018-104",
   documentRef: "NOT-ELECTION-2018/104",
   documentType: JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_ELECTION_DEED,
   issuingAuthority: "Special Notary Office of Panaji",
@@ -62,11 +80,15 @@ const sampleClauseDEvidence = {
   verifiedParties: "Declarant Rajesh Gupta",
   documentHash: "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
   verificationStatus: "VERIFIED",
-  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verifiedBy: "Special Notary Office of Panaji",
+  reviewerRole: "SPECIAL_NOTARY",
+  enrollmentNumber: "NOTARY/GOA/2018/45",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-994",
   verificationDate: "2026-04-10"
 };
 
 const sampleResidenceEvidence = {
+  documentStorageId: "DOC-STORE-GOA-RES-2015-778",
   documentRef: "GOA-RES-CERT-2015/778",
   documentType: JURISDICTION_DOCUMENT_TYPES.PERMANENT_RESIDENCE_CERTIFICATE,
   issuingAuthority: "Mamlatdar of Tiswadi (Panaji)",
@@ -74,11 +96,15 @@ const sampleResidenceEvidence = {
   verifiedParties: "Rajesh Gupta",
   documentHash: "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
   verificationStatus: "VERIFIED",
-  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verifiedBy: "Mamlatdar of Tiswadi",
+  reviewerRole: "GOVERNMENT_AUTHORITY",
+  enrollmentNumber: "MAMLATDAR/TISWADI/GOA",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-995",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseEEvidence = {
+  documentStorageId: "DOC-STORE-MHA-1992-055",
   documentRef: "MHA-CIT-1992/55",
   documentType: JURISDICTION_DOCUMENT_TYPES.CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE,
   issuingAuthority: "Ministry of Home Affairs / District Magistrate North Goa",
@@ -86,11 +112,15 @@ const sampleClauseEEvidence = {
   verifiedParties: "Foreign-Citizen Parents and Testator",
   documentHash: "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
   verificationStatus: "VERIFIED",
-  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verifiedBy: "District Magistrate North Goa",
+  reviewerRole: "GOVERNMENT_AUTHORITY",
+  enrollmentNumber: "MHA/F-SEC/1992",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-996",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseFEvidence = {
+  documentStorageId: "DOC-STORE-FOUNDLING-1975-002",
   documentRef: "CIVIL-FOUNDLING-1975/02",
   documentType: JURISDICTION_DOCUMENT_TYPES.FOUNDLING_CIVIL_REGISTRATION,
   issuingAuthority: "Civil Registrar of Mormugao (Vasco)",
@@ -98,11 +128,15 @@ const sampleClauseFEvidence = {
   verifiedParties: "Foundling Child under Official Civil Custody",
   documentHash: "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
   verificationStatus: "VERIFIED",
-  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verifiedBy: "Civil Registrar of Mormugao",
+  reviewerRole: "CIVIL_REGISTRAR",
+  enrollmentNumber: "REGISTRAR/MORMUGAO/1975",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-997",
   verificationDate: "2026-04-10"
 };
 
 const sampleClauseGEvidence = {
+  documentStorageId: "DOC-STORE-ADOPT-2005-119",
   documentRef: "ADOPT-REG-2005/119",
   documentType: JURISDICTION_DOCUMENT_TYPES.REGISTERED_ADOPTION_DEED,
   issuingAuthority: "Sub-Registrar of Salcete (Margao)",
@@ -111,19 +145,112 @@ const sampleClauseGEvidence = {
   adoptiveParentsGoanRegimeVerified: true,
   documentHash: "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
   verificationStatus: "VERIFIED",
+  verifiedBy: "Sub-Registrar of Salcete",
+  reviewerRole: "SUB_REGISTRAR",
+  enrollmentNumber: "SUBREG/SALCETE/2005",
+  auditSessionId: "AUDIT-2026-SEC14-AUTH-998",
+  verificationDate: "2026-04-10"
+};
+
+const sampleAdoptiveParentsGoanEvidence = {
+  documentStorageId: "DOC-STORE-ADOPT-PARENTS-001",
+  documentRef: "ASSENTO-1955/210",
+  documentType: JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
+  issuingAuthority: "Conservatória do Registo Civil de Salcete (Margao)",
+  registrationDate: "1955-08-14",
+  verifiedParties: "Adoptive Parents Manuel & Maria Fernandes",
+  documentHash: "7c980bf37b3ef1d5fe4e262b9a7c3852e69a08e1a6c4dfb9c025096515b6b15e",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "GOA/123/2005",
+  auditSessionId: "AUDIT-2026-GOA-ADOPT-001",
+  verificationStatus: "VERIFIED",
   verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
   verificationDate: "2026-04-10"
 };
 
+const sampleAdoptiveParentsRoiEvidence = {
+  documentStorageId: "DOC-STORE-ROI-ADOPT-PARENTS-002",
+  documentRef: "DOMICILE-MH-1980/44",
+  documentType: JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
+  issuingAuthority: "Tahsildar of Pune",
+  issueDate: "1980-04-12",
+  verifiedParties: "Adoptive Parents Suresh & Anita Joshi",
+  documentHash: "8b7a6d5c4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "MAH/456/1990",
+  auditSessionId: "AUDIT-2026-ROI-ADOPT-002",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Rajesh Deshmukh, Bar Council of Maharashtra",
+  verificationDate: "2026-04-10"
+};
+
+const sampleParentsRoiEvidence = {
+  documentStorageId: "DOC-STORE-ROI-PARENTS-003",
+  documentRef: "ROI-DOM-UP-1970/112",
+  documentType: JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
+  issuingAuthority: "District Magistrate of Lucknow",
+  issueDate: "1970-07-15",
+  verifiedParties: "Parents Ramesh & Sunita Gupta",
+  documentHash: "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "UP/789/1985",
+  auditSessionId: "AUDIT-2026-ROI-PARENTS-003",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Tariq Khan, High Court of Allahabad",
+  verificationDate: "2026-04-10"
+};
+
+const samplePostingEvidence = {
+  documentStorageId: "DOC-STORE-GOVT-POSTING-004",
+  documentRef: "MOD-POSTING-ORD-1998/55",
+  documentType: JURISDICTION_DOCUMENT_TYPES.GOVERNMENT_POSTING_RECORD,
+  issuingAuthority: "Ministry of Defence / Central Government of India",
+  issueDate: "1998-02-01",
+  verifiedParties: "Testator Parent Official Deployment Order to Goa",
+  documentHash: "3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "GOA/123/2005",
+  auditSessionId: "AUDIT-2026-GOVT-POSTING-004",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleSpecialMarriageCertificateEvidence = {
+  documentStorageId: "DOC-STORE-SMA-CERT-005",
+  documentRef: "SMA-MARR-CERT-2012/441",
+  documentType: JURISDICTION_DOCUMENT_TYPES.SPECIAL_MARRIAGE_CERTIFICATE,
+  issuingAuthority: "Marriage Officer under Special Marriage Act, 1954, New Delhi",
+  registrationDate: "2012-06-18",
+  verifiedParties: "Spouses Married under Special Marriage Act, 1954",
+  documentHash: "5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "D/567/2008",
+  auditSessionId: "AUDIT-2026-SMA-MARR-005",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Sunita Sharma, Bar Council of Delhi",
+  verificationDate: "2026-04-10"
+};
+
 const sampleShariatDeclarationRecord = {
+  documentStorageId: "DOC-STORE-SHARIAT-DECL-006",
   filingReference: "SHARIAT-DECL-2022/89",
   declarationDate: "2022-03-15",
   prescribedAuthority: "District Magistrate, Lucknow",
   prescribedForm: true,
   formType: "FORM_A_SHARIAT_SECTION_3",
   contractCompetent: true,
+  ageConfirmed18Plus: true,
+  soundMindConfirmed: true,
+  notDisqualifiedConfirmed: true,
+  competenceFactsVerified: true,
   residenceTerritory: "Uttar Pradesh",
   statutoryDescendantCoverage: true,
+  minorChildrenCovered: true,
+  documentHash: "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+  reviewerRole: "ADVOCATE",
+  enrollmentNumber: "UP/789/1985",
+  auditSessionId: "AUDIT-2026-SHARIAT-DECL-006",
   verificationStatus: "VERIFIED",
   verifiedBy: "Advocate Tariq Khan, High Court of Allahabad",
   verificationDate: "2026-01-10"
@@ -167,7 +294,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       pob: 'Margao, Goa',
       fatherPob: 'Margao, Goa',
       parentsPortugueseRegime: false,
-      parentsRestOfIndiaGoverned: true
+      parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence
     });
     expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
     expect(res.reasons[0]).toContain('Jose Paulo Coutinho');
@@ -204,6 +332,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
       parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
       statutoryElectionClauseD: true,
       clauseDEvidence: sampleClauseDEvidence,
       permanentResidenceEvidence: sampleResidenceEvidence
@@ -217,7 +346,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
       parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
       isTemporaryMilitaryPosting: true,
+      postingEvidence: samplePostingEvidence,
       statutoryElectionClauseD: true
     });
     expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
@@ -248,7 +379,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Bangalore, Karnataka',
       isAdopted: true,
-      clauseGEvidence: sampleClauseGEvidence
+      clauseGEvidence: sampleClauseGEvidence,
+      adoptiveParentsEvidence: sampleAdoptiveParentsGoanEvidence
     });
     expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_G);
@@ -932,7 +1064,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
       parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
       isGovernmentPosting: true,
+      postingEvidence: samplePostingEvidence,
       statutoryElectionClauseD: true
     });
     expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
@@ -1305,6 +1439,457 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     });
     expect(resAmbiguousTerritory.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resAmbiguousTerritory.blockers[0]).toContain('ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS');
+  });
+
+  // ── REVISION 7 FORENSIC AUTHENTICATION, SMA 21/21A, & FAIL-CLOSED JURISDICTION TESTS ──
+
+  it('64. Stage 1 Forensic Evidence Integrity: Reject empty-file SHA-256 and all-zeros hash with ERR_EMPTY_OR_INVALID_FILE_HASH', () => {
+    const emptyHashRecord = {
+      ...sampleClauseAEvidence,
+      documentHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" // Standard empty file hash
+    };
+    const emptyRes = validateJurisdictionEvidence(emptyHashRecord, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(emptyRes.isValid).toBe(false);
+    expect(emptyRes.blockerCode).toBe("ERR_EMPTY_OR_INVALID_FILE_HASH");
+
+    const allZerosRecord = {
+      ...sampleClauseAEvidence,
+      documentHash: "0000000000000000000000000000000000000000000000000000000000000000"
+    };
+    const zerosRes = validateJurisdictionEvidence(allZerosRecord, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(zerosRes.isValid).toBe(false);
+    expect(zerosRes.blockerCode).toBe("ERR_EMPTY_OR_INVALID_FILE_HASH");
+
+    const malformedRecord = {
+      ...sampleClauseAEvidence,
+      documentHash: "not-a-valid-sha256-hash"
+    };
+    const malformedRes = validateJurisdictionEvidence(malformedRecord, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(malformedRes.isValid).toBe(false);
+    expect(malformedRes.blockerCode).toBe("ERR_EMPTY_OR_INVALID_FILE_HASH");
+  });
+
+  it('65. Stage 1 Forensic Reviewer Validation: Reject arbitrary verifier text without authorized role or Bar enrollment with ERR_GOA_EVIDENCE_UNVERIFIED', () => {
+    const unauthorizedRoleRecord = {
+      ...sampleClauseAEvidence,
+      reviewerRole: "PARALEGAL_ASSISTANT"
+    };
+    const resRole = validateJurisdictionEvidence(unauthorizedRoleRecord, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(resRole.isValid).toBe(false);
+    expect(resRole.blockerCode).toBe("ERR_GOA_EVIDENCE_UNVERIFIED");
+    expect(resRole.reason).toContain("Unauthorized or missing reviewer role");
+
+    const missingEnrollmentRecord = {
+      ...sampleClauseAEvidence,
+      enrollmentNumber: ""
+    };
+    const resEnroll = validateJurisdictionEvidence(missingEnrollmentRecord, [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]);
+    expect(resEnroll.isValid).toBe(false);
+    expect(resEnroll.blockerCode).toBe("ERR_GOA_EVIDENCE_UNVERIFIED");
+    expect(resEnroll.reason).toContain("Missing reviewer professional credentials");
+  });
+
+  it('66. Stage 1 Forensic Party Mismatch: Strict context check rejects evidence record not matching testator', () => {
+    const mismatchRecord = {
+      ...sampleClauseAEvidence,
+      verifiedParties: "Testator António Fernandes"
+    };
+    const resMismatch = validateJurisdictionEvidence(
+      mismatchRecord,
+      [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD],
+      { testatorName: "Ramesh Kumar Sharma", strictTestatorMatch: true }
+    );
+    expect(resMismatch.isValid).toBe(false);
+    expect(resMismatch.blockerCode).toBe("ERR_PARTY_MISMATCH");
+    expect(resMismatch.reason).toContain("does not match testator");
+  });
+
+  it('67. Stage 1 Negative Goa Jurisdiction Bypass: Bare parentsPortugueseRegime: false without verified rest-of-India evidence returns GOA_STATUS_UNDETERMINED', () => {
+    const res = classifyGoaJurisdiction({
+      pob: "Margao, Goa",
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true
+      // Notice: parentsRestOfIndiaEvidence is omitted!
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.blockers[0]).toContain("ERR_GOA_JURISDICTION_UNCONFIRMED");
+    expect(res.blockers[0]).toContain("negative subjection to the Portuguese Civil Code cannot be established by a self-entered Boolean");
+    expect(res.canGenerateWill).toBe(false);
+  });
+
+  it('68. Stage 1 Section 1(4)(d) Posting Proviso: Unverified posting orders return GOA_STATUS_UNDETERMINED; verified posting evidence returns GOA_NOT_APPLICABLE', () => {
+    // Unverified posting orders
+    const resUnverified = classifyGoaJurisdiction({
+      pob: "Margao, Goa",
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+      isGovernmentPosting: true,
+      postingEvidence: null // Missing posting orders!
+    });
+    expect(resUnverified.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resUnverified.blockers[0]).toContain("ERR_GOA_EVIDENCE_UNVERIFIED");
+
+    // Verified posting orders
+    const resVerified = classifyGoaJurisdiction({
+      pob: "Margao, Goa",
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
+      parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+      isGovernmentPosting: true,
+      postingEvidence: samplePostingEvidence
+    });
+    expect(resVerified.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
+    expect(resVerified.statutoryClause).toContain("Posting Excluded from Permanent Residence");
+    expect(resVerified.canGenerateWill).toBe(true);
+  });
+
+  it('69. Stage 1 Section 1(4)(g) Adoption Separated Evidence: Registered adoption deed without separate verified proof of adoptive parents status returns GOA_STATUS_UNDETERMINED', () => {
+    // Adoption deed verified, but adoptive parents status unverified (bare boolean attempt)
+    const resUnverifiedParents = classifyGoaJurisdiction({
+      pob: "Bangalore, Karnataka",
+      isAdopted: true,
+      clauseGEvidence: sampleClauseGEvidence,
+      adoptiveParentsGoanRegime: true // Bare boolean attempt!
+    });
+    expect(resUnverifiedParents.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resUnverifiedParents.blockers[0]).toContain("ERR_GOA_EVIDENCE_UNVERIFIED");
+    expect(resUnverifiedParents.blockers[0]).toContain("Reliance on naked Boolean assertions is prohibited");
+
+    // Verified adoptive parents under rest-of-India law
+    const resRoiAdoptive = classifyGoaJurisdiction({
+      pob: "Bangalore, Karnataka",
+      isAdopted: true,
+      clauseGEvidence: sampleClauseGEvidence,
+      adoptiveParentsEvidence: sampleAdoptiveParentsRoiEvidence
+    });
+    expect(resRoiAdoptive.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
+    expect(resRoiAdoptive.statutoryClause).toContain("Indian Succession Act (Adoption Under Rest-of-India Law)");
+    expect(resRoiAdoptive.canGenerateWill).toBe(true);
+
+    // Verified adoptive parents under Goa Civil Code
+    const resGoanAdoptive = classifyGoaJurisdiction({
+      pob: "Bangalore, Karnataka",
+      isAdopted: true,
+      clauseGEvidence: sampleClauseGEvidence,
+      adoptiveParentsEvidence: sampleAdoptiveParentsGoanEvidence
+    });
+    expect(resGoanAdoptive.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
+    expect(resGoanAdoptive.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_G);
+    expect(resGoanAdoptive.canGenerateWill).toBe(true);
+  });
+
+  it('70. Stage 1 Section 1(4)(c) Born Outside Goa with Goa Property/Lineage: Unrecorded parental status returns GOA_STATUS_UNDETERMINED', () => {
+    const res = classifyGoaJurisdiction({
+      pob: "New Delhi",
+      hasGoaProperty: true,
+      religion: "Hindu"
+      // parentsPortugueseRegime is unrecorded!
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.blockers[0]).toContain("ERR_GOA_JURISDICTION_UNCONFIRMED");
+    expect(res.statutoryClause).toContain("Section 1(4)(c) Parental Origin Inquiry");
+  });
+
+  it('71. Stage 1 Shariat Section 3 Declaration: Unrecognized authority returns ERR_SHARIAT_SEC3_DEFECTIVE', () => {
+    const invalidAuthDecl = {
+      ...sampleShariatDeclarationRecord,
+      prescribedAuthority: "Municipal Councillor, Ward 4"
+    };
+    const res = validateShariatDeclarationRecord(invalidAuthDecl, { age: 35, contractCompetent: true });
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe("ERR_SHARIAT_SEC3_DEFECTIVE");
+    expect(res.reason).toContain("not a recognized Section 3 authority");
+  });
+
+  it('72. Stage 1 Shariat Section 3 Declaration: Form Verification requires FORM_A_SHARIAT_SECTION_3', () => {
+    const invalidFormDecl = {
+      ...sampleShariatDeclarationRecord,
+      prescribedForm: false,
+      formType: "PLAIN_PAPER_AFFIDAVIT"
+    };
+    const res = validateShariatDeclarationRecord(invalidFormDecl, { age: 35, contractCompetent: true });
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe("ERR_SHARIAT_SEC3_DEFECTIVE");
+    expect(res.reason).toContain("prescribed statutory form");
+  });
+
+  it('73. Stage 1 Shariat Section 3 Declaration: Minor or lacking Contract Act Section 11 competence facts returns ERR_SHARIAT_SEC3_INCOMPETENT', () => {
+    const minorDecl = {
+      ...sampleShariatDeclarationRecord,
+      ageConfirmed18Plus: false,
+      isAdult: false
+    };
+    const res = validateShariatDeclarationRecord(minorDecl, { age: 16, contractCompetent: false });
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe("ERR_SHARIAT_SEC3_INCOMPETENT");
+    expect(res.reason).toContain("Section 11 of the Indian Contract Act, 1872");
+  });
+
+  it('74. Stage 1 Shariat Section 3 Declaration: Goa resident declarant rejected because Goa succession is a special and local law', () => {
+    const goaDecl = {
+      ...sampleShariatDeclarationRecord,
+      residenceTerritory: "Goa"
+    };
+    const res = validateShariatDeclarationRecord(goaDecl, { age: 40, contractCompetent: true });
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe("ERR_SHARIAT_SEC3_RESIDENCE_UNVERIFIED");
+    expect(res.reason).toContain("Jose Paulo Coutinho");
+  });
+
+  it('75. Stage 1 Shariat Section 2 Expanded Agricultural Asset Detection: Detects keywords and triggers ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION', () => {
+    const willWithPaddyAndOrchard = {
+      personal: {
+        religion: "Muslim",
+        sect: "Sunni",
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      },
+      assets: [
+        { id: "a1", type: "Residential House", value: 3000000 },
+        { id: "a2", type: "Land Parcel", desc: "Paddy field and cashew plantation in Khasra No 102", value: 2000000 }
+      ]
+    };
+    const res = resolvePersonalLawRegime(willWithPaddyAndOrchard);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.agriculturalAssets.length).toBe(1);
+    expect(res.blockers[0]).toContain("ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION");
+
+    const audit = runPreFlightLegalBlockerAudit(willWithPaddyAndOrchard);
+    expect(audit.isExecutionReady).toBe(false);
+    expect(audit.blockers.some(b => b.code === "ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION")).toBe(true);
+  });
+
+  it('76. Stage 1 Special Marriage Act (SMA) Section 21: Christian marrying under SMA retains religion and is routed to ISA Part VI', () => {
+    const willData = {
+      personal: {
+        fullName: "David DSilva",
+        pob: "Mumbai, Maharashtra",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Christian",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954",
+        marriageCertificateEvidence: sampleSpecialMarriageCertificateEvidence
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
+    expect(res.isChristian).toBe(true);
+    expect(res.statuteCitation).toContain("Special Marriage Act, 1954 (Section 21)");
+  });
+
+  it('77. Stage 1 Special Marriage Act (SMA) Section 21: Muslim marrying under SMA retains isMuslim: true and is routed to ISA Part VI without altering religious identity', () => {
+    const willData = {
+      personal: {
+        fullName: "Faiz Ahmed",
+        pob: "Delhi",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Muslim",
+        spouseReligion: "Hindu",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954",
+        marriageCertificateEvidence: sampleSpecialMarriageCertificateEvidence
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
+    expect(res.isMuslim).toBe(true);
+    expect(res.isChristian).toBe(false); // CRITICAL: NEVER FORCES isChristian: true
+    expect(res.religion).toBe("Muslim");
+    expect(res.statuteCitation).toContain("Special Marriage Act, 1954 (Section 21)");
+  });
+
+  it('78. Stage 1 Special Marriage Act (SMA) Section 21: Parsi marrying under SMA retains isParsi: true and is routed to ISA Part VI', () => {
+    const willData = {
+      personal: {
+        fullName: "Rustom Wadia",
+        pob: "Mumbai, Maharashtra",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Parsi",
+        spouseReligion: "Christian",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954",
+        marriageCertificateEvidence: sampleSpecialMarriageCertificateEvidence
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
+    expect(res.isParsi).toBe(true);
+    expect(res.isChristian).toBe(false);
+    expect(res.religion).toBe("Parsi");
+    expect(res.statuteCitation).toContain("Special Marriage Act, 1954 (Section 21)");
+  });
+
+  it('79. Stage 1 Special Marriage Act (SMA) Section 21A: Both spouses Hindu/Buddhist/Sikh/Jain route to Hindu Succession Act & ISA Section 57 without Christian classification', () => {
+    const willData = {
+      personal: {
+        fullName: "Arjun Verma",
+        pob: "Bengaluru, Karnataka",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        spouseReligion: "Hindu",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954",
+        marriageCertificateEvidence: sampleSpecialMarriageCertificateEvidence,
+        willExecutionDate: "2026-04-15",
+        willExecutionPlace: "Bengaluru"
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
+    expect(res.isHindu).toBe(true);
+    expect(res.isChristian).toBe(false);
+    expect(res.reasons.some(r => r.includes("Section 21A"))).toBe(true);
+    expect(res.statuteCitation).toContain("Hindu Succession Act, 1956 (Section 30)");
+  });
+
+  it('80. Stage 1 Special Marriage Act (SMA) Blocker: Missing marriage certificate returns ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED and preventsGeneration: true', () => {
+    const willData = {
+      personal: {
+        fullName: "Sameer Khan",
+        pob: "Pune, Maharashtra",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Muslim",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954",
+        marriageCertificateEvidence: null // Missing!
+      }
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.blockers[0]).toContain("ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED");
+
+    const audit = runPreFlightLegalBlockerAudit(willData);
+    expect(audit.isExecutionReady).toBe(false);
+    expect(audit.blockers.some(b => b.code === "ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED")).toBe(true);
+  });
+
+  it('81. Stage 1 Hindu Section 57 Historical Boundaries: Bombay OOCJ, Madras OOCJ, and Bengal Lieutenant-Governor codes routed to Section 57(a)', () => {
+    const willBombayOOCJ = resolvePersonalLawRegime({
+      personal: {
+        fullName: "Narayan Rao",
+        pob: "Bombay",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ,
+        willExecutionDate: "2026-02-15"
+      }
+    });
+    expect(willBombayOOCJ.section57Clause).toContain("Section 57(a)");
+    expect(willBombayOOCJ.scheduleIIIApplicable).toBe(true);
+
+    const willMadrasOOCJ = resolvePersonalLawRegime({
+      personal: {
+        fullName: "Subramanian Iyer",
+        pob: "Madras",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.MADRAS_OOCJ,
+        willExecutionDate: "2026-02-15"
+      }
+    });
+    expect(willMadrasOOCJ.section57Clause).toContain("Section 57(a)");
+    expect(willMadrasOOCJ.scheduleIIIApplicable).toBe(true);
+
+    const willBengalLtGov = resolvePersonalLawRegime({
+      personal: {
+        fullName: "Debabrata Banerjee",
+        pob: "Calcutta",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.BENGAL_LIEUTENANT_GOVERNOR,
+        willExecutionDate: "2026-02-15"
+      }
+    });
+    expect(willBengalLtGov.section57Clause).toContain("Section 57(a)");
+    expect(willBengalLtGov.scheduleIIIApplicable).toBe(true);
+  });
+
+  it('82. Stage 1 Hindu Section 57(b) Asset-Level Check: Evaluates each immovable asset individually; property in Bombay OOCJ triggers Section 57(b)', () => {
+    const willData = {
+      personal: {
+        fullName: "Harish Chandra",
+        pob: "Varanasi, UP",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        willExecutionPlace: "Varanasi, UP",
+        willExecutionDate: "2026-03-10"
+      },
+      assets: [
+        { id: "a1", type: "Movable Shares", value: 1000000 },
+        {
+          id: "a2",
+          type: "Real Estate",
+          desc: "Commercial Office in Fort, Mumbai",
+          isImmovable: true,
+          historicalTerritoryCode: HISTORICAL_PRESIDENCY_CODES.BOMBAY_OOCJ,
+          value: 15000000
+        }
+      ]
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.section57Clause).toContain("Section 57(b)");
+    expect(res.scheduleIIIApplicable).toBe(true);
+  });
+
+  it('83. Stage 1 Hindu Section 57(c) Residual Nature: Post-1927 will executed outside presidency towns without presidency property is routed to Section 57(c)', () => {
+    const willData = {
+      personal: {
+        fullName: "Manoj Tiwari",
+        pob: "Bhopal, MP",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Hindu",
+        willExecutionPlace: "Bhopal, MP",
+        willExecutionDate: "2026-06-01"
+      },
+      assets: [
+        { id: "a1", type: "House", location: "Bhopal, MP", value: 4000000, isImmovable: true }
+      ]
+    };
+    const res = resolvePersonalLawRegime(willData);
+    expect(res.section57Clause).toContain("Section 57(c)");
+    expect(res.scheduleIIIApplicable).toBe(true);
+  });
+
+  it('84. Stage 1 Pre-Flight Blocker Audit: Verifies all Stage 1 fatal blockers halt execution readiness with preventsGeneration: true', () => {
+    const willBlockedGoa = {
+      personal: {
+        fullName: "Dr. Joseph Fernandes",
+        pob: "Margao, Goa" // Unconfirmed parental origin
+      }
+    };
+    const auditGoa = runPreFlightLegalBlockerAudit(willBlockedGoa);
+    expect(auditGoa.isExecutionReady).toBe(false);
+    expect(auditGoa.blockers.some(b => b.code === "ERR_GOA_JURISDICTION_UNCONFIRMED" && b.preventsGeneration)).toBe(true);
+
+    const willBlockedSMA = {
+      personal: {
+        fullName: "Sameer Khan",
+        pob: "Pune, Maharashtra",
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: "Muslim",
+        marriageRegime: "SPECIAL_MARRIAGE_ACT_1954"
+      }
+    };
+    const auditSMA = runPreFlightLegalBlockerAudit(willBlockedSMA);
+    expect(auditSMA.isExecutionReady).toBe(false);
+    expect(auditSMA.blockers.some(b => b.code === "ERR_SMA_MARRIAGE_CERTIFICATE_REQUIRED" && b.preventsGeneration)).toBe(true);
   });
 
 });

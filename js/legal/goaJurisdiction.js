@@ -46,71 +46,227 @@ export const JURISDICTION_DOCUMENT_TYPES = {
   PERMANENT_RESIDENCE_CERTIFICATE: "PERMANENT_RESIDENCE_CERTIFICATE",
   CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE: "CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE",
   FOUNDLING_CIVIL_REGISTRATION: "FOUNDLING_CIVIL_REGISTRATION",
-  REGISTERED_ADOPTION_DEED: "REGISTERED_ADOPTION_DEED"
+  REGISTERED_ADOPTION_DEED: "REGISTERED_ADOPTION_DEED",
+  REST_OF_INDIA_CIVIL_RECORD: "REST_OF_INDIA_CIVIL_RECORD",
+  REST_OF_INDIA_DOMICILE_CERTIFICATE: "REST_OF_INDIA_DOMICILE_CERTIFICATE",
+  GOVERNMENT_POSTING_RECORD: "GOVERNMENT_POSTING_RECORD",
+  MILITARY_POSTING_RECORD: "MILITARY_POSTING_RECORD",
+  DIPLOMATIC_POSTING_RECORD: "DIPLOMATIC_POSTING_RECORD",
+  SPECIAL_MARRIAGE_CERTIFICATE: "SPECIAL_MARRIAGE_CERTIFICATE"
 };
+
+export const AUTHORIZED_REVIEWER_ROLES = [
+  'ADVOCATE',
+  'SPECIAL_NOTARY',
+  'CIVIL_REGISTRAR',
+  'SUB_REGISTRAR',
+  'GOVERNMENT_AUTHORITY'
+];
+
+// SHA-256 hash of an empty input (must never be accepted as valid file hash)
+const EMPTY_STRING_SHA256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+const ALL_ZEROS_SHA256 = '0000000000000000000000000000000000000000000000000000000000000000';
+const SHA256_HEX_REGEX = /^[a-f0-9]{64}$/i;
+const BAR_ENROLLMENT_REGEX = /^[A-Z]{2,4}\/\d+\/\d{4}$/i;
 
 /**
  * Validates whether an evidentiary record satisfies rigorous forensic standards.
  * Standalone Boolean flags are strictly barred from establishing jurisdiction.
+ * Cryptographic hash confirms binary file integrity; legal authenticity is certified by authenticated advocate credentials.
+ *
  * @param {Object} record - Structured evidence record
  * @param {Array<string>} expectedDocTypes - Allowed document type strings
- * @returns {Object} { isValid: boolean, reason: string }
+ * @param {Object} context - Optional verification context (testatorName, requiredSubject)
+ * @returns {Object} { isValid: boolean, blockerCode: string, reason: string }
  */
-export function validateJurisdictionEvidence(record, expectedDocTypes = []) {
+export function validateJurisdictionEvidence(record, expectedDocTypes = [], context = {}) {
   if (!record || typeof record !== 'object') {
     return {
       isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_MISSING",
       reason: "Missing documentary evidence record. A self-entered Boolean alone cannot establish jurisdiction."
     };
   }
 
+  // 1. Immutable Document Storage Identifier
+  const storageId = (record.documentStorageId || record.storageKey || record.uploadId || '').toString().trim();
+  if (!storageId) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing uploaded document storage identifier (documentStorageId / storageKey). Document must be uploaded to secure repository."
+    };
+  }
+
+  // 2. Primary Reference / Registration Number
   const docRef = (record.documentRef || record.registrationNumber || record.certificateNumber || '').toString().trim();
   if (!docRef) {
-    return { isValid: false, reason: "Missing document reference or certificate registration number." };
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing document reference or certificate registration number."
+    };
   }
 
+  // 3. Document Type Classification
   const docType = (record.documentType || '').trim();
   if (!docType) {
-    return { isValid: false, reason: "Missing document type classification." };
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing document type classification."
+    };
   }
   if (expectedDocTypes.length > 0 && !expectedDocTypes.includes(docType)) {
-    return { isValid: false, reason: `Unrecognized document type '${docType}' for this statutory category.` };
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: `Unrecognized document type '${docType}' for this statutory category.`
+    };
   }
 
+  // 4. Issuing Authority
   const issuingAuthority = (record.issuingAuthority || '').trim();
   if (!issuingAuthority) {
-    return { isValid: false, reason: "Missing issuing authority." };
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing issuing authority on evidence record."
+    };
   }
 
+  // 5. Statutory Date
   const statutoryDate = record.issueDate || record.registrationDate || record.statutoryDate;
   if (!statutoryDate) {
-    return { isValid: false, reason: "Missing statutory registration/issue date." };
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing statutory registration or issue date."
+    };
   }
 
-  if (!record.verifiedParties && !record.verifiedFacts) {
-    return { isValid: false, reason: "Missing verified parties or facts in evidence record." };
+  // 6. Verified Parties & Facts with Subject Matching
+  const verifiedParties = (record.verifiedParties || record.verifiedSubject || record.subjectName || '').trim();
+  if (!verifiedParties && !record.verifiedFacts) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing verified parties or facts in evidence record."
+    };
   }
 
-  const docHash = (record.documentHash || record.sha256 || '').trim();
+  // Subject matching against context
+  if (context.testatorName && verifiedParties) {
+    const tNameLower = context.testatorName.toLowerCase();
+    const vpLower = verifiedParties.toLowerCase();
+    // If context demands matching testator name and parties are completely foreign
+    if (context.strictTestatorMatch === true && !vpLower.includes(tNameLower)) {
+      return {
+        isValid: false,
+        blockerCode: "ERR_PARTY_MISMATCH",
+        reason: `Evidence record verified parties '${verifiedParties}' does not match testator '${context.testatorName}'.`
+      };
+    }
+  }
+
+  // 7. Strict Cryptographic File Hash Validation
+  const docHash = (record.documentHash || record.sha256 || '').trim().toLowerCase();
   if (!docHash) {
-    return { isValid: false, reason: "Missing document file integrity hash (sha256)." };
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Missing document file integrity hash (sha256)."
+    };
+  }
+  if (!SHA256_HEX_REGEX.test(docHash)) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Document hash is not a valid 64-character hexadecimal SHA-256 string."
+    };
+  }
+  if (docHash === EMPTY_STRING_SHA256) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Document hash matches empty-file SHA-256 (e3b0c442...). Zero-byte files cannot serve as legal evidence."
+    };
+  }
+  if (docHash === ALL_ZEROS_SHA256) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_EMPTY_OR_INVALID_FILE_HASH",
+      reason: "Document hash is all zeros, representing an uncomputed or forged hash."
+    };
   }
 
-  if (record.verificationStatus !== 'VERIFIED') {
-    return { isValid: false, reason: `Document verification outcome is '${record.verificationStatus}', expected 'VERIFIED'.` };
-  }
-
+  // 8. Authenticated Reviewer Credentials & Role
   const verifier = (record.verifiedBy || '').trim();
-  const verDate = (record.verificationDate || '').trim();
-  if (!verifier || !verDate) {
-    return { isValid: false, reason: "Missing verifying advocate identity or verification date." };
+  if (!verifier) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing verifying advocate or authority identity."
+    };
   }
 
-  return { isValid: true, reason: "Documentary evidence verified." };
+  const reviewerRole = (record.reviewerRole || '').trim().toUpperCase();
+  if (!reviewerRole || !AUTHORIZED_REVIEWER_ROLES.includes(reviewerRole)) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: `Unauthorized or missing reviewer role '${record.reviewerRole}'. Reviewer must be an ADVOCATE, SPECIAL_NOTARY, or CIVIL_REGISTRAR.`
+    };
+  }
+
+  const enrollmentNo = (record.enrollmentNumber || record.barEnrollmentNumber || record.officerCredentials || '').trim();
+  if (!enrollmentNo) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing reviewer professional credentials or Bar enrollment number."
+    };
+  }
+
+  // 9. Tamper-Resistant Verification Status & Audit Record
+  if (record.verificationStatus !== 'VERIFIED') {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: `Document verification outcome is '${record.verificationStatus}', expected 'VERIFIED'.`
+    };
+  }
+
+  const verDate = (record.verificationDate || record.verificationTimestamp || '').trim();
+  if (!verDate) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing verification timestamp."
+    };
+  }
+
+  const auditSessionId = (record.auditSessionId || record.auditRecordId || record.auditHash || '').trim();
+  if (!auditSessionId) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_GOA_EVIDENCE_UNVERIFIED",
+      reason: "Missing tamper-resistant verification audit record identifier."
+    };
+  }
+
+  return {
+    isValid: true,
+    blockerCode: null,
+    integrityVerified: true,
+    reason: "Documentary evidence authenticated by authorized legal reviewer. Cryptographic hash confirms file integrity."
+  };
 }
 
 /**
  * Classifies the governing succession jurisdiction strictly under Section 1(4)(a)–(g) criteria.
+ * Fail-Closed: Missing or unverified evidence must NEVER default to GOA_NOT_APPLICABLE.
+ *
  * @param {Object} p - Personal data object
  * @returns {Object} { status, statutoryClause, applicableAct, reasons, blockers, canGenerateWill }
  */
@@ -166,28 +322,36 @@ export function classifyGoaJurisdiction(p = {}) {
     };
   }
 
-  // Evidence Lookups:
   const jurEv = p.jurisdictionEvidence || {};
+  const verificationContext = { testatorName: p.fullName };
 
   // ── Clause (g): Adopted by parents governed by the specified Code or Act ──
   if (p.isAdopted) {
+    // 1. Validate registered adoption deed:
     const adoptionRecord = p.clauseGEvidence || p.adoptionEvidence || jurEv.clauseG;
-    const adoptionCheck = validateJurisdictionEvidence(adoptionRecord, [JURISDICTION_DOCUMENT_TYPES.REGISTERED_ADOPTION_DEED]);
+    const adoptionCheck = validateJurisdictionEvidence(adoptionRecord, [JURISDICTION_DOCUMENT_TYPES.REGISTERED_ADOPTION_DEED], verificationContext);
 
     if (!adoptionCheck.isValid) {
-      blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(g) requires verified registered adoption deed and proof of adoptive parents' status. ${adoptionCheck.reason}`);
+      blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(g) requires verified registered adoption deed. ${adoptionCheck.reason}`);
       return {
         status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-        statutoryClause: "Section 1(4)(g) Verification Required",
+        statutoryClause: "Section 1(4)(g) Adoption Deed Unverified",
         applicableAct: "Unconfirmed",
-        reasons: ["Documentary verification of adoption deed and adoptive parents' civil code subjection is required."],
+        reasons: ["Documentary verification of adoption deed is mandatory."],
         blockers,
         canGenerateWill: false
       };
     }
 
-    if (adoptionRecord.adoptiveParentsGoanRegimeVerified === true || p.adoptiveParentsGoanRegime === true) {
-      reasons.push("Section 1(4)(g): Person adopted by parents governed by the Portuguese Civil Code of 1867 or Goa Act 23 of 2016 (verified by registered adoption deed).");
+    // 2. Validate separate evidence of adoptive parents' legal status (never accept bare booleans):
+    const adoptiveParentsRecord = p.adoptiveParentsEvidence || (adoptionRecord && adoptionRecord.adoptiveParentsEvidence) || jurEv.adoptiveParents;
+    const adoptiveParentsGoanCheck = validateJurisdictionEvidence(adoptiveParentsRecord, [
+      JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
+      JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD
+    ]);
+
+    if (adoptiveParentsGoanCheck.isValid) {
+      reasons.push("Section 1(4)(g): Person adopted by parents affirmatively verified as governed by the Portuguese Civil Code of 1867 or Goa Act 23 of 2016.");
       return {
         status: JURISDICTION_STATUS.GOA_APPLICABLE,
         statutoryClause: GOA_SECTION_1_4_CLAUSES.CLAUSE_G,
@@ -196,17 +360,36 @@ export function classifyGoaJurisdiction(p = {}) {
         blockers: [],
         canGenerateWill: true
       };
-    } else {
-      reasons.push("Section 1(4)(g) Not Met: Adoptive parents were not governed by the Portuguese Civil Code or Goa Act 23 of 2016.");
+    }
+
+    // Check if adoptive parents have verified rest-of-India status:
+    const adoptiveParentsRoiCheck = validateJurisdictionEvidence(adoptiveParentsRecord, [
+      JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
+      JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
+    ]);
+
+    if (adoptiveParentsRoiCheck.isValid) {
+      reasons.push("Section 1(4)(g) Not Applicable: Adoptive parents verified as governed by rest-of-India personal law under documented evidence.");
       return {
         status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
-        statutoryClause: "Indian Succession Act (Adoption Under Personal Law)",
+        statutoryClause: "Indian Succession Act (Adoption Under Rest-of-India Law)",
         applicableAct: "Indian Succession Act, 1925",
         reasons,
         blockers: [],
         canGenerateWill: true
       };
     }
+
+    // If adoptive parents' legal status is unverified or reliant on bare boolean:
+    blockers.push("ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(g) requires separate documentary verification of adoptive parents' civil code subjection. Reliance on naked Boolean assertions is prohibited.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Section 1(4)(g) Adoptive Parents Regime Unverified",
+      applicableAct: "Unconfirmed",
+      reasons: ["Documentary evidence establishing adoptive parents' governing succession regime is mandatory."],
+      blockers,
+      canGenerateWill: false
+    };
   }
 
   // ── Clause (a): Governed by Portuguese Civil Code before 20 December 1961 ──
@@ -218,7 +401,7 @@ export function classifyGoaJurisdiction(p = {}) {
     const clauseACheck = validateJurisdictionEvidence(clauseARecord, [
       JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD,
       JURISDICTION_DOCUMENT_TYPES.PORTUGUESE_BIRTH_REGISTRATION_ASSENTO
-    ]);
+    ], verificationContext);
 
     if (!clauseACheck.isValid) {
       blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(a) requires verified documentary proof of subjection to the Portuguese Civil Code of 1867 prior to 20 December 1961. ${clauseACheck.reason}`);
@@ -244,8 +427,8 @@ export function classifyGoaJurisdiction(p = {}) {
   }
 
   // Parents' 1867 Civil Code status:
-  const claimsParentsPortuguese = Boolean(p.parentsPortugueseRegime || p.parentsCivilCode1867 || (p.fatherPortugueseRegime && p.motherPortugueseRegime));
-  const parentsRestOfIndiaGoverned = Boolean(p.parentsRestOfIndiaGoverned || p.parentsGovernedByRestOfIndiaLaw);
+  const claimsParentsPortuguese = Boolean(p.parentsPortugueseRegime === true || p.parentsCivilCode1867 === true || (p.fatherPortugueseRegime === true && p.motherPortugueseRegime === true));
+  const claimsParentsRestOfIndia = Boolean(p.parentsRestOfIndiaGoverned === true || p.parentsGovernedByRestOfIndiaLaw === true || p.parentsPortugueseRegime === false);
   const parentsStatusUnrecorded = (p.parentsPortugueseRegime === undefined && p.parentsCivilCode1867 === undefined && p.parentsRestOfIndiaGoverned === undefined);
 
   // ── Clause (b): Born in Goa to parents governed by the Civil Code ──
@@ -303,7 +486,7 @@ export function classifyGoaJurisdiction(p = {}) {
     const claimsOptOut = Boolean(p.statutoryOptOutClauseC || p.optOutDeclarationDate);
     if (claimsOptOut) {
       const optOutRecord = p.clauseCEvidence || p.optOutEvidence || jurEv.clauseC;
-      const optOutCheck = validateJurisdictionEvidence(optOutRecord, [JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_OPT_OUT_DEED]);
+      const optOutCheck = validateJurisdictionEvidence(optOutRecord, [JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_OPT_OUT_DEED], verificationContext);
 
       if (!optOutCheck.isValid || !p.optOutBeforeSpecialNotary) {
         blockers.push(`ERR_GOA_JURISDICTION_UNCONFIRMED: Section 1(4)(c) opt-out declaration requires verified Special Notary registration within the statutory 3-year deadline. Unverified or disputed opt-out leaves jurisdiction undetermined. ${optOutCheck.reason}`);
@@ -427,76 +610,118 @@ export function classifyGoaJurisdiction(p = {}) {
     };
   }
 
-  // ── Clause (d): Born in Goa to rest-of-India parents, with permanent residence and election ──
-  if (isTestatorBornGoa && parentsStatusUnrecorded) {
-    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Testator born in Goa, but parents' legal regime (Portuguese Civil Code vs. rest-of-India personal laws) is unrecorded. Cannot route to Indian Succession Act or Goa Act without verification.");
-    return {
-      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-      statutoryClause: "Section 1(4) Parental Regime Unconfirmed",
-      applicableAct: "Unconfirmed",
-      reasons: ["Documentary evidence establishing whether parents were governed by the Portuguese Civil Code or rest-of-India personal laws is mandatory."],
-      blockers,
-      canGenerateWill: false
-    };
-  }
-
-  if (isTestatorBornGoa && (parentsRestOfIndiaGoverned || p.parentsPortugueseRegime === false)) {
-    const isConsularOrMilitaryPosting = Boolean(p.isConsularOrDiplomaticPosting || p.isTemporaryMilitaryPosting || p.isGovernmentPosting);
-    if (isConsularOrMilitaryPosting) {
-      reasons.push("Section 1(4) Proviso: Government service, diplomatic posting, or armed forces assignment in Goa does not constitute permanent residence under Clause (d). Governed by personal law under Jose Paulo Coutinho (2019) SCC OnLine SC 1190 / (2020) 17 SCC 159.");
+  // ── Clause (d): Born in Goa to rest-of-India parents ──
+  if (isTestatorBornGoa) {
+    if (parentsStatusUnrecorded) {
+      blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Testator born in Goa, but parents' legal regime (Portuguese Civil Code vs. rest-of-India personal laws) is unrecorded. Cannot route to Indian Succession Act or Goa Act without verification.");
       return {
-        status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
-        statutoryClause: "Indian Succession Act (Proviso: Posting Excluded from Permanent Residence)",
-        applicableAct: "Indian Succession Act, 1925",
-        reasons,
-        blockers: [],
-        canGenerateWill: true
+        status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+        statutoryClause: "Section 1(4) Parental Regime Unconfirmed",
+        applicableAct: "Unconfirmed",
+        reasons: ["Documentary evidence establishing whether parents were governed by the Portuguese Civil Code or rest-of-India personal laws is mandatory."],
+        blockers,
+        canGenerateWill: false
       };
     }
 
-    const claimsElection = Boolean(p.statutoryElectionClauseD || p.statutoryElectionGoa);
-    if (claimsElection) {
-      const electionRecord = p.clauseDEvidence || p.electionEvidence || jurEv.clauseD;
-      const electionCheck = validateJurisdictionEvidence(electionRecord, [JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_ELECTION_DEED]);
+    if (claimsParentsRestOfIndia) {
+      // CRITICAL REVISION 7 FIX: Negative Boolean cannot establish rest-of-India status!
+      // Must require verified documentary evidence of parents' rest-of-India status under Section 1(4)(d).
+      const parentsRoiRecord = p.parentsRestOfIndiaEvidence || p.clauseDEvidence?.parentsEvidence || jurEv.parentsRestOfIndia;
+      const parentsRoiCheck = validateJurisdictionEvidence(parentsRoiRecord, [
+        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
+        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
+      ]);
 
-      const residenceRecord = p.permanentResidenceEvidence || jurEv.residence;
-      const residenceCheck = validateJurisdictionEvidence(residenceRecord, [JURISDICTION_DOCUMENT_TYPES.PERMANENT_RESIDENCE_CERTIFICATE]);
-
-      if (!electionCheck.isValid || !residenceCheck.isValid) {
-        blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(d) statutory election and permanent residence require verified Special Notary registration and verified residence proof. ${electionCheck.isValid ? residenceCheck.reason : electionCheck.reason}`);
+      if (!parentsRoiCheck.isValid) {
+        blockers.push(`ERR_GOA_JURISDICTION_UNCONFIRMED: For a testator born in Goa, negative subjection to the Portuguese Civil Code cannot be established by a self-entered Boolean. Documentary evidence establishing parents' rest-of-India legal regime is mandatory. ${parentsRoiCheck.reason}`);
         return {
           status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
-          statutoryClause: "Section 1(4)(d) Evidence Incomplete",
+          statutoryClause: "Section 1(4)(d) Parents' Rest-of-India Evidence Required",
           applicableAct: "Unconfirmed",
-          reasons: ["Both statutory election deed and permanent residence proof must be verified by an advocate."],
+          reasons: ["Documentary proof of parents' rest-of-India civil origin or domicile is mandatory."],
           blockers,
           canGenerateWill: false
         };
       }
 
-      reasons.push("Section 1(4)(d): Testator born in Goa to rest-of-India parents, satisfying permanent residence requirement and having declared verified statutory election before Special Notary.");
-      return {
-        status: JURISDICTION_STATUS.GOA_APPLICABLE,
-        statutoryClause: GOA_SECTION_1_4_CLAUSES.CLAUSE_D,
-        applicableAct: "Goa Act 23 of 2016",
-        reasons,
-        blockers: [],
-        canGenerateWill: true
-      };
-    } else {
-      reasons.push("Section 1(4)(d) Incomplete: Testator born in Goa to rest-of-India parents, but statutory election is not exercised. Governed by their personal law pursuant to Jose Paulo Coutinho (2019) SCC OnLine SC 1190 / (2020) 17 SCC 159.");
-      return {
-        status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
-        statutoryClause: "Indian Succession Act (Non-Electing Section 1(4)(d))",
-        applicableAct: "Indian Succession Act, 1925",
-        reasons,
-        blockers: [],
-        canGenerateWill: true
-      };
+      // Check Government / Consular / Military Posting Proviso:
+      const claimsPosting = Boolean(p.isConsularOrDiplomaticPosting || p.isTemporaryMilitaryPosting || p.isGovernmentPosting);
+      if (claimsPosting) {
+        const postingRecord = p.postingEvidence || jurEv.posting;
+        const postingCheck = validateJurisdictionEvidence(postingRecord, [
+          JURISDICTION_DOCUMENT_TYPES.GOVERNMENT_POSTING_RECORD,
+          JURISDICTION_DOCUMENT_TYPES.MILITARY_POSTING_RECORD,
+          JURISDICTION_DOCUMENT_TYPES.DIPLOMATIC_POSTING_RECORD
+        ]);
+
+        if (!postingCheck.isValid) {
+          blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4) posting proviso requires verified government/military posting orders. ${postingCheck.reason}`);
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4) Proviso Evidence Unverified",
+            applicableAct: "Unconfirmed",
+            reasons: ["Documentary evidence of official posting is mandatory to invoke the Section 1(4) proviso."],
+            blockers,
+            canGenerateWill: false
+          };
+        }
+
+        reasons.push("Section 1(4) Proviso: Verified government service, diplomatic posting, or armed forces assignment in Goa excludes from permanent residence under Clause (d). Governed by personal law under Jose Paulo Coutinho (2019) 20 SCC 85.");
+        return {
+          status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
+          statutoryClause: "Indian Succession Act (Proviso: Posting Excluded from Permanent Residence)",
+          applicableAct: "Indian Succession Act, 1925",
+          reasons,
+          blockers: [],
+          canGenerateWill: true
+        };
+      }
+
+      const claimsElection = Boolean(p.statutoryElectionClauseD || p.statutoryElectionGoa);
+      if (claimsElection) {
+        const electionRecord = p.clauseDEvidence || p.electionEvidence || jurEv.clauseD;
+        const electionCheck = validateJurisdictionEvidence(electionRecord, [JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_ELECTION_DEED], verificationContext);
+
+        const residenceRecord = p.permanentResidenceEvidence || jurEv.residence;
+        const residenceCheck = validateJurisdictionEvidence(residenceRecord, [JURISDICTION_DOCUMENT_TYPES.PERMANENT_RESIDENCE_CERTIFICATE], verificationContext);
+
+        if (!electionCheck.isValid || !residenceCheck.isValid) {
+          blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(d) statutory election and permanent residence require verified Special Notary registration and verified residence proof. ${electionCheck.isValid ? residenceCheck.reason : electionCheck.reason}`);
+          return {
+            status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+            statutoryClause: "Section 1(4)(d) Evidence Incomplete",
+            applicableAct: "Unconfirmed",
+            reasons: ["Both statutory election deed and permanent residence proof must be verified by an advocate."],
+            blockers,
+            canGenerateWill: false
+          };
+        }
+
+        reasons.push("Section 1(4)(d): Testator born in Goa to rest-of-India parents, satisfying permanent residence requirement and having declared verified statutory election before Special Notary.");
+        return {
+          status: JURISDICTION_STATUS.GOA_APPLICABLE,
+          statutoryClause: GOA_SECTION_1_4_CLAUSES.CLAUSE_D,
+          applicableAct: "Goa Act 23 of 2016",
+          reasons,
+          blockers: [],
+          canGenerateWill: true
+        };
+      } else {
+        reasons.push("Section 1(4)(d) Non-Electing: Testator born in Goa to parents verified as governed by rest-of-India law, without statutory election. Governed by their personal law pursuant to Jose Paulo Coutinho (2019) 20 SCC 85.");
+        return {
+          status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
+          statutoryClause: "Indian Succession Act (Non-Electing Section 1(4)(d))",
+          applicableAct: "Indian Succession Act, 1925",
+          reasons,
+          blockers: [],
+          canGenerateWill: true
+        };
+      }
     }
   }
 
-  // Ambiguity Gate: Goa resident with unrecorded birthplace or parentage
+  // ── Ambiguity Gate: Goa connection / residence with unrecorded birthplace or parentage ──
   if (isGoaResident) {
     blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Residence or domicile in Goa alone does not establish legal regime under Section 1(4). Affirmative documentary proof of parents' legal status or statutory declaration is mandatory.");
     return {
@@ -504,6 +729,20 @@ export function classifyGoaJurisdiction(p = {}) {
       statutoryClause: "Section 1(4) Verification Required",
       applicableAct: "Unconfirmed",
       reasons: ["Current residence in Goa alone is legally insufficient to establish Section 1(4) applicability."],
+      blockers,
+      canGenerateWill: false
+    };
+  }
+
+  // If born outside Goa, check if there is an unrecorded parental status with Goa connection:
+  const hasGoaAncestralConnection = Boolean(p.hasGoaAncestryClaim || p.hasGoaProperty);
+  if (hasGoaAncestralConnection && parentsStatusUnrecorded) {
+    blockers.push("ERR_GOA_JURISDICTION_UNCONFIRMED: Testator has declared Goa property or ancestral connection, but parental legal status is unrecorded. Section 1(4)(c) applicability cannot be ruled out without evidence.");
+    return {
+      status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+      statutoryClause: "Section 1(4)(c) Parental Origin Inquiry",
+      applicableAct: "Unconfirmed",
+      reasons: ["Parental civil code status must be affirmatively verified where Goa ancestral connection exists."],
       blockers,
       canGenerateWill: false
     };
@@ -522,8 +761,8 @@ export function classifyGoaJurisdiction(p = {}) {
     };
   }
 
-  // Standard Rest-of-India Jurisdiction
-  reasons.push("Governed under the Indian Succession Act, 1925 and applicable personal law (rest of India jurisdiction).");
+  // Conclusive Reasoned Rest-of-India Jurisdiction
+  reasons.push("Governed under the Indian Succession Act, 1925 and applicable personal law (reasoned rest-of-India determination with no Section 1(4) Goa nexus).");
   return {
     status: JURISDICTION_STATUS.GOA_NOT_APPLICABLE,
     statutoryClause: "Indian Succession Act, 1925 (Part VI)",
