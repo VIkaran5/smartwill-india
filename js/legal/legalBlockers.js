@@ -24,13 +24,19 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
   const isGoa = (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE || jur.status === JURISDICTION_STATUS.GOA_APPLICABLE);
 
   if (jur.status === JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED || jur.status === JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED) {
+    const jurBlocker = (jur.blockers && jur.blockers[0]) || "Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime.";
+    let jurCode = "ERR_GOA_JURISDICTION_UNCONFIRMED";
+    const jurCodeMatch = jurBlocker.match(/^(ERR_[A-Z0-9_]+)/);
+    if (jurCodeMatch) {
+      jurCode = jurCodeMatch[1];
+    }
     blockers.push({
-      code: "ERR_GOA_JURISDICTION_UNCONFIRMED",
+      code: jurCode,
       page: "Page 1",
       clause: "Preamble & Jurisdiction Selection",
-      errorDescription: (jur.blockers && jur.blockers[0]) || "Applicability under Section 1(4) of Goa Act 23 of 2016 is unconfirmed. Domicile or residence in Goa alone does not establish legal regime.",
+      errorDescription: jurBlocker,
       applicableStatute: "Section 1(4), Goa Succession Act, 2012",
-      requiredCorrection: "Record testator's verified place of birth, parents' birthplace, and 1867 Civil Code personal law status.",
+      requiredCorrection: "Record testator's verified place of birth, parents' birthplace, and civil code personal law status with documentary proof.",
       preventsGeneration: true
     });
   }
@@ -40,10 +46,13 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
   if (pl.regime === PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED || (pl.blockers && pl.blockers.length > 0)) {
     const primaryBlocker = (pl.blockers && pl.blockers[0]) || "Personal law regime requires legal review";
     let blockerCode = "ERR_PERSONAL_LAW_REVIEW_REQUIRED";
-    if (primaryBlocker.includes("ERR_GOA_JURISDICTION_UNCONFIRMED")) blockerCode = "ERR_GOA_JURISDICTION_UNCONFIRMED";
-    else if (primaryBlocker.includes("ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED")) blockerCode = "ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED";
-    else if (primaryBlocker.includes("ISMAILI_BOHRA_SPECIAL_REVIEW")) blockerCode = "ERR_ISMAILI_BOHRA_SPECIAL_REVIEW";
-    else if (primaryBlocker.includes("UNRECOGNIZED_PERSONAL_LAW")) blockerCode = "ERR_UNRECOGNIZED_PERSONAL_LAW";
+    const codeMatch = primaryBlocker.match(/^(ERR_[A-Z0-9_]+|UNRECOGNIZED_PERSONAL_LAW)/);
+    if (codeMatch) {
+      blockerCode = codeMatch[1];
+    }
+    if (primaryBlocker.includes("ISMAILI_BOHRA_SPECIAL_REVIEW")) {
+      blockerCode = "ERR_ISMAILI_BOHRA_SPECIAL_REVIEW";
+    }
 
     if (!blockers.some(b => b.code === blockerCode)) {
       blockers.push({

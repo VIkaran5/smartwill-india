@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { classifyGoaJurisdiction, JURISDICTION_STATUS, GOA_SECTION_1_4_CLAUSES } from '../../js/legal/goaJurisdiction.js';
+import {
+  classifyGoaJurisdiction,
+  JURISDICTION_STATUS,
+  GOA_SECTION_1_4_CLAUSES,
+  JURISDICTION_DOCUMENT_TYPES,
+  validateJurisdictionEvidence
+} from '../../js/legal/goaJurisdiction.js';
 import { calculateGoaInheritance, CALCULATION_STATUS } from '../../js/legal/inheritanceCalculator.js';
 import { evaluateAssetMatrimonialOwnership, MATRIMONIAL_REGIMES, SECTION_219_EXCEPTIONS } from '../../js/legal/matrimonialRegime.js';
 import { verifyPropertyTitle, TITLE_DOCUMENT_TYPES } from '../../js/legal/titleVerification.js';
@@ -8,30 +14,140 @@ import { generateMinorTrustClauses, generateStatutoryDebtHierarchy } from '../..
 import { validateResiduaryAllocations } from '../../js/legal/residuaryValidator.js';
 import { runPreFlightLegalBlockerAudit } from '../../js/legal/legalBlockers.js';
 import { calculateDraftReadinessIndex, DRAFT_STATUS_BANDS } from '../../js/legal/readinessIndex.js';
-import { resolvePersonalLawRegime, PERSONAL_LAW_REGIMES } from '../../js/legal/personalLawRouter.js';
+import { resolvePersonalLawRegime, PERSONAL_LAW_REGIMES, validateShariatDeclarationRecord } from '../../js/legal/personalLawRouter.js';
 import { generateGoaSection333PDF, formatDateToFormalWords } from '../../js/services/pdfGoaSection333.js';
+
+// Standard verified evidence fixtures for test suite
+const sampleClauseAEvidence = {
+  documentRef: "REG-CIVIL-1959/882",
+  documentType: JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD,
+  issuingAuthority: "Conservatória do Registo Civil de Salcete (Margao)",
+  registrationDate: "1959-06-12",
+  verifiedParties: "Testator António Fernandes",
+  documentHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseBEvidence = {
+  documentRef: "ASSENTO-1960/451",
+  documentType: JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
+  issuingAuthority: "Conservatória do Registo Civil de Ilhas (Panaji)",
+  registrationDate: "1960-03-15",
+  verifiedParties: "Parents Manuel & Maria Fernandes",
+  documentHash: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseCEvidence = {
+  documentRef: "NOT-OPTOUT-1980/21",
+  documentType: JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_OPT_OUT_DEED,
+  issuingAuthority: "Special Notary Office of Margao",
+  registrationDate: "1980-05-10",
+  verifiedParties: "Declarant Francis Fernandes",
+  documentHash: "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseDEvidence = {
+  documentRef: "NOT-ELECTION-2018/104",
+  documentType: JURISDICTION_DOCUMENT_TYPES.SPECIAL_NOTARY_ELECTION_DEED,
+  issuingAuthority: "Special Notary Office of Panaji",
+  registrationDate: "2018-05-20",
+  verifiedParties: "Declarant Rajesh Gupta",
+  documentHash: "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleResidenceEvidence = {
+  documentRef: "GOA-RES-CERT-2015/778",
+  documentType: JURISDICTION_DOCUMENT_TYPES.PERMANENT_RESIDENCE_CERTIFICATE,
+  issuingAuthority: "Mamlatdar of Tiswadi (Panaji)",
+  issueDate: "2015-01-10",
+  verifiedParties: "Rajesh Gupta",
+  documentHash: "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseEEvidence = {
+  documentRef: "MHA-CIT-1992/55",
+  documentType: JURISDICTION_DOCUMENT_TYPES.CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE,
+  issuingAuthority: "Ministry of Home Affairs / District Magistrate North Goa",
+  issueDate: "1992-08-11",
+  verifiedParties: "Foreign-Citizen Parents and Testator",
+  documentHash: "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseFEvidence = {
+  documentRef: "CIVIL-FOUNDLING-1975/02",
+  documentType: JURISDICTION_DOCUMENT_TYPES.FOUNDLING_CIVIL_REGISTRATION,
+  issuingAuthority: "Civil Registrar of Mormugao (Vasco)",
+  registrationDate: "1975-09-04",
+  verifiedParties: "Foundling Child under Official Civil Custody",
+  documentHash: "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleClauseGEvidence = {
+  documentRef: "ADOPT-REG-2005/119",
+  documentType: JURISDICTION_DOCUMENT_TYPES.REGISTERED_ADOPTION_DEED,
+  issuingAuthority: "Sub-Registrar of Salcete (Margao)",
+  registrationDate: "2005-11-20",
+  verifiedParties: "Adoptive Parents governed by Goa Succession Act",
+  adoptiveParentsGoanRegimeVerified: true,
+  documentHash: "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Carlos Pereira, Bar of Goa",
+  verificationDate: "2026-04-10"
+};
+
+const sampleShariatDeclarationRecord = {
+  filingReference: "SHARIAT-DECL-2022/89",
+  declarationDate: "2022-03-15",
+  prescribedAuthority: "District Magistrate, Lucknow",
+  prescribedForm: true,
+  formType: "FORM_A_SHARIAT_SECTION_3",
+  contractCompetent: true,
+  residenceTerritory: "Uttar Pradesh",
+  statutoryDescendantCoverage: true,
+  verificationStatus: "VERIFIED",
+  verifiedBy: "Advocate Tariq Khan, High Court of Allahabad",
+  verificationDate: "2026-01-10"
+};
 
 describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () => {
 
   // ── GOA SECTION 1(4)(a)–(g) STATUTORY CLASSIFICATION TESTS ──
 
   it('1. Section 1(4)(a): Requires affirmative proof of 1867 Civil Code regime (not mere pre-1961 birth date)', () => {
-    // With affirmative proof:
     const resVerified = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       dob: '1958-04-12',
-      pre1961PortugueseRegime: true
+      pre1961PortugueseRegime: true,
+      clauseAEvidence: sampleClauseAEvidence
     });
-    expect(resVerified.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(resVerified.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(resVerified.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_A);
 
-    // Negative: Born in Goa before 1961 but without proof of applicable Civil Code regime
     const resUnverified = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       dob: '1958-04-12'
-      // Missing pre1961PortugueseRegime & parentsPortugueseRegime undefined
     });
-    expect(resUnverified.status).toBe(JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED);
+    expect(resUnverified.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
     expect(resUnverified.canGenerateWill).toBe(false);
   });
 
@@ -39,21 +155,21 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Panaji, Goa',
       fatherPob: 'Margao, Goa',
-      parentsPortugueseRegime: true
+      parentsPortugueseRegime: true,
+      clauseBEvidence: sampleClauseBEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_B);
   });
 
   it('3. Section 1(4)(b) Negative: Parents born in Goa but NOT governed by Portuguese Civil Code', () => {
-    // e.g., Rest-of-India parents temporarily residing in Goa when child was born
     const res = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       fatherPob: 'Margao, Goa',
-      parentsPortugueseRegime: false
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true
     });
-    // Evaluates to Section 1(4)(d) non-electing -> ISA under Jose Paulo Coutinho
-    expect(res.status).toBe(JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
     expect(res.reasons[0]).toContain('Jose Paulo Coutinho');
   });
 
@@ -61,21 +177,25 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Mumbai, Maharashtra',
       parentsPortugueseRegime: true,
+      clauseBEvidence: sampleClauseBEvidence,
       statutoryOptOutClauseC: false
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_C);
   });
 
   it('5. Section 1(4)(c) Opt-Out: Executed before Special Notary within statutory 3-year deadline', () => {
     const res = classifyGoaJurisdiction({
       pob: 'London, UK',
+      dob: '1960-01-01',
       parentsPortugueseRegime: true,
+      clauseBEvidence: sampleClauseBEvidence,
       statutoryOptOutClauseC: true,
       optOutBeforeSpecialNotary: true,
-      optOutWithinThreeYearPeriod: true
+      optOutDeclarationDate: '1980-05-10',
+      clauseCEvidence: sampleClauseCEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
     expect(res.statutoryClause).toContain('Section 1(4)(c) Opt-Out');
   });
 
@@ -83,10 +203,12 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
       statutoryElectionClauseD: true,
-      permanentResidenceGoaSatisfied: true
+      clauseDEvidence: sampleClauseDEvidence,
+      permanentResidenceEvidence: sampleResidenceEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_D);
   });
 
@@ -94,29 +216,31 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
       isTemporaryMilitaryPosting: true,
       statutoryElectionClauseD: true
     });
-    // Military posting bars permanent residence under Clause (d)
-    expect(res.status).toBe(JURISDICTION_STATUS.INDIAN_SUCCESSION_ACT_APPLICABLE);
-    expect(res.statutoryClause).toContain('Proviso: Posting Excluded from Permanent Residence');
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
+    expect(res.statutoryClause).toContain('Posting Excluded from Permanent Residence');
   });
 
   it('8. Section 1(4)(e): Born in Goa to foreign parents satisfying Citizenship Act Sections 3 & 4', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Panaji, Goa',
-      foreignParentsCitizenshipFulfilled: true
+      foreignParentsCitizenshipFulfilled: true,
+      clauseEEvidence: sampleClauseEEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_E);
   });
 
   it('9. Section 1(4)(f): Born in Goa of unknown parents or unknown nationality', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Vasco, Goa',
-      unknownParentsOrNationality: true
+      unknownParentsOrNationality: true,
+      clauseFEvidence: sampleClauseFEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_F);
   });
 
@@ -124,9 +248,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = classifyGoaJurisdiction({
       pob: 'Bangalore, Karnataka',
       isAdopted: true,
-      adoptiveParentsGoanRegime: true
+      clauseGEvidence: sampleClauseGEvidence
     });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_ACT_APPLICABLE);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
     expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_G);
   });
 
@@ -137,14 +261,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       assets: [{ id: 1, type: 'Fixed Deposit', value: 2000000, allocations: [{ beneficiaryId: 'b1', percentage: 50 }] }],
       debts: [{ id: 'd1', amount: 200000 }],
       lifetimeGifts: [
-        { id: 'g1', value: 300000, recipientRelation: 'Son' }, // Sections 90-109 Collation
-        { id: 'g2', value: 100000, recipientRelation: 'Third Party' }, // Sections 110-121 Reduction
-        { id: 'g3', value: 50000, desc: 'Perished Car', hasPerishedWithoutFault: true } // Excluded under Section 89(2)
+        { id: 'g1', value: 300000, recipientRelation: 'Son' },
+        { id: 'g2', value: 100000, recipientRelation: 'Third Party' },
+        { id: 'g3', value: 50000, desc: 'Perished Car', hasPerishedWithoutFault: true }
       ],
       beneficiaries: [{ id: 'b1', name: 'Son A', relation: 'Son' }]
     };
     const calc = calculateGoaInheritance(willData);
-    // (20,00,000 - 2,00,000) + 3,00,000 + 1,00,000 = 22,00,000 (g3 excluded)
     expect(calc.section89ComputationBase).toBe(2200000);
     expect(calc.totalAllLifetimeGifts).toBe(400000);
     expect(calc.descendantCollationAdvancements).toBe(300000);
@@ -156,13 +279,12 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   it('12. Forced Heirs: Omitted child in Will is identified via familyStructure schema', () => {
     const willData = {
       assets: [{ id: 1, type: 'Cash', value: 1000000, allocations: [{ beneficiaryId: 'b_charity', percentage: 100 }] }],
-      beneficiaries: [{ id: 'b_charity', name: 'Charity Trust', relation: 'Charity' }], // Child omitted from Will!
+      beneficiaries: [{ id: 'b_charity', name: 'Charity Trust', relation: 'Charity' }],
       familyStructure: {
-        children: [{ name: 'Omitted Son', age: 24 }] // Preserved in family tree
+        children: [{ name: 'Omitted Son', age: 24 }]
       }
     };
     const calc = calculateGoaInheritance(willData);
-    // Even though no child was named in the Will, familyStructure triggers 50% descendant legitime
     expect(calc.statutoryLegitimeValue).toBe(500000);
     expect(calc.statutoryDisposableQuota).toBe(500000);
     expect(calc.status).toBe(CALCULATION_STATUS.INOFFICIOUS_BREACH);
@@ -180,15 +302,15 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       }
     };
     const calc = calculateGoaInheritance(willData);
-    expect(calc.statutoryLegitimeValue).toBeCloseTo(1000000, 0); // 1/3 of 3,000,000 = 1,000,000
-    expect(calc.statutoryDisposableQuota).toBeCloseTo(2000000, 0); // 2/3 of 3,000,000 = 2,000,000
+    expect(calc.statutoryLegitimeValue).toBeCloseTo(1000000, 0);
+    expect(calc.statutoryDisposableQuota).toBeCloseTo(2000000, 0);
     expect(calc.legitimeDescription).toContain('Section 83(d)');
   });
 
   it('14. Estate Insolvency: Debts exceeding assets triggers fatal estate deficiency blocker', () => {
     const willData = {
       assets: [{ id: 1, type: 'Bank Account', value: 500000 }],
-      debts: [{ id: 'd1', amount: 800000 }], // Debts exceed assets
+      debts: [{ id: 'd1', amount: 800000 }],
       hasNoLifetimeGiftsDeclared: true
     };
     const calc = calculateGoaInheritance(willData);
@@ -201,7 +323,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   it('15. Section 219 Nullity: Bequest of specific community asset without exception is prohibited', () => {
     const asset = {
       desc: 'Specific Flat 402',
-      allocations: [{ beneficiaryId: 'b_child', percentage: 50 }] // Attempt to bequeath specific community parcel to child
+      allocations: [{ beneficiaryId: 'b_child', percentage: 50 }]
     };
     const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
     const res = evaluateAssetMatrimonialOwnership(asset, mat);
@@ -266,7 +388,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const asset = {
       type: 'Residential Land',
       desc: 'Ancestral Plot',
-      details: { registrationNumber: 'FAKE-12345' } // Registration string only!
+      details: { registrationNumber: 'FAKE-12345' }
     };
     const res = verifyPropertyTitle(asset);
     expect(res.isValidTitle).toBe(false);
@@ -314,7 +436,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   // ── PERSONAL LAW ROUTER TESTS ──
 
   it('25. Personal Law Router: Missing or unrecorded religion returns LEGAL_REVIEW_REQUIRED (never defaults to Hindu)', () => {
-    const res = resolvePersonalLawRegime({ personal: { fullName: 'Amit' } }); // Missing religion
+    const res = resolvePersonalLawRegime({ personal: { fullName: 'Amit' } });
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(res.requiresLegalReview).toBe(true);
   });
@@ -343,6 +465,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         fatherPob: "Margao, Goa",
         motherPob: "Margao, Goa",
         parentsPortugueseRegime: true,
+        clauseBEvidence: sampleClauseBEvidence,
         addressLine1: "House No. 45/A, Borda",
         addressCity: "Margao",
         addressState: "Goa",
@@ -385,12 +508,10 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
 
     const doc = await generateGoaSection333PDF(willData);
     expect(doc).toBeDefined();
-    // Real jsPDF measurements in mm (A4: 210 x 297mm)
-    expect(Math.round(doc.internal.pageSize.getWidth())).toBe(210); // A4 width
-    expect(Math.round(doc.internal.pageSize.getHeight())).toBe(297); // A4 height
+    expect(Math.round(doc.internal.pageSize.getWidth())).toBe(210);
+    expect(Math.round(doc.internal.pageSize.getHeight())).toBe(297);
     expect(doc.getNumberOfPages()).toBeGreaterThanOrEqual(1);
 
-    // Verify formal date in words helper
     const words = formatDateToFormalWords("1964-05-15");
     expect(words).toContain("fifteenth day of May nineteen hundred and sixty four");
   });
@@ -411,6 +532,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         pob: "Margao, Goa",
         fatherPob: "Margao, Goa",
         parentsPortugueseRegime: true,
+        clauseBEvidence: sampleClauseBEvidence,
         govtIdType: "Aadhaar",
         govtIdDigits: "9876",
         addressLine1: "House No. 45/A, Borda",
@@ -443,11 +565,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       familyStructure: { children: [{ name: "Kevin Fernandes" }] },
       executor: { name: "Advocate Francis Xavier Pereira" },
       witnesses: [{ name: "Witness 1", address: "Margao" }, { name: "Witness 2", address: "Margao" }]
-      // Without advocate review sign-off!
     };
 
     const res = calculateDraftReadinessIndex(readyProfile);
-    // Score is capped at 85/100 without advocate review
     expect(res.score).toBeLessThanOrEqual(85);
     expect(res.statusBadge).toBe(DRAFT_STATUS_BANDS.READY_FOR_NOTARY_REVIEW);
   });
@@ -466,6 +586,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         pob: "Margao, Goa",
         fatherPob: "Margao, Goa",
         parentsPortugueseRegime: true,
+        clauseBEvidence: sampleClauseBEvidence,
         govtIdType: "Aadhaar",
         govtIdDigits: "9876",
         addressLine1: "House No. 45/A, Borda",
@@ -517,7 +638,6 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         fullName: "Dr. Joseph",
         addressCity: "Margao",
         addressState: "Goa"
-        // Missing mother's name and occupation
       },
       assets: [{ id: 1, type: "Flat", value: 1000000, titleDocType: "REGISTERED_SALE_DEED" }]
     };
@@ -527,7 +647,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.audit.totalBlockersCount).toBeGreaterThan(0);
   });
 
-  // ── ADVANCED STATUTORY EDGE CASE REGRESSION TESTS (P0 FORENSIC COMPLETION) ──
+  // ── SECTIONS 110–121 REDUCTION SCHEDULE TESTS ──
 
   it('31. Sections 110–121 Reduction Schedule: Computes exact rupee pro-rata reduction of legacies and reverse chronological reduction of gifts', () => {
     const willData = {
@@ -547,14 +667,14 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
           desc: "Gift of Gold to Cousin",
           value: 1000000,
           date: "2022-01-10",
-          recipientRelation: "Cousin" // Third party
+          recipientRelation: "Cousin"
         },
         {
           id: "g2",
           desc: "Gift of Shares to Trust",
           value: 1000000,
           date: "2024-06-15",
-          recipientRelation: "Trust" // More recent third party gift
+          recipientRelation: "Trust"
         }
       ],
       beneficiaries: [
@@ -562,21 +682,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         { id: "b_son", name: "Raj", relation: "Son" }
       ],
       familyStructure: {
-        children: [{ name: "Raj" }] // Descendants survive -> 50% legitime, 50% disposable quota
+        children: [{ name: "Raj" }]
       }
     };
 
-    // Computation Base = 4,000,000 (assets) + 2,000,000 (gifts) = 6,000,000
-    // Disposable quota (50%) = 3,000,000
-    // Total dispositions subject to quota = 4,000,000 (legacy) + 2,000,000 (third-party gifts) = 6,000,000
-    // Excess = 6,000,000 - 3,000,000 = 3,000,000 inofficious breach!
     const calc = calculateGoaInheritance(willData);
     expect(calc.status).toBe(CALCULATION_STATUS.INOFFICIOUS_BREACH);
     expect(calc.reductionSchedule).toBeDefined();
-
-    // Section 111 & 112: Legacies reduced first pro-rata
-    // Total legacy value = 4,000,000. Excess = 3,000,000.
-    // Legacy absorbs entire 3,000,000 reduction!
     expect(calc.reductionSchedule.totalReductionFromLegacies).toBe(3000000);
     expect(calc.reductionSchedule.legacies[0].reductionAmount).toBe(3000000);
     expect(calc.reductionSchedule.legacies[0].netValueAfterReduction).toBe(1000000);
@@ -586,7 +698,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const asset = {
       desc: "Unallotted Family Parcel Sy #50",
       hasRegisteredPartitionDeed: true,
-      isAllottedToTestator: false // Mentioned in deed, but not allotted to this spouse!
+      isAllottedToTestator: false
     };
     const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
     const res = evaluateAssetMatrimonialOwnership(asset, mat);
@@ -598,7 +710,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   it('33. Section 219 Negative: Naked spouse consent boolean without Special Notary deed is rejected', () => {
     const asset = {
       desc: "Community Plot Sy #90",
-      hasSpouseNotarialConsent: true // Naked boolean only!
+      hasSpouseNotarialConsent: true
     };
     const mat = { isMarried: true, regime: MATRIMONIAL_REGIMES.COMMUNITY_OF_PROPERTY };
     const res = evaluateAssetMatrimonialOwnership(asset, mat);
@@ -611,7 +723,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
       type: "Residential Plot",
       desc: "Plot Sy #100",
       titleDocType: TITLE_DOCUMENT_TYPES.REGISTERED_SALE_DEED,
-      isDocumentVerified: false // Unverified selection!
+      isDocumentVerified: false
     };
     const res = verifyPropertyTitle(asset);
     expect(res.isValidTitle).toBe(false);
@@ -644,11 +756,11 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         dob: "1964-05-15",
         pob: "Margao, Goa",
         parentsPortugueseRegime: true,
+        clauseBEvidence: sampleClauseBEvidence,
         addressLine1: "Borda",
         addressCity: "Margao",
         addressState: "Goa",
         pincode: "403601"
-        // Missing age!
       },
       executor: { name: "Advocate Pereira" }
     };
@@ -681,7 +793,6 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const profileWithNotaryAndBlockers = {
       personal: {
         fullName: "Dr. Joseph"
-        // Missing mandatory parentage and address -> triggers fatal audit blockers!
       },
       specialNotaryExecution: {
         isNotaryAuthenticated: true,
@@ -696,80 +807,6 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.statusBadge).not.toBe(DRAFT_STATUS_BANDS.NOTARIAL_EXECUTION_COMPLETED);
   });
 
-  // ── STAGE 1: JURISDICTION, PERSONAL LAW & CENTRAL BLOCKER REGRESSION TESTS ──
-
-  it('11. Stage 1: Non-Goan Indian citizen with no Section 1(4) qualifying criteria routed to Central Law', () => {
-    const res = classifyGoaJurisdiction({
-      pob: 'Jaipur, Rajasthan',
-      parentsPortugueseRegime: false,
-      parentsRestOfIndiaGoverned: true,
-      addressState: 'Rajasthan',
-      religion: 'Hindu'
-    });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
-    expect(res.canGenerateWill).toBe(true);
-  });
-
-  it('12. Stage 1: Ambiguous ancestral lineage without documentation triggers GOA_STATUS_UNDETERMINED', () => {
-    const res = classifyGoaJurisdiction({
-      pob: 'Margao, Goa'
-      // Parents status unrecorded
-    });
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
-    expect(res.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
-    expect(res.canGenerateWill).toBe(false);
-  });
-
-  it('13. Stage 1 Neutral: Atheist evaluated strictly on Section 1(4) factual criteria, not religion label', () => {
-    // If Section 1(4)(b) criteria met:
-    const resGoa = classifyGoaJurisdiction({
-      pob: 'Panaji, Goa',
-      parentsPortugueseRegime: true,
-      religion: 'Atheist'
-    });
-    expect(resGoa.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
-
-    // If outside Goa, Atheist routes to legal review because succession law cannot be assumed
-    const resRouter = resolvePersonalLawRegime({
-      personal: {
-        pob: 'Delhi',
-        parentsPortugueseRegime: false,
-        parentsRestOfIndiaGoverned: true,
-        religion: 'Atheist'
-      }
-    });
-    expect(resRouter.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
-    expect(resRouter.requiresLegalReview).toBe(true);
-  });
-
-  it('25. Stage 1: Christian outside Goa governed fully by Indian Succession Act Part VI', () => {
-    const res = resolvePersonalLawRegime({
-      personal: {
-        pob: 'Kochi, Kerala',
-        parentsPortugueseRegime: false,
-        parentsRestOfIndiaGoverned: true,
-        religion: 'Christian'
-      }
-    });
-    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
-    expect(res.isChristian).toBe(true);
-    expect(res.statuteCitation).toContain('Indian Succession Act, 1925 (Part VI');
-  });
-
-  it('26. Stage 1: Parsi outside Goa governed by Indian Succession Act Part VI with Parsi scope', () => {
-    const res = resolvePersonalLawRegime({
-      personal: {
-        pob: 'Mumbai, Maharashtra',
-        parentsPortugueseRegime: false,
-        parentsRestOfIndiaGoverned: true,
-        religion: 'Parsi'
-      }
-    });
-    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.PARSI);
-    expect(res.isParsi).toBe(true);
-    expect(res.statuteCitation).toContain('Parsi Scope');
-  });
-
   it('40. Stage 1 Central Blocker: Unrecognized succession regime halts PDF generation', () => {
     const willData = {
       personal: {
@@ -780,7 +817,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     };
     const audit = runPreFlightLegalBlockerAudit(willData);
     expect(audit.isExecutionReady).toBe(false);
-    expect(audit.blockers.some(b => b.code === 'ERR_PERSONAL_LAW_REVIEW_REQUIRED' || b.code === 'ERR_UNRECOGNIZED_PERSONAL_LAW')).toBe(true);
+    expect(audit.blockers.some(b => b.code === 'ERR_PERSONAL_LAW_REVIEW_REQUIRED' || b.code === 'UNRECOGNIZED_PERSONAL_LAW')).toBe(true);
   });
 
   it('41. Stage 1 Central Blocker: Dawoodi Bohra / Ismaili special custom flagged for specialist review', () => {
@@ -799,7 +836,79 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(audit.blockers.some(b => b.code === 'ERR_ISMAILI_BOHRA_SPECIAL_REVIEW')).toBe(true);
   });
 
-  it('79. Stage 1 Negative: Spurious 10-year residency claim rejected under Section 1(4)', () => {
+  it('42. Stage 1: Non-Goan Indian citizen with no Section 1(4) qualifying criteria routed to Central Law', () => {
+    const res = classifyGoaJurisdiction({
+      pob: 'Jaipur, Rajasthan',
+      parentsPortugueseRegime: false,
+      parentsRestOfIndiaGoverned: true,
+      addressState: 'Rajasthan',
+      religion: 'Hindu'
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_NOT_APPLICABLE);
+    expect(res.canGenerateWill).toBe(true);
+  });
+
+  it('43. Stage 1: Ambiguous ancestral lineage without documentation triggers GOA_STATUS_UNDETERMINED', () => {
+    const res = classifyGoaJurisdiction({
+      pob: 'Margao, Goa'
+    });
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
+    expect(res.canGenerateWill).toBe(false);
+  });
+
+  it('44. Stage 1 Neutral: Atheist evaluated strictly on Section 1(4) factual criteria, not religion label', () => {
+    const resGoa = classifyGoaJurisdiction({
+      pob: 'Panaji, Goa',
+      parentsPortugueseRegime: true,
+      clauseBEvidence: sampleClauseBEvidence,
+      religion: 'Atheist'
+    });
+    expect(resGoa.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
+
+    const resRouter = resolvePersonalLawRegime({
+      personal: {
+        pob: 'Delhi',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        religion: 'Atheist'
+      }
+    });
+    expect(resRouter.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resRouter.requiresLegalReview).toBe(true);
+  });
+
+  it('45. Stage 1: Christian outside Goa governed fully by Indian Succession Act Part VI without Section 57 citation', () => {
+    const res = resolvePersonalLawRegime({
+      personal: {
+        pob: 'Kochi, Kerala',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        religion: 'Christian'
+      }
+    });
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.CHRISTIAN_CIVIL);
+    expect(res.isChristian).toBe(true);
+    expect(res.statuteCitation).toContain('Indian Succession Act, 1925 (Part VI');
+    expect(res.statuteCitation).not.toContain('Section 57');
+  });
+
+  it('46. Stage 1: Parsi outside Goa governed by Indian Succession Act Part VI with Section 58 Parsi scope without Section 57 citation', () => {
+    const res = resolvePersonalLawRegime({
+      personal: {
+        pob: 'Mumbai, Maharashtra',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        religion: 'Parsi'
+      }
+    });
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.PARSI);
+    expect(res.isParsi).toBe(true);
+    expect(res.statuteCitation).toContain('Parsi Scope under Section 58');
+    expect(res.statuteCitation).not.toContain('Sections 57');
+  });
+
+  it('47. Stage 1 Negative: Spurious 10-year residency claim rejected under Section 1(4)', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Bhopal, Madhya Pradesh',
       addressState: 'Goa',
@@ -809,7 +918,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.blockers[0]).toContain('ERR_INVALID_JURISDICTION_CRITERIA');
   });
 
-  it('80. Stage 1 Negative: Marriage of non-Goan to Goan rejected as Section 1(4) qualification route', () => {
+  it('48. Stage 1 Negative: Marriage of non-Goan to Goan rejected as Section 1(4) qualification route', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Lucknow, Uttar Pradesh',
       marriageToGoanClaim: true
@@ -818,7 +927,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.blockers[0]).toContain('ERR_INVALID_JURISDICTION_CRITERIA');
   });
 
-  it('81. Stage 1 Proviso: Residence in Goa due to Indian government service excluded from permanent residence', () => {
+  it('49. Stage 1 Proviso: Residence in Goa due to Indian government service excluded from permanent residence', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Margao, Goa',
       parentsPortugueseRegime: false,
@@ -830,34 +939,39 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.statutoryClause).toContain('Posting Excluded from Permanent Residence');
   });
 
-  it('82. Stage 1: Section 1(4)(c) disputed deadline or missing declaration date triggers GOA_STATUS_UNDETERMINED', () => {
+  it('50. Stage 1: Section 1(4)(c) disputed deadline or unverified opt-out declaration triggers GOA_STATUS_UNDETERMINED', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Mumbai, Maharashtra',
+      dob: '1970-01-01',
       parentsPortugueseRegime: true,
-      // Claimed opt out but missing Special Notary date/record
+      clauseBEvidence: sampleClauseBEvidence,
       statutoryOptOutClauseC: true,
-      optOutBeforeSpecialNotary: false
+      optOutBeforeSpecialNotary: true,
+      optOutDeclarationDate: '2020-01-01',
+      clauseCEvidence: {
+        ...sampleClauseCEvidence,
+        registrationDate: '2020-01-01' // Statutory 3-year deadline long expired!
+      }
     });
-    // Missing verified opt-out leaves testator under Goa Act (clause C default)
-    expect(res.status).toBe(JURISDICTION_STATUS.GOA_APPLICABLE);
-    expect(res.statutoryClause).toBe(GOA_SECTION_1_4_CLAUSES.CLAUSE_C);
+    expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(res.blockers[0]).toContain('ERR_GOA_JURISDICTION_UNCONFIRMED');
   });
 
-  it('83. Stage 1: Section 1(4)(e) foreign parents failing Citizenship Act requirements rejected', () => {
+  it('51. Stage 1: Section 1(4)(e) foreign parents failing Citizenship Act requirements rejected', () => {
     const res = classifyGoaJurisdiction({
       pob: 'Panaji, Goa',
       foreignParentsCitizenshipFulfilled: false
     });
-    // Without meeting Citizenship Act Sections 3 & 4, fails clause (e)
     expect(res.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
   });
 
-  it('84. Stage 1 Goa Supremacy: Muslim governed by Goa Act remains under Goa Act, not Shariat (Jose Paulo Coutinho & Ashabi Khan)', () => {
+  it('52. Stage 1 Goa Supremacy: Muslim governed by Goa Act remains under Goa Act, preserves religion Muslim and isMuslim true', () => {
     const willData = {
       personal: {
         fullName: 'Ibrahim Khan',
         pob: 'Margao, Goa',
         parentsPortugueseRegime: true,
+        clauseBEvidence: sampleClauseBEvidence,
         religion: 'Muslim',
         sect: 'Sunni'
       }
@@ -865,12 +979,14 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const res = resolvePersonalLawRegime(willData);
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.GOA_UCC);
     expect(res.isGoa).toBe(true);
-    expect(res.isMuslim).toBe(false); // Does not divert to Shariat!
+    expect(res.religion).toBe('Muslim');
+    expect(res.isMuslim).toBe(true);
+    expect(res.shariatApplicable).toBe(false);
     expect(res.precedentAuthority).toContain('Jose Paulo Coutinho');
     expect(res.precedentAuthority).toContain('Ashabi Khan');
   });
 
-  it('85. Stage 1 ISA Section 57(c) Residual Check: Negative test proving a Will covered by 57(a) or (b) is NOT reclassified under (c)', () => {
+  it('53. Stage 1 ISA Section 57(c) Residual Check: Negative test proving a Will covered by 57(a) or (b) is NOT reclassified under (c)', () => {
     const willDataPresidencyExecution = {
       personal: {
         fullName: 'Kolkata Testator',
@@ -903,8 +1019,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(resB.section57Clause).not.toContain('Section 57(c)');
   });
 
-  it('91. Stage 1 Positive Section 57(a), (b), (c) Regression Tests', () => {
-    // 57(a): Execution in presidency town
+  it('54. Stage 1 Positive Section 57(a), (b), (c) Regression Tests', () => {
     const willA = resolvePersonalLawRegime({
       personal: {
         fullName: 'Chennai Testator',
@@ -912,13 +1027,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsPortugueseRegime: false,
         parentsRestOfIndiaGoverned: true,
         religion: 'Hindu',
-        willExecutionPlace: 'Chennai'
+        willExecutionPlace: 'Chennai',
+        willExecutionDate: '2026-01-10'
       }
     });
     expect(willA.section57Clause).toContain('Section 57(a)');
     expect(willA.scheduleIIIApplicable).toBe(true);
 
-    // 57(b): Immoveable property in presidency town
     const willB = resolvePersonalLawRegime({
       personal: {
         fullName: 'Pune Testator',
@@ -927,13 +1042,13 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsRestOfIndiaGoverned: true,
         religion: 'Hindu',
         willExecutionPlace: 'Pune',
-        immovablePropertyLocation: 'Mumbai'
+        immovablePropertyLocation: 'Mumbai',
+        willExecutionDate: '2026-01-10'
       }
     });
     expect(willB.section57Clause).toContain('Section 57(b)');
     expect(willB.scheduleIIIApplicable).toBe(true);
 
-    // 57(c): Post-1927 Will executed outside presidency towns with immoveables outside presidency towns
     const willC = resolvePersonalLawRegime({
       personal: {
         fullName: 'Nagpur Testator',
@@ -950,21 +1065,22 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(willC.scheduleIIIApplicable).toBe(true);
   });
 
-  it('92. Stage 1: Hindu Succession Act Section 30 coparcenary testamentary power recognized', () => {
+  it('55. Stage 1: Hindu Succession Act Section 30 coparcenary testamentary power recognized', () => {
     const res = resolvePersonalLawRegime({
       personal: {
         fullName: 'Venkatesh Rao',
         pob: 'Bengaluru, Karnataka',
         parentsPortugueseRegime: false,
         parentsRestOfIndiaGoverned: true,
-        religion: 'Hindu'
+        religion: 'Hindu',
+        willExecutionDate: '2026-02-01'
       }
     });
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
     expect(res.coparcenaryNotice).toContain('Section 30 of the Hindu Succession Act, 1956');
   });
 
-  it('93. Stage 1: Shariat Act Section 3 verified declaration applies Section 2 rules to wills and legacies', () => {
+  it('56. Stage 1: Shariat Act Section 3 verified declaration applies Section 2 rules to wills and legacies', () => {
     const willData = {
       personal: {
         fullName: 'Zafar Ahmed',
@@ -973,8 +1089,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsRestOfIndiaGoverned: true,
         religion: 'Muslim',
         sect: 'Sunni',
-        shariatSec3Declaration: true,
-        contractCompetent: true
+        contractCompetent: true,
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
       }
     };
     const res = resolvePersonalLawRegime(willData);
@@ -983,7 +1099,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.statuteCitation).toContain('Section 3 Declaration Verified');
   });
 
-  it('94. Stage 1 Negative: Missing Section 3 declaration does not activate Shariat calculation; emits ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED and LEGAL_REVIEW_REQUIRED', () => {
+  it('57. Stage 1 Negative: Missing Section 3 declaration does not activate Shariat calculation; emits ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED and LEGAL_REVIEW_REQUIRED', () => {
     const willData = {
       personal: {
         fullName: 'Mohammed Ali',
@@ -991,8 +1107,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         parentsPortugueseRegime: false,
         parentsRestOfIndiaGoverned: true,
         religion: 'Muslim',
-        sect: 'Sunni',
-        shariatSec3Declaration: false // Missing declaration!
+        sect: 'Sunni'
       }
     };
     const res = resolvePersonalLawRegime(willData);
@@ -1002,6 +1117,194 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     const audit = runPreFlightLegalBlockerAudit(willData);
     expect(audit.isExecutionReady).toBe(false);
     expect(audit.blockers.some(b => b.code === 'ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED')).toBe(true);
+  });
+
+  it('58. Stage 1 Forensic Negative: Naked Boolean assertions for Section 1(4)(a), (b), (g) strictly fail with ERR_GOA_EVIDENCE_UNVERIFIED and GOA_STATUS_UNDETERMINED', () => {
+    const resClauseA = classifyGoaJurisdiction({
+      pob: 'Margao, Goa',
+      pre1961PortugueseRegime: true
+    });
+    expect(resClauseA.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resClauseA.blockers[0]).toContain('ERR_GOA_EVIDENCE_UNVERIFIED');
+
+    const resClauseB = classifyGoaJurisdiction({
+      pob: 'Panaji, Goa',
+      parentsPortugueseRegime: true
+    });
+    expect(resClauseB.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resClauseB.blockers[0]).toContain('ERR_GOA_EVIDENCE_UNVERIFIED');
+
+    const resClauseG = classifyGoaJurisdiction({
+      pob: 'Margao, Goa',
+      isAdopted: true,
+      adoptiveParentsGoanRegime: true
+    });
+    expect(resClauseG.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resClauseG.blockers[0]).toContain('ERR_GOA_EVIDENCE_UNVERIFIED');
+  });
+
+  it('59. Stage 1 Shariat Section 3 Negatives: Naked Boolean, unverified record, incompetent declarant, and refused appeal strictly fail', () => {
+    const resNaked = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatSec3Declaration: true
+      }
+    });
+    expect(resNaked.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resNaked.blockers[0]).toContain('ERR_SHARIAT_SEC3_DEFECTIVE');
+
+    const unverifiedRec = { ...sampleShariatDeclarationRecord, verificationStatus: 'PENDING_DOCUMENTATION' };
+    const resUnverified = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: unverifiedRec
+      }
+    });
+    expect(resUnverified.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resUnverified.blockers[0]).toContain('ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED');
+
+    const incompetentRec = { ...sampleShariatDeclarationRecord, contractCompetent: false };
+    const resIncompetent = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        sect: 'Sunni',
+        contractCompetent: false,
+        shariatDeclarationRecord: incompetentRec
+      }
+    });
+    expect(resIncompetent.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resIncompetent.blockers[0]).toContain('ERR_SHARIAT_SEC3_INCOMPETENT');
+
+    const refusedRec = { ...sampleShariatDeclarationRecord, appealFiled: true, appealStatus: 'REFUSED' };
+    const resRefused = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: refusedRec
+      }
+    });
+    expect(resRefused.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resRefused.blockers[0]).toContain('ERR_SHARIAT_SEC3_APPEAL_REFUSED');
+  });
+
+  it('60. Stage 1 Shariat Section 2 Asset-Level Check: Agricultural land is isolated and halts automated Will distribution with ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION', () => {
+    const willWithAgriLand = {
+      personal: {
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      },
+      assets: [
+        { id: 'a1', type: 'Residential Flat', value: 5000000 },
+        { id: 'a2', type: 'Agricultural Land', desc: 'Ancestral Farm in Barabanki', value: 2500000, isAgriculturalLand: true }
+      ]
+    };
+    const res = resolvePersonalLawRegime(willWithAgriLand);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.agriculturalAssets.length).toBe(1);
+    expect(res.blockers[0]).toContain('ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION');
+
+    const audit = runPreFlightLegalBlockerAudit(willWithAgriLand);
+    expect(audit.isExecutionReady).toBe(false);
+    expect(audit.blockers.some(b => b.code === 'ERR_AGRICULTURAL_LAND_SHARIAT_EXCLUSION')).toBe(true);
+  });
+
+  it('61. Stage 1 Muslim Sect Check: Missing or unrecognized school of jurisprudence strictly returns LEGAL_REVIEW_REQUIRED and ERR_MUSLIM_SCHOOL_UNVERIFIED (never defaults to Sunni)', () => {
+    const resMissingSect = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      }
+    });
+    expect(resMissingSect.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resMissingSect.blockers[0]).toContain('ERR_MUSLIM_SCHOOL_UNVERIFIED');
+
+    const resUnknownSect = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Muslim',
+        sect: 'Eclectic Non-Denominational',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      }
+    });
+    expect(resUnknownSect.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resUnknownSect.blockers[0]).toContain('ERR_MUSLIM_SCHOOL_UNVERIFIED');
+  });
+
+  it('62. Stage 1 Hindu Section 57 Date Boundaries: Tests for missing execution date, invalid date, pre-1870 execution, exactly 1870-09-01, pre-1927 non-presidency, and exactly 1927-01-01', () => {
+    const resMissingDate = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Nagpur'
+      }
+    });
+    expect(resMissingDate.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resMissingDate.blockers[0]).toContain('ERR_WILL_EXECUTION_DATE_REQUIRED');
+
+    const resInvalidDate = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionDate: 'NOT-A-DATE'
+      }
+    });
+    expect(resInvalidDate.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resInvalidDate.blockers[0]).toContain('ERR_INVALID_EXECUTION_DATE');
+
+    const resPre1870 = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Calcutta',
+        willExecutionDate: '1869-05-10'
+      }
+    });
+    expect(resPre1870.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resPre1870.blockers[0]).toContain('ERR_PRE_1870_WILL_INELIGIBLE');
+
+    const resExact1870 = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Calcutta',
+        willExecutionDate: '1870-09-01'
+      }
+    });
+    expect(resExact1870.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
+    expect(resExact1870.section57Clause).toContain('Section 57(a)');
+
+    const resPre1927 = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Nagpur',
+        immovablePropertyLocation: 'Nagpur',
+        willExecutionDate: '1925-10-15'
+      }
+    });
+    expect(resPre1927.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resPre1927.blockers[0]).toContain('ERR_PRE_1927_NON_PRESIDENCY_WILL');
+
+    const resExact1927 = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Nagpur',
+        immovablePropertyLocation: 'Nagpur',
+        willExecutionDate: '1927-01-01'
+      }
+    });
+    expect(resExact1927.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
+    expect(resExact1927.section57Clause).toContain('Section 57(c)');
+  });
+
+  it('63. Stage 1 Hindu Section 57 Territorial Boundary Ambiguity: Uncertain historical boundary returns LEGAL_REVIEW_REQUIRED with ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS', () => {
+    const resAmbiguousTerritory = resolvePersonalLawRegime({
+      personal: {
+        religion: 'Hindu',
+        willExecutionPlace: 'Presidency Outskirts / Greater Bengal Frontier',
+        willExecutionDate: '2026-03-01',
+        isTerritoryAmbiguous: true
+      }
+    });
+    expect(resAmbiguousTerritory.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resAmbiguousTerritory.blockers[0]).toContain('ERR_TERRITORIAL_JURISDICTION_AMBIGUOUS');
   });
 
 });
