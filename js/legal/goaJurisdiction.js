@@ -17,7 +17,7 @@
  * Clause (g): Persons adopted by parents governed by the specified Code or Act
  */
 
-import { validateEvidenceRecordAgainstServer } from '../services/evidenceVerificationService.js';
+import { validateEvidenceRecordAgainstServer } from './evidenceValidator.js';
 
 export const JURISDICTION_STATUS = {
   GOA_APPLICABLE: "GOA_APPLICABLE",
@@ -437,7 +437,7 @@ export function validateJurisdictionEvidence(record, expectedDocTypes = [], cont
  * @param {Object} p - Personal data object
  * @returns {Object} { status, statutoryClause, applicableAct, reasons, blockers, canGenerateWill }
  */
-export function classifyGoaJurisdiction(p = {}) {
+export function classifyGoaJurisdiction(p = {}, authenticatedServerContext = null) {
   const reasons = [];
   const blockers = [];
 
@@ -515,10 +515,40 @@ export function classifyGoaJurisdiction(p = {}) {
   }
 
   const jurEv = p.jurisdictionEvidence || {};
+  const activeAuthContext = authenticatedServerContext || (p && (p.authenticatedServerContext || p.authContext)) || null;
+  const hasEvidenceSupplied = Boolean(
+    p.jurisdictionEvidence ||
+    p.clauseAEvidence || p.clauseBEvidence || p.clauseCEvidence ||
+    p.clauseDEvidence || p.clauseEEvidence || p.clauseFEvidence ||
+    p.clauseGEvidence || p.pre1961Evidence || p.parentsCivilCodeEvidence ||
+    p.parentsRestOfIndiaEvidence || p.adoptionEvidence || p.foundlingEvidence ||
+    p.citizenshipEvidence || p.postingEvidence || p.electionEvidence ||
+    p.permanentResidenceEvidence || (jurEv && Object.keys(jurEv).length > 0)
+  );
+
+  if (hasEvidenceSupplied) {
+    if (!activeAuthContext || typeof activeAuthContext !== 'object' ||
+        !activeAuthContext.userId || typeof activeAuthContext.userId !== 'string' || activeAuthContext.userId.trim() === '' ||
+        !activeAuthContext.willId || typeof activeAuthContext.willId !== 'string' || activeAuthContext.willId.trim() === '') {
+      blockers.push("ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT: Evidence evaluation requires a verified authenticated server context with valid userId and willId. Client-derived identity is prohibited.");
+      return {
+        status: JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED,
+        statutoryClause: "Unauthenticated Evidence Context",
+        applicableAct: "Unconfirmed",
+        reasons: ["Evidence evaluation requires an authenticated server session with verified userId and willId."],
+        blockers,
+        canGenerateWill: false
+      };
+    }
+  }
+
+  const cleanUserId = activeAuthContext ? activeAuthContext.userId.trim() : null;
+  const cleanWillId = activeAuthContext ? activeAuthContext.willId.trim() : null;
+
   const parentNames = [p.fatherName, p.motherName, p.parentName].filter(Boolean);
   const verificationContext = {
-    userId: p.userId || p.uid || (p.user && p.user.uid),
-    willId: p.willId || p.id,
+    userId: cleanUserId,
+    willId: cleanWillId,
     testatorName: p.fullName,
     parentNames,
     strictTestatorMatch: true
@@ -544,10 +574,19 @@ export function classifyGoaJurisdiction(p = {}) {
 
     // 2. Validate separate evidence of adoptive parents' legal status (never accept bare booleans):
     const adoptiveParentsRecord = p.adoptiveParentsEvidence || (adoptionRecord && adoptionRecord.adoptiveParentsEvidence) || jurEv.adoptiveParents;
+    const adoptiveParentsContext = {
+      userId: cleanUserId,
+      willId: cleanWillId,
+      requiredSubject: 'PARENTS',
+      testatorName: p.fullName,
+      parentNames,
+      strictSubjectMatch: false
+    };
+
     const adoptiveParentsGoanCheck = validateJurisdictionEvidence(adoptiveParentsRecord, [
       JURISDICTION_DOCUMENT_TYPES.PARENTS_PORTUGUESE_CIVIL_REGISTRATION,
       JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD
-    ]);
+    ], adoptiveParentsContext);
 
     if (adoptiveParentsGoanCheck.isValid) {
       reasons.push("Section 1(4)(g): Person adopted by parents affirmatively verified as governed by the Portuguese Civil Code of 1867 or Goa Act 23 of 2016.");
@@ -565,7 +604,7 @@ export function classifyGoaJurisdiction(p = {}) {
     const adoptiveParentsRoiCheck = validateJurisdictionEvidence(adoptiveParentsRecord, [
       JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
       JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE
-    ]);
+    ], adoptiveParentsContext);
 
     if (adoptiveParentsRoiCheck.isValid) {
       reasons.push("Section 1(4)(g) Not Applicable: Adoptive parents verified as governed by rest-of-India personal law under documented evidence.");
@@ -634,6 +673,8 @@ export function classifyGoaJurisdiction(p = {}) {
   if (isTestatorBornGoa && claimsParentsPortuguese) {
     const clauseBRecord = p.clauseBEvidence || p.parentsCivilCodeEvidence || jurEv.clauseB;
     const parentVerificationContext = {
+      userId: cleanUserId,
+      willId: cleanWillId,
       requiredSubject: 'PARENTS',
       testatorName: p.fullName,
       parentNames,
@@ -671,6 +712,8 @@ export function classifyGoaJurisdiction(p = {}) {
   if (!isTestatorBornGoa && claimsParentsPortuguese) {
     const clauseBRecord = p.clauseBEvidence || p.parentsCivilCodeEvidence || jurEv.clauseB;
     const parentVerificationContext = {
+      userId: cleanUserId,
+      willId: cleanWillId,
       requiredSubject: 'PARENTS',
       testatorName: p.fullName,
       parentNames,
@@ -800,7 +843,7 @@ export function classifyGoaJurisdiction(p = {}) {
   // ── Clause (f): Born in Goa of unknown parents or unknown nationality ──
   if (isTestatorBornGoa && p.unknownParentsOrNationality) {
     const foundlingRecord = p.clauseFEvidence || p.foundlingEvidence || jurEv.clauseF;
-    const foundlingCheck = validateJurisdictionEvidence(foundlingRecord, [JURISDICTION_DOCUMENT_TYPES.FOUNDLING_CIVIL_REGISTRATION]);
+    const foundlingCheck = validateJurisdictionEvidence(foundlingRecord, [JURISDICTION_DOCUMENT_TYPES.FOUNDLING_CIVIL_REGISTRATION], verificationContext);
 
     if (!foundlingCheck.isValid) {
       blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(f) requires verified foundling registration or official civil certificate of unknown parentage. ${foundlingCheck.reason}`);
@@ -828,7 +871,7 @@ export function classifyGoaJurisdiction(p = {}) {
   // ── Clause (e): Born in Goa to foreign parents satisfying Citizenship Act Sections 3 & 4 ──
   if (isTestatorBornGoa && (p.foreignParentsCitizenshipFulfilled || p.citizenshipActSec3or4Fulfilled)) {
     const citizenshipRecord = p.clauseEEvidence || p.citizenshipEvidence || jurEv.clauseE;
-    const citizenshipCheck = validateJurisdictionEvidence(citizenshipRecord, [JURISDICTION_DOCUMENT_TYPES.CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE]);
+    const citizenshipCheck = validateJurisdictionEvidence(citizenshipRecord, [JURISDICTION_DOCUMENT_TYPES.CITIZENSHIP_ACT_VERIFICATION_CERTIFICATE], verificationContext);
 
     if (!citizenshipCheck.isValid) {
       blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4)(e) requires verified proof of compliance with Sections 3 & 4 of the Citizenship Act, 1955. ${citizenshipCheck.reason}`);
@@ -872,6 +915,8 @@ export function classifyGoaJurisdiction(p = {}) {
       // Must require verified documentary evidence of parents' rest-of-India status under Section 1(4)(d).
       const parentsRoiRecord = p.parentsRestOfIndiaEvidence || p.clauseDEvidence?.parentsEvidence || jurEv.parentsRestOfIndia;
       const parentRoiContext = {
+        userId: cleanUserId,
+        willId: cleanWillId,
         requiredSubject: 'PARENTS',
         testatorName: p.fullName,
         parentNames,
@@ -903,7 +948,7 @@ export function classifyGoaJurisdiction(p = {}) {
           JURISDICTION_DOCUMENT_TYPES.GOVERNMENT_POSTING_RECORD,
           JURISDICTION_DOCUMENT_TYPES.MILITARY_POSTING_RECORD,
           JURISDICTION_DOCUMENT_TYPES.DIPLOMATIC_POSTING_RECORD
-        ]);
+        ], verificationContext);
 
         if (!postingCheck.isValid) {
           blockers.push(`ERR_GOA_EVIDENCE_UNVERIFIED: Section 1(4) posting proviso requires verified government/military posting orders. ${postingCheck.reason}`);
@@ -1053,8 +1098,8 @@ export function classifyGoaJurisdiction(p = {}) {
     }
 
     const parentRoiContext = {
-      userId: p.userId || p.uid || (p.user && p.user.uid),
-      willId: p.willId || p.id,
+      userId: cleanUserId,
+      willId: cleanWillId,
       requiredSubject: 'PARENTS',
       testatorName: p.fullName,
       parentNames,

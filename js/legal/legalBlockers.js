@@ -18,9 +18,10 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
   const assets = Array.isArray(willData.assets) ? willData.assets : [];
   const blockers = [];
   const warnings = [];
+  const authContext = willData.authenticatedServerContext || willData.authContext || null;
 
   // Gate 1: Jurisdiction Classification (Section 1(4))
-  const jur = classifyGoaJurisdiction(p);
+  const jur = classifyGoaJurisdiction(p, authContext);
   const isGoa = (jur.status === JURISDICTION_STATUS.GOA_ACT_APPLICABLE || jur.status === JURISDICTION_STATUS.GOA_APPLICABLE);
 
   if (jur.status === JURISDICTION_STATUS.LEGAL_REVIEW_REQUIRED || jur.status === JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED) {
@@ -49,7 +50,7 @@ export function runPreFlightLegalBlockerAudit(willData = {}) {
   }
 
   // Gate 1B: Central Personal Law & Shariat Audit Gate
-  const pl = resolvePersonalLawRegime(willData);
+  const pl = resolvePersonalLawRegime(willData, authContext);
   if (pl.regime === PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED || (pl.blockers && pl.blockers.length > 0)) {
     const plBlockersList = (pl.blockers && pl.blockers.length > 0)
       ? pl.blockers

@@ -31,7 +31,7 @@ import {
   validateEvidenceRecordAgainstServer,
   VALID_LAND_CLASSIFICATION_DOC_TYPES,
   VALID_PROPERTY_TERRITORY_DOC_TYPES
-} from '../services/evidenceVerificationService.js';
+} from './evidenceValidator.js';
 
 export const PERSONAL_LAW_REGIMES = {
   GOA_UCC: "GOA_UCC",
@@ -78,7 +78,7 @@ const AGRICULTURAL_KEYWORD_REGEX = /(\bagricultur|\bagri\b|\bpaddy\b|\borchard\b
  * @param {Object} personal - Personal data object
  * @returns {Object} { isValid: boolean, blockerCode: string, reason: string }
  */
-export function validateShariatDeclarationRecord(record, personal = {}) {
+export function validateShariatDeclarationRecord(record, personal = {}, authenticatedServerContext = null) {
   if (!record || typeof record !== 'object') {
     return {
       isValid: false,
@@ -87,11 +87,25 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
     };
   }
 
+  // Mandatory Authenticated Server Context Validation
+  if (!authenticatedServerContext || typeof authenticatedServerContext !== 'object' ||
+      !authenticatedServerContext.userId || typeof authenticatedServerContext.userId !== 'string' || authenticatedServerContext.userId.trim() === '' ||
+      !authenticatedServerContext.willId || typeof authenticatedServerContext.willId !== 'string' || authenticatedServerContext.willId.trim() === '') {
+    return {
+      isValid: false,
+      blockerCode: "ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT",
+      reason: "Evidence verification requires a verified authenticated server context with valid userId and willId. Client-derived identity is prohibited."
+    };
+  }
+
+  const cleanUserId = authenticatedServerContext.userId.trim();
+  const cleanWillId = authenticatedServerContext.willId.trim();
+
   // Authoritative Backend Evidence Verification Check:
   // Strictly rejects client-supplied booleans, unverified storage keys, cross-user reuse, and stale versions
   const serverContext = {
-    userId: personal.userId || personal.uid || (personal.user && personal.user.uid),
-    willId: personal.willId || personal.id,
+    userId: cleanUserId,
+    willId: cleanWillId,
     testatorName: personal.fullName,
     requiredSubject: 'TESTATOR'
   };
@@ -227,6 +241,8 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
       JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
       JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD
     ], {
+      userId: cleanUserId,
+      willId: cleanWillId,
       requiredSubject: 'TESTATOR',
       testatorName: personal.fullName,
       strictTestatorMatch: true
@@ -442,14 +458,17 @@ export function validateShariatDeclarationRecord(record, personal = {}) {
  * @param {Object} willData - Full will dataset
  * @returns {Object} Complete statutory routing metadata
  */
-export function resolvePersonalLawRegime(willData = {}) {
+export function resolvePersonalLawRegime(willData = {}, authenticatedServerContext = null) {
   const p = willData.personal || {};
   const blockers = [];
   const reasons = [];
 
+  // Derive authenticatedServerContext if passed in willData from server
+  const activeAuthContext = authenticatedServerContext || willData.authenticatedServerContext || willData.authContext || null;
+
   // ── STEP 1: GOA JURISDICTION EVALUATED FIRST ──
   // Mandatory Fail-Closed: Missing evidence must never default to non-Goa personal law.
-  const jurisdiction = classifyGoaJurisdiction(p);
+  const jurisdiction = classifyGoaJurisdiction(p, activeAuthContext);
 
   // 1A. Positive Establishment of Goa Succession Act (Jose Paulo Coutinho & Ashabi Khan)
   if (jurisdiction.status === JURISDICTION_STATUS.GOA_APPLICABLE) {
@@ -532,7 +551,11 @@ export function resolvePersonalLawRegime(willData = {}) {
     const marriageCheck = validateJurisdictionEvidence(
       marriageRecord,
       [JURISDICTION_DOCUMENT_TYPES.SPECIAL_MARRIAGE_CERTIFICATE],
-      { testatorName: p.fullName }
+      {
+        userId: activeAuthContext ? activeAuthContext.userId : null,
+        willId: activeAuthContext ? activeAuthContext.willId : null,
+        testatorName: p.fullName
+      }
     );
 
     if (!marriageCheck.isValid) {
@@ -693,24 +716,35 @@ export function resolvePersonalLawRegime(willData = {}) {
     // Asset-Level Check: Agricultural Land Exclusion under Section 2 of Shariat Act, 1937
     // Broad scan covering agricultural, paddy, orchard, cashew, plantation, farm, khasra, etc.
     // AND unclassified land/plot assets whose revenue character is uncertain.
-    if (!Array.isArray(willData.assets)) {
-      const hasNegativeDeclaration = willData.noAssets === true || p.noAssets === true || willData.noImmovableProperty === true;
-      if (!hasNegativeDeclaration) {
-        return {
-          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
-          isGoa: false,
-          isParsi: false,
-          isChristian: false,
-          isMuslim: true,
-          isHindu: false,
-          requiresLegalReview: true,
-          statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Asset Inventory Required)",
-          statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
-          reasons: ["Asset inventory is missing or unrecorded. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from testamentary succession; asset completeness must be verified."],
-          blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete asset inventory (or explicit negative declaration) is mandatory under Section 2 of Shariat Act, 1937 to verify exclusion of agricultural land."],
-          jurisdiction
-        };
-      }
+    // Naked booleans (noAssets: true, noImmovableProperty: true) are strictly REJECTED.
+    const assetDecl = willData.assetInventoryDeclaration || p.assetInventoryDeclaration;
+    const hasValidNegativeDeclaration = Boolean(
+      assetDecl &&
+      assetDecl.hasNoAssets === true &&
+      assetDecl.declarationSigned === true &&
+      isValidIsoDate(assetDecl.declarationDate) &&
+      assetDecl.verifiedCompletenessAudit === true &&
+      assetDecl.auditSessionId
+    );
+
+    if (!Array.isArray(willData.assets) && !hasValidNegativeDeclaration) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: true,
+        isHindu: false,
+        requiresLegalReview: true,
+        statuteCitation: "Muslim Personal Law (Shariat) Application Act, 1937 (Section 2 Asset Inventory Required)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
+        reasons: [
+          "Asset inventory is missing or unrecorded. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from testamentary succession; asset completeness must be verified.",
+          "Naked Booleans (e.g. noAssets: true) cannot bypass statutory asset inventory requirements without a verified structured completeness declaration."
+        ],
+        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete asset inventory (or verified structured asset inventory declaration) is mandatory under Section 2 of Shariat Act, 1937 to verify exclusion of agricultural land. Naked booleans (noAssets: true) are legally inadmissible."],
+        jurisdiction
+      };
     }
 
     const assetsList = Array.isArray(willData.assets) ? willData.assets : [];
@@ -734,12 +768,21 @@ export function resolvePersonalLawRegime(willData = {}) {
         // Generic civil records are strictly excluded; only statutory land classification documents are accepted.
         const revEv = a.classificationEvidence || a.revenueEvidence || a.revenueRecord;
         const parcelId = a.surveyNumber || a.khasraNumber || a.ctsNumber || a.plotNumber;
-        const revCheck = revEv ? validateJurisdictionEvidence(revEv, VALID_LAND_CLASSIFICATION_DOC_TYPES, {
-          userId: p.userId || p.uid || (p.user && p.user.uid),
-          willId: p.willId || p.id,
-          testatorName: p.fullName,
-          parcelId
-        }) : { isValid: false, blockerCode: "ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN", reason: "Missing revenue classification evidence." };
+        let revCheck;
+        if (!activeAuthContext || !activeAuthContext.userId || !activeAuthContext.willId) {
+          revCheck = {
+            isValid: false,
+            blockerCode: "ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT",
+            reason: "Evidence verification requires a verified authenticated server session with valid userId and willId."
+          };
+        } else {
+          revCheck = revEv ? validateJurisdictionEvidence(revEv, VALID_LAND_CLASSIFICATION_DOC_TYPES, {
+            userId: activeAuthContext.userId.trim(),
+            willId: activeAuthContext.willId.trim(),
+            testatorName: p.fullName,
+            parcelId
+          }) : { isValid: false, blockerCode: "ERR_AGRICULTURAL_LAND_CLASSIFICATION_UNCERTAIN", reason: "Missing revenue classification evidence." };
+        }
 
         if ((revClass === 'NON_AGRICULTURAL' || revClass === 'COMMERCIAL' || revClass === 'RESIDENTIAL') && revCheck.isValid) {
           // Confirmed non-agricultural by verified documentary revenue classification evidence
@@ -833,7 +876,7 @@ export function resolvePersonalLawRegime(willData = {}) {
       };
     }
 
-    const declValidation = validateShariatDeclarationRecord(declarationRecord, p);
+    const declValidation = validateShariatDeclarationRecord(declarationRecord, p, activeAuthContext);
     if (!declValidation.isValid) {
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
@@ -1066,15 +1109,24 @@ export function resolvePersonalLawRegime(willData = {}) {
     // Fail-Closed: User-entered historical territory code alone cannot establish Section 57(a) jurisdiction without verified documentary evidence!
     if (isHistoricalPresidencyExec) {
       const execHistEvidence = p.historicalTerritoryEvidence || p.territorialEvidence;
-      const execHistCheck = execHistEvidence ? validateJurisdictionEvidence(execHistEvidence, [
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
-        JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
-        ...VALID_PROPERTY_TERRITORY_DOC_TYPES
-      ], {
-        userId: p.userId || p.uid || (p.user && p.user.uid),
-        willId: p.willId || p.id,
-        testatorName: p.fullName
-      }) : { isValid: false, reason: "Missing historical territory evidence." };
+      let execHistCheck;
+      if (!activeAuthContext || !activeAuthContext.userId || !activeAuthContext.willId) {
+        execHistCheck = {
+          isValid: false,
+          blockerCode: "ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT",
+          reason: "Evidence verification requires a verified authenticated server session with valid userId and willId."
+        };
+      } else {
+        execHistCheck = execHistEvidence ? validateJurisdictionEvidence(execHistEvidence, [
+          JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_CIVIL_RECORD,
+          JURISDICTION_DOCUMENT_TYPES.REST_OF_INDIA_DOMICILE_CERTIFICATE,
+          ...VALID_PROPERTY_TERRITORY_DOC_TYPES
+        ], {
+          userId: activeAuthContext.userId.trim(),
+          willId: activeAuthContext.willId.trim(),
+          testatorName: p.fullName
+        }) : { isValid: false, reason: "Missing historical territory evidence." };
+      }
 
       if (!execHistCheck.isValid) {
         return {
@@ -1098,24 +1150,35 @@ export function resolvePersonalLawRegime(willData = {}) {
 
     // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
     // Mandatory Asset Inventory Gate for Section 57(b) Immovable Property Verification:
-    if (!Array.isArray(willData.assets)) {
-      const hasNegativeDeclaration = willData.noImmovableProperty === true || p.noImmovableProperty === true || willData.noAssets === true || p.noAssets === true;
-      if (!hasNegativeDeclaration) {
-        return {
-          regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
-          isGoa: false,
-          isParsi: false,
-          isChristian: false,
-          isMuslim: false,
-          isHindu: true,
-          requiresLegalReview: true,
-          statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Asset Inventory Required)",
-          statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
-          reasons: ["Asset inventory is missing or unrecorded. Immovable property situated within historical presidency towns must be affirmatively identified under Section 57(b); asset completeness must be verified."],
-          blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete immovable property inventory (or affirmative negative declaration) is mandatory to evaluate Section 57(b) territorial jurisdiction."],
-          jurisdiction
-        };
-      }
+    // Naked booleans (noImmovableProperty: true, noAssets: true) are strictly REJECTED.
+    const assetDeclHindu = willData.assetInventoryDeclaration || p.assetInventoryDeclaration;
+    const hasValidHinduNegativeDeclaration = Boolean(
+      assetDeclHindu &&
+      (assetDeclHindu.hasNoAssets === true || assetDeclHindu.hasNoImmovableProperty === true) &&
+      assetDeclHindu.declarationSigned === true &&
+      isValidIsoDate(assetDeclHindu.declarationDate) &&
+      assetDeclHindu.verifiedCompletenessAudit === true &&
+      assetDeclHindu.auditSessionId
+    );
+
+    if (!Array.isArray(willData.assets) && !hasValidHinduNegativeDeclaration) {
+      return {
+        regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
+        isGoa: false,
+        isParsi: false,
+        isChristian: false,
+        isMuslim: false,
+        isHindu: true,
+        requiresLegalReview: true,
+        statuteCitation: "Indian Succession Act, 1925 Section 57(b) (Asset Inventory Required)",
+        statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
+        reasons: [
+          "Asset inventory is missing or unrecorded. Immovable property situated within historical presidency towns must be affirmatively identified under Section 57(b); asset completeness must be verified.",
+          "Naked Booleans (e.g. noImmovableProperty: true) cannot bypass statutory asset inventory requirements without a verified structured completeness declaration."
+        ],
+        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete immovable property inventory (or verified structured asset inventory declaration) is mandatory to evaluate Section 57(b) territorial jurisdiction. Naked booleans (noImmovableProperty: true) are legally inadmissible."],
+        jurisdiction
+      };
     }
 
     // Broad, non-dropping immovable property inventory check covering apartments, flats, villas, shops, units, land, houses, etc.
@@ -1182,12 +1245,21 @@ export function resolvePersonalLawRegime(willData = {}) {
       if (!claimsCode) return false;
       const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
       const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
-      const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
-        userId: p.userId || p.uid || (p.user && p.user.uid),
-        willId: p.willId || p.id,
-        testatorName: p.fullName,
-        parcelId
-      }) : { isValid: false, blockerCode: "ERR_HISTORICAL_TERRITORY_UNVERIFIED", reason: "Missing historical territory evidence." };
+      let evCheck;
+      if (!activeAuthContext || !activeAuthContext.userId || !activeAuthContext.willId) {
+        evCheck = {
+          isValid: false,
+          blockerCode: "ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT",
+          reason: "Evidence verification requires a verified authenticated server session with valid userId and willId."
+        };
+      } else {
+        evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+          userId: activeAuthContext.userId.trim(),
+          willId: activeAuthContext.willId.trim(),
+          testatorName: p.fullName,
+          parcelId
+        }) : { isValid: false, blockerCode: "ERR_HISTORICAL_TERRITORY_UNVERIFIED", reason: "Missing historical territory evidence." };
+      }
 
       if (!evCheck.isValid) {
         if (evCheck.blockerCode === 'ERR_PARCEL_MISMATCH') {
@@ -1222,12 +1294,17 @@ export function resolvePersonalLawRegime(willData = {}) {
       const hasVerifiedAsset = immovableAssets.some(a => {
         const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
         const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
-        const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
-          userId: p.userId || p.uid || (p.user && p.user.uid),
-          willId: p.willId || p.id,
-          testatorName: p.fullName,
-          parcelId
-        }) : { isValid: false };
+        let evCheck;
+        if (!activeAuthContext || !activeAuthContext.userId || !activeAuthContext.willId) {
+          evCheck = { isValid: false };
+        } else {
+          evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+            userId: activeAuthContext.userId.trim(),
+            willId: activeAuthContext.willId.trim(),
+            testatorName: p.fullName,
+            parcelId
+          }) : { isValid: false };
+        }
         return evCheck.isValid;
       });
       if (!hasVerifiedAsset) {
@@ -1256,12 +1333,17 @@ export function resolvePersonalLawRegime(willData = {}) {
       if (!claimsCode) return false;
       const ev = a.historicalTerritoryEvidence || a.territorialEvidence;
       const parcelId = a.surveyNumber || a.ctsNumber || a.khasraNumber || a.plotNumber;
-      const evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
-        userId: p.userId || p.uid || (p.user && p.user.uid),
-        willId: p.willId || p.id,
-        testatorName: p.fullName,
-        parcelId
-      }) : { isValid: false };
+      let evCheck;
+      if (!activeAuthContext || !activeAuthContext.userId || !activeAuthContext.willId) {
+        evCheck = { isValid: false };
+      } else {
+        evCheck = ev ? validateJurisdictionEvidence(ev, VALID_PROPERTY_TERRITORY_DOC_TYPES, {
+          userId: activeAuthContext.userId.trim(),
+          willId: activeAuthContext.willId.trim(),
+          testatorName: p.fullName,
+          parcelId
+        }) : { isValid: false };
+      }
       return evCheck.isValid;
     });
 

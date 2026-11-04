@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
-  classifyGoaJurisdiction,
+  classifyGoaJurisdiction as rawClassifyGoaJurisdiction,
   JURISDICTION_STATUS,
   GOA_SECTION_1_4_CLAUSES,
   JURISDICTION_DOCUMENT_TYPES,
-  validateJurisdictionEvidence
+  validateJurisdictionEvidence as rawValidateJurisdictionEvidence
 } from '../../js/legal/goaJurisdiction.js';
 import { calculateGoaInheritance, CALCULATION_STATUS } from '../../js/legal/inheritanceCalculator.js';
 import { evaluateAssetMatrimonialOwnership, MATRIMONIAL_REGIMES, SECTION_219_EXCEPTIONS } from '../../js/legal/matrimonialRegime.js';
@@ -12,21 +12,80 @@ import { verifyPropertyTitle, TITLE_DOCUMENT_TYPES } from '../../js/legal/titleV
 import { generateNominationClause } from '../../js/legal/nominationRules.js';
 import { generateMinorTrustClauses, generateStatutoryDebtHierarchy } from '../../js/legal/trusteeMinorRules.js';
 import { validateResiduaryAllocations } from '../../js/legal/residuaryValidator.js';
-import { runPreFlightLegalBlockerAudit } from '../../js/legal/legalBlockers.js';
-import { calculateDraftReadinessIndex, DRAFT_STATUS_BANDS } from '../../js/legal/readinessIndex.js';
+import { runPreFlightLegalBlockerAudit as rawRunPreFlightLegalBlockerAudit } from '../../js/legal/legalBlockers.js';
+import { calculateDraftReadinessIndex as rawCalculateDraftReadinessIndex, DRAFT_STATUS_BANDS } from '../../js/legal/readinessIndex.js';
 import {
-  resolvePersonalLawRegime,
+  resolvePersonalLawRegime as rawResolvePersonalLawRegime,
   PERSONAL_LAW_REGIMES,
-  validateShariatDeclarationRecord,
+  validateShariatDeclarationRecord as rawValidateShariatDeclarationRecord,
   HISTORICAL_PRESIDENCY_CODES
 } from '../../js/legal/personalLawRouter.js';
-import { generateGoaSection333PDF, formatDateToFormalWords } from '../../js/services/pdfGoaSection333.js';
+import { generateGoaSection333PDF as rawGenerateGoaSection333PDF, formatDateToFormalWords } from '../../js/services/pdfGoaSection333.js';
 
 import {
   createTrustedServerEvidenceFixture,
+  createTestAuthContext,
   registerAndVerifyEvidence,
   clearServerVerificationRegistry
-} from '../../js/services/evidenceVerificationService.js';
+} from '../fixtures/testEvidenceFixtures.js';
+
+import {
+  VALID_LAND_CLASSIFICATION_DOC_TYPES,
+  VALID_PROPERTY_TERRITORY_DOC_TYPES
+} from '../../js/legal/evidenceValidator.js';
+
+// Default authenticated server context for test suite
+const defaultAuthContext = createTestAuthContext();
+
+// Test suite wrappers enforcing authenticated server context
+function classifyGoaJurisdiction(p, auth) {
+  const context = arguments.length > 1 ? auth : (p && p.authenticatedServerContext !== undefined ? p.authenticatedServerContext : defaultAuthContext);
+  return rawClassifyGoaJurisdiction(p, context);
+}
+
+function resolvePersonalLawRegime(willData, auth) {
+  const context = arguments.length > 1 ? auth : (willData && willData.authenticatedServerContext !== undefined ? willData.authenticatedServerContext : defaultAuthContext);
+  return rawResolvePersonalLawRegime(willData, context);
+}
+
+function validateShariatDeclarationRecord(record, personal, auth) {
+  const context = arguments.length > 2 ? auth : defaultAuthContext;
+  return rawValidateShariatDeclarationRecord(record, personal, context);
+}
+
+function validateJurisdictionEvidence(record, expectedDocTypes = [], context) {
+  const effectiveContext = (arguments.length > 2 && context !== undefined)
+    ? { ...defaultAuthContext, ...context }
+    : defaultAuthContext;
+  return rawValidateJurisdictionEvidence(record, expectedDocTypes, effectiveContext);
+}
+
+function ensureTestAuth(data) {
+  if (!data || typeof data !== 'object') return data;
+  if (!data.authenticatedServerContext && !data.authContext && (!data.personal || !data.personal.authenticatedServerContext)) {
+    return {
+      ...data,
+      authenticatedServerContext: defaultAuthContext,
+      personal: data.personal ? {
+        ...data.personal,
+        authenticatedServerContext: defaultAuthContext
+      } : undefined
+    };
+  }
+  return data;
+}
+
+async function generateGoaSection333PDF(willData) {
+  return rawGenerateGoaSection333PDF(ensureTestAuth(willData));
+}
+
+function calculateDraftReadinessIndex(willData) {
+  return rawCalculateDraftReadinessIndex(ensureTestAuth(willData));
+}
+
+function runPreFlightLegalBlockerAudit(willData) {
+  return rawRunPreFlightLegalBlockerAudit(ensureTestAuth(willData));
+}
 
 // Standard verified evidence fixtures for test suite with authentic backend forensic verification
 const sampleClauseAEvidence = createTrustedServerEvidenceFixture({
@@ -3211,6 +3270,208 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(res.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
     expect(res.reasons.some(r => r.includes('Asset inventory is missing or unrecorded'))).toBe(true);
+  });
+
+  // ── REVISION 12 BACKEND SECURITY RECONSTRUCTION & ADVERSARIAL INTEGRATION TESTS ──
+
+  it('143. Stage 1 Revision 12 Adversarial 17: Unauthenticated call to classifyGoaJurisdiction with evidence returns ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT', () => {
+    const resNoAuth = rawClassifyGoaJurisdiction({
+      pob: 'Margao, Goa',
+      dob: '1958-04-12',
+      pre1961PortugueseRegime: true,
+      clauseAEvidence: sampleClauseAEvidence
+    }, null);
+
+    expect(resNoAuth.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resNoAuth.canGenerateWill).toBe(false);
+    expect(resNoAuth.blockers[0]).toContain('ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT');
+
+    const resEmptyAuth = rawClassifyGoaJurisdiction({
+      pob: 'Margao, Goa',
+      dob: '1958-04-12',
+      pre1961PortugueseRegime: true,
+      clauseAEvidence: sampleClauseAEvidence
+    }, {});
+    expect(resEmptyAuth.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resEmptyAuth.blockers[0]).toContain('ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT');
+  });
+
+  it('144. Stage 1 Revision 12 Adversarial 18: Unauthenticated call to resolvePersonalLawRegime with Shariat Section 3 declaration fails with ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT', () => {
+    const willData = {
+      personal: {
+        fullName: 'Imtiaz Khan',
+        pob: 'Lucknow, UP',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        dob: '1980-01-01',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      },
+      assets: [
+        {
+          id: 'plot-1',
+          type: 'Plot',
+          desc: 'Plot No. 12, Gulmohar Enclave',
+          revenueClassification: 'NON_AGRICULTURAL',
+          classificationEvidence: sampleRevenueClassificationEvidence
+        }
+      ]
+    };
+
+    const res = rawResolvePersonalLawRegime(willData, null);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.blockers.some(b => b.includes('ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT'))).toBe(true);
+  });
+
+  it('145. Stage 1 Revision 12 Adversarial 19: Forged evidence ticket with invalid HMAC signature rejected with ERR_FORGED_EVIDENCE_TICKET', () => {
+    const validTicket = sampleClauseAEvidence.serverVerificationTicket;
+    const tamperedEvidence = {
+      ...sampleClauseAEvidence,
+      serverVerificationTicket: {
+        ...validTicket,
+        claimedStatutoryFact: 'ALTERED_FACT_FORGERY',
+        serverSignature: 'a'.repeat(64)
+      }
+    };
+
+    const res = validateJurisdictionEvidence(
+      tamperedEvidence,
+      [JURISDICTION_DOCUMENT_TYPES.HISTORICAL_PORTUGUESE_CIVIL_RECORD]
+    );
+
+    expect(res.isValid).toBe(false);
+    expect(res.blockerCode).toBe('ERR_FORGED_EVIDENCE_TICKET');
+    expect(res.reason).toContain('Server verification ticket signature');
+  });
+
+  it('146. Stage 1 Revision 12 Adversarial 20: Naked boolean noAssets or noImmovableProperty fails closed with ERR_ASSET_INVENTORY_REQUIRED', () => {
+    const hinduNakedBool = {
+      personal: {
+        fullName: 'Ramesh Sharma',
+        pob: 'Varanasi, UP',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Hindu',
+        willExecutionDate: '2026-06-15',
+        willExecutionPlace: 'Varanasi, UP',
+        noImmovableProperty: true
+      }
+    };
+    const resHindu = resolvePersonalLawRegime(hinduNakedBool);
+    expect(resHindu.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resHindu.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+
+    const muslimNakedBool = {
+      personal: {
+        fullName: 'Imtiaz Khan',
+        pob: 'Lucknow, UP',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        dob: '1980-01-01',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord,
+        noAssets: true
+      }
+    };
+    const resMuslim = resolvePersonalLawRegime(muslimNakedBool);
+    expect(resMuslim.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resMuslim.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+  });
+
+  it('147. Stage 1 Revision 12 Adversarial 21: Client and public assets are completely free of server secrets and fixture generators', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+
+    function searchDirForSecrets(dirPath) {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          searchDirForSecrets(fullPath);
+        } else if (entry.isFile() && (entry.name.endsWith('.js') || entry.name.endsWith('.cjs') || entry.name.endsWith('.html'))) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          expect(content).not.toContain('smartwill-secret-key-2026');
+          if (dirPath.includes('js') && !dirPath.includes('server') && !dirPath.includes('tests') && !dirPath.includes('functions')) {
+            expect(content).not.toContain('createTrustedServerEvidenceFixture');
+          }
+        }
+      }
+    }
+
+    const jsDir = path.resolve(process.cwd(), 'js');
+    searchDirForSecrets(jsDir);
+  });
+
+  it('148. Stage 1 Revision 12 Adversarial 22: Server evidence verification engine enforces authoritative reviewer validation and raw byte hashing', async () => {
+    const { registerAndVerifyEvidence } = await import('../../server/evidenceVerificationEngine.cjs');
+    
+    // 1. Unverified reviewer role rejected
+    expect(() => registerAndVerifyEvidence({
+      user: { uid: 'user-audit-123' },
+      willId: 'will-audit-456',
+      documentStorageId: 'DOC-123',
+      documentBytes: 'test bytes content',
+      reviewer: { verifiedBy: 'John Doe', reviewerRole: 'NOTARY_ASSISTANT' }
+    })).toThrow(/ERR_UNAUTHORIZED_REVIEWER_ROLE/);
+
+    // 2. Verified reviewer produces valid ticket with correct byte hash
+    const validResult = registerAndVerifyEvidence({
+      user: { uid: 'user-audit-123' },
+      willId: 'will-audit-456',
+      documentStorageId: 'DOC-STORE-123',
+      documentBytes: 'statutory-document-raw-bytes-sample',
+      documentMetadata: { documentType: 'HISTORICAL_PORTUGUESE_CIVIL_RECORD' },
+      reviewer: {
+        verifiedBy: 'Advocate Carlos Pereira, Bar of Goa',
+        reviewerRole: 'ADVOCATE',
+        enrollmentNumber: 'GOA/123/2005'
+      }
+    });
+
+    expect(validResult).toBeDefined();
+    expect(validResult.verificationTicketId).toMatch(/^TICKET-/);
+    expect(validResult.serverSignature).toHaveLength(64);
+    expect(validResult.userId).toBe('user-audit-123');
+    expect(validResult.willId).toBe('will-audit-456');
+  });
+
+  it('149. Stage 1 Revision 12 Adversarial 23: Vercel serverless endpoint /api/verify-evidence enforces authentication and willId binding', async () => {
+    const verifyEvidenceHandler = (await import('../../api/verify-evidence.js')).default || (await import('../../api/verify-evidence.js'));
+
+    // Test rejection of non-POST
+    let statusSet = 0;
+    const mockResGet = {
+      setHeader: () => {},
+      status: (code) => { statusSet = code; return { json: () => {}, end: () => {} }; },
+      json: () => {}
+    };
+    await verifyEvidenceHandler({ method: 'GET', headers: {} }, mockResGet);
+    expect(statusSet).toBe(405);
+
+    // Test rejection of unauthenticated POST
+    let unauthStatus = 0;
+    const mockResUnauth = {
+      setHeader: () => {},
+      status: (code) => { unauthStatus = code; return { json: () => {}, end: () => {} }; },
+      json: () => {}
+    };
+    await verifyEvidenceHandler({ method: 'POST', headers: {}, body: {} }, mockResUnauth);
+    expect(unauthStatus).toBe(401);
+  });
+
+  it('150. Stage 1 Revision 12 Adversarial 24: Cloud Function verifyEvidence enforces authentication and validates storage identity', async () => {
+    const { verifyEvidence } = await import('../../functions/verifyEvidence.js');
+    
+    // Unauthenticated caller throws ERR_UNAUTHENTICATED_REQUEST
+    await expect(verifyEvidence.run({}, { auth: null })).rejects.toThrow(/ERR_UNAUTHENTICATED_REQUEST/);
+
+    // Missing willId throws ERR_WILL_BINDING_REQUIRED
+    await expect(verifyEvidence.run({}, { auth: { uid: 'test-user-id', token: {} } })).rejects.toThrow(/ERR_WILL_BINDING_REQUIRED/);
   });
 
 });
