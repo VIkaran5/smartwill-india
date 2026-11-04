@@ -8,7 +8,28 @@
  * Version: 2.1.3 (Revision 12 Forensic Standard)
  */
 
-const functions = require('firebase-functions');
+let functions;
+try {
+  functions = require('firebase-functions');
+} catch (e) {
+  // Graceful fallback for root unit test environments where functions/ has separate package.json
+  functions = {
+    https: {
+      onCall: (fn) => {
+        const handler = (data, context) => fn(data, context);
+        handler.run = fn;
+        return handler;
+      },
+      HttpsError: class HttpsError extends Error {
+        constructor(code, message) {
+          super(message);
+          this.code = code;
+          this.name = 'HttpsError';
+        }
+      }
+    }
+  };
+}
 const admin = require('firebase-admin');
 const { registerAndVerifyEvidence } = require('../server/evidenceVerificationEngine.cjs');
 
