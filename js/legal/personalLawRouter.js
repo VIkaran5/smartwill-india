@@ -463,8 +463,10 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
   const blockers = [];
   const reasons = [];
 
-  // Derive authenticatedServerContext if passed in willData from server
-  const activeAuthContext = authenticatedServerContext || willData.authenticatedServerContext || willData.authContext || null;
+  // Authoritative server context can be supplied explicitly or retrieved from authenticated server session context
+  const activeAuthContext = (authenticatedServerContext && typeof authenticatedServerContext === 'object')
+    ? authenticatedServerContext
+    : (willData && (willData.authenticatedServerContext || willData.authContext)) || null;
 
   // ── STEP 1: GOA JURISDICTION EVALUATED FIRST ──
   // Mandatory Fail-Closed: Missing evidence must never default to non-Goa personal law.
@@ -716,18 +718,28 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
     // Asset-Level Check: Agricultural Land Exclusion under Section 2 of Shariat Act, 1937
     // Broad scan covering agricultural, paddy, orchard, cashew, plantation, farm, khasra, etc.
     // AND unclassified land/plot assets whose revenue character is uncertain.
-    // Naked booleans (noAssets: true, noImmovableProperty: true) are strictly REJECTED.
+    // Empty asset arrays or naked booleans (noAssets: true) are strictly REJECTED without server-verified completeness attestation.
     const assetDecl = willData.assetInventoryDeclaration || p.assetInventoryDeclaration;
-    const hasValidNegativeDeclaration = Boolean(
-      assetDecl &&
-      assetDecl.hasNoAssets === true &&
-      assetDecl.declarationSigned === true &&
-      isValidIsoDate(assetDecl.declarationDate) &&
-      assetDecl.verifiedCompletenessAudit === true &&
-      assetDecl.auditSessionId
-    );
+    let hasValidNegativeDeclaration = false;
 
-    if (!Array.isArray(willData.assets) && !hasValidNegativeDeclaration) {
+    if (assetDecl &&
+        assetDecl.hasNoAssets === true &&
+        assetDecl.declarationSigned === true &&
+        isValidIsoDate(assetDecl.declarationDate) &&
+        assetDecl.auditSessionId &&
+        !['test', 'fake', 'mock', 'null', 'undefined', 'invalid'].includes(String(assetDecl.auditSessionId).toLowerCase())) {
+      const auditTicket = assetDecl.completenessAttestationTicket || assetDecl.serverAuditTicket || assetDecl.serverVerificationTicket;
+      if (auditTicket && activeAuthContext) {
+        const ticketCheck = validateEvidenceRecordAgainstServer(auditTicket, activeAuthContext);
+        if (ticketCheck.isValid) {
+          hasValidNegativeDeclaration = true;
+        }
+      }
+    }
+
+    const hasNoAssetsInInventory = !Array.isArray(willData.assets) || willData.assets.length === 0;
+
+    if (hasNoAssetsInInventory && !hasValidNegativeDeclaration) {
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -740,9 +752,9 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
         statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
         reasons: [
           "Asset inventory is missing or unrecorded. Under Section 2 of the Shariat Act, 1937, agricultural land is excluded from testamentary succession; asset completeness must be verified.",
-          "Naked Booleans (e.g. noAssets: true) cannot bypass statutory asset inventory requirements without a verified structured completeness declaration."
+          "Empty asset arrays or naked Booleans (e.g. noAssets: true) cannot bypass statutory asset inventory requirements without a server-verified completeness attestation."
         ],
-        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete asset inventory (or verified structured asset inventory declaration) is mandatory under Section 2 of Shariat Act, 1937 to verify exclusion of agricultural land. Naked booleans (noAssets: true) are legally inadmissible."],
+        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete asset inventory (or server-verified structured completeness attestation) is mandatory under Section 2 of Shariat Act, 1937 to verify exclusion of agricultural land. Naked booleans (noAssets: true) or empty asset arrays without verified audit are legally inadmissible."],
         jurisdiction
       };
     }
@@ -1150,18 +1162,28 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
 
     // Clause (b): Made outside those territories, so far as relates to immovable property situated within those territories
     // Mandatory Asset Inventory Gate for Section 57(b) Immovable Property Verification:
-    // Naked booleans (noImmovableProperty: true, noAssets: true) are strictly REJECTED.
+    // Empty asset arrays or naked booleans (noImmovableProperty: true) are strictly REJECTED without server-verified completeness attestation.
     const assetDeclHindu = willData.assetInventoryDeclaration || p.assetInventoryDeclaration;
-    const hasValidHinduNegativeDeclaration = Boolean(
-      assetDeclHindu &&
-      (assetDeclHindu.hasNoAssets === true || assetDeclHindu.hasNoImmovableProperty === true) &&
-      assetDeclHindu.declarationSigned === true &&
-      isValidIsoDate(assetDeclHindu.declarationDate) &&
-      assetDeclHindu.verifiedCompletenessAudit === true &&
-      assetDeclHindu.auditSessionId
-    );
+    let hasValidHinduNegativeDeclaration = false;
 
-    if (!Array.isArray(willData.assets) && !hasValidHinduNegativeDeclaration) {
+    if (assetDeclHindu &&
+        (assetDeclHindu.hasNoAssets === true || assetDeclHindu.hasNoImmovableProperty === true) &&
+        assetDeclHindu.declarationSigned === true &&
+        isValidIsoDate(assetDeclHindu.declarationDate) &&
+        assetDeclHindu.auditSessionId &&
+        !['test', 'fake', 'mock', 'null', 'undefined', 'invalid'].includes(String(assetDeclHindu.auditSessionId).toLowerCase())) {
+      const auditTicket = assetDeclHindu.completenessAttestationTicket || assetDeclHindu.serverAuditTicket || assetDeclHindu.serverVerificationTicket;
+      if (auditTicket && activeAuthContext) {
+        const ticketCheck = validateEvidenceRecordAgainstServer(auditTicket, activeAuthContext);
+        if (ticketCheck.isValid) {
+          hasValidHinduNegativeDeclaration = true;
+        }
+      }
+    }
+
+    const hasNoAssetsHindu = !Array.isArray(willData.assets) || willData.assets.length === 0;
+
+    if (!hasPresidencyExecution && hasNoAssetsHindu && !hasValidHinduNegativeDeclaration) {
       return {
         regime: PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED,
         isGoa: false,
@@ -1174,9 +1196,9 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
         statutoryCrest: "LEGAL REVIEW REQUIRED — ASSET INVENTORY MANDATORY",
         reasons: [
           "Asset inventory is missing or unrecorded. Immovable property situated within historical presidency towns must be affirmatively identified under Section 57(b); asset completeness must be verified.",
-          "Naked Booleans (e.g. noImmovableProperty: true) cannot bypass statutory asset inventory requirements without a verified structured completeness declaration."
+          "Empty asset arrays or naked Booleans (e.g. noImmovableProperty: true) cannot bypass statutory asset inventory requirements without a server-verified completeness attestation."
         ],
-        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete immovable property inventory (or verified structured asset inventory declaration) is mandatory to evaluate Section 57(b) territorial jurisdiction. Naked booleans (noImmovableProperty: true) are legally inadmissible."],
+        blockers: ["ERR_ASSET_INVENTORY_REQUIRED: Complete immovable property inventory (or server-verified structured completeness attestation) is mandatory to evaluate Section 57(b) territorial jurisdiction. Naked booleans (noImmovableProperty: true) or empty asset arrays without verified audit are legally inadmissible."],
         jurisdiction
       };
     }

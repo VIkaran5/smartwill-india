@@ -7,13 +7,16 @@
 import cjsModule from './evidenceVerificationEngine.cjs';
 
 export const {
+  getSigningKey,
   computeSha256,
   registerAndVerifyEvidence,
+  persistTicketToFirestore,
+  getTicketFromFirestore,
   validateEvidenceRecordAgainstServer,
   verifyTicketSignature,
   computeTicketSignature,
+  verifyReviewerCredentials,
   clearServerVerificationRegistry,
-  AUTHORITATIVE_REVIEWER_REGISTRY,
   AUTHORIZED_REVIEWER_ROLES,
   BAR_ENROLLMENT_REGEX,
   VALID_LAND_CLASSIFICATION_DOC_TYPES,

@@ -515,7 +515,10 @@ export function classifyGoaJurisdiction(p = {}, authenticatedServerContext = nul
   }
 
   const jurEv = p.jurisdictionEvidence || {};
-  const activeAuthContext = authenticatedServerContext || (p && (p.authenticatedServerContext || p.authContext)) || null;
+  // Authoritative server context can be supplied explicitly or retrieved from authenticated server session context
+  const activeAuthContext = (authenticatedServerContext && typeof authenticatedServerContext === 'object')
+    ? authenticatedServerContext
+    : (p && (p.authenticatedServerContext || p.authContext)) || null;
   const hasEvidenceSupplied = Boolean(
     p.jurisdictionEvidence ||
     p.clauseAEvidence || p.clauseBEvidence || p.clauseCEvidence ||

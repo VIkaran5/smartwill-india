@@ -31,7 +31,9 @@ import {
 
 import {
   VALID_LAND_CLASSIFICATION_DOC_TYPES,
-  VALID_PROPERTY_TERRITORY_DOC_TYPES
+  VALID_PROPERTY_TERRITORY_DOC_TYPES,
+  setCryptographicTicketVerifier,
+  validateEvidenceRecordAgainstServer
 } from '../../js/legal/evidenceValidator.js';
 
 // Default authenticated server context for test suite
@@ -1324,7 +1326,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         immovablePropertyLocation: 'Nagpur',
         willExecutionDate: '2026-01-15'
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Residential House", desc: "Ancestral House in Nagpur", value: 1000000, immovablePropertyLocation: "Nagpur" }
+      ]
     });
     expect(willC.section57Clause).toContain('Section 57(c)');
     expect(willC.scheduleIIIApplicable).toBe(true);
@@ -1342,7 +1346,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         willExecutionPlace: 'Bengaluru',
         willExecutionDate: '2026-02-01'
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Bank Account", desc: "Fixed Deposit at SBI Bengaluru", value: 500000 }
+      ]
     });
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
     expect(res.coparcenaryNotice).toContain('Section 30 of the Hindu Succession Act, 1956');
@@ -1362,7 +1368,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         contractCompetent: true,
         shariatDeclarationRecord: sampleShariatDeclarationRecord
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Residential House", desc: "House in Lucknow", value: 2000000 }
+      ]
     };
     const res = resolvePersonalLawRegime(willData);
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.MUSLIM_SUNNI);
@@ -1382,7 +1390,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         religion: 'Muslim',
         sect: 'Sunni'
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Residential House", desc: "House in Hyderabad", value: 2500000 }
+      ]
     };
     const res = resolvePersonalLawRegime(willData);
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
@@ -1418,6 +1428,10 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
   });
 
   it('59. Stage 1 Shariat Section 3 Negatives: Naked Boolean, unverified record, incompetent declarant, and refused appeal strictly fail', () => {
+    const validSampleAssets = [
+      { id: "a1", type: "Residential House", desc: "House in Lucknow", value: 2000000 }
+    ];
+
     const resNaked = resolvePersonalLawRegime({
       personal: {
         dob: '1980-01-01',
@@ -1429,7 +1443,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         sect: 'Sunni',
         shariatSec3Declaration: true
       },
-      assets: []
+      assets: validSampleAssets
     });
     expect(resNaked.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resNaked.blockers[0]).toContain('ERR_SHARIAT_SEC3_DEFECTIVE');
@@ -1446,7 +1460,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         sect: 'Sunni',
         shariatDeclarationRecord: unverifiedRec
       },
-      assets: []
+      assets: validSampleAssets
     });
     expect(resUnverified.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resUnverified.blockers[0]).toContain('ERR_MUSLIM_TESTAMENTARY_REGIME_UNCONFIRMED');
@@ -1464,7 +1478,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         contractCompetent: false,
         shariatDeclarationRecord: incompetentRec
       },
-      assets: []
+      assets: validSampleAssets
     });
     expect(resIncompetent.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resIncompetent.blockers[0]).toContain('ERR_SHARIAT_SEC3_INCOMPETENT');
@@ -1481,7 +1495,7 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         sect: 'Sunni',
         shariatDeclarationRecord: refusedRec
       },
-      assets: []
+      assets: validSampleAssets
     });
     expect(resRefused.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resRefused.blockers[0]).toContain('ERR_SHARIAT_SEC3_APPEAL_REFUSED');
@@ -1627,7 +1641,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         immovablePropertyLocation: 'Nagpur',
         willExecutionDate: '1925-10-15'
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Residential House", desc: "House in Nagpur", value: 100000, immovablePropertyLocation: "Nagpur" }
+      ]
     });
     expect(resPre1927.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
     expect(resPre1927.blockers[0]).toContain('ERR_PRE_1927_NON_PRESIDENCY_WILL');
@@ -1644,7 +1660,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         immovablePropertyLocation: 'Nagpur',
         willExecutionDate: '1927-01-01'
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Residential House", desc: "House in Nagpur", value: 100000, immovablePropertyLocation: "Nagpur" }
+      ]
     });
     expect(resExact1927.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
     expect(resExact1927.section57Clause).toContain('Section 57(c)');
@@ -1971,7 +1989,9 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
         willExecutionDate: "2026-04-15",
         willExecutionPlace: "Bengaluru"
       },
-      assets: []
+      assets: [
+        { id: "a1", type: "Bank Account", desc: "Fixed Deposit at SBI Bengaluru", value: 500000 }
+      ]
     };
     const res = resolvePersonalLawRegime(willData);
     expect(res.regime).toBe(PERSONAL_LAW_REGIMES.HINDU);
@@ -3395,7 +3415,8 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
           searchDirForSecrets(fullPath);
         } else if (entry.isFile() && (entry.name.endsWith('.js') || entry.name.endsWith('.cjs') || entry.name.endsWith('.html'))) {
           const content = fs.readFileSync(fullPath, 'utf8');
-          expect(content).not.toContain('smartwill-secret-key-2026');
+          const legacyRev11Key = ['smartwill', 'secret', 'key', '2026'].join('-');
+          expect(content).not.toContain(legacyRev11Key);
           if (dirPath.includes('js') && !dirPath.includes('server') && !dirPath.includes('tests') && !dirPath.includes('functions')) {
             expect(content).not.toContain('createTrustedServerEvidenceFixture');
           }
@@ -3472,6 +3493,263 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
 
     // Missing willId throws ERR_WILL_BINDING_REQUIRED
     await expect(verifyEvidence.run({}, { auth: { uid: 'test-user-id', token: {} } })).rejects.toThrow(/ERR_WILL_BINDING_REQUIRED/);
+  }, 20000);
+
+  it('151. Stage 1 Revision 13 Adversarial 25: Missing signing secret in backend environment fails closed with ERR_SIGNING_KEY_UNAVAILABLE', async () => {
+    const { registerAndVerifyEvidence } = await import('../../functions/evidenceVerificationEngine.cjs');
+    const originalKey = process.env.SMARTWILL_EVIDENCE_SIGNING_KEY;
+    try {
+      delete process.env.SMARTWILL_EVIDENCE_SIGNING_KEY;
+      expect(() => registerAndVerifyEvidence({
+        user: { uid: 'u1' },
+        willId: 'w1',
+        documentStorageId: 'DOC-1',
+        documentBytes: 'test bytes',
+        reviewer: { verifiedBy: 'Advocate A', reviewerRole: 'ADVOCATE', enrollmentNumber: 'GOA/123/2005', authoritativeRegistryConfirmed: true }
+      })).toThrow(/ERR_SIGNING_KEY_UNAVAILABLE/);
+    } finally {
+      process.env.SMARTWILL_EVIDENCE_SIGNING_KEY = originalKey;
+    }
+  });
+
+  it('152. Stage 1 Revision 13 Adversarial 26: Submitting client-supplied documentBytes to verifyEvidence is strictly rejected with ERR_CLIENT_BYTES_PROHIBITED', async () => {
+    const { verifyEvidence } = await import('../../functions/verifyEvidence.js');
+    await expect(verifyEvidence.run({
+      willId: 'will-101',
+      documentStorageId: 'DOC-101',
+      documentBytes: 'client-supplied-raw-content'
+    }, {
+      auth: { uid: 'usr-101', token: {} }
+    })).rejects.toThrow(/ERR_CLIENT_BYTES_PROHIBITED/);
+  }, 20000);
+
+  it('153. Stage 1 Revision 13 Adversarial 27: Cross-user will access is strictly rejected with ERR_FORBIDDEN_WILL_ACCESS', async () => {
+    const { verifyEvidence } = await import('../../functions/verifyEvidence.js');
+
+    const mockDb = {
+      collection: (colName) => ({
+        doc: () => ({
+          get: async () => ({
+            exists: true,
+            data: () => ({ userId: 'usr-bob-999' })
+          })
+        })
+      })
+    };
+
+    await expect(verifyEvidence.run({
+      willId: 'will-owned-by-bob',
+      documentStorageId: 'DOC-STORAGE-123'
+    }, {
+      auth: { uid: 'usr-alice-111', token: {} },
+      db: mockDb
+    })).rejects.toThrow(/ERR_FORBIDDEN_WILL_ACCESS/);
+  });
+
+  it('154. Stage 1 Revision 13 Adversarial 28: Storage object belonging to another will or user is rejected with ERR_CROSS_WILL_DOCUMENT_STORAGE', async () => {
+    const { verifyEvidence } = await import('../../functions/verifyEvidence.js');
+
+    const mockDb = {
+      collection: (colName) => ({
+        doc: () => ({
+          get: async () => ({
+            exists: true,
+            data: () => ({ userId: 'usr-alice-111' })
+          })
+        })
+      })
+    };
+
+    const mockBucket = {
+      file: () => ({
+        exists: async () => [true],
+        getMetadata: async () => [{
+          metadata: {
+            userId: 'usr-alice-111',
+            willId: 'will-different-999'
+          }
+        }],
+        download: async () => [Buffer.from('real-storage-bytes')]
+      })
+    };
+
+    await expect(verifyEvidence.run({
+      willId: 'will-alice-111',
+      documentStorageId: 'DOC-STORAGE-CROSS'
+    }, {
+      auth: { uid: 'usr-alice-111', token: {} },
+      db: mockDb,
+      bucket: mockBucket
+    })).rejects.toThrow(/ERR_CROSS_WILL_DOCUMENT_STORAGE/);
+  });
+
+  it('155. Stage 1 Revision 13 Adversarial 29: Missing cryptographic verifier in client validator fails closed with ERR_CRYPTO_VERIFIER_UNAVAILABLE', async () => {
+    const { verifyTicketSignature } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    try {
+      // Temporarily deregister verifier
+      setCryptographicTicketVerifier(null);
+
+      const testTicketEvidence = {
+        documentStorageId: 'DOC-123',
+        serverVerificationTicket: {
+          verificationTicketId: 'TICKET-123',
+          userId: 'usr-default-101',
+          willId: 'will-default-202',
+          serverSignature: 'a'.repeat(64),
+          serverComputedHash: 'b'.repeat(64)
+        }
+      };
+
+      const res = validateEvidenceRecordAgainstServer(testTicketEvidence, {
+        userId: 'usr-default-101',
+        willId: 'will-default-202'
+      });
+
+      expect(res.isValid).toBe(false);
+      expect(res.blockerCode).toBe('ERR_CRYPTO_VERIFIER_UNAVAILABLE');
+    } finally {
+      // Restore authoritative verifier
+      setCryptographicTicketVerifier(verifyTicketSignature);
+    }
+  });
+
+  it('156. Stage 1 Revision 13 Adversarial 30: Reviewer without authoritative Bar Council registry confirmation marked PENDING_MANUAL_VERIFICATION', async () => {
+    const { registerAndVerifyEvidence: regEngine } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    const unconfirmedTicket = regEngine({
+      user: { uid: 'usr-default-101' },
+      willId: 'will-default-202',
+      documentStorageId: 'DOC-STORE-UNCONFIRMED',
+      documentBytes: Buffer.from('authentic legal document content'),
+      reviewer: {
+        verifiedBy: 'Advocate Ramesh Joshi',
+        reviewerRole: 'ADVOCATE',
+        enrollmentNumber: 'MAH/999/2010',
+        authoritativeRegistryConfirmed: false
+      }
+    });
+
+    expect(unconfirmedTicket.reviewer.credentialVerified).toBe(false);
+    expect(unconfirmedTicket.reviewer.verificationStatus).toBe('PENDING_MANUAL_VERIFICATION');
+  });
+
+  it('157. Stage 1 Revision 13 Adversarial 31: Empty asset array assets: [] without server-verified completeness attestation fails closed with ERR_ASSET_INVENTORY_REQUIRED', () => {
+    // Muslim Shariat Section 2 pathway
+    const muslimEmptyAssets = {
+      personal: {
+        fullName: 'Mohammed Ali',
+        pob: 'Lucknow, UP',
+        dob: '1980-01-01',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord
+      },
+      assets: []
+    };
+    const resMuslim = resolvePersonalLawRegime(muslimEmptyAssets);
+    expect(resMuslim.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resMuslim.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+
+    // Hindu Section 57(b) pathway
+    const hinduEmptyAssets = {
+      personal: {
+        fullName: 'Ramesh Sharma',
+        pob: 'Varanasi, UP',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Hindu',
+        willExecutionDate: '2026-06-15',
+        willExecutionPlace: 'Varanasi, UP'
+      },
+      assets: []
+    };
+    const resHindu = resolvePersonalLawRegime(hinduEmptyAssets);
+    expect(resHindu.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resHindu.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+  });
+
+  it('158. Stage 1 Revision 13 Adversarial 32: Fabricated auditSessionId without valid server ticket fails closed with ERR_ASSET_INVENTORY_REQUIRED', () => {
+    const fabricatedDeclaration = {
+      personal: {
+        fullName: 'Imtiaz Khan',
+        pob: 'Lucknow, UP',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        dob: '1980-01-01',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord,
+        assetInventoryDeclaration: {
+          hasNoAssets: true,
+          declarationSigned: true,
+          declarationDate: '2026-04-10',
+          verifiedCompletenessAudit: true,
+          auditSessionId: 'SESSION-FABRICATED-789'
+        }
+      },
+      assets: []
+    };
+
+    const res = resolvePersonalLawRegime(fabricatedDeclaration);
+    expect(res.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(res.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+  });
+
+  it('159. Stage 1 Revision 13 Adversarial 33: Complete repository, backend, and dist secret scan asserts ZERO hardcoded signing keys', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+
+    const FORBIDDEN_SECRETS = [
+      ['smartwill', 'secret', 'key', '2026'].join('-'),
+      ['SMARTWILL', 'SERVER', 'SECRET', 'REV12', '9f82a4c17e384b0d'].join('_')
+    ];
+
+    const DIRS_TO_SCAN = ['js', 'server', 'functions', 'api', 'dist'];
+
+    for (const dir of DIRS_TO_SCAN) {
+      const fullDir = path.resolve(process.cwd(), dir);
+      if (!fs.existsSync(fullDir)) continue;
+
+      function scan(currentPath) {
+        const entries = fs.readdirSync(currentPath, { withFileTypes: true });
+        for (const entry of entries) {
+          const entryPath = path.join(currentPath, entry.name);
+          if (entry.isDirectory()) {
+            if (entry.name !== 'node_modules') scan(entryPath);
+          } else if (entry.isFile() && /\.(js|cjs|mjs|json|html)$/.test(entry.name)) {
+            const content = fs.readFileSync(entryPath, 'utf8');
+            for (const secret of FORBIDDEN_SECRETS) {
+              expect(content).not.toContain(secret);
+            }
+          }
+        }
+      }
+      scan(fullDir);
+    }
+  });
+
+  it('160. Stage 1 Revision 13 Adversarial 34: Functions and Vercel endpoints self-contained and free of parent-directory imports', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+
+    // 1. Verify functions/package has self-contained evidenceVerificationEngine.cjs
+    const funcEnginePath = path.resolve(process.cwd(), 'functions/evidenceVerificationEngine.cjs');
+    expect(fs.existsSync(funcEnginePath)).toBe(true);
+
+    const funcVerifyContent = fs.readFileSync(path.resolve(process.cwd(), 'functions/verifyEvidence.js'), 'utf8');
+    // Must NOT contain parent directory traversal to server
+    expect(funcVerifyContent).not.toContain('../server/evidenceVerificationEngine');
+    expect(funcVerifyContent).toContain('./evidenceVerificationEngine.cjs');
+
+    // 2. Verify api/verify-evidence.js exports handler
+    const vercelHandler = await import('../../api/verify-evidence.js');
+    expect(typeof (vercelHandler.default || vercelHandler)).toBe('function');
   });
 
 });

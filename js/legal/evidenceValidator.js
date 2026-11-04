@@ -91,17 +91,24 @@ export function validateEvidenceRecordAgainstServer(record, context = {}) {
     };
   }
 
-  // 4. Server-Side Cryptographic Verification (if verifier registered)
-  if (typeof cryptographicTicketVerifier === 'function') {
-    const isCryptoValid = cryptographicTicketVerifier(ticket);
-    if (!isCryptoValid) {
-      return {
-        isValid: false,
-        blockerCode: "ERR_FORGED_EVIDENCE_TICKET",
-        reason: "Server verification ticket signature failed cryptographic verification.",
-        ticket: null
-      };
-    }
+  // 4. Authoritative Cryptographic Verification (Fail-Closed)
+  if (typeof cryptographicTicketVerifier !== 'function') {
+    return {
+      isValid: false,
+      blockerCode: "ERR_CRYPTO_VERIFIER_UNAVAILABLE",
+      reason: "Cryptographic ticket verifier is not initialized. Authoritative evidence signature verification is mandatory and cannot be skipped.",
+      ticket: null
+    };
+  }
+
+  const isCryptoValid = cryptographicTicketVerifier(ticket);
+  if (!isCryptoValid) {
+    return {
+      isValid: false,
+      blockerCode: "ERR_FORGED_EVIDENCE_TICKET",
+      reason: "Server verification ticket signature failed cryptographic verification.",
+      ticket: null
+    };
   }
 
   // 5. Authenticated User Binding (Reject Cross-User Evidence Reuse)

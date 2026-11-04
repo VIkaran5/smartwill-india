@@ -1,11 +1,12 @@
 /**
  * SmartWill India — Evidence Verification Cloud Function
  * 
- * Firebase Cloud Function (Callable & HTTP) for trusted backend evidence verification.
- * Authenticates user tokens, checks will context, computes SHA-256 binary hash,
- * validates reviewer credentials, and returns an authoritative verification ticket.
+ * Firebase Cloud Function for trusted backend evidence verification.
+ * Authenticates user tokens, verifies Firestore will ownership, verifies Cloud Storage
+ * object ownership, retrieves raw bytes from private bucket, verifies reviewer credentials,
+ * and records immutable verification tickets in Firestore.
  * 
- * Version: 2.1.3 (Revision 12 Forensic Standard)
+ * Version: 2.1.3 (Revision 13 Forensic Standard)
  */
 
 let functions;
@@ -30,8 +31,10 @@ try {
     }
   };
 }
+
 const admin = require('firebase-admin');
-const { registerAndVerifyEvidence } = require('../server/evidenceVerificationEngine.cjs');
+// Self-contained import inside functions/ package (no ../ parent directory traversal)
+const { registerAndVerifyEvidence } = require('./evidenceVerificationEngine.cjs');
 
 if (!admin.apps.length) {
   admin.initializeApp();
@@ -39,9 +42,13 @@ if (!admin.apps.length) {
 
 /**
  * Callable Cloud Function: verifyEvidence
- * Usage from Firebase Web/Mobile Client:
- *   const verifyEvidenceFn = httpsCallable(functions, 'verifyEvidence');
- *   const result = await verifyEvidenceFn({ willId: '...', documentStorageId: '...', ... });
+ * 
+ * Enforces:
+ * 1. Mandatory Firebase Authentication
+ * 2. Firestore Will Ownership Verification (Authorization)
+ * 3. Rejection of client-supplied document bytes
+ * 4. Private Storage retrieval & ownership audit
+ * 5. Immutable ticket persistence in Firestore
  */
 exports.verifyEvidence = functions.https.onCall(async (data, context) => {
   // 1. Mandatory Firebase Authentication
@@ -52,11 +59,18 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
     );
   }
 
+  // 2. Reject client-supplied raw bytes unconditionally (P0-2)
+  if (data && data.documentBytes !== undefined) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'ERR_CLIENT_BYTES_PROHIBITED: Submitting raw document bytes from client payload is strictly prohibited. Documents must be retrieved from private cloud storage.'
+    );
+  }
+
   const {
     willId,
     documentStorageId,
     storageId,
-    documentBytes,
     documentMetadata,
     reviewer,
     subjectId,
@@ -65,47 +79,110 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
     claimedStatutoryFact
   } = data || {};
 
-  const cleanStorageId = documentStorageId || storageId;
-  if (!willId || typeof willId !== 'string' || willId.trim() === '') {
+  const cleanWillId = (willId || '').trim();
+  const cleanStorageId = (documentStorageId || storageId || '').trim();
+
+  if (!cleanWillId) {
     throw new functions.https.HttpsError(
       'invalid-argument',
       'ERR_WILL_BINDING_REQUIRED: Evidence must be bound to a specific will identifier.'
     );
   }
 
-  if (!cleanStorageId || typeof cleanStorageId !== 'string' || cleanStorageId.trim() === '') {
+  if (!cleanStorageId) {
     throw new functions.https.HttpsError(
       'invalid-argument',
       'ERR_INVALID_STORAGE_ID: Storage identifier is mandatory.'
     );
   }
 
-  try {
-    let fileBytes = documentBytes;
+  const db = (context && context.db) || (data && data._testDb) || admin.firestore();
 
-    // If documentBytes is not directly supplied in payload, attempt fetching from Cloud Storage bucket
-    if (!fileBytes && admin.storage) {
-      try {
-        const bucket = admin.storage().bucket();
-        const file = bucket.file(cleanStorageId);
-        const [downloaded] = await file.download();
-        fileBytes = downloaded;
-      } catch (storageErr) {
-        console.warn('[Cloud Storage Fetch Warning]', storageErr.message);
-      }
+  // 3. Firestore Will Ownership Verification (P0-3: Authorization)
+  let willDoc;
+  try {
+    willDoc = await db.collection('wills').doc(cleanWillId).get();
+  } catch (err) {
+    console.error('[Firestore Will Lookup Error]', err.message);
+    throw new functions.https.HttpsError('internal', 'ERR_WILL_LOOKUP_FAILED: Failed to verify will record.');
+  }
+
+  if (!willDoc.exists) {
+    throw new functions.https.HttpsError(
+      'not-found',
+      `ERR_WILL_NOT_FOUND: Will '${cleanWillId}' does not exist.`
+    );
+  }
+
+  const willData = willDoc.data() || {};
+  const willOwnerUid = willData.userId || willData.ownerId || willData.uid;
+  if (willOwnerUid !== context.auth.uid) {
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      `ERR_FORBIDDEN_WILL_ACCESS: Authenticated user '${context.auth.uid}' is not the owner of will '${cleanWillId}'. Cross-user access is prohibited.`
+    );
+  }
+
+  // 4. Private Cloud Storage Retrieval & Ownership Audit (P0-2, P0-3)
+  let fileBytes;
+  try {
+    const bucket = (context && context.bucket) || (data && data._testBucket) || admin.storage().bucket();
+    const file = bucket.file(cleanStorageId);
+    const [exists] = await file.exists();
+    if (!exists) {
+      throw new functions.https.HttpsError(
+        'not-found',
+        `ERR_STORAGE_OBJECT_NOT_FOUND: Evidence document '${cleanStorageId}' was not found in private storage repository.`
+      );
     }
 
-    const ticket = registerAndVerifyEvidence({
-      user: { uid: context.auth.uid, email: context.auth.token.email || '' },
-      willId: willId.trim(),
-      documentStorageId: cleanStorageId.trim(),
+    const [metadata] = await file.getMetadata();
+    const customMeta = metadata.metadata || {};
+
+    // Verify storage object ownership matches authenticated user and will
+    if (customMeta.userId && customMeta.userId !== context.auth.uid) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        `ERR_CROSS_USER_DOCUMENT_STORAGE: Storage object belongs to user '${customMeta.userId}', not authenticated user '${context.auth.uid}'.`
+      );
+    }
+    if (customMeta.willId && customMeta.willId !== cleanWillId) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        `ERR_CROSS_WILL_DOCUMENT_STORAGE: Storage object is bound to will '${customMeta.willId}', not requested will '${cleanWillId}'.`
+      );
+    }
+
+    const [downloaded] = await file.download();
+    if (!downloaded || downloaded.length === 0) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'ERR_EMPTY_DOCUMENT_BYTES: Stored document object contains 0 bytes.'
+      );
+    }
+    fileBytes = downloaded;
+  } catch (storageErr) {
+    if (storageErr.code && storageErr.message && storageErr.message.startsWith('ERR_')) {
+      throw storageErr;
+    }
+    console.error('[Cloud Storage Retrieval Error]', storageErr.message);
+    throw new functions.https.HttpsError('internal', `ERR_STORAGE_RETRIEVAL_FAILED: ${storageErr.message}`);
+  }
+
+  // 5. Authoritative Verification Pipeline with Firestore Persistence
+  try {
+    const ticket = await registerAndVerifyEvidence({
+      user: { uid: context.auth.uid, email: context.auth.token?.email || '' },
+      willId: cleanWillId,
+      documentStorageId: cleanStorageId,
       documentBytes: fileBytes,
       documentMetadata: documentMetadata || {},
       reviewer: reviewer || {},
       subjectId,
       parcelId,
       documentVersion: Number(documentVersion) || 1,
-      claimedStatutoryFact
+      claimedStatutoryFact,
+      db
     });
 
     return {

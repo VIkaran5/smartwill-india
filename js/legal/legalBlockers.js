@@ -13,12 +13,16 @@ import { verifyPropertyTitle } from './titleVerification.js';
 import { validateResiduaryAllocations } from './residuaryValidator.js';
 import { evaluateAssetMatrimonialOwnership } from './matrimonialRegime.js';
 
-export function runPreFlightLegalBlockerAudit(willData = {}) {
+export function runPreFlightLegalBlockerAudit(willData = {}, trustedServerContext = null) {
   const p = willData.personal || {};
   const assets = Array.isArray(willData.assets) ? willData.assets : [];
   const blockers = [];
   const warnings = [];
-  const authContext = willData.authenticatedServerContext || willData.authContext || null;
+  const authContext = (trustedServerContext && typeof trustedServerContext === 'object')
+    ? trustedServerContext
+    : (willData && (willData.authenticatedServerContext || willData.authContext))
+      || (p && (p.authenticatedServerContext || p.authContext))
+      || null;
 
   // Gate 1: Jurisdiction Classification (Section 1(4))
   const jur = classifyGoaJurisdiction(p, authContext);
