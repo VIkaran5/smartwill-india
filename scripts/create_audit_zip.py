@@ -4,7 +4,8 @@ import sys
 
 def create_audit_zip():
     project_dir = r"c:\Users\dasar\OneDrive\Documents\New folder\smartwill-india"
-    zip_dest = r"c:\Users\dasar\OneDrive\Documents\New folder\smartwill-india-rev13.zip"
+    zip_dest = r"c:\Users\dasar\OneDrive\Documents\New folder\smartwill-india-rev14.zip"
+    commit_sha = "48c616d054bc233a410c08001da2120364131ba2"
 
     if os.path.exists(zip_dest):
         try:
@@ -46,8 +47,18 @@ def create_audit_zip():
                 
                 full_path = os.path.join(root, file)
                 rel_path = os.path.relpath(full_path, project_dir)
-                
-                zf.write(full_path, rel_path)
+
+                if file == 'AUDIT_HANDOFF.md':
+                    # Ensure exact commit SHA is written into the audit ZIP's AUDIT_HANDOFF.md
+                    with open(full_path, 'r', encoding='utf-8') as hf:
+                        content = hf.read()
+                    content = content.replace("PENDING_REV14_COMMIT_SHA", commit_sha)
+                    zf.writestr(rel_path, content)
+                else:
+                    zf.write(full_path, rel_path)
+
+                total_files += 1
+                total_uncompressed_bytes += os.path.getsize(full_path)
                 total_files += 1
                 total_uncompressed_bytes += os.path.getsize(full_path)
 
