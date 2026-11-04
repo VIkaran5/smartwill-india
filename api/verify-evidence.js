@@ -123,7 +123,17 @@ async function handler(req, res) {
 
     // 7. Private Cloud Storage Retrieval & Ownership Audit (P0-2, P0-3)
     let fileBytes;
+    let actualStorageGeneration = '1';
     try {
+      // Validate storage path against path traversal
+      if (cleanStorageId.includes('..') || cleanStorageId.startsWith('/') || cleanStorageId.includes('\\')) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid storage identifier path. Directory traversal is prohibited.',
+          blockerCode: 'ERR_FORBIDDEN_STORAGE_PATH'
+        });
+      }
+
       const bucket = admin.storage().bucket();
       const file = bucket.file(cleanStorageId);
       const [exists] = await file.exists();
@@ -138,21 +148,35 @@ async function handler(req, res) {
       const [metadata] = await file.getMetadata();
       const customMeta = metadata.metadata || {};
 
-      if (customMeta.userId && customMeta.userId !== auth.uid) {
+      const metaUserId = customMeta.userId ? String(customMeta.userId).trim() : null;
+      const metaWillId = customMeta.willId ? String(customMeta.willId).trim() : null;
+
+      // Mandatory metadata existence check: missing or empty metadata strictly fails closed
+      if (!metaUserId || !metaWillId) {
         return res.status(403).json({
           success: false,
-          error: `Storage object belongs to user '${customMeta.userId}', not authenticated user '${auth.uid}'.`,
+          error: 'Storage object is missing mandatory ownership metadata (userId and willId). Direct download prohibited.',
+          blockerCode: 'ERR_STORAGE_METADATA_MISSING'
+        });
+      }
+
+      if (metaUserId !== auth.uid) {
+        return res.status(403).json({
+          success: false,
+          error: `Storage object belongs to user '${metaUserId}', not authenticated user '${auth.uid}'.`,
           blockerCode: 'ERR_CROSS_USER_DOCUMENT_STORAGE'
         });
       }
 
-      if (customMeta.willId && customMeta.willId !== cleanWillId) {
+      if (metaWillId !== cleanWillId) {
         return res.status(403).json({
           success: false,
-          error: `Storage object is bound to will '${customMeta.willId}', not requested will '${cleanWillId}'.`,
+          error: `Storage object is bound to will '${metaWillId}', not requested will '${cleanWillId}'.`,
           blockerCode: 'ERR_CROSS_WILL_DOCUMENT_STORAGE'
         });
       }
+
+      actualStorageGeneration = metadata.generation || metadata.metageneration || '1';
 
       const [downloaded] = await file.download();
       if (!downloaded || downloaded.length === 0) {
@@ -172,17 +196,26 @@ async function handler(req, res) {
       });
     }
 
-    // 8. Authoritative Verification Engine with Firestore Persistence
+    // Sanitize reviewer: strip client-supplied booleans
+    const sanitizedReviewer = reviewer ? {
+      verifiedBy: (reviewer.verifiedBy || '').trim(),
+      reviewerRole: (reviewer.reviewerRole || '').trim(),
+      enrollmentNumber: (reviewer.enrollmentNumber || reviewer.barEnrollmentNumber || '').trim(),
+      reviewedAt: reviewer.reviewedAt || null
+    } : {};
+
+    // 8. Authoritative Verification Engine with Mandatory Firestore Persistence
     const ticket = await registerAndVerifyEvidence({
       user: { uid: auth.uid, email: auth.email },
       willId: cleanWillId,
       documentStorageId: cleanStorageId,
       documentBytes: fileBytes,
       documentMetadata: documentMetadata || {},
-      reviewer: reviewer || {},
+      reviewer: sanitizedReviewer,
       subjectId,
       parcelId,
       documentVersion: Number(documentVersion) || 1,
+      storageGeneration: actualStorageGeneration,
       claimedStatutoryFact,
       db
     });

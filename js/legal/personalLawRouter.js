@@ -454,8 +454,87 @@ export function validateShariatDeclarationRecord(record, personal = {}, authenti
 }
 
 /**
+ * Authoritatively validates an asset-completeness attestation ticket (P1-5).
+ * A generic signed document (e.g. title deed or civil record) or a pending reviewer ticket
+ * MUST NEVER qualify as proof of asset completeness.
+ * 
+ * @param {Object} auditTicket - Server verification ticket or container
+ * @param {Object} authContext - Authenticated caller context
+ * @returns {Object} { isValid: boolean, blockerCode: string|null, reason: string|null }
+ */
+function validateAssetCompletenessTicket(auditTicket, authContext) {
+  if (!auditTicket || typeof auditTicket !== 'object') {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_ASSET_ATTESTATION_MISSING',
+      reason: 'Asset completeness attestation ticket is missing or invalid.'
+    };
+  }
+
+  if (!authContext || !authContext.userId || !authContext.willId) {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT',
+      reason: 'Asset completeness verification requires a verified authenticated server context.'
+    };
+  }
+
+  // 1. Verify cryptographic signature and user/will binding
+  const ticketCheck = validateEvidenceRecordAgainstServer(auditTicket, authContext);
+  if (!ticketCheck.isValid) {
+    return ticketCheck;
+  }
+
+  const t = auditTicket.serverVerificationTicket || auditTicket;
+
+  // 2. Specific documentType check: strictly require ASSET_COMPLETENESS_ATTESTATION
+  if (t.documentType !== 'ASSET_COMPLETENESS_ATTESTATION') {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_INVALID_ATTESTATION_TYPE',
+      reason: `Document type '${t.documentType || 'UNRECORDED'}' is not an ASSET_COMPLETENESS_ATTESTATION. Generic civil records, title deeds, or land documents cannot prove negative asset declaration.`
+    };
+  }
+
+  // 3. Claimed statutory fact check: strictly require ASSET_COMPLETENESS or NEGATIVE_ASSET_DECLARATION
+  const fact = (t.claimedStatutoryFact || '').trim().toUpperCase();
+  if (fact !== 'ASSET_COMPLETENESS' && fact !== 'NEGATIVE_ASSET_DECLARATION') {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_INVALID_STATUTORY_FACT',
+      reason: `Claimed statutory fact '${t.claimedStatutoryFact || 'UNRECORDED'}' does not certify negative asset declaration or asset completeness.`
+    };
+  }
+
+  // 4. Reviewer verification MUST be fully verified (NOT pending)
+  const rev = t.reviewer || {};
+  if (rev.credentialVerified !== true || rev.verificationStatus !== 'VERIFIED') {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_REVIEWER_VERIFICATION_PENDING',
+      reason: `Asset completeness attestation reviewer status is '${rev.verificationStatus || 'PENDING_MANUAL_VERIFICATION'}'. Reviewer credentials must be authoritatively verified.`
+    };
+  }
+
+  // 5. Statutory fact established check
+  if (t.statutoryFactEstablished !== true || t.verificationStatus !== 'VERIFIED') {
+    return {
+      isValid: false,
+      blockerCode: 'ERR_STATUTORY_FACT_UNESTABLISHED',
+      reason: 'Asset completeness statutory fact has not been authoritatively established on the ticket.'
+    };
+  }
+
+  return {
+    isValid: true,
+    ticket: t
+  };
+}
+
+/**
  * Authoritatively determines the personal law regime, statutory crest, and governing citation.
  * @param {Object} willData - Full will dataset
+ * @param {Object} [authenticatedServerContext=null] - Mandatory trusted caller server context
  * @returns {Object} Complete statutory routing metadata
  */
 export function resolvePersonalLawRegime(willData = {}, authenticatedServerContext = null) {
@@ -463,10 +542,15 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
   const blockers = [];
   const reasons = [];
 
-  // Authoritative server context can be supplied explicitly or retrieved from authenticated server session context
+  // Authoritative server context: requires explicit verified server context
+  // Generic client-supplied authContext is strictly prohibited (P1-4)
   const activeAuthContext = (authenticatedServerContext && typeof authenticatedServerContext === 'object')
     ? authenticatedServerContext
-    : (willData && (willData.authenticatedServerContext || willData.authContext)) || null;
+    : (willData && willData.authenticatedServerContext && typeof willData.authenticatedServerContext === 'object')
+      ? willData.authenticatedServerContext
+      : (p && p.authenticatedServerContext && typeof p.authenticatedServerContext === 'object')
+        ? p.authenticatedServerContext
+        : null;
 
   // ── STEP 1: GOA JURISDICTION EVALUATED FIRST ──
   // Mandatory Fail-Closed: Missing evidence must never default to non-Goa personal law.
@@ -730,7 +814,7 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
         !['test', 'fake', 'mock', 'null', 'undefined', 'invalid'].includes(String(assetDecl.auditSessionId).toLowerCase())) {
       const auditTicket = assetDecl.completenessAttestationTicket || assetDecl.serverAuditTicket || assetDecl.serverVerificationTicket;
       if (auditTicket && activeAuthContext) {
-        const ticketCheck = validateEvidenceRecordAgainstServer(auditTicket, activeAuthContext);
+        const ticketCheck = validateAssetCompletenessTicket(auditTicket, activeAuthContext);
         if (ticketCheck.isValid) {
           hasValidNegativeDeclaration = true;
         }
@@ -1174,7 +1258,7 @@ export function resolvePersonalLawRegime(willData = {}, authenticatedServerConte
         !['test', 'fake', 'mock', 'null', 'undefined', 'invalid'].includes(String(assetDeclHindu.auditSessionId).toLowerCase())) {
       const auditTicket = assetDeclHindu.completenessAttestationTicket || assetDeclHindu.serverAuditTicket || assetDeclHindu.serverVerificationTicket;
       if (auditTicket && activeAuthContext) {
-        const ticketCheck = validateEvidenceRecordAgainstServer(auditTicket, activeAuthContext);
+        const ticketCheck = validateAssetCompletenessTicket(auditTicket, activeAuthContext);
         if (ticketCheck.isValid) {
           hasValidHinduNegativeDeclaration = true;
         }

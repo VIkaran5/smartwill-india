@@ -25,6 +25,7 @@ import { generateGoaSection333PDF as rawGenerateGoaSection333PDF, formatDateToFo
 import {
   createTrustedServerEvidenceFixture,
   createTestAuthContext,
+  createTestCompletenessDeclaration,
   registerAndVerifyEvidence,
   clearServerVerificationRegistry
 } from '../fixtures/testEvidenceFixtures.js';
@@ -3750,6 +3751,497 @@ describe('SmartWill India — Legal Engine 2.1 Statutory Regression Suite', () =
     // 2. Verify api/verify-evidence.js exports handler
     const vercelHandler = await import('../../api/verify-evidence.js');
     expect(typeof (vercelHandler.default || vercelHandler)).toBe('function');
+  });
+
+  it('161. Stage 1 Revision 14 Adversarial 35 (P0-1): Complete ticket canonical payload tampering protection', async () => {
+    const { registerAndVerifyEvidence: regEngine, verifyTicketSignature } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    const originalTicket = regEngine({
+      user: { uid: 'usr-audit-101' },
+      willId: 'will-audit-202',
+      documentStorageId: 'DOC-AUTHENTIC-101',
+      documentBytes: Buffer.from('canonical statutory document content'),
+      documentMetadata: {
+        documentType: 'TITLE_DEED_REGISTERED',
+        documentRef: 'DEED-992/2020',
+        issuingAuthority: 'Sub-Registrar of Margao',
+        issueDate: '2020-05-15',
+        verifiedParties: 'Dr. Joseph Fernandes'
+      },
+      reviewer: {
+        verifiedBy: 'Advocate Carlos Pereira',
+        reviewerRole: 'ADVOCATE',
+        enrollmentNumber: 'GOA/123/2005'
+      },
+      storageGeneration: '88123049182',
+      claimedStatutoryFact: 'HISTORICAL_TERRITORY_PROPERTY'
+    });
+
+    expect(verifyTicketSignature(originalTicket)).toBe(true);
+
+    // Tampering test for EVERY security-relevant field individually:
+    const fieldsToTamper = [
+      { field: 'verifiedParties', altered: 'Fabricated Testator' },
+      { field: 'documentType', altered: 'CONVERSION_CERTIFICATE' },
+      { field: 'documentRef', altered: 'FORGED-REF-999' },
+      { field: 'issuingAuthority', altered: 'Bogus Authority' },
+      { field: 'issueDate', altered: '2025-01-01' },
+      { field: 'storageGeneration', altered: '99999999999' },
+      { field: 'documentVersion', altered: 9 },
+      { field: 'serverComputedHash', altered: 'f'.repeat(64) },
+      { field: 'userId', altered: 'usr-intruder-666' },
+      { field: 'willId', altered: 'will-foreign-777' },
+      { field: 'claimedStatutoryFact', altered: 'NON_AGRICULTURAL' },
+      { field: 'statutoryFactEstablished', altered: true },
+      { field: 'verificationStatus', altered: 'VERIFIED' },
+      { field: 'verifiedAt', altered: '2026-11-04T00:00:00.000Z' },
+      { field: 'verificationTicketId', altered: 'TICKET-FORGED-000' }
+    ];
+
+    for (const { field, altered } of fieldsToTamper) {
+      const tampered = { ...originalTicket, [field]: altered };
+      expect(verifyTicketSignature(tampered)).toBe(false);
+    }
+
+    // Tampering reviewer fields inside reviewer sub-object:
+    const reviewerFieldsToTamper = [
+      { field: 'reviewerRole', altered: 'HIGH_COURT_ADVOCATE' },
+      { field: 'enrollmentNumber', altered: 'MAH/888/2012' },
+      { field: 'verifiedBy', altered: 'Fabricated Advocate' },
+      { field: 'credentialVerified', altered: true },
+      { field: 'verificationStatus', altered: 'VERIFIED' }
+    ];
+
+    for (const { field, altered } of reviewerFieldsToTamper) {
+      const tampered = {
+        ...originalTicket,
+        reviewer: { ...originalTicket.reviewer, [field]: altered }
+      };
+      expect(verifyTicketSignature(tampered)).toBe(false);
+    }
+  });
+
+  it('162. Stage 1 Revision 14 Adversarial 36 (P0-2): Client-supplied reviewer verification flags are strictly stripped and rejected', async () => {
+    const { registerAndVerifyEvidence: regEngine } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    // Attacker crafts client request containing fabricated advocate with all verification flags set to true
+    const clientForgedPayload = {
+      user: { uid: 'usr-attacker-007' },
+      willId: 'will-target-101',
+      documentStorageId: 'DOC-SPOOF-001',
+      documentBytes: Buffer.from('unverified document bytes'),
+      reviewer: {
+        verifiedBy: 'Self-Claimed Bar Council Advocate',
+        reviewerRole: 'ADVOCATE',
+        enrollmentNumber: 'MAH/555/2015',
+        authoritativeRegistryConfirmed: true,
+        barCouncilVerified: true,
+        credentialVerified: true
+      }
+    };
+
+    const result = regEngine(clientForgedPayload);
+
+    // Backend must NEVER trust client booleans
+    expect(result.reviewer.credentialVerified).toBe(false);
+    expect(result.reviewer.verificationStatus).toBe('PENDING_MANUAL_VERIFICATION');
+    expect(result.statutoryFactEstablished).toBe(false);
+    expect(result.verificationStatus).toBe('PENDING_REVIEWER_VERIFICATION');
+  });
+
+  it('163. Stage 1 Revision 14 Adversarial 37 (P0-3): Storage metadata absence, path traversal, and generation binding', async () => {
+    const { verifyEvidence } = await import('../../functions/verifyEvidence.js');
+
+    const mockDb = {
+      collection: () => ({
+        doc: () => ({
+          get: async () => ({
+            exists: true,
+            data: () => ({ userId: 'usr-owner-101' })
+          }),
+          set: async () => {}
+        })
+      }),
+      batch: () => ({
+        set: () => {},
+        commit: async () => {}
+      })
+    };
+
+    // 1. Path traversal rejected with ERR_FORBIDDEN_STORAGE_PATH
+    await expect(verifyEvidence.run({
+      willId: 'will-owner-101',
+      documentStorageId: '../../etc/passwd'
+    }, {
+      auth: { uid: 'usr-owner-101', token: {} },
+      db: mockDb
+    })).rejects.toThrow(/ERR_FORBIDDEN_STORAGE_PATH/);
+
+    // 2. Missing metadata.userId fails closed with ERR_STORAGE_METADATA_MISSING
+    const bucketMissingUser = {
+      file: () => ({
+        exists: async () => [true],
+        getMetadata: async () => [{ metadata: { willId: 'will-owner-101' } }],
+        download: async () => [Buffer.from('document-content')]
+      })
+    };
+    await expect(verifyEvidence.run({
+      willId: 'will-owner-101',
+      documentStorageId: 'users/usr-owner-101/doc.pdf'
+    }, {
+      auth: { uid: 'usr-owner-101', token: {} },
+      db: mockDb,
+      bucket: bucketMissingUser
+    })).rejects.toThrow(/ERR_STORAGE_METADATA_MISSING/);
+
+    // 3. Missing metadata.willId fails closed with ERR_STORAGE_METADATA_MISSING
+    const bucketMissingWill = {
+      file: () => ({
+        exists: async () => [true],
+        getMetadata: async () => [{ metadata: { userId: 'usr-owner-101' } }],
+        download: async () => [Buffer.from('document-content')]
+      })
+    };
+    await expect(verifyEvidence.run({
+      willId: 'will-owner-101',
+      documentStorageId: 'users/usr-owner-101/doc.pdf'
+    }, {
+      auth: { uid: 'usr-owner-101', token: {} },
+      db: mockDb,
+      bucket: bucketMissingWill
+    })).rejects.toThrow(/ERR_STORAGE_METADATA_MISSING/);
+
+    // 4. Object generation is bound from actual GCS metadata
+    const bucketWithGeneration = {
+      file: () => ({
+        exists: async () => [true],
+        getMetadata: async () => [{
+          generation: '16928374829104',
+          metadata: { userId: 'usr-owner-101', willId: 'will-owner-101' }
+        }],
+        download: async () => [Buffer.from('real-statutory-deed-bytes')]
+      })
+    };
+    const validRun = await verifyEvidence.run({
+      willId: 'will-owner-101',
+      documentStorageId: 'users/usr-owner-101/wills/will-owner-101/deed.pdf',
+      documentMetadata: { documentType: 'TITLE_DEED_REGISTERED' },
+      reviewer: { verifiedBy: 'Advocate Pereira', reviewerRole: 'ADVOCATE', enrollmentNumber: 'GOA/123/2005' }
+    }, {
+      auth: { uid: 'usr-owner-101', token: {} },
+      db: mockDb,
+      bucket: bucketWithGeneration
+    });
+    expect(validRun.success).toBe(true);
+    expect(validRun.ticket.storageGeneration).toBe('16928374829104');
+  });
+
+  it('164. Stage 1 Revision 14 Adversarial 38 (P1-1 & P1-2): Mandatory asynchronous Firestore persistence and fail-closed persistence failures', async () => {
+    const { registerAndVerifyEvidence: regEngine, getTicketFromFirestore, persistTicketToFirestore } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    let ticketStored = null;
+    let auditStored = null;
+    const mockDbSuccess = {
+      batch: () => ({
+        set: (ref, data) => {
+          if (ref.path.includes('evidenceTickets')) ticketStored = data;
+          if (ref.path.includes('evidenceAuditLogs')) auditStored = data;
+        },
+        commit: async () => {}
+      }),
+      collection: (name) => ({
+        doc: (id) => ({
+          path: `${name}/${id}`,
+          get: async () => ({
+            exists: true,
+            data: () => ticketStored
+          })
+        })
+      })
+    };
+
+    const ticket = await regEngine({
+      user: { uid: 'usr-persist-101' },
+      willId: 'will-persist-202',
+      documentStorageId: 'DOC-PERSIST-101',
+      documentBytes: Buffer.from('persisted statutory content'),
+      reviewer: { verifiedBy: 'Advocate A', reviewerRole: 'ADVOCATE', enrollmentNumber: 'GOA/123/2005' },
+      db: mockDbSuccess
+    });
+
+    expect(ticket).toBeDefined();
+    expect(ticketStored).toBeDefined();
+    expect(ticketStored.verificationTicketId).toBe(ticket.verificationTicketId);
+    expect(auditStored).toBeDefined();
+    expect(auditStored.ticketId).toBe(ticket.verificationTicketId);
+
+    // Retrieve persisted ticket
+    const retrieved = await getTicketFromFirestore(ticket.verificationTicketId, mockDbSuccess);
+    expect(retrieved).toBeDefined();
+    expect(retrieved.verificationTicketId).toBe(ticket.verificationTicketId);
+
+    // Tampered record in Firestore throws ERR_PERSISTED_TICKET_TAMPERED
+    const mockDbTampered = {
+      collection: () => ({
+        doc: () => ({
+          get: async () => ({
+            exists: true,
+            data: () => ({ ...ticketStored, verifiedParties: 'Tampered Hacker Name' })
+          })
+        })
+      })
+    };
+    await expect(getTicketFromFirestore(ticket.verificationTicketId, mockDbTampered)).rejects.toThrow(/ERR_PERSISTED_TICKET_TAMPERED/);
+
+    // Persistence failure in Firestore causes registerAndVerifyEvidence to fail closed with ERR_PERSISTENCE_FAILED
+    const mockDbFailing = {
+      batch: () => ({
+        set: () => {},
+        commit: async () => { throw new Error('Firestore connection timeout'); }
+      }),
+      collection: () => ({})
+    };
+    await expect(regEngine({
+      user: { uid: 'usr-persist-101' },
+      willId: 'will-persist-202',
+      documentStorageId: 'DOC-PERSIST-FAIL',
+      documentBytes: Buffer.from('content'),
+      reviewer: { verifiedBy: 'Advocate A', reviewerRole: 'ADVOCATE', enrollmentNumber: 'GOA/123/2005' },
+      db: mockDbFailing
+    })).rejects.toThrow(/ERR_PERSISTENCE_FAILED/);
+  });
+
+  it('165. Stage 1 Revision 14 Adversarial 39 (P1-3): Vercel endpoint /api/validate-ticket validates authentic tickets and rejects forged/cross-user tickets', async () => {
+    const validateTicketHandler = (await import('../../api/validate-ticket.js')).default || (await import('../../api/validate-ticket.js'));
+    const { registerAndVerifyEvidence: regEngine } = await import('../../functions/evidenceVerificationEngine.cjs');
+
+    const validTicket = regEngine({
+      user: { uid: 'usr-client-101' },
+      willId: 'will-client-202',
+      documentStorageId: 'DOC-CLIENT-VAL',
+      documentBytes: Buffer.from('authentic bytes'),
+      reviewer: { verifiedBy: 'Advocate Pereira', reviewerRole: 'ADVOCATE', enrollmentNumber: 'GOA/123/2005' }
+    });
+
+    // Helper for mock response
+    function createRes() {
+      let statusCode = 200;
+      let jsonResult = null;
+      let ended = false;
+      return {
+        setHeader: () => {},
+        status: (c) => {
+          statusCode = c;
+          return {
+            json: (j) => { jsonResult = j; return { statusCode, jsonResult }; },
+            end: () => { ended = true; return { statusCode, jsonResult }; }
+          };
+        },
+        getStatus: () => statusCode,
+        getBody: () => jsonResult
+      };
+    }
+
+    // 1. Rejects GET requests with 405 Method Not Allowed
+    const resGet = createRes();
+    await validateTicketHandler({ method: 'GET', headers: {} }, resGet);
+    expect(resGet.getStatus()).toBe(405);
+
+    // 2. Rejects unauthenticated requests with 401 Unauthorized
+    const resNoAuth = createRes();
+    await validateTicketHandler({ method: 'POST', headers: {}, body: { ticket: validTicket } }, resNoAuth);
+    expect(resNoAuth.getStatus()).toBe(401);
+
+    // 3. Valid ticket returns 200 with isValid: true
+    const resValid = createRes();
+    await validateTicketHandler({
+      method: 'POST',
+      headers: {},
+      auth: { uid: 'usr-client-101', email: 'user@smartwill.in' },
+      body: { ticket: validTicket }
+    }, resValid, { auth: { uid: 'usr-client-101', email: 'user@smartwill.in' } });
+    expect(resValid.getStatus()).toBe(200);
+    expect(resValid.getBody().isValid).toBe(true);
+    expect(resValid.getBody().ticketId).toBe(validTicket.verificationTicketId);
+
+    // 4. Forged ticket signature returns 403 ERR_FORGED_EVIDENCE_TICKET
+    const resForged = createRes();
+    const forgedTicket = { ...validTicket, verifiedParties: 'Forged Name' };
+    await validateTicketHandler({
+      method: 'POST',
+      headers: {},
+      auth: { uid: 'usr-client-101' },
+      body: { ticket: forgedTicket }
+    }, resForged, { auth: { uid: 'usr-client-101' } });
+    expect(resForged.getStatus()).toBe(403);
+    expect(resForged.getBody().blockerCode).toBe('ERR_FORGED_EVIDENCE_TICKET');
+
+    // 5. Cross-user ticket reuse returns 403 ERR_CROSS_USER_EVIDENCE_REUSE
+    const resCrossUser = createRes();
+    await validateTicketHandler({
+      method: 'POST',
+      headers: {},
+      auth: { uid: 'usr-attacker-999' },
+      body: { ticket: validTicket }
+    }, resCrossUser, { auth: { uid: 'usr-attacker-999' } });
+    expect(resCrossUser.getStatus()).toBe(403);
+    expect(resCrossUser.getBody().blockerCode).toBe('ERR_CROSS_USER_EVIDENCE_REUSE');
+
+    // 6. Persisted ticket tampering in Firestore returns 403 ERR_PERSISTED_TICKET_TAMPERED
+    const mockDbTampered = {
+      collection: () => ({
+        doc: () => ({
+          get: async () => ({
+            exists: true,
+            data: () => ({ ...validTicket, serverSignature: 'tampered-signature' })
+          })
+        })
+      })
+    };
+    const resPersistedTampered = createRes();
+    await validateTicketHandler({
+      method: 'POST',
+      headers: {},
+      auth: { uid: 'usr-client-101' },
+      body: { ticket: validTicket }
+    }, resPersistedTampered, {
+      auth: { uid: 'usr-client-101' },
+      db: mockDbTampered
+    });
+    expect(resPersistedTampered.getStatus()).toBe(403);
+    expect(resPersistedTampered.getBody().blockerCode).toBe('ERR_PERSISTED_TICKET_TAMPERED');
+  });
+
+  it('166. Stage 1 Revision 14 Adversarial 40 (P1-4): Spoofed authContext in form data strictly fails closed without authenticatedServerContext', () => {
+    // Attempt to spoof authentication by providing authContext inside form data
+    const spoofedPersonalData = {
+      fullName: 'Ramesh Sharma',
+      pob: 'Varanasi, UP',
+      religion: 'Hindu',
+      authContext: { userId: 'usr-spoofed', willId: 'will-spoofed' },
+      clauseAEvidence: sampleClauseAEvidence
+    };
+
+    // Calling classifyGoaJurisdiction without trusted authenticatedServerContext
+    const resGoa = classifyGoaJurisdiction(spoofedPersonalData, null);
+    expect(resGoa.status).toBe(JURISDICTION_STATUS.GOA_STATUS_UNDETERMINED);
+    expect(resGoa.blockers[0]).toContain('ERR_UNAUTHENTICATED_EVIDENCE_CONTEXT');
+
+    // Calling resolvePersonalLawRegime without trusted authenticatedServerContext
+    const spoofedWill = {
+      personal: spoofedPersonalData,
+      authContext: { userId: 'usr-spoofed', willId: 'will-spoofed' },
+      assets: []
+    };
+    const resPersonal = resolvePersonalLawRegime(spoofedWill, null);
+    expect(resPersonal.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+  });
+
+  it('167. Stage 1 Revision 14 Adversarial 41 (P1-5): Asset-completeness gate rejects generic signed tickets, pending reviewers, and altered facts', async () => {
+    const testAuth = createTestAuthContext();
+
+    // 1. Generic signed document (TITLE_DEED_REGISTERED) used as asset completeness attestation -> strictly rejected
+    const genericTicketEvidence = createTrustedServerEvidenceFixture({
+      documentType: 'TITLE_DEED_REGISTERED',
+      claimedStatutoryFact: 'HISTORICAL_TERRITORY_PROPERTY'
+    });
+
+    const muslimGenericAttestation = {
+      personal: {
+        fullName: 'Mohammed Ali',
+        pob: 'Lucknow, UP',
+        dob: '1980-01-01',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord,
+        assetInventoryDeclaration: {
+          hasNoAssets: true,
+          declarationSigned: true,
+          declarationDate: '2026-06-15',
+          auditSessionId: 'SESSION-GENERIC-101',
+          completenessAttestationTicket: genericTicketEvidence
+        }
+      },
+      assets: []
+    };
+    const resGeneric = resolvePersonalLawRegime(muslimGenericAttestation, testAuth);
+    expect(resGeneric.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resGeneric.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+
+    // 2. Pending reviewer ticket used as asset completeness attestation -> strictly rejected
+    const { registerAndVerifyEvidence: regEngine } = await import('../../functions/evidenceVerificationEngine.cjs');
+    const pendingReviewerTicket = regEngine({
+      user: { uid: testAuth.userId },
+      willId: testAuth.willId,
+      documentStorageId: 'AUDIT-STORE-PENDING',
+      documentBytes: Buffer.from('declaration bytes'),
+      documentMetadata: {
+        documentType: 'ASSET_COMPLETENESS_ATTESTATION',
+        verifiedParties: 'Mohammed Ali'
+      },
+      reviewer: {
+        verifiedBy: 'Advocate Pending',
+        reviewerRole: 'ADVOCATE',
+        enrollmentNumber: 'UP/111/2018'
+      },
+      claimedStatutoryFact: 'ASSET_COMPLETENESS'
+    });
+    expect(pendingReviewerTicket.reviewer.verificationStatus).toBe('PENDING_MANUAL_VERIFICATION');
+
+    const muslimPendingAttestation = {
+      personal: {
+        fullName: 'Mohammed Ali',
+        pob: 'Lucknow, UP',
+        dob: '1980-01-01',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord,
+        assetInventoryDeclaration: {
+          hasNoAssets: true,
+          declarationSigned: true,
+          declarationDate: '2026-06-15',
+          auditSessionId: 'SESSION-PENDING-202',
+          completenessAttestationTicket: pendingReviewerTicket
+        }
+      },
+      assets: []
+    };
+    const resPending = resolvePersonalLawRegime(muslimPendingAttestation, testAuth);
+    expect(resPending.regime).toBe(PERSONAL_LAW_REGIMES.LEGAL_REVIEW_REQUIRED);
+    expect(resPending.blockers[0]).toContain('ERR_ASSET_INVENTORY_REQUIRED');
+
+    // 3. Genuine, authoritatively verified asset completeness attestation -> successfully satisfies gate
+    const genuineCompletenessDecl = createTestCompletenessDeclaration({
+      userId: testAuth.userId,
+      willId: testAuth.willId,
+      testatorName: 'Mohammed Ali'
+    });
+
+    const muslimGenuineAttestation = {
+      personal: {
+        fullName: 'Mohammed Ali',
+        pob: 'Lucknow, UP',
+        dob: '1980-01-01',
+        parentsPortugueseRegime: false,
+        parentsRestOfIndiaGoverned: true,
+        parentsRestOfIndiaEvidence: sampleParentsRoiEvidence,
+        religion: 'Muslim',
+        sect: 'Sunni',
+        shariatDeclarationRecord: sampleShariatDeclarationRecord,
+        assetInventoryDeclaration: genuineCompletenessDecl
+      },
+      assets: []
+    };
+    const resGenuine = resolvePersonalLawRegime(muslimGenuineAttestation, testAuth);
+    expect(resGenuine.regime).toBe(PERSONAL_LAW_REGIMES.MUSLIM_SUNNI);
+    expect(resGenuine.shariatSec3Verified).toBe(true);
+    expect(resGenuine.blockers).toHaveLength(0);
   });
 
 });

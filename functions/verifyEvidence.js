@@ -125,7 +125,16 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
 
   // 4. Private Cloud Storage Retrieval & Ownership Audit (P0-2, P0-3)
   let fileBytes;
+  let actualStorageGeneration = '1';
   try {
+    // Validate storage path against path traversal
+    if (cleanStorageId.includes('..') || cleanStorageId.startsWith('/') || cleanStorageId.includes('\\')) {
+      throw new functions.https.HttpsError(
+        'invalid-argument',
+        'ERR_FORBIDDEN_STORAGE_PATH: Invalid storage identifier path. Directory traversal is prohibited.'
+      );
+    }
+
     const bucket = (context && context.bucket) || (data && data._testBucket) || admin.storage().bucket();
     const file = bucket.file(cleanStorageId);
     const [exists] = await file.exists();
@@ -139,19 +148,32 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
     const [metadata] = await file.getMetadata();
     const customMeta = metadata.metadata || {};
 
+    const metaUserId = customMeta.userId ? String(customMeta.userId).trim() : null;
+    const metaWillId = customMeta.willId ? String(customMeta.willId).trim() : null;
+
+    // Mandatory metadata existence check: missing or empty metadata strictly fails closed
+    if (!metaUserId || !metaWillId) {
+      throw new functions.https.HttpsError(
+        'permission-denied',
+        'ERR_STORAGE_METADATA_MISSING: Storage object is missing mandatory ownership metadata (userId and willId). Direct download prohibited.'
+      );
+    }
+
     // Verify storage object ownership matches authenticated user and will
-    if (customMeta.userId && customMeta.userId !== context.auth.uid) {
+    if (metaUserId !== context.auth.uid) {
       throw new functions.https.HttpsError(
         'permission-denied',
-        `ERR_CROSS_USER_DOCUMENT_STORAGE: Storage object belongs to user '${customMeta.userId}', not authenticated user '${context.auth.uid}'.`
+        `ERR_CROSS_USER_DOCUMENT_STORAGE: Storage object belongs to user '${metaUserId}', not authenticated user '${context.auth.uid}'.`
       );
     }
-    if (customMeta.willId && customMeta.willId !== cleanWillId) {
+    if (metaWillId !== cleanWillId) {
       throw new functions.https.HttpsError(
         'permission-denied',
-        `ERR_CROSS_WILL_DOCUMENT_STORAGE: Storage object is bound to will '${customMeta.willId}', not requested will '${cleanWillId}'.`
+        `ERR_CROSS_WILL_DOCUMENT_STORAGE: Storage object is bound to will '${metaWillId}', not requested will '${cleanWillId}'.`
       );
     }
+
+    actualStorageGeneration = metadata.generation || metadata.metageneration || '1';
 
     const [downloaded] = await file.download();
     if (!downloaded || downloaded.length === 0) {
@@ -169,7 +191,15 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('internal', `ERR_STORAGE_RETRIEVAL_FAILED: ${storageErr.message}`);
   }
 
-  // 5. Authoritative Verification Pipeline with Firestore Persistence
+  // Sanitize reviewer: strip client-supplied booleans
+  const sanitizedReviewer = reviewer ? {
+    verifiedBy: (reviewer.verifiedBy || '').trim(),
+    reviewerRole: (reviewer.reviewerRole || '').trim(),
+    enrollmentNumber: (reviewer.enrollmentNumber || reviewer.barEnrollmentNumber || '').trim(),
+    reviewedAt: reviewer.reviewedAt || null
+  } : {};
+
+  // 5. Authoritative Verification Pipeline with Mandatory Firestore Persistence
   try {
     const ticket = await registerAndVerifyEvidence({
       user: { uid: context.auth.uid, email: context.auth.token?.email || '' },
@@ -177,10 +207,11 @@ exports.verifyEvidence = functions.https.onCall(async (data, context) => {
       documentStorageId: cleanStorageId,
       documentBytes: fileBytes,
       documentMetadata: documentMetadata || {},
-      reviewer: reviewer || {},
+      reviewer: sanitizedReviewer,
       subjectId,
       parcelId,
       documentVersion: Number(documentVersion) || 1,
+      storageGeneration: actualStorageGeneration,
       claimedStatutoryFact,
       db
     });

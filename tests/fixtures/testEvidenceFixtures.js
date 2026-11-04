@@ -84,7 +84,11 @@ export function createTrustedServerEvidenceFixture(options = {}) {
     subjectId: options.subjectId || metadata.verifiedParties,
     parcelId: options.parcelId || null,
     documentVersion: options.documentVersion || 1,
-    claimedStatutoryFact: options.claimedStatutoryFact || null
+    claimedStatutoryFact: options.claimedStatutoryFact || null,
+    options: {
+      authoritativeAdminVerified: options.authoritativeAdminVerified !== undefined ? options.authoritativeAdminVerified : true,
+      ...options.backendOptions
+    }
   });
 
   return {
@@ -134,10 +138,12 @@ export function createTestCompletenessDeclaration(options = {}) {
     reviewer: {
       verifiedBy: 'Advocate Tariq Khan, High Court of Allahabad',
       reviewerRole: 'ADVOCATE',
-      enrollmentNumber: 'UP/789/1985',
-      authoritativeRegistryConfirmed: true
+      enrollmentNumber: 'UP/789/1985'
     },
-    claimedStatutoryFact: 'ASSET_COMPLETENESS'
+    claimedStatutoryFact: 'ASSET_COMPLETENESS',
+    options: {
+      authoritativeAdminVerified: true
+    }
   });
 
   return {
